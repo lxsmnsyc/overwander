@@ -16,6 +16,7 @@ import ItemGrid, { type ItemCell } from './ItemGrid';
 import ItemSprite from './ItemSprite';
 import { Button, Dialog, DialogActions, Note, Row, Status } from '../styled';
 import { failed, readable } from '../app/resource-reads';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Picking something out of the bag.
@@ -425,8 +426,11 @@ function PickerList(
       }}
     >
       {props.most == null
-        ? `${props.verb ?? 'Pick'} ${describeItem(asked.item)}`
-        : `${props.verb ?? 'Take'} ${taking()}`}
+        ? m.item_cell_verb({
+            verb: props.verb ?? m.catch_picker_pick_verb(),
+            item: describeItem(asked.item),
+          })
+        : m.catch_picker_take_count({ verb: props.verb ?? m.catch_picker_take(), count: taking() })}
     </Button>
   );
 
@@ -444,7 +448,7 @@ function PickerList(
           <Note>
             {(props.entries == null ? failed(props.bag) : null) ??
               props.empty ??
-              'Nothing in the bag for this.'}
+              m.item_picker_empty()}
           </Note>
         }
       >
@@ -479,7 +483,7 @@ function PickerList(
                 <Show when={props.most != null}>
                   <Row class="flex-nowrap items-center gap-1">
                     <Button
-                      label="One less"
+                      label={m.item_picker_less()}
                       disabled={props.disabled === true || taking() <= 1}
                       onClick={() => {
                         setTaking(taking() - 1);
@@ -496,7 +500,7 @@ function PickerList(
                       max={room(asked)}
                       value={taking()}
                       disabled={props.disabled}
-                      aria-label={`How many ${describeItem(asked.item)}`}
+                      aria-label={m.item_picker_how_many({ item: describeItem(asked.item) })}
                       onInput={(event) => {
                         const wanted = Math.floor(Number(event.currentTarget.value));
 
@@ -504,7 +508,7 @@ function PickerList(
                       }}
                     />
                     <Button
-                      label="One more"
+                      label={m.item_picker_more()}
                       disabled={props.disabled === true || taking() >= room(asked)}
                       onClick={() => {
                         setTaking(taking() + 1);
@@ -513,13 +517,13 @@ function PickerList(
                       +
                     </Button>
                     <Button
-                      label="As many as you can"
+                      label={m.item_picker_max_label()}
                       disabled={props.disabled === true || taking() >= room(asked)}
                       onClick={() => {
                         setTaking(room(asked));
                       }}
                     >
-                      Max
+                      {m.item_picker_max()}
                     </Button>
                   </Row>
                 </Show>
@@ -540,7 +544,7 @@ function PickerList(
                       setPending(null);
                     }}
                   >
-                    Cancel
+                    {m.battle_cancel()}
                   </Button>
                   {confirmPending(asked)}
                 </Row>
@@ -569,7 +573,7 @@ function PickerList(
                 basket holding five of one thing was a number that
                 answered nothing — and what is in it is listed above
                 the button either way */}
-              {confirming() ? 'Sure?' : (props.verb ?? 'Take')}
+              {confirming() ? m.catch_picker_sure() : (props.verb ?? m.catch_picker_take())}
             </Button>
           </Show>
         </div>
@@ -594,10 +598,10 @@ function PickerList(
                   dock().close();
                 }}
               >
-                Pick none
+                {m.catch_picker_none()}
               </Button>
             </Show>
-            <Button onClick={dock().close}>Close</Button>
+            <Button onClick={dock().close}>{m.ui_close()}</Button>
           </DialogActions>
         )}
       </Show>
@@ -638,9 +642,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     if (props.description != null) {
       return props.description;
     }
-    return props.multiple === true
-      ? 'Choose what to take out of the bag, and how many of each.'
-      : 'Choose one thing out of the bag.';
+    return props.multiple === true ? m.item_picker_choose_many() : m.item_picker_choose_one();
   };
 
   const close = (): void => {
@@ -652,10 +654,10 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
     <Suspense
       fallback={
         <>
-          <Note>Looking through the bag…</Note>
+          <Note>{m.item_bag_loading()}</Note>
           <Show when={docked}>
             <DialogActions>
-              <Button onClick={close}>Close</Button>
+              <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Show>
         </>
@@ -682,13 +684,13 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
             setOpened(true);
           }}
         >
-          {props.label ?? props.title ?? 'Pick an item'}
+          {props.label ?? props.title ?? m.item_picker_pick()}
         </Button>
       </Show>
       <Dialog
         isOpen={showing()}
         onClose={close}
-        title={props.title ?? 'The bag'}
+        title={props.title ?? m.item_picker_title()}
         description={purpose()}
         terse={props.terse}
         lead={props.lead}

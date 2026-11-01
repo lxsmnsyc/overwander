@@ -1,7 +1,6 @@
 import { type JSX, Show, createResource, createSignal } from 'solid-js';
 import {
   type BoxRecord,
-  DEFAULT_BOX_NAME,
   DEFAULT_BOX_TONE,
   boxTone,
   fileCatches,
@@ -14,6 +13,7 @@ import { BoxIcon } from '../../../icons';
 import { Dialog, Menu, type MenuAction } from '../../../styled';
 import BoxForm from '../../catches-list/box-form';
 import describeFailure from '../../../../i18n/refusals';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * Which box a pokemon is filed in, beside its name, and the menu that
@@ -52,7 +52,7 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
         return { name: box.name, tone: boxTone(box.colour) };
       }
     }
-    return { name: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE };
+    return { name: m.catch_box_default(), tone: DEFAULT_BOX_TONE };
   };
 
   const failed = (caught: unknown): void => {
@@ -67,10 +67,10 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
     fileCatches([props.catchId], box)
       .then((outcome) => {
         if (outcome.done.length === 0) {
-          props.onFailed('It could not be moved.');
+          props.onFailed(m.catch_box_move_failed());
           return;
         }
-        props.onMoved(`Moved to ${name}.`);
+        props.onMoved(m.catch_box_moved({ name }));
       })
       .catch(failed);
   };
@@ -80,12 +80,12 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
     makeBox(name, colour, [props.catchId])
       .then((id) => {
         if (id == null) {
-          props.onFailed('The box could not be made.');
+          props.onFailed(m.catch_box_make_failed());
           return;
         }
         setMaking(false);
         setMade((count) => count + 1);
-        props.onMoved(`Made ${name} and moved it there.`);
+        props.onMoved(m.catch_box_made({ name }));
       })
       .catch(failed)
       .finally(() => {
@@ -96,11 +96,11 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
   const actions = (): MenuAction[] => {
     const entries: MenuAction[] = [
       {
-        label: DEFAULT_BOX_NAME,
+        label: m.catch_box_default(),
         swatch: DEFAULT_BOX_TONE,
         checked: props.box == null,
         onSelect: () => {
-          move(null, DEFAULT_BOX_NAME);
+          move(null, m.catch_box_default());
         },
       },
     ];
@@ -116,7 +116,7 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
       });
     }
     entries.push({
-      label: 'New box…',
+      label: m.catch_box_new_menu(),
       separated: true,
       onSelect: () => {
         setMaking(true);
@@ -128,8 +128,8 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
   return (
     <>
       <Menu
-        label={`In ${here().name}. Move to another box`}
-        heading="Move to"
+        label={m.catch_box_chip_label({ name: here().name })}
+        heading={m.catch_box_move_to()}
         actions={actions()}
         face={
           <span class="inline-flex items-center gap-1.5">
@@ -149,11 +149,11 @@ export default function BoxChip(props: BoxChipProps): JSX.Element {
           onClose={() => {
             setMaking(false);
           }}
-          title="New box"
-          description="Name it and pick a colour. This pokemon goes in it."
+          title={m.catch_box_new()}
+          description={m.catch_box_new_note()}
         >
           <BoxForm
-            verb="Make it"
+            verb={m.catch_box_make_it()}
             busy={busy()}
             onSubmit={make}
             onCancel={() => {

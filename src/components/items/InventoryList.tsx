@@ -14,7 +14,7 @@ import { getCaught } from '../../auth/caught';
 import { capAsksForStat } from '../../data/items/bottle-caps';
 import {
   ItemFlags,
-  type ItemTypes,
+  ItemTypes,
   type Items,
   getMachineMove,
   isMachineItem,
@@ -29,7 +29,7 @@ import { hostMythicalRaid } from '../../auth/raids';
 import { isEscapeRope } from '../../data/items/escape-rope';
 import { getRaidSpecies } from '../../data/items/raid-items';
 import { getItemData } from '../../data/items';
-import { ITEM_TYPE_NAMES, ITEM_TYPE_ORDER } from '../../data/items/names';
+import { ITEM_TYPE_ORDER } from '../../data/items/names';
 import CatchPicker from '../catches/catch-picker';
 import AbilityPatchDialog from '../catches/AbilityPatchDialog';
 import IncreasePPDialog from '../catches/IncreasePPDialog';
@@ -46,6 +46,7 @@ import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } 
 import settings, { setSetting } from '../app/settings';
 import { failed, readable } from '../app/resource-reads';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export interface InventoryListProps {
   player: string;
@@ -95,32 +96,43 @@ function Count(props: { of: number }): JSX.Element {
   return <span class="ml-2 text-xs font-normal tabular-nums opacity-80">{props.of}</span>;
 }
 
-/** What pressing this square is announced as doing */
-function relicVerb(item: Items): string {
+/** What each pocket of the bag is called: plural, since a pocket names a shelf */
+const POCKET_NAMES: Record<ItemTypes, () => string> = {
+  [ItemTypes.Medicine]: m.item_pocket_medicine,
+  [ItemTypes.PokeBall]: m.item_pocket_balls,
+  [ItemTypes.Berry]: m.item_pocket_berries,
+  [ItemTypes.Held]: m.item_pocket_held,
+  [ItemTypes.Machine]: m.item_pocket_machines,
+  [ItemTypes.KeyItem]: m.item_pocket_key,
+  [ItemTypes.Evolution]: m.item_pocket_evolution,
+  [ItemTypes.Valuable]: m.item_pocket_valuables,
+  [ItemTypes.Training]: m.item_pocket_training,
+  [ItemTypes.Fossil]: m.item_pocket_fossils,
+};
+
+/** What pressing this square is announced as doing, with the item named */
+function relicVerb(item: Items, named: string): string {
   if (isRelic(item)) {
-    return 'Open the raid with ';
+    return m.item_open_raid_with({ item: named });
   }
   if (isEscapeRope(item)) {
-    return 'Climb out with ';
+    return m.item_climb_out_with({ item: named });
   }
-  return isUsable(item) ? 'Use ' : '';
+  return isUsable(item) ? m.item_cell_verb({ verb: m.catch_use(), item: named }) : named;
 }
 
 /** What the bag's pockets hold and what pressing does, for the dialog's title bar */
 export function BagHint(): JSX.Element {
   return (
-    <Hint title="About the bag">
+    <Hint title={m.item_bag_help()}>
       <HintList>
-        <li>Press an item you can use to pick the pokemon to use it on.</li>
-        <li>Medicine heals and cures. Poke Balls are thrown at wild pokemon.</li>
-        <li>Held items are given to a pokemon from its sheet.</li>
-        <li>Machines teach a move, and evolution items evolve the pokemon that need them.</li>
-        <li>Training items change a pokemon's values or effort.</li>
-        <li>Fossils are revived by the Fossil Scientist, and valuables are only worth selling.</li>
-        <li>
-          Candies belong to a family. Every pokemon in that line spends the same pile to level up,
-          and releasing one gives some back.
-        </li>
+        <li>{m.item_bag_help_use()}</li>
+        <li>{m.item_bag_help_medicine()}</li>
+        <li>{m.item_bag_help_held()}</li>
+        <li>{m.item_bag_help_machines()}</li>
+        <li>{m.item_bag_help_training()}</li>
+        <li>{m.item_bag_help_fossils()}</li>
+        <li>{m.item_bag_help_candies()}</li>
       </HintList>
     </Hint>
   );
@@ -226,7 +238,7 @@ function BagBody(
     const at = game.position();
 
     if (at == null) {
-      said('Take a walk first: a relic is used where the player is standing.', 'ember');
+      said(m.item_relic_no_place(), 'ember');
       return;
     }
 
@@ -235,7 +247,7 @@ function BagBody(
         props.onSpent();
 
         if (lobby == null) {
-          said('That relic called nothing.');
+          said(m.item_relic_nothing());
           return;
         }
         game.setRaid(lobby[0]);
@@ -255,12 +267,12 @@ function BagBody(
     useEscapeRope()
       .then((at) => {
         if (at == null) {
-          said('A rope is for the dark, and there is no way up within reach.', 'ember');
+          said(m.item_rope_refused(), 'ember');
           return;
         }
         props.onSpent();
         game.standHere(at);
-        said('Up the rope, and out into the light.', 'leaf');
+        said(m.item_rope_used(), 'leaf');
       })
       .catch((caught: unknown) => {
         said(describeFailure(caught), 'ember');
@@ -278,7 +290,10 @@ function BagBody(
       cells.push({
         item: entry.item,
         amount: entry.amount,
-        said: `${relicVerb(entry.item)}${describeItem(entry.item)}, ${entry.amount} carried`,
+        said: m.item_cell_carried({
+          label: relicVerb(entry.item, describeItem(entry.item)),
+          count: entry.amount,
+        }),
       });
     }
     return cells;
@@ -349,7 +364,7 @@ function BagBody(
   // A machine asks which move is given up for it, and a level whether a
   // new one is taken at all: the same form with a different price
   askTeachings(teaching, nextTeaching, () => {
-    said('Taught.');
+    said(m.catch_taught());
     changed();
   });
 
@@ -420,22 +435,23 @@ function BagBody(
         }}
         class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
       >
-        <TabBar class="md:sticky md:top-0 md:w-44 md:shrink-0 md:flex-col md:overflow-visible">
+        {/* Wide enough for "Objetos equipables" and its count */}
+        <TabBar class="md:sticky md:top-0 md:w-48 md:shrink-0 md:flex-col md:overflow-visible">
           <TabButton value={ALL_ITEMS} class="md:justify-between">
-            All
+            {m.item_pocket_all()}
             <Count of={readable(props.items)?.length ?? 0} />
           </TabButton>
           <For each={types()}>
             {(type) => (
               <TabButton value={type} class="md:justify-between">
-                {ITEM_TYPE_NAMES[type]}
+                {POCKET_NAMES[type]()}
                 <Count of={tray(type).length} />
               </TabButton>
             )}
           </For>
           <span aria-hidden="true" class="mx-2 my-1 hidden h-0.5 bg-line-soft md:block" />
           <TabButton value={CANDIES} class="md:justify-between">
-            Candies
+            {m.item_pocket_candies()}
             <Count of={piles().length} />
           </TabButton>
         </TabBar>
@@ -444,7 +460,7 @@ function BagBody(
           <TabPane value={ALL_ITEMS}>
             <Show
               when={readable(props.items)?.length}
-              fallback={<Note>{failed(props.items) ?? 'Carrying nothing.'}</Note>}
+              fallback={<Note>{failed(props.items) ?? m.item_bag_empty()}</Note>}
             >
               <ItemGrid entries={tray(null)} onPress={press} />
             </Show>
@@ -471,9 +487,9 @@ function BagBody(
         player={props.player}
         open={using() != null}
         value={null}
-        title="Use it on"
-        verb="Use"
-        empty="You have nothing to use it on."
+        title={m.item_use_on()}
+        verb={m.catch_use()}
+        empty={m.item_use_on_empty()}
         filter={(option) => {
           const item = using();
 
@@ -552,7 +568,7 @@ export default function InventoryList(props: InventoryListProps): JSX.Element {
   const [candies] = createResource(() => props.player, getCandies);
 
   return (
-    <Suspense fallback={<Note>Looking through the bag…</Note>}>
+    <Suspense fallback={<Note>{m.item_bag_loading()}</Note>}>
       <BagBody
         {...props}
         items={items}

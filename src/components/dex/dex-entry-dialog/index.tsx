@@ -11,6 +11,7 @@ import { dexLabel } from '../PokedexGrid';
 import { answered } from '../../app/resource-reads';
 import { DexEntryBody, type DexEntryDialogProps, type DexReads } from './body';
 import { dexOrder } from './species-facts';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export type { DexEntryDialogProps, DexReads };
 
@@ -127,11 +128,11 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
       onClose={props.onClose}
       // Named apart from the dex it was opened out of, and announced by
       // that name; the species itself heads the top row
-      title="Dex Entry"
+      title={m.dex_entry_title()}
       quiet
       bar={
         <>
-          <StepButton label="Previous pokemon" way="previous" onPress={walk(-1)} />
+          <StepButton label={m.dex_previous()} way="previous" onPress={walk(-1)} />
           <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
             <Show when={props.species}>
               {(species) => (
@@ -140,29 +141,31 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
                     {dexLabel(getSpeciesData(species()).dexNumber)}{' '}
                     {met() ? getSpeciesData(species()).name : '???'}
                   </h3>
-                  <Meta>{met() ? getSpeciesData(species()).category : '??? Pokemon'}</Meta>
+                  <Meta>
+                    {met() ? getSpeciesData(species()).category : m.dex_unknown_category()}
+                  </Meta>
                   <Show when={met()}>
                     <Divider />
                     <For each={getSpeciesData(species()).types}>
                       {(type) => <TypeBadge type={type} />}
                     </For>
-                    <Badge tone="tide">{tally().seen} seen</Badge>
-                    <Badge tone="leaf">{tally().caught} caught</Badge>
+                    <Badge tone="tide">{m.dex_seen({ count: tally().seen })}</Badge>
+                    <Badge tone="leaf">{m.dex_caught({ count: tally().caught })}</Badge>
                   </Show>
                 </>
               )}
             </Show>
           </span>
-          <StepButton label="Next pokemon" way="next" onPress={walk(1)} />
+          <StepButton label={m.dex_next()} way="next" onPress={walk(1)} />
           <CloseButton onPress={props.onClose} />
         </>
       }
-      description="One species in full: what it is, where it lives, and everything it can learn."
+      description={m.dex_entry_description()}
     >
-      <Suspense fallback={<Note>Reading the dex…</Note>}>
+      <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
         {/* An entry lists what it can learn and what it can hold, so
             it waits for the two registries the walk does not */}
-        <BattleData fallback={<Note>Reading the dex…</Note>}>
+        <BattleData fallback={<Note>{m.dex_loading()}</Note>}>
           <DexEntryBody {...props} dex={dex} candy={candy} female={female} pokedex={pokedex} />
         </BattleData>
       </Suspense>

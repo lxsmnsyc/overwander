@@ -13,6 +13,7 @@ import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 import { Button, List, ListRow, Note } from '../../../styled';
 
 import { Index, type JSX, Show } from 'solid-js';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * Everything it could ever become, with the ones it cannot become yet
@@ -47,13 +48,13 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
         fallback={
           <Show when={props.options != null}>
             <Note class="flex flex-1 items-center justify-center text-center">
-              No evolutions or forms
+              {m.catch_evolution_none()}
             </Note>
           </Show>
         }
       >
         <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
-          Evolves into
+          {m.catch_evolves_into()}
         </h3>
         {/* A line with many branches scrolls inside its own box
             rather than pushing the rest of the sheet down */}
@@ -110,7 +111,11 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       // fetched to be hidden
                       shiny={props.shiny && known().shiny}
                       female={props.female}
-                      called={props.shiny ? `${getSpeciesData(becomes()).name}, shiny` : undefined}
+                      called={
+                        props.shiny
+                          ? m.catch_shiny_name({ name: getSpeciesData(becomes()).name })
+                          : undefined
+                      }
                       // Standing the way the pokemon above it stands,
                       // met or not: the row is a sum with that picture,
                       // and one of them asleep or facing another way
@@ -135,7 +140,11 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                 for something the pokemon cannot have */}
                   <Show
                     when={!option().covered}
-                    fallback={<span class="grow text-left text-sm text-muted">ready</span>}
+                    fallback={
+                      <span class="grow text-left text-sm text-muted">
+                        {m.catch_evolution_ready()}
+                      </span>
+                    }
                   >
                     <span class="flex grow items-center gap-1 text-left text-sm text-muted">
                       <EvolutionCondition
@@ -152,7 +161,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                         props.onEvolve(option().evolution.species);
                       }}
                     >
-                      Evolve
+                      {m.catch_evolve()}
                     </Button>
                   </Show>
                 </ListRow>

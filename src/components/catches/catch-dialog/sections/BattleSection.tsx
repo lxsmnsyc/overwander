@@ -17,7 +17,7 @@ import type { InventoryEntry } from '../../../../auth/inventory';
 
 import type Abilities from '../../../../data/ids/abilities';
 
-import type { Items } from '../../../../data/ids/items';
+import { Items } from '../../../../data/ids/items';
 
 import type { Moves } from '../../../../data/ids/moves';
 
@@ -55,6 +55,7 @@ import {
 } from '../../../styled';
 
 import { Index, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * What it brings to a fight, in one row: what it knows, what it is,
@@ -117,10 +118,10 @@ const ABILITY_BADGES: Record<AbilityKind, BadgeTone> = {
 };
 
 /** What opens a locked slot of each kind */
-const UNLOCKED_BY: Record<Slots, string> = {
-  [Slots.Ability]: 'The Channeler opens another when she calls up an ability.',
-  [Slots.Item]: 'A Utility Belt opens another for good.',
-  [Slots.Move]: 'The Dojo Master opens another for a Heart Scale.',
+const UNLOCKED_BY: Record<Slots, () => string> = {
+  [Slots.Ability]: m.catch_slot_unlock_ability,
+  [Slots.Item]: () => m.catch_slot_unlock_item({ item: describeItem(Items.UtilityBelt) }),
+  [Slots.Move]: () => m.catch_slot_unlock_move({ item: describeItem(Items.HeartScale) }),
 };
 
 /** An unfilled slot: dashed while free, shaded with a lock while it still has to be opened */
@@ -130,16 +131,20 @@ function Unfilled(props: { state: OpenSlot; kind: Slots; class: string }): JSX.E
       when={props.state === 'locked'}
       fallback={
         <li
-          aria-label="Empty slot"
+          aria-label={m.catch_slot_empty_label()}
           class={`flex items-center justify-center rounded-lg border-2 border-dashed
             border-line text-[10px] font-bold tracking-wide text-muted uppercase ${props.class}`}
         >
-          Empty
+          {m.catch_slot_empty()}
         </li>
       }
     >
       <li>
-        <TooltipHost class="block" name="Locked slot" description={UNLOCKED_BY[props.kind]}>
+        <TooltipHost
+          class="block"
+          name={m.catch_slot_locked()}
+          description={UNLOCKED_BY[props.kind]()}
+        >
           <span
             class={`flex items-center justify-center rounded-lg border-2 border-line-soft
               bg-line-soft text-muted ${props.class}`}
@@ -176,9 +181,9 @@ function Heading(props: {
       </span>
       <Show when={props.shifted}>
         <div class="flex gap-1">
-          <Button onClick={props.onUndo}>Undo</Button>
+          <Button onClick={props.onUndo}>{m.catch_undo()}</Button>
           <Button tone="primary" disabled={props.frozen} onClick={props.onSave}>
-            Save
+            {m.catch_heading_save()}
           </Button>
         </div>
       </Show>
@@ -264,26 +269,24 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
       <div class="grid grid-cols-2 rounded-2xl border-2 border-line-soft p-3">
         <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pr-3">
           <Heading
-            title="Abilities"
+            title={m.catch_abilities()}
             hint={
-              <Hint title="About abilities">
+              <Hint title={m.catch_abilities_help()}>
                 <HintList>
                   <li>
-                    A pokemon has room for {DEFAULT_ABILITY_SLOTS} ability to start, and up to{' '}
-                    {mostSlots(Slots.Ability)}.
+                    {m.catch_abilities_help_room({
+                      start: DEFAULT_ABILITY_SLOTS,
+                      max: mostSlots(Slots.Ability),
+                    })}
                   </li>
                   <li>
-                    An Ability Capsule draws another ability its line can reach. An Ability Patch
-                    writes in its family's signature ability.
+                    {m.catch_abilities_help_items({
+                      capsule: describeItem(Items.AbilityCapsule),
+                      patch: describeItem(Items.AbilityPatch),
+                    })}
                   </li>
-                  <li>
-                    The Channeler, a wandering NPC, calls up another ability its line can reach and
-                    adds a slot for it. She charges one {describeItem(CHANNELER_FEE)} and helps once
-                    each time she appears.
-                  </li>
-                  <li>
-                    Drag to reorder. A fight that allows fewer abilities takes them from the top.
-                  </li>
+                  <li>{m.catch_abilities_help_channeler({ fee: describeItem(CHANNELER_FEE) })}</li>
+                  <li>{m.catch_abilities_help_order()}</li>
                 </HintList>
               </Hint>
             }
@@ -328,19 +331,19 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
 
         <div class="flex min-w-0 flex-col gap-1 pl-3">
           <Heading
-            title="Held items"
+            title={m.catch_held_items()}
             hint={
-              <Hint title="About held items">
+              <Hint title={m.catch_held_items_help()}>
                 <HintList>
                   <li>
-                    A pokemon holds {DEFAULT_ITEM_SLOTS} item to start. A Utility Belt adds a slot
-                    for good, up to {mostSlots(Slots.Item)}.
+                    {m.catch_held_items_help_room({
+                      start: DEFAULT_ITEM_SLOTS,
+                      belt: describeItem(Items.UtilityBelt),
+                      max: mostSlots(Slots.Item),
+                    })}
                   </li>
-                  <li>
-                    Press an empty square to give an item from the bag. Hover an item to take it
-                    back.
-                  </li>
-                  <li>Drag to reorder. A fight that allows fewer items takes them from the top.</li>
+                  <li>{m.catch_held_items_help_give()}</li>
+                  <li>{m.catch_held_items_help_order()}</li>
                 </HintList>
               </Hint>
             }
@@ -372,7 +375,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                       <button
                         type="button"
                         disabled={props.frozen || props.holdables.length === 0}
-                        aria-label="Give it an item"
+                        aria-label={m.catch_give_item()}
                         class="flex aspect-square cursor-pointer items-center
                       justify-center rounded-lg border-2 border-dashed
                       border-line bg-paper/40 p-0 text-muted shadow-none
@@ -389,9 +392,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                     <HoverCard
                       class="block"
                       title={detailItem(items()[at]).name}
-                      kind="Item"
+                      kind={m.tooltip_kind_item()}
                       footer={(close) => (
-                        <Show when={props.owned} fallback={<Button onClick={close}>Close</Button>}>
+                        <Show
+                          when={props.owned}
+                          fallback={<Button onClick={close}>{m.ui_close()}</Button>}
+                        >
                           <Button
                             tone="primary"
                             disabled={props.frozen}
@@ -400,7 +406,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                               props.onTake(items()[at]);
                             }}
                           >
-                            Take
+                            {m.catch_take()}
                           </Button>
                         </Show>
                       )}
@@ -438,25 +444,19 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
       {/* Grows to the foot of the column, so the right side ends level with the left */}
       <div class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-line-soft p-3 md:flex-1">
         <Heading
-          title="Moves"
+          title={m.catch_moves()}
           hint={
-            <Hint title="About moves">
+            <Hint title={m.catch_moves_help()}>
               <HintList>
                 <li>
-                  A pokemon knows up to {DEFAULT_MOVE_SLOTS} moves to start, and never more than{' '}
-                  {mostSlots(Slots.Move)}.
+                  {m.catch_moves_help_room({
+                    start: DEFAULT_MOVE_SLOTS,
+                    max: mostSlots(Slots.Move),
+                  })}
                 </li>
-                <li>
-                  Drag to reorder, or hold Alt and press the arrows. A fight that allows fewer moves
-                  takes them from the top.
-                </li>
-                <li>
-                  PP is how quickly a move comes back after use, not a count that runs out. PP Ups
-                  raise it for good.
-                </li>
-                <li>
-                  Speed shortens every cooldown. Hover a move to see its wait for this pokemon.
-                </li>
+                <li>{m.catch_moves_help_order()}</li>
+                <li>{m.catch_moves_help_pp()}</li>
+                <li>{m.catch_moves_help_speed()}</li>
               </HintList>
             </Hint>
           }
@@ -516,12 +516,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           onClose={() => {
             props.onGiving(false);
           }}
-          title="Give an item"
-          description="Choose what it should carry."
+          title={m.catch_give_title()}
+          description={m.catch_give_description()}
           entries={props.bag}
           disabled={props.frozen}
           value={null}
-          verb="Give"
+          verb={m.catch_give_verb()}
           filter={(entry) => isHoldable(entry.item)}
           onPick={(item) => {
             props.onGiving(false);

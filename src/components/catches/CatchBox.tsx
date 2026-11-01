@@ -15,6 +15,7 @@ import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import createLongPress, { type LongPress } from '../styled/long-press';
 import AnimatedSprite from '../sprites/AnimatedSprite';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A box of pokemon, drawn the way the games draw one.
@@ -797,7 +798,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
             type="button"
             aria-label={
               props.placeLabel?.(slotAt(index()) ?? 0) ??
-              `Put them in slot ${(slotAt(index()) ?? 0) + 1}`
+              m.catch_box_put_in_slot({ slot: (slotAt(index()) ?? 0) + 1 })
             }
             class={`flex ${aspect()} w-full cursor-pointer flex-col items-center justify-center
               rounded-lg border-2 border-dashed border-leaf bg-leaf-soft/40 text-[10px]
@@ -811,7 +812,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
               }
             }}
           >
-            <span aria-hidden="true">Put here</span>
+            <span aria-hidden="true">{m.catch_box_put_here()}</span>
             <Show when={props.numbered === true}>
               <span aria-hidden="true" class="text-muted">
                 {slotNumber(slotAt(index()) ?? 0)}
@@ -886,7 +887,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
         setFrame(element);
       }}
       role="group"
-      aria-label={`Box of pokemon, ${filled()} of ${count()} squares filled.`}
+      aria-label={m.catch_box_label({ filled: filled(), count: count() })}
       class={
         scrolls()
           ? `${framed()} overflow-y-auto overscroll-contain [scrollbar-gutter:stable]`

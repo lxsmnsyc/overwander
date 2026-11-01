@@ -42,6 +42,27 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Move Reminder | わざおもいだし | Recordador de Movimientos |
 | machine (TM) | わざマシン | máquina |
 | Poke Ball | モンスターボール | Poké Ball |
+| Physical, Special, Status (move category) | ぶつり, とくしゅ, へんか | Físico, Especial, Estado |
+| Accuracy | めいちゅう | Precisión |
+| Male, Female, Genderless | オス, メス, せいべつ ふめい | Macho, Hembra, Sin género |
+| HP | HP | PS |
+| friendship | なつきど | amistad |
+| nature | せいかく | naturaleza |
+| IV, EV | こたいち, どりょくち | IV, EV |
+| base stats | しゅぞくち | estadísticas base |
+| held item | もちもの | objeto equipado |
+| release (a pokemon) | にがす | liberar |
+| nickname | ニックネーム | mote |
+| evolve, evolution line | しんか, しんかの ながれ | evolucionar, línea evolutiva |
+| purify, purified | リライブ, リライブずみ | purificar, purificado |
+| Gigantamax | キョダイマックス | Gigamax |
+| Tera type | テラスタイプ | teratipo |
+| hidden ability | かくれとくせい | habilidad oculta |
+| fossil | かせき | fósil |
+| Channeler (the NPC) | きとうし | la Médium |
+| Breeder, Move Tutor | そだてや, わざおしえ | Guardería, Tutor de Movimientos |
+| Kanto … Paldea | カントー, ジョウト, ホウエン, シンオウ, イッシュ, カロス, アローラ, ガラル, ヒスイ, パルデア | Kanto, Johto, Hoenn, Sinnoh, Teselia, Kalos, Alola, Galar, Hisui, Paldea |
+| bag pockets | くすり, モンスターボール, きのみ, もちもの, わざマシン, だいじなもの | Botiquín, Poké Balls, Bayas, Objetos equipables, Máquinas, Objetos clave |
 
 ## Terms this engine invented
 
@@ -102,6 +123,13 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | block, unblock | ブロック, ブロックを やめる | bloquear, desbloquear | |
 | lot, bid | ロット, にゅうさつ | lote, puja | An auction's entry and an offer on it |
 | trade | こうかん | intercambio | Swapping pokemon with a friend |
+| signature ability | とくゆうとくせい | habilidad distintiva | The ability one evolution family is granted rather than born with |
+| Default (the built-in box) | デフォルト | Principal | Where catches land before they are filed |
+| slot (a box's square, a pokemon's room for moves, abilities or items) | マス, わく | casilla, hueco | |
+| cooldown (a move's wait) | まちじかん | recarga | What PP stands for in this engine |
+| Dojo Master | どうじょうの しはん | Maestro del Dojo | The NPC who opens a move slot |
+| relic | いせきの どうぐ | reliquia | An item that calls a mythical raid |
+| sheet (a pokemon's) | シート | ficha | The catch dialog |
 
 ## Status conditions
 
@@ -123,8 +151,13 @@ The names a status shows on a card or a catch, in `src/data/text/<locale>/status
 ## Money and counts
 
 - `ui_gold` writes money as おかね {amount} in Japanese and {amount} de dinero in Spanish, after the verdict's `verdict_gold`.
-- A Japanese count of pokemon takes ひき (`{count}ひき`), a count of moves つ, of times かい, of waiting things けん.
+- A Japanese count of pokemon takes ひき (`{count}ひき`), a count of moves つ, of times かい, of waiting things けん, of items, boxes and candies こ, of steps ほ, of species しゅるい.
 - Japanese quotes a line in 「」, Spanish in «».
+
+## Lists inside a sentence
+
+- `catch_and`, `catch_or` and `dex_fossil_and` are the joiners an evolution's conditions, its times of day and a fossil's halves are listed with. English keeps its words; Japanese lists conditions with 、 after しんかの じょうけん:, Spanish with y and o.
+- English puts an article before an item or species named in a sentence (`withArticle`); the other languages name it bare. `articled()` in `catch-dialog/describe.tsx` and `game/items/use-item.ts` decides by locale.
 
 ## Language names
 

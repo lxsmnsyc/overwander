@@ -6,6 +6,7 @@ import CatchBox, { type BoxEntry } from './CatchBox';
 import CatchCard from './CatchCard';
 import { asBoxEntry } from './catch-summary';
 import { titleCatch } from '../details';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export interface TeamStripProps {
   /** The party, as records — live ones, or snapshots read back */
@@ -64,7 +65,7 @@ export default function TeamStrip(props: TeamStripProps): JSX.Element {
             class="block size-full"
             trigger={<span class="block size-full" />}
             title={titleCatch(recordOf(entry().id)?.[1])}
-            kind="Pokémon"
+            kind={m.battle_kind_pokemon()}
           >
             <Show when={recordOf(entry().id)}>{(found) => <CatchCard caught={found()[1]} />}</Show>
           </HoverCard>

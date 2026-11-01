@@ -4,6 +4,8 @@ import { ActionsIcon, PlusIcon } from '../../icons';
 import { Badge, Button, Menu, Meta, Row, Select } from '../../styled';
 import BoxForm from './box-form';
 import type { RailBox } from './rail';
+import { m } from '../../../i18n/paraglide/messages.js';
+import { joinSentences } from '../../../i18n/format';
 
 /**
  * The name over the box showing, how full it is, and what can be done
@@ -48,22 +50,23 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
   /** What the line under the name says about how full the box is */
   const fill = (): string => {
     if (props.selecting) {
-      const place = props.id == null ? '' : ' Then press an empty square to put them there.';
-
-      return `Press to pick. Shift-press picks a run, and picks carry across boxes and searches.${place}`;
+      return props.id == null
+        ? m.catch_heading_picking()
+        : joinSentences([m.catch_heading_picking(), m.catch_heading_picking_place()]);
     }
-    const pokemon = `${props.count} pokemon`;
-
     if (props.id == null) {
-      return `${pokemon}. Anything not filed in a box waits here, and new catches land here first.`;
+      return m.catch_heading_default({ count: props.count });
     }
     if (props.count === 0) {
-      return 'Empty for now';
+      return m.catch_heading_empty();
     }
     if (gaps() === 0) {
-      return `${pokemon}.`;
+      return m.catch_heading_count({ count: props.count });
     }
-    return `${pokemon} over ${props.span} slots. ${gaps()} gap${gaps() === 1 ? '' : 's'} left to fill.`;
+    return joinSentences([
+      m.catch_heading_slots({ count: props.count, span: props.span }),
+      m.catch_heading_gaps({ gaps: gaps() }),
+    ]);
   };
 
   const destinations = (): { value: string; label: string }[] => {
@@ -89,7 +92,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
             <h3 class="m-0 truncate text-2xl font-black">{props.name}</h3>
             <Show when={props.id == null}>
               <Badge tone="tide" class="tracking-wide uppercase">
-                Built in
+                {m.catch_heading_built_in()}
               </Badge>
             </Show>
           </div>
@@ -99,29 +102,29 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
           <Show when={props.id != null && props.count === 0 && !props.selecting}>
             <Button tone="accent" disabled={props.busy} onClick={props.onAdd}>
               <PlusIcon class="size-4" aria-hidden="true" />
-              Add pokemon
+              {m.catch_heading_add()}
             </Button>
           </Show>
           <Show when={props.id != null}>
             <Menu
-              label={`${props.name} menu`}
+              label={m.catch_heading_menu({ name: props.name })}
               icon={ActionsIcon}
               actions={[
                 {
-                  label: 'Rename',
+                  label: m.catch_heading_rename(),
                   onSelect: () => {
                     setAsking('edit');
                   },
                 },
                 {
-                  label: 'Change colour',
+                  label: m.catch_heading_change_colour(),
                   onSelect: () => {
                     setAsking('colour');
                   },
                 },
                 {
-                  label: 'Lay out by dex number',
-                  hint: 'Puts each pokemon in the slot of its number',
+                  label: m.catch_heading_lay_out(),
+                  hint: m.catch_heading_lay_out_hint(),
                   separated: true,
                   disabled: props.busy || props.count === 0,
                   onSelect: () => {
@@ -129,15 +132,15 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
                   },
                 },
                 {
-                  label: 'Close up the gaps',
-                  hint: 'Slides everything forward, keeping its order',
+                  label: m.catch_heading_close_up(),
+                  hint: m.catch_heading_close_up_hint(),
                   disabled: props.busy || gaps() === 0,
                   onSelect: () => {
                     props.onLayOut('packed');
                   },
                 },
                 {
-                  label: `Move all ${props.count} to another box`,
+                  label: m.catch_heading_move_all({ count: props.count }),
                   disabled: props.busy || props.count === 0,
                   onSelect: () => {
                     setTo(TO_DEFAULT);
@@ -145,7 +148,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
                   },
                 },
                 {
-                  label: 'Delete box',
+                  label: m.catch_heading_delete(),
                   tone: 'danger',
                   separated: true,
                   disabled: props.busy,
@@ -163,10 +166,14 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
         <Match when={asking() === 'edit' || asking() === 'colour'}>
           <div class="max-w-sm">
             <BoxForm
-              heading={asking() === 'edit' ? `Rename ${props.name}` : `Colour of ${props.name}`}
+              heading={
+                asking() === 'edit'
+                  ? m.catch_heading_rename_box({ name: props.name })
+                  : m.catch_heading_colour_of({ name: props.name })
+              }
               name={props.name}
               colour={props.colour}
-              verb="Save"
+              verb={m.catch_heading_save()}
               busy={props.busy}
               onSubmit={(name, colour) => {
                 setAsking(null);
@@ -181,7 +188,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
         <Match when={asking() === 'empty'}>
           <Row class="items-end">
             <Select
-              label={`Move all ${props.count} to`}
+              label={m.catch_heading_move_all_to({ count: props.count })}
               value={to()}
               options={destinations()}
               onChange={(value) => {
@@ -196,14 +203,14 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
                 props.onEmpty(to() === TO_DEFAULT ? null : to());
               }}
             >
-              Move them
+              {m.catch_heading_move_them()}
             </Button>
             <Button
               onClick={() => {
                 setAsking(null);
               }}
             >
-              Never mind
+              {m.ui_never_mind()}
             </Button>
           </Row>
         </Match>
@@ -211,9 +218,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
             lost. What was in it is safe either way */}
         <Match when={asking() === 'delete'}>
           <Row class="items-center">
-            <Meta>
-              Delete {props.name}? Its {props.count} pokemon go back to Default.
-            </Meta>
+            <Meta>{m.catch_heading_delete_ask({ name: props.name, count: props.count })}</Meta>
             <Button
               tone="danger"
               disabled={props.busy}
@@ -222,14 +227,14 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
                 props.onDelete();
               }}
             >
-              Delete it
+              {m.catch_heading_delete_it()}
             </Button>
             <Button
               onClick={() => {
                 setAsking(null);
               }}
             >
-              Keep it
+              {m.catch_heading_keep_it()}
             </Button>
           </Row>
         </Match>

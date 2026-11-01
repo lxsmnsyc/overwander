@@ -21,6 +21,7 @@ import {
   isSubterraneanLair,
 } from '../../../data/overworld/lair';
 import { getBaseForms, getSpeciesData } from '../../../data/species';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * The ceiling the stat bars are drawn against.
@@ -156,7 +157,7 @@ function hourBadges(found: { time: TimeOfDay; rarity: SpawnRarity }[]): string[]
     }
   }
   if (met.length === TIMES_OF_DAY.length && rarities.size === 1) {
-    return [`Anytime · ${SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0]}`];
+    return [m.dex_anytime({ rarity: SPAWN_RARITY_NAMES[bands.get(met[0]) ?? 0] })];
   }
 
   const badges: string[] = [];
@@ -197,7 +198,7 @@ export function describeLairs(species: Species): { name: string; where: string[]
     }
     // An underground lair is also in the caves under each of those
     if (isSubterraneanLair(lair)) {
-      where.push('their caves');
+      where.push(m.dex_their_caves());
     }
     lairs.push({ name: LAIR_NAMES[lair], where });
   }

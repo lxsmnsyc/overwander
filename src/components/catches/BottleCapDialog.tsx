@@ -14,11 +14,13 @@ import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../data/co
 import { Items } from '../../data/ids/items';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { Genders } from '../../data/ids/species';
+import { getItemData } from '../../data/items';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Note, RadioGroup, Status } from '../styled';
 import { describeIVs } from './catch-dialog/describe';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Spending a Bottle Cap on the stat the player picks. Nothing leaves
@@ -78,7 +80,7 @@ function CapBody(
       rows.push({
         value: stat,
         label: STAT_NAMES[stat],
-        description: value < MAX_IV ? `${value} → ${MAX_IV}` : `Already ${MAX_IV}`,
+        description: value < MAX_IV ? `${value} → ${MAX_IV}` : m.catch_cap_already({ max: MAX_IV }),
         disabled: value >= MAX_IV,
       });
     }
@@ -99,14 +101,14 @@ function CapBody(
         setBusy(false);
 
         if (ivs == null) {
-          setStatus(
-            'The Bottle Cap could not be used. The stat may already be perfect, or you may no longer have one.',
-          );
+          setStatus(m.catch_cap_failed({ item: getItemData(Items.BottleCap).name }));
           // What the record says may be what refused it
           props.onRead();
           return;
         }
-        props.onUsed?.(`${STAT_NAMES[stat]} is ${MAX_IV} now: ${describeIVs(ivs)}.`);
+        props.onUsed?.(
+          m.catch_cap_used({ stat: STAT_NAMES[stat], max: MAX_IV, ivs: describeIVs(ivs) }),
+        );
         setChosen(null);
         props.onClose();
       })
@@ -118,7 +120,7 @@ function CapBody(
 
   return (
     <>
-      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
+      <Show when={props.caught()} fallback={<Note>{m.catch_reading_record()}</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -137,10 +139,10 @@ function CapBody(
 
       <Show
         when={chosen() != null || props.caught() == null}
-        fallback={<Note>Every value is already perfect.</Note>}
+        fallback={<Note>{m.catch_cap_all_perfect()}</Note>}
       >
         <RadioGroup
-          label="Stat"
+          label={m.catch_cap_stat()}
           value={chosen()}
           options={options()}
           onChange={(stat) => {
@@ -157,10 +159,10 @@ function CapBody(
           disabled={busy() || chosen() == null || valueOf(chosen() ?? STAT_ORDER[0]) >= MAX_IV}
           onClick={use}
         >
-          {busy() ? 'Using…' : 'Use Bottle Cap'}
+          {busy() ? m.catch_using() : m.catch_use_item({ item: getItemData(Items.BottleCap).name })}
         </Button>
         <Button disabled={busy()} onClick={props.onClose}>
-          Cancel
+          {m.battle_cancel()}
         </Button>
       </DialogActions>
     </>
@@ -175,10 +177,10 @@ export default function BottleCapDialog(props: BottleCapDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.catchId != null}
       onClose={props.onClose}
-      title="Bottle Cap"
-      description={`Raises one value to ${MAX_IV}. Choose which, since nothing takes it back.`}
+      title={getItemData(Items.BottleCap).name}
+      description={m.catch_cap_description({ max: MAX_IV })}
     >
-      <Suspense fallback={<Note>Reading the record…</Note>}>
+      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
         <CapBody
           {...props}
           caught={caught}

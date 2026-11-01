@@ -10,19 +10,14 @@ import {
   planCatchSearch,
 } from '../../../model/search/catch';
 import ensureBattleData from '../../../data/battle-data';
-import {
-  type BoxRecord,
-  DEFAULT_BOX_NAME,
-  DEFAULT_BOX_TONE,
-  boxTone,
-  listBoxes,
-} from '../../../auth/boxes';
+import { type BoxRecord, DEFAULT_BOX_TONE, boxTone, listBoxes } from '../../../auth/boxes';
 import { answered } from '../../app/resource-reads';
 import { parseControls } from '../../../core/query';
 import { BoxIcon } from '../../icons';
 import { Button, Dialog, DialogActions, Meta, Note, Select, type SelectOption } from '../../styled';
 import PickerBox from './box';
 import type { BoxFilter, CatchOption, CatchPickerProps } from './options';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export type { BoxFilter, CatchOption, CatchPickerProps } from './options';
 
@@ -33,7 +28,7 @@ const ALL_BOXES = '*';
 const DEFAULT_BOX = '';
 
 /** How each order a caller may ask for is said beside the search */
-const SORT_NOTES = new Map<string, string>([['level', 'Strongest first']]);
+const SORT_NOTES = new Map<string, () => string>([['level', m.catch_picker_strongest_first]]);
 
 /**
  * Picking one of the player's pokemon.
@@ -172,7 +167,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       return null;
     }
     if (id === DEFAULT_BOX) {
-      return DEFAULT_BOX_NAME;
+      return m.catch_box_default();
     }
     for (const [made, box] of answered(boxes) ?? []) {
       if (made === id) {
@@ -193,8 +188,8 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     }
 
     const options: SelectOption<string>[] = [
-      { value: ALL_BOXES, label: 'All boxes' },
-      { value: DEFAULT_BOX, label: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE },
+      { value: ALL_BOXES, label: m.catch_picker_all_boxes() },
+      { value: DEFAULT_BOX, label: m.catch_box_default(), tone: DEFAULT_BOX_TONE },
     ];
 
     for (const [id, box] of answered(boxes) ?? []) {
@@ -202,7 +197,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     }
     return (
       <Select
-        label="Box"
+        label={m.catch_picker_box()}
         class="shrink-0 [&>label]:sr-only"
         accent
         icon={<BoxIcon class="size-4 shrink-0 text-tide-dark" aria-hidden="true" />}
@@ -222,7 +217,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     }
     const name = switchedName();
 
-    return name == null ? 'Search every box' : `Search ${name}`;
+    return name == null ? m.catch_picker_search_all() : m.catch_picker_search_box({ name });
   };
 
   /**
@@ -231,12 +226,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    */
   const remark = (): string | undefined =>
     props.multiple === true && switches() && switched() !== ALL_BOXES
-      ? 'Picks made in other boxes stay picked while you look at this one.'
+      ? m.catch_picker_picks_stay()
       : undefined;
 
   /** The order the caller asked for, said beside the search until a `sort:` of the player's own replaces it */
   const sorted = (): JSX.Element => {
-    const said = props.sort == null ? undefined : SORT_NOTES.get(props.sort);
+    const said = props.sort == null ? undefined : SORT_NOTES.get(props.sort)?.();
 
     if (said == null || parseControls(query(), true).sort !== '') {
       return null;
@@ -267,14 +262,14 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       return props.description;
     }
     if (props.viewOnly === true) {
-      return 'What this trainer has caught.';
+      return m.catch_picker_theirs_note();
     }
     if (props.multiple !== true) {
-      return 'Choose one of your pokemon.';
+      return m.pick_catch_prompt();
     }
     return limit() === Number.POSITIVE_INFINITY
-      ? 'Choose from your pokemon.'
-      : `Choose from your pokemon — up to ${limit()} of them.`;
+      ? m.catch_picker_choose_many()
+      : m.catch_picker_choose_up_to({ count: limit() });
   };
 
   const close = (): void => {
@@ -291,14 +286,14 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   const trouble = (): boolean => registries.error != null || owned.error != null;
 
   const box = (): JSX.Element => (
-    <Suspense fallback={<Note>Looking them over…</Note>}>
+    <Suspense fallback={<Note>{m.pick_catch_loading()}</Note>}>
       <Show when={trouble()}>
-        <Note>Could not read your pokemon just now. Try again in a moment.</Note>
+        <Note>{m.catch_picker_failed()}</Note>
       </Show>
       {/* Nothing is drawn against half-filled registries: a box whose
           search cannot name a move says so instead of answering it
           with an empty collection */}
-      <Show when={ready()} fallback={<Note>Looking them over…</Note>}>
+      <Show when={ready()} fallback={<Note>{m.pick_catch_loading()}</Note>}>
         <PickerBox
           {...props}
           box={view()}
@@ -341,14 +336,16 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
             setOpened(true);
           }}
         >
-          {props.label ?? props.title ?? 'Pick a pokemon'}
+          {props.label ?? props.title ?? m.catch_picker_pick()}
         </Button>
       </Show>
       <Dialog
         isOpen={showing()}
         onClose={close}
         width="wide"
-        title={props.title ?? (props.viewOnly === true ? 'Their pokemon' : 'Your pokemon')}
+        title={
+          props.title ?? (props.viewOnly === true ? m.catch_picker_theirs() : m.pick_catch_title())
+        }
         description={purpose()}
       >
         {box()}
@@ -362,10 +359,10 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
                 close();
               }}
             >
-              Pick none
+              {m.catch_picker_none()}
             </Button>
           </Show>
-          <Button onClick={close}>Close</Button>
+          <Button onClick={close}>{m.ui_close()}</Button>
         </DialogActions>
       </Dialog>
     </Show>

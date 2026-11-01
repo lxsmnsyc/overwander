@@ -4,6 +4,7 @@ import { getFamilyName } from '../../data/species';
 import CandySprite from '../sprites/CandySprite';
 import { GRID_COLUMNS } from './ItemGrid';
 import { Note, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The candy piles as a tray of pictures, the way the bag draws items.
@@ -59,12 +60,15 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
             <TooltipHost
               class="block w-full"
               kind="candy"
-              name={`${getFamilyName(pile().family)} candy`}
-              description={`${pile().count} in the jar. It raises anything of that family, and letting one go pays more of it.`}
+              name={m.item_candy_name({ family: getFamilyName(pile().family) })}
+              description={m.item_candy_description({ count: pile().count })}
             >
               <span
                 role="img"
-                aria-label={`${getFamilyName(pile().family)} candy, ${pile().count} held`}
+                aria-label={m.item_candy_label({
+                  family: getFamilyName(pile().family),
+                  count: pile().count,
+                })}
                 class="relative flex aspect-square w-full items-center justify-center rounded-lg
                     border-2 border-line bg-paper p-1"
               >
@@ -96,7 +100,7 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
         </For>
       </div>
       <Show when={props.piles.length === 0}>
-        <Note class="text-center">No candies yet.</Note>
+        <Note class="text-center">{m.item_candy_none()}</Note>
       </Show>
     </div>
   );

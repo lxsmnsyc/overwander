@@ -30,6 +30,7 @@ import { NATURE_NAMES } from '../../../../data/ids/text';
 import { Badge, Button, Hint, HintList, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * The six stats, each read three ways side by side: what the pokemon
@@ -132,28 +133,28 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
       >
         <span class="col-span-3 flex items-center gap-1.5">
           <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
-            Stats
+            {m.catch_stats()}
           </h3>
-          <Hint title="About stats">
+          <Hint title={m.catch_stats_help()}>
             <HintList>
-              <li>IVs are what it was born with, from 0 to {MAX_IV}. They never change.</li>
+              <li>{m.catch_stats_help_iv({ max: MAX_IV })}</li>
               <li>
-                EVs are trained in. It earns {EFFORT_PER_LEVEL} points a level to spend in this
-                table. A stat takes at most {MAX_EFFORT_PER_STAT}.
+                {m.catch_stats_help_ev({ level: EFFORT_PER_LEVEL, max: MAX_EFFORT_PER_STAT })}
               </li>
-              <li>
-                Wings add {WING_EFFORT} and vitamins add {VITAMIN_EFFORT} to one stat, on top of the
-                level points rather than out of them.
-              </li>
-              <li>Some berries take effort back out of a stat, so it can be spent again.</li>
-              <li>The nature raises one stat by 10% (▲) and lowers another by 10% (▼).</li>
-              <li>Each bar is measured against this pokemon's best stat.</li>
+              <li>{m.catch_stats_help_items({ wing: WING_EFFORT, vitamin: VITAMIN_EFFORT })}</li>
+              <li>{m.catch_stats_help_berries()}</li>
+              <li>{m.catch_stats_help_nature()}</li>
+              <li>{m.catch_stats_help_bars()}</li>
             </HintList>
           </Hint>
           {/* Beside the arrows it explains */}
           <Badge>{NATURE_NAMES[props.caught.nature]}</Badge>
         </span>
-        <span class="text-right text-xs font-semibold text-muted uppercase">Total</span>
+        {/* Spills left over the bars rather than wrapping: ごうけい is
+            wider than the column */}
+        <span class="text-right text-xs font-semibold whitespace-nowrap text-muted uppercase">
+          {m.catch_stats_total()}
+        </span>
         <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>
         <span class="text-right text-xs font-semibold text-muted uppercase">EV</span>
 
@@ -167,10 +168,13 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                 title={
                   NATURE_MARKS[shift(stat)] === ''
                     ? undefined
-                    : `${STAT_LABELS[stat]} is ${NATURE_WORDS[shift(stat)]}`
+                    : m.catch_stats_nature({
+                        stat: STAT_LABELS[stat],
+                        shift: NATURE_WORDS[shift(stat)](),
+                      })
                 }
                 aria-label={
-                  NATURE_MARKS[shift(stat)] === '' ? undefined : NATURE_WORDS[shift(stat)]
+                  NATURE_MARKS[shift(stat)] === '' ? undefined : NATURE_WORDS[shift(stat)]()
                 }
               >
                 {NATURE_MARKS[shift(stat)]}
@@ -213,7 +217,10 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                   step={EFFORT_STEP}
                   value={laidOut()[stat]}
                   disabled={props.frozen}
-                  aria-label={`${STAT_LABELS[stat]} effort, ${floorOf(stat)} saved`}
+                  aria-label={m.catch_stats_effort({
+                    stat: STAT_LABELS[stat],
+                    saved: floorOf(stat),
+                  })}
                   onInput={(event) => {
                     aim(stat, Number(event.currentTarget.value), false);
                   }}
@@ -231,14 +238,14 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
           stats are one round trip and free to change until then */}
       <div class="flex items-center justify-end gap-2">
         <Show when={props.owned}>
-          <Meta class="tabular-nums">Remaining: {left()}</Meta>
+          <Meta class="tabular-nums">{m.catch_stats_remaining({ count: left() })}</Meta>
           <Show when={spent() > 0}>
             <Button
               onClick={() => {
                 setPending({});
               }}
             >
-              Undo
+              {m.catch_undo()}
             </Button>
             <Button
               tone="primary"
@@ -261,7 +268,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                 props.onTrain(laid);
               }}
             >
-              Save
+              {m.catch_heading_save()}
             </Button>
           </Show>
         </Show>

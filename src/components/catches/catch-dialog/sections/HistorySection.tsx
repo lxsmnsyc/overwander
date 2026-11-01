@@ -2,7 +2,7 @@ import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory } from '../describe';
 import type { OwnershipRecord } from '../../../../model/caught-record';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
-import { ACQUISITION_NAMES } from '../../../../model/caught-record';
+import { ACQUISITION_LABELS } from '../../catch-summary';
 
 import describeDate from '../../../../core/dates';
 
@@ -15,6 +15,7 @@ import { DialogSection, List, ListRow, Meta, RowButton } from '../../../styled';
 
 import { For, type JSX, Show } from 'solid-js';
 import { formatNumber } from '../../../../i18n/format';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * Whose hands it has passed through, oldest first. A previous owner is
@@ -81,13 +82,16 @@ export default function HistorySection(props: HistorySectionProps): JSX.Element 
                 price on it, and the price is most of
                 what the entry is worth reading for */}
                 <Meta>
-                  {ACQUISITION_NAMES[entry.kind]} · {describeDate(entry.acquiredAt)}
+                  {ACQUISITION_LABELS[entry.kind]()} · {describeDate(entry.acquiredAt)}
                   {/* Grouped, since a winning bid runs to
                   five figures and a bare 12000 is read
                   digit by digit. Tested for absence
                   rather than truth: nought gold is a
                   price, and nothing is not */}
-                  <Show when={entry.paid != null}> · {formatNumber(entry.paid ?? 0)} gold</Show>
+                  <Show when={entry.paid != null}>
+                    {' '}
+                    · {m.ui_gold({ amount: formatNumber(entry.paid ?? 0) })}
+                  </Show>
                 </Meta>
               </ListRow>
             )}

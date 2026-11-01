@@ -3,6 +3,7 @@ import { type ItemBand, getItemBand } from '../../data/overworld/item-pool';
 import type { ToastState, ToastTone } from '../styled';
 import { describeItem } from '../details';
 import ItemSprite from './ItemSprite';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Items handed over, said in the corner: **one line per kind**, with
@@ -41,7 +42,7 @@ export default function sayItems(toast: ToastState, items: SaidStack[], title?: 
   for (const stack of items) {
     toast.push({
       title,
-      message: `${describeItem(stack.item)} ×${stack.amount}`,
+      message: m.ui_item_times({ item: describeItem(stack.item), amount: stack.amount }),
       art: () => <ItemSprite item={stack.item} size={ICON_SIZE} label="" />,
       tone: FIND_TONES[getItemBand(stack.item) ?? 'base'],
     });

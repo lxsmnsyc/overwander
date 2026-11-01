@@ -24,6 +24,7 @@ import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { ArrowRightIcon } from '../icons';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Spending a PP Up or a PP Max on one move.
@@ -103,25 +104,27 @@ function BottleBody(
    */
   const refused = (move: Moves | undefined): string | null => {
     if (move == null) {
-      return 'Nothing chosen';
+      return m.catch_pp_nothing_chosen();
     }
     if (spent(move) >= PP_UP_LIMIT) {
-      return 'Full';
+      return m.catch_pp_full();
     }
     // A move with 1 PP gains nothing, and the server refuses it
-    return getMovePP(move, after(move)) === getMovePP(move, spent(move)) ? 'No effect' : null;
+    return getMovePP(move, after(move)) === getMovePP(move, spent(move))
+      ? m.catch_pp_no_effect()
+      : null;
   };
 
   const named = (): string => {
     const record = props.caught();
 
     if (record == null) {
-      return 'This pokemon';
+      return m.teach_this_pokemon();
     }
-    return isEgg(record) ? 'Egg' : getSpeciesData(record.species).name;
+    return isEgg(record) ? m.ui_egg() : getSpeciesData(record.species).name;
   };
 
-  const bottle = (): string => (props.item == null ? 'It' : describeItem(props.item));
+  const bottle = (): string => (props.item == null ? m.catch_pp_it() : describeItem(props.item));
 
   /**
    * Whether there is anything here to spend it on. A pokemon whose
@@ -181,16 +184,19 @@ function BottleBody(
         setBusy(false);
 
         if (result == null) {
-          setStatus(
-            `${bottle()} could not be used — the move may already carry everything it will take, or you may no longer have one.`,
-          );
+          setStatus(m.catch_pp_failed({ item: bottle() }));
           // What the record says may be what refused it, so it is read
           // again rather than left as it was
           props.onUsedUp();
           return;
         }
         props.onUsed?.(
-          `${getMoveData(move).name} carries ${result.points} of ${PP_UP_LIMIT} — ${result.pp} PP.`,
+          m.catch_pp_used({
+            move: getMoveData(move).name,
+            points: result.points,
+            max: PP_UP_LIMIT,
+            pp: result.pp,
+          }),
         );
         close();
       })
@@ -202,7 +208,7 @@ function BottleBody(
 
   return (
     <>
-      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
+      <Show when={props.caught()} fallback={<Note>{m.catch_reading_record()}</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -219,8 +225,8 @@ function BottleBody(
         )}
       </Show>
 
-      <Show when={known().length} fallback={<Note>It knows nothing to spend it on.</Note>}>
-        <Show when={anywhere()} fallback={<Note>Every move it knows is already full.</Note>}>
+      <Show when={known().length} fallback={<Note>{m.catch_pp_no_moves()}</Note>}>
+        <Show when={anywhere()} fallback={<Note>{m.catch_pp_all_full()}</Note>}>
           <MovePicker
             moves={known()}
             value={chosen()}
@@ -233,8 +239,8 @@ function BottleBody(
             aside={(move) => (
               <Meta class="inline-flex items-center gap-1 whitespace-nowrap">
                 {getMovePP(move, spent(move))}
-                <ArrowRightIcon class="size-3.5" aria-label="to" />
-                {getMovePP(move, after(move))} PP
+                <ArrowRightIcon class="size-3.5" aria-label={m.catch_pp_to()} />
+                {m.catch_pp_amount({ pp: getMovePP(move, after(move)) })}
               </Meta>
             )}
           />
@@ -245,10 +251,10 @@ function BottleBody(
 
       <DialogActions>
         <Button tone="primary" disabled={busy() || refused(picked()) != null} onClick={use}>
-          {busy() ? 'Using…' : `Use ${bottle()}`}
+          {busy() ? m.catch_using() : m.catch_use_item({ item: bottle() })}
         </Button>
         <Button disabled={busy()} onClick={close}>
-          Cancel
+          {m.battle_cancel()}
         </Button>
       </DialogActions>
     </>
@@ -268,17 +274,16 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
     getCaught,
   );
 
-  const bottle = (): string => (props.item == null ? 'It' : describeItem(props.item));
+  const bottle = (): string => (props.item == null ? m.catch_pp_it() : describeItem(props.item));
 
   return (
     <Dialog
       isOpen={props.catchId != null && props.item != null}
       onClose={props.onClose}
-      title="Increase PP"
-      description={`${bottle()} is spent on one move, and nothing takes the points back. Choose the
-        move it goes on.`}
+      title={m.catch_pp_title()}
+      description={m.catch_pp_description({ item: bottle() })}
     >
-      <Suspense fallback={<Note>Reading the record…</Note>}>
+      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
         <BottleBody
           {...props}
           caught={caught}

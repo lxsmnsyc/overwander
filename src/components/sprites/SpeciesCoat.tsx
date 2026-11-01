@@ -4,6 +4,7 @@ import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from './AnimatedSprite';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A pokemon drawn to what the reader has earned of it.
@@ -29,9 +30,9 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
  */
 export function describeCoat(met: boolean, revealed: boolean, called: string): string {
   if (!met) {
-    return 'A pokemon nobody has met yet';
+    return m.dex_coat_unmet();
   }
-  return revealed ? called : `${called} — not yet caught`;
+  return revealed ? called : m.dex_coat_not_caught({ name: called });
 }
 
 export interface SpeciesCoatProps {

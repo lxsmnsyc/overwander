@@ -11,3 +11,4 @@
 - Translation: ja and es for all 580 keys. Japanese conditions for evolving are noun phrases after しんかの じょうけん:, joined with 、. Spanish counts that can be one are plural messages (candy, steps, gaps, the bulk toasts, seen and caught). Term list extended: official terms for the catch sheet, bag pockets, regions and move categories, plus the engine's own (signature ability, Default box, slot, cooldown, relic, Dojo Master).
 - `test/i18n` passes (37 tests).
 - Paused 2026-11-01 for a device shutdown, after the translation commit (tree clean). Was about to edit a catch `body.tsx`; reason not recorded, so recheck it on resume. Still to do: fast check over the touched tests, screenshots in ja and es, changeset, full `pnpm test`, outcome, then the fresh review and the PR.
+- Resumed 2026-11-01: no `body.tsx` exists and no English literal was left in the owned files, so the paused edit was dropped. Screenshots, two layout fixes, review fixes, outcome.

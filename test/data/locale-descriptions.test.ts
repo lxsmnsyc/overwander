@@ -1,8 +1,12 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { parse } from 'yaml';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type * as LocaleModule from '../../src/i18n/locale';
 import registerGameData from '../../src/data/index';
 import { getItemData } from '../../src/data/items';
-import { ITEM_IDS } from '../../src/data/ids/names';
+import { getMoveData } from '../../src/data/moves';
+import { ITEM_IDS, MOVE_IDS } from '../../src/data/ids/names';
 
 /**
  * Every registry entry has a description in Japanese and Spanish, whether
@@ -27,10 +31,33 @@ afterEach(() => {
   active.locale = 'en';
 });
 
+const MOVE_TEXT = join(import.meta.dirname, '../../src/data/text/en/moves');
+
+/** The moves filed under the generations whose descriptions are translated */
+const MOVE_GENERATIONS = ['gen-1', 'gen-2', 'gen-3', 'gen-4'];
+
+/** The name of every move written in the folders of `MOVE_GENERATIONS` */
+function listFiledMoves(): string[] {
+  const names: string[] = [];
+
+  for (const generation of MOVE_GENERATIONS) {
+    for (const file of readdirSync(join(MOVE_TEXT, generation))) {
+      const text: unknown = parse(readFileSync(join(MOVE_TEXT, generation, file), 'utf8'));
+
+      if (typeof text === 'object' && text !== null) {
+        names.push(...Object.keys(text));
+      }
+    }
+  }
+  return names;
+}
+
 interface Registry {
   name: string;
   /** The key and the description of every entry, in the active locale */
   describe(): Map<string, string>;
+  /** How many entries it holds at least, so an empty read cannot pass */
+  minimum: number;
 }
 
 const REGISTRIES: Registry[] = [
@@ -49,6 +76,26 @@ const REGISTRIES: Registry[] = [
       }
       return found;
     },
+    minimum: 500,
+  },
+  {
+    name: 'moves (generations 1 to 4)',
+    describe() {
+      const found = new Map<string, string>();
+
+      const ids = new Map<string, number>(Object.entries(MOVE_IDS));
+
+      for (const name of listFiledMoves()) {
+        const id = ids.get(name);
+
+        if (id === undefined) {
+          throw new Error(`${name} is filed under a generation but has no move id`);
+        }
+        found.set(name, getMoveData(id).description);
+      }
+      return found;
+    },
+    minimum: 400,
   },
 ];
 
@@ -75,7 +122,7 @@ describe('descriptions by locale', () => {
             unfinished.push(name);
           }
         }
-        expect(english.size).toBeGreaterThan(500);
+        expect(english.size).toBeGreaterThan(registry.minimum);
         expect(same).toEqual([]);
         expect(unfinished).toEqual([]);
       });

@@ -1,7 +1,7 @@
 ---
 id: i18n-descriptions
 title: Make registry descriptions translatable
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

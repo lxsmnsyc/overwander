@@ -41,13 +41,13 @@ UtilityUmbrella:
   description: 'El portador está bajo un cielo despejado: el sol y la lluvia no le afectan.'
 SmokeBall:
   name: Bola de Humo
-  description: El portador siempre puede ser cambiado, incluso si está atrapado.
+  description: El portador siempre puede ser retirado del combate, incluso si está atrapado.
 DestinyKnot:
   name: Lazo Destino
   description: Quien enamore al portador queda enamorado también. Un huevo criado con él copia 5 valores en lugar de 3.
 GripClaw:
   name: Garra Garfio
-  description: Las ataduras que aplica el portador duran x1,75 más.
+  description: Las ataduras que aplica el portador duran 1,75 veces más.
 BindingBand:
   name: Banda Atadura
   description: Las ataduras que aplica el portador hacen 1/3 más de daño.
@@ -83,34 +83,34 @@ Stick:
   description: Sube 2 niveles la probabilidad de golpe crítico de un Farfetch’d. No hace nada a los demás.
 ShedShell:
   name: Muda Concha
-  description: El portador siempre puede ser cambiado, incluso si está atrapado.
+  description: El portador siempre puede ser retirado del combate, incluso si está atrapado.
 Leftovers:
   name: Restos
   description: Devuelve al portador 1/16 de sus PS cada vez que actúa.
 DampRock:
   name: Roca Lluvia
-  description: La lluvia que invoca el portador dura x1,6 más.
+  description: La lluvia que invoca el portador dura 1,6 veces más.
 HeatRock:
   name: Roca Calor
-  description: El sol que invoca el portador dura x1,6 más.
+  description: El sol que invoca el portador dura 1,6 veces más.
 IcyRock:
   name: Roca Helada
-  description: El granizo y la nieve que invoca el portador duran x1,6 más.
+  description: El granizo y la nieve que invoca el portador duran 1,6 veces más.
 SmoothRock:
   name: Roca Suave
-  description: La tormenta de arena que invoca el portador dura x1,6 más.
+  description: La tormenta de arena que invoca el portador dura 1,6 veces más.
 LightClay:
   name: Refleluz
-  description: Las pantallas que levanta el portador duran x1,6 más.
+  description: Las pantallas que levanta el portador duran 1,6 veces más.
 TerrainExtender:
   name: Cubresuelos
-  description: El campo que establece el portador dura x1,6 más.
+  description: El campo que establece el portador dura 1,6 veces más.
 BigRoot:
   name: Raíz Grande
   description: x1,3 en todo lo que drene el portador.
 SoulDew:
   name: Rocío Bondad
-  description: Los movimientos Psíquicos y de tipo Dragón de un Latios o una Latias que lo lleve hacen x1,2 de daño.
+  description: Los movimientos de tipo Psíquico y de tipo Dragón de un Latios o una Latias que lo lleve hacen x1,2 de daño.
 LoadedDice:
   name: Dado Trucado
   description: Un movimiento del portador que golpea varias veces nunca acierta menos de 4.

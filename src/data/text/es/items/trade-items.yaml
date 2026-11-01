@@ -5,7 +5,7 @@ RazorClaw:
   description: Sube 1 nivel la probabilidad de golpe crítico del portador. Un Sneasel que lo lleve evoluciona desde el nivel 35 al atardecer o de noche, y lo gasta.
 RazorFang:
   name: Colmillo Agudo
-  description: 1 de cada 10 golpes del portador hace retroceder al objetivo. Un Gligar que lo lleve evoluciona desde el nivel 35 al atardecer o de noche, y lo gasta.
+  description: 1 de cada 10 golpes del portador amedrenta al objetivo. Un Gligar que lo lleve evoluciona desde el nivel 35 al atardecer o de noche, y lo gasta.
 OvalStone:
   name: Piedra Oval
   description: Un Happiny que lo lleve crece hasta Chansey desde el nivel 15, por la mañana o de día, y lo gasta.
@@ -14,7 +14,7 @@ LinkingCord:
   description: Hace evolucionar a un Pokémon que de otro modo solo evolucionaría al intercambiarse. El objeto equipado que pide el intercambio sigue haciendo falta, y se gasta.
 KingsRock:
   name: Roca del Rey
-  description: 1 de cada 10 golpes del portador hace retroceder al objetivo. También hace evolucionar a una línea que lo pide.
+  description: 1 de cada 10 golpes del portador amedrenta al objetivo. También hace evolucionar a una línea que lo pide.
 DragonScale:
   name: Escama Dragón
   description: Hace evolucionar mediante intercambio al Pokémon que lo lleve, cuando su línea lo pide.

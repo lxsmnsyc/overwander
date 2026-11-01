@@ -44,10 +44,10 @@ SweetApple:
   description: Un Applin sobre el que se usa engorda y se convierte en Appletun.
 CrackedPot:
   name: Tetera Agrietada
-  description: Un Sinistea sobre el que se usa se mete en la tetera y se convierte en Polteageist.
+  description: Un Sinistea sobre el que se usa se mete en la Tetera Agrietada y se convierte en Polteageist.
 ChippedPot:
   name: Tetera Rota
-  description: Un Sinistea genuino sobre el que se usa se mete en la tetera y se convierte en un Polteageist genuino.
+  description: Un Sinistea genuino sobre el que se usa se mete en la Tetera Rota y se convierte en un Polteageist genuino.
 GalaricaCuff:
   name: Brazal Galanuez
   description: Un Slowpoke de Galar sobre el que se usa se convierte en Slowbro de Galar.
@@ -83,4 +83,4 @@ UnremarkableTeacup:
   description: Hace evolucionar al Pokémon sobre el que se usa, cuando su línea lo pide.
 MasterpieceTeacup:
   name: Cuenco Exquisito
-  description: Un Poltchageist artesano sobre el que se usa se mete en la taza y se convierte en un Sinistcha de obra maestra.
+  description: Un Poltchageist exquisito sobre el que se usa se mete en el Cuenco Exquisito y se convierte en un Sinistcha exquisito.

@@ -44,10 +44,10 @@ SweetApple:
   description: つかった カジッチュは ふくよかに なって、 タルップルに なる。
 CrackedPot:
   name: われたポット
-  description: つかった ヤバチャは ポットに はいって、 ポットデスに なる。
+  description: つかった ヤバチャは われたポットに はいって、 ポットデスに なる。
 ChippedPot:
   name: かけたポット
-  description: つかった ほんものの ヤバチャは ポットに はいって、 ほんものの ポットデスに なる。
+  description: つかった ほんものの ヤバチャは かけたポットに はいって、 ほんものの ポットデスに なる。
 GalaricaCuff:
   name: ガラナツブレス
   description: つかった ガラルの すがたの ヤドンは、 ガラルの すがたの ヤドランに なる。
@@ -83,4 +83,4 @@ UnremarkableTeacup:
   description: つかった ポケモンを、 しんかの ながれが もとめる ばあいに しんかさせる。
 MasterpieceTeacup:
   name: ケッサクのちゃわん
-  description: つかった めいさくの チャデスは カップに はいって、 めいさくの ヤバソチャに なる。
+  description: つかった ケッサクの チャデスは ケッサクのちゃわんに はいって、 ケッサクの ヤバソチャに なる。

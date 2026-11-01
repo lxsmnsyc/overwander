@@ -41,16 +41,16 @@ AdrenalineOrb:
   description: Sube 1 nivel la Velocidad cuando el portador es intimidado por Intimidación.
 ElectricSeed:
   name: Semilla Electro
-  description: Sube 1 nivel la Defensa cuando Campo Eléctrico cubre al portador.
+  description: Sube 1 nivel la Defensa cuando el Campo Eléctrico cubre al portador.
 GrassySeed:
   name: Semilla Hierba
-  description: Sube 1 nivel la Defensa cuando Campo de Hierba cubre al portador.
+  description: Sube 1 nivel la Defensa cuando el Campo de Hierba cubre al portador.
 MistySeed:
   name: Semilla Bruma
-  description: Sube 1 nivel la Defensa Esp. cuando Campo de Niebla cubre al portador.
+  description: Sube 1 nivel la Defensa Esp. cuando el Campo de Niebla cubre al portador.
 PsychicSeed:
   name: Semilla Psique
-  description: Sube 1 nivel la Defensa Esp. cuando Campo Psíquico cubre al portador.
+  description: Sube 1 nivel la Defensa Esp. cuando el Campo Psíquico cubre al portador.
 RedCard:
   name: Tarjeta Roja
   description: 'Aparta al atacante: a un enemigo lo cambia por su Pokémon más débil, a un aliado por el más fuerte.'

@@ -29,6 +29,9 @@
 - `pnpm test`: 278 files, 5773 tests; 5772 pass. `tera-sites` timed out under load and passes alone (6 of 6).
 - `pnpm official-names` rerun: no parsed value differs from the committed files, and a second run changes nothing.
 
+- Review fixes (one commit): form and item names matched in the teacup and pot lines, Booster Energy's two abilities split, the Espada and Escudo Supremo forms, Spanish agreement and articles, and the Balm line corrected in English too (each player packs up to 3), with hand-written `name` バーム and Bálsamo.
+- After the fixes: `pnpm exec vitest run test/data test/i18n`: 37 files, 569 tests pass. `pnpm typecheck` exit 0. `rtk proxy pnpm exec oxlint src test` exit 0. `pnpm official-names` rerun leaves no unstaged diff.
+
 ## Size
 
 - Estimated M, actual M.

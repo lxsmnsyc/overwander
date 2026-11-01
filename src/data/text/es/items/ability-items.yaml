@@ -4,6 +4,6 @@ AbilityCapsule:
   name: Cáps. Habilidad
 AbilityPatch:
   name: Parche Habilidad
-  description: Graba para siempre la habilidad distintiva de su familia en un Pokémon; si no queda ningún hueco, sustituye una habilidad a tu elección. Se gasta al usarse.
+  description: Graba para siempre la habilidad distintiva de su línea evolutiva en un Pokémon; si no queda ningún hueco, sustituye una habilidad a tu elección. Se gasta al usarse.
 templates:
   capsule: Hace que un Pokémon adquiera otra habilidad que su línea evolutiva pueda alcanzar, hasta un máximo de {slots}. Cuál sale es cuestión de suerte. Se gasta al usarse.

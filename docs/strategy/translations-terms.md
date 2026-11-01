@@ -140,7 +140,7 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | award, achievement, tier                                              | アワード, じっせき, ランク                    | galardón, logro, rango                          | What the profile's shelf lists                                               |
 | title (worn under a name)                                             | しょうごう                                    | título                                          |                                                                              |
 | profile, nickname (a player's)                                        | プロフィール, ニックネーム                    | perfil, mote                                    |                                                                              |
-| Balm (Noble raid item)                                                | バーム                                        | Bálsamo                                         | Stopgap until batch 8 names it                                               |
+| Balm (Noble raid item)                                                | バーム                                        | Bálsamo                                         | Hand-written `name` in `text/<locale>/items/balms.yaml`                      |
 
 ## Status conditions
 

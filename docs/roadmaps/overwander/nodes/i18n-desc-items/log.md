@@ -5,3 +5,4 @@
 - First read of the built lines showed Spanish stat names ending in `Esp.` doubled the full stop (mints, vitamins, wings, the Oran-style nature berries) and "forma Eléctrico" in the plate line. Reworded so the stat does not close the sentence.
 - `pnpm official-names` run twice: the first run only reordered keys and added the header to files that had none (no value changed, checked by comparing parsed YAML); the second run changed nothing, so the reordered files are committed.
 - The full suite had one timeout (`tera-sites`), which passes alone.
+- Review: applied in one commit (see outcome); the English Balm line was wrong (the server packs Balms per player), so it changed too.

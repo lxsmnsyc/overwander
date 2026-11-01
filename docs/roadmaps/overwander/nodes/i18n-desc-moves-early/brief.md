@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-moves-early
 title: Translate move descriptions, Gens 1 to 4
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

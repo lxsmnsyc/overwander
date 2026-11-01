@@ -1671,5 +1671,644 @@
   "dex_tab_level": "Nivel",
   "dex_moves_none_level": "No aprende nada al crecer.",
   "dex_moves_none_machines": "No se le puede enseñar nada.",
-  "dex_moves_none_egg": "No hereda nada."
+  "dex_moves_none_egg": "No hereda nada.",
+  "auction_closed": "puja cerrada",
+  "auction_left_hours": "quedan {hours} h",
+  "auction_left_minutes": "quedan {minutes} min",
+  "auction_a_pokemon": "Un Pokémon",
+  "auction_reading": "Leyendo el tablón…",
+  "auction_refusal_own": "Es tu lote",
+  "auction_refusal_winning": "Vas ganando esta",
+  "auction_refusal_dear": "{amount} de dinero es más de lo que tienes",
+  "auction_bid": "Pujar",
+  "auction_bid_on": "Pujar por {name}",
+  "auction_bid_description": "El mínimo es lo menos que el vendedor admite subir. Vale cualquier puja desde ahí hasta lo que tengas, así que un lote puede quedar fuera de alcance de una sola vez.",
+  "auction_bid_meta": "{floor} de dinero para llevártelo · tienes {gold}",
+  "auction_bid_amount": "Pujar {amount} de dinero",
+  "auction_you": "tú",
+  "auction_a_trainer": "un Entrenador",
+  "auction_bid_failed": "No se ha podido pujar.",
+  "auction_bid_placed": "Has pujado {amount} de dinero. Es tuyo si nadie puja más.",
+  "auction_collected": "Recogido.",
+  "auction_collect_failed": "No se ha podido recoger ese lote.",
+  "auction_taken_back": "Retirado.",
+  "auction_take_back_failed": "No se ha podido retirar ese lote.",
+  "auction_won_for": "ganado por {amount} de dinero",
+  "auction_collect": "Recoger",
+  "auction_nobody_bid": "sin pujas",
+  "auction_take_back": "Retirar",
+  "auction_owned_by": "Vendedor",
+  "auction_bidding": "Puja",
+  "auction_item_said": "{item}: {standing}, de {seller}",
+  "auction_catch_said": "{label}: de {seller}",
+  "auction_empty": "Ahora mismo no hay nada.",
+  "auction_no_match": "Nada coincide.",
+  "auction_items": "Objetos",
+  "auction_pokemon": "Pokémon",
+  "auction_kind_lot": "Lote",
+  "auction_search_placeholder": "Nombre, o price:<500 is:pokemon",
+  "auction_loading": "Cargando subastas…",
+  "auction_sell": "Vender",
+  "auction_about_selling": "Sobre vender",
+  "auction_hint_duration": "Una subasta dura {hours} horas, y solo puedes tener una a la vez.",
+  "auction_hint_catches": "Se puede vender un Pokémon variocolor, con IV perfectos o todos a cero, o legendario o singular. Un favorito no se puede vender.",
+  "auction_hint_items": "Solo se pueden vender objetos especiales.",
+  "auction_hint_unsold": "Un lote sin pujas no vuelve solo. Recógelo en Perfil, Subastas, Venta.",
+  "auction_running": "Tienes una subasta en marcha: {remaining}. Una a la vez, es decir, una al día.",
+  "auction_from_bag": "De la mochila",
+  "auction_bag_empty": "Nada de la mochila es lo bastante raro para la subasta.",
+  "auction_from_records": "De tus registros",
+  "auction_records_empty": "Nada tuyo es lo bastante raro para la subasta.",
+  "auction_back_to_board": "Volver al tablón",
+  "auction_this_pokemon": "Este Pokémon",
+  "auction_put_up_failed_item": "No se ha podido poner a la venta: puede que ya tengas una subasta en marcha, o que ya no lo lleves.",
+  "auction_put_up_failed_catch": "No se ha podido poner a la venta: puede que ya tengas una subasta en marcha, o que sea un favorito, un Huevo o tu compañero.",
+  "auction_reading_record": "Leyendo el registro…",
+  "auction_title": "Subastar {name}",
+  "auction_description": "El precio de salida y lo mínimo que una puja puede subirlo. Un lote dura un día.",
+  "auction_opening_bid": "Puja inicial",
+  "auction_least_raise": "Subida mínima",
+  "auction_put_up": "Poner a la venta",
+  "auction_confirm_title": "¿Subastar {name}?",
+  "auction_confirm_description": "Sale de tus registros en cuanto se abre el lote.",
+  "auction_confirm_item": "Sale por {asking} de dinero y sube de {raise} en {raise}. Dura un día y no se puede retirar: solo vuelve si el día acaba sin pujas. Se vende una pieza, no el montón.",
+  "auction_confirm_catch": "Sale por {asking} de dinero y sube de {raise} en {raise}. Dura un día y no se puede retirar: solo vuelve si el día acaba sin pujas. Se vende con el objeto que lleva equipado.",
+  "auction_confirm_payment": "Quien gane paga lo que pujó, y el dinero es tuyo cuando lo recoja.",
+  "auction_putting_up": "Poniendo a la venta…",
+  "auction_put_up_day": "Vender por un día",
+  "auction_state_leading": "ganando",
+  "auction_state_outbid": "superada",
+  "auction_state_won": "ganada, pendiente de recoger",
+  "auction_state_lost": "perdida",
+  "auction_state_collected": "ganada y recogida",
+  "auction_you_bid": "tu puja {mine} · va por {standing}",
+  "auction_no_bids": "No has pujado por nada.",
+  "auction_loading_bids": "Cargando pujas…",
+  "auction_lot_running": "en subasta",
+  "auction_lot_sold": "vendido",
+  "auction_lot_settled": "cerrado",
+  "auction_lot_standing": "{standing} · {remaining}",
+  "auction_lot_returns": "Vuelve a ti.",
+  "auction_back_in_hands": "Vuelve a tus manos.",
+  "auction_stranded": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Ha vuelto un lote sin vender y te espera para que lo retires.",
+        "countPlural=*": "Han vuelto {count} lotes sin vender y te esperan para que los retires."
+      }
+    }
+  ],
+  "auction_none_listed": "No has puesto nada a la venta.",
+  "auction_leading": "Va ganando",
+  "auction_won_by": "Ganador",
+  "auction_take_back_short": "Retirar",
+  "auction_selling_note": "Un lote a la vez, y dura un día. Las ventas nuevas se hacen en un tablón de subastas.",
+  "trade_a_pokemon": "un Pokémon",
+  "trade_gold_none": "Sin dinero",
+  "trade_gold_give": "Añadir dinero a la oferta",
+  "trade_gold_ask": "Pedir dinero a cambio",
+  "trade_this_trainer": "este Entrenador",
+  "trade_reason_only": "tu único Pokémon",
+  "trade_reason_battle": "en combate",
+  "trade_reason_egg": "aún es un Huevo",
+  "trade_reason_favorite": "un favorito",
+  "trade_reason_buddy": "tu compañero",
+  "trade_reason_their_favorite": "su favorito",
+  "trade_offer_failed": "No se ha podido hacer la oferta.",
+  "trade_offer_sent": "Oferta enviada a {name}.",
+  "trade_title": "Intercambio con {name}",
+  "trade_description": "Tu Pokémon pasa a ellos en cuanto aceptan, y el suyo llega a ti. Una oferta retiene tu Pokémon hasta que se responde o la retiras.",
+  "trade_nothing_picked": "Aún no has elegido nada.",
+  "trade_pick_yours": "Elige el tuyo",
+  "trade_for_their_pick": "Por el que elija {name}.",
+  "trade_for": "Por {name}",
+  "trade_their_pick": "Lo elige ella o él",
+  "trade_ask_for_one": "Pedir uno",
+  "trade_gold": "Dinero",
+  "trade_amount": "Cantidad",
+  "trade_gold_taken_now": "Se descuenta al enviar la oferta · tienes {gold}",
+  "trade_gold_taken_later": "Se les descuenta cuando aceptan",
+  "trade_ask_note": "Si nombras uno, es justo ese el que vuelve; si lo dejas a su elección, lo eligen ellos.",
+  "trade_send": "Enviar oferta",
+  "trade_your_side": "Tu parte",
+  "trade_your_side_description": "Elige el Pokémon que ofreces. Queda retenido en cuanto se envía la oferta.",
+  "trade_offer": "Ofrecer",
+  "trade_their_side": "Pokémon de {name}",
+  "trade_their_side_description": "Nombra el que pides. Es el que vuelve si aceptan.",
+  "trade_ask_for": "Pedir",
+  "trade_made": "Hecho",
+  "trade_declined": "Rechazado",
+  "trade_taken_back": "Retirado",
+  "trade_unnamed_trainer": "Entrenador sin nombre",
+  "trade_deal": "{offered} por {asked}",
+  "trade_deal_gives": "{offered} por {asked} · con {gold} de dinero",
+  "trade_deal_asks": "{offered} por {asked} · pide {gold} de dinero",
+  "trade_deal_asks_you": "{offered} por {asked} · te pide {gold} de dinero",
+  "trade_their_pick_short": "a su elección",
+  "trade_your_pick": "a tu elección",
+  "trade_closed": "Ese intercambio ya no está abierto.",
+  "trade_failed": "No se ha podido hacer.",
+  "trade_sure": "¿Seguro?",
+  "trade_answer": "Responder",
+  "trade_accept": "Aceptar",
+  "trade_done": "Intercambio hecho.",
+  "trade_withdrawn": "Oferta retirada.",
+  "trade_pending": "Pendientes",
+  "trade_settled": "Cerrados",
+  "trade_nobody_offering": "Ahora mismo nadie te ofrece nada.",
+  "trade_offered_to_you": "Te lo ofrecen a ti.",
+  "trade_offer_declined": "Oferta rechazada.",
+  "trade_decline": "Rechazar",
+  "trade_waiting": "Esperando respuesta. El Pokémon queda retenido hasta que la den.",
+  "trade_take_back": "Retirar",
+  "trade_none_settled": "Todavía no se ha cerrado ninguno.",
+  "trade_settled_on": "{word} · {date}",
+  "trade_answer_with": "Responder con",
+  "trade_answer_description": "Elige el Pokémon que devuelves. Al elegirlo aceptas el intercambio.",
+  "trade_give": "Dar",
+  "raid_asleep": "{name}, dormido en la guarida",
+  "raid_a_raid": "Una incursión",
+  "raid_a_friend": "Un amigo",
+  "raid_called_watch": "{name} te ha llamado para mirar",
+  "raid_called_fight": "{name} te ha llamado para combatir",
+  "raid_open": "Abrir",
+  "raid_next_window": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Nuevas incursiones en {count} minuto",
+        "countPlural=*": "Nuevas incursiones en {count} minutos"
+      }
+    }
+  ],
+  "raid_loading": "Cargando incursiones…",
+  "raid_invited": "Invitado",
+  "raid_gathering": "Reuniéndose · {count}",
+  "raid_none_gathering": "Ahora mismo no se reúne ninguna incursión.",
+  "raid_gathering_line": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{where} · {count} equipo",
+        "countPlural=*": "{where} · {count} equipos"
+      }
+    }
+  ],
+  "raid_host": "Anfitrión",
+  "raid_join": "Unirse",
+  "raid_spectate": "Mirar",
+  "raid_rejoin": "Volver",
+  "raid_kind_mythical": "Empezar la incursión gasta la reliquia que la llamó, y solo ocurre una vez, se gane o se pierda.",
+  "raid_kind_shadow": "Una incursión Oscura: lo que deja es más fuerte y cuesta el doble de caramelos criarlo.",
+  "raid_kind_totem": "Una incursión de dominante: empieza potenciado y llama a un aliado con la mitad de PS. Si lo derrotas deja un Cristal Z y espera con tamaño dominante.",
+  "raid_kind_gigantamax": "Una incursión Dinamax: se mantiene Gigamax todo el combate. Si lo derrotas deja Maxisetas y, al capturarlo, conserva su factor Gigamax.",
+  "raid_kind_dynamax": "Una incursión Dinamax: se mantiene Dinamax todo el combate. Si lo derrotas deja Maxisetas y, de vez en cuando, una Maximuñequera.",
+  "raid_kind_noble": "Una incursión señorial: sus PS son su frenesí, se tambalea al 3/4, 1/2 y 1/4 y arremete contra todo el equipo entre medias. Si lo calmas deja Bálsamos y dinero en vez de esperar a que lo captures. Cada jugador lleva hasta 3 Bálsamos de su mochila.",
+  "raid_kind_tera": "Una teraincursión: se mantiene teracristalizado todo el combate y recibe los golpes solo como su teratipo. Si lo derrotas deja Teralitos de ese tipo y, al capturarlo, conserva su teratipo.",
+  "raid_kind_alpha": "Una incursión alfa: con 3/4, 1/2 y 1/4 de PS trae a su lado a seis de los suyos. Si lo derrotas espera con tres estadísticas perfectas.",
+  "raid_kind_plain": "Una incursión admite un equipo. Si lo derrotas, espera en el mundo a quien lo combatió.",
+  "raid_action_reopened": "El equipo que entró no salió. La guarida vuelve a estar abierta.",
+  "raid_action_empty": "Aquí aún no hay nadie. Si abres una sala, cualquiera puede unirse.",
+  "raid_action_gathering": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Se está reuniendo una sala: de momento {count} equipo.",
+        "countPlural=*": "Se está reuniendo una sala: de momento {count} equipos."
+      }
+    }
+  ],
+  "raid_action_rejoin": "Tu equipo sigue combatiendo ahí dentro.",
+  "raid_action_no_pokemon": "No tienes ningún Pokémon propio que llevar, así que aquí solo puedes mirar.",
+  "raid_action_started": "La incursión ya ha empezado. Mirar no da nada.",
+  "raid_lair": "Guarida",
+  "raid_lair_summary": "Una guarida y lo que hay en ella.",
+  "raid_lair_quiet_toast": "La guarida está en calma. Puede que alguien la haya despejado desde que miraste.",
+  "raid_lair_empty": "Una guarida, y ahora mismo no hay nada en ella.",
+  "raid_quiet": "En calma por ahora",
+  "raid_waiting_label": "{name}, esperando en la guarida",
+  "raid_waiting": "Esperando",
+  "raid_types": "Tipos",
+  "raid_tera_type": "Teratipo",
+  "raid_immune": "Inmune",
+  "raid_relic_spent": "La reliquia está gastada. Sea cual sea el desenlace de esta incursión, solo ocurre una vez.",
+  "raid_hosting": "Eres el anfitrión",
+  "raid_waiting_host": "Esperando al anfitrión",
+  "raid_notice_watch_only": "Necesitas un Pokémon propio para combatir. Esta solo puedes mirarla.",
+  "raid_notice_full": "La sala está llena: ya hay {max} Entrenadores dentro.",
+  "raid_notice_start": "Para empezar hace falta al menos un equipo.",
+  "raid_loading_one": "Cargando incursión…",
+  "raid_trainers": "Entrenadores",
+  "raid_search_placeholder": "Nombre, o size:6 is:host",
+  "raid_no_teams": "Todavía no se ha unido ningún equipo.",
+  "raid_no_match": "Nadie coincide.",
+  "raid_join_failed": "Ese equipo no ha podido unirse: puede que alguno ya esté en otra incursión.",
+  "raid_change_team": "Cambiar equipo",
+  "raid_form_team": "Formar un equipo",
+  "raid_start_failed": "No se ha podido empezar la incursión.",
+  "raid_invite_title": "Invitar a la incursión",
+  "raid_invite_description": "Verán la llamada sobre su lista de incursiones, y unirse es responderla.",
+  "quest_landmark_cache": "escondites de objetos",
+  "quest_landmark_berry": "arbustos de bayas",
+  "quest_landmark_nest": "nidos",
+  "quest_landmark_phenomenon": "sucesos",
+  "quest_landmark_portal": "cruces de portal",
+  "quest_landmark_apricorn": "árboles de bonguri",
+  "quest_foe_rocket": "Team Rocket",
+  "quest_foe_gym_leader": "líderes de gimnasio",
+  "quest_foe_elite_four": "miembros del Alto Mando",
+  "quest_foe_champion": "Campeones",
+  "quest_foe_trainer": "Entrenadores en duelo",
+  "quest_foe_gym_seat": "puestos de gimnasio",
+  "quest_hand_over": "Entrega {count} × {item}",
+  "quest_dex": "Captura {count} especies distintas",
+  "quest_dex_region": "Captura {count} especies distintas de {region}",
+  "quest_catch_species": "Captura {count} × {name}",
+  "quest_catch_family": "Captura {count} de la línea de {family}",
+  "quest_catch_type": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Captura {count} de tipo {type}",
+        "countPlural=*": "Captura {count} de tipo {type}"
+      }
+    }
+  ],
+  "quest_catch_any": "Captura {count} Pokémon",
+  "quest_hatch": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Haz eclosionar {count} Huevo",
+        "countPlural=*": "Haz eclosionar {count} Huevos"
+      }
+    }
+  ],
+  "quest_hatch_species": "Haz eclosionar {count} × {name}",
+  "quest_level_ups": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Sube {count} nivel",
+        "countPlural=*": "Sube {count} niveles"
+      }
+    }
+  ],
+  "quest_use_items": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Usa {count} objeto",
+        "countPlural=*": "Usa {count} objetos"
+      }
+    }
+  ],
+  "quest_use_item": "Usa {count} × {item}",
+  "quest_steps": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Camina {count} paso con un compañero",
+        "countPlural=*": "Camina {count} pasos con un compañero"
+      }
+    }
+  ],
+  "quest_wanderers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Trata con {count} viajero",
+        "countPlural=*": "Trata con {count} viajeros"
+      }
+    }
+  ],
+  "quest_wanderer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Trata con {name} {count} vez",
+        "countPlural=*": "Trata con {name} {count} veces"
+      }
+    }
+  ],
+  "quest_landmarks": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Reclama {count} lugar de interés",
+        "countPlural=*": "Reclama {count} lugares de interés"
+      }
+    }
+  ],
+  "quest_landmark": "Reclama {count} {landmark}",
+  "quest_raid_runs": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Combate en {count} incursión",
+        "countPlural=*": "Combate en {count} incursiones"
+      }
+    }
+  ],
+  "quest_raid_wins": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Gana {count} incursión",
+        "countPlural=*": "Gana {count} incursiones"
+      }
+    }
+  ],
+  "quest_trades": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Cierra {count} intercambio",
+        "countPlural=*": "Cierra {count} intercambios"
+      }
+    }
+  ],
+  "quest_friends": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Haz {count} amigo",
+        "countPlural=*": "Haz {count} amigos"
+      }
+    }
+  ],
+  "quest_auctions": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Cierra {count} subasta",
+        "countPlural=*": "Cierra {count} subastas"
+      }
+    }
+  ],
+  "quest_purifies": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Purifica {count} Pokémon Oscuro",
+        "countPlural=*": "Purifica {count} Pokémon Oscuros"
+      }
+    }
+  ],
+  "quest_evolve_species": "Evoluciona {count} × {name}",
+  "quest_evolve_family": "Evoluciona {count} de la línea de {family}",
+  "quest_evolve_type": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Evoluciona {count} de tipo {type}",
+        "countPlural=*": "Evoluciona {count} de tipo {type}"
+      }
+    }
+  ],
+  "quest_evolve_any": "Evoluciona {count} Pokémon",
+  "quest_release_any": "Libera {count} Pokémon",
+  "quest_release_species": "Libera {count} × {name}",
+  "quest_moves": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Enseña {count} movimiento",
+        "countPlural=*": "Enseña {count} movimientos"
+      }
+    }
+  ],
+  "quest_move": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Enseña {name} {count} vez",
+        "countPlural=*": "Enseña {name} {count} veces"
+      }
+    }
+  ],
+  "quest_beat_trainers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} Entrenador",
+        "countPlural=*": "Vence a {count} Entrenadores"
+      }
+    }
+  ],
+  "quest_beat_foe": "Gana {count} combates contra {foe}",
+  "quest_gold_earned": "Gana {amount} de dinero",
+  "quest_gold_spent": "Gasta {amount} de dinero",
+  "quest_gifts": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Recoge {count} Regalo Misterioso",
+        "countPlural=*": "Recoge {count} Regalos Misteriosos"
+      }
+    }
+  ],
+  "quest_bids": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Puja en {count} subasta",
+        "countPlural=*": "Puja en {count} subastas"
+      }
+    }
+  ],
+  "quest_shiny_any": "Captura {count} Pokémon variocolor",
+  "quest_shiny_species": "Captura {count} {name} variocolor",
+  "quest_duel_trainers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} Entrenador en duelo",
+        "countPlural=*": "Vence a {count} Entrenadores en duelo"
+      }
+    }
+  ],
+  "quest_duel_trainer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Vence a {count} {name}",
+        "countPlural=*": "Vence a {count} {name}"
+      }
+    }
+  ],
+  "quest_biomes": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Descubre {count} bioma",
+        "countPlural=*": "Descubre {count} biomas"
+      }
+    }
+  ],
+  "quest_effort": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Asigna {count} punto de esfuerzo",
+        "countPlural=*": "Asigna {count} puntos de esfuerzo"
+      }
+    }
+  ],
+  "quest_reward_item": "{amount} × {item}",
+  "quest_reward_meeting": "Un encuentro: {name} Nv. {level}",
+  "quest_reward_egg": "Un Huevo Pokémon",
+  "quest_turn_in_note": "Se saca de la mochila al reclamar.",
+  "quest_claimed": "Reclamada",
+  "quest_claim": "Reclamar",
+  "quest_pays": "Recompensa",
+  "quest_locked": "Bloqueada",
+  "quest_not_ready": "Esa misión aún no se puede reclamar.",
+  "quest_reward_label": "Recompensa de misión",
+  "quest_claim_failed": "No se ha podido reclamar.",
+  "quest_received": "Has recibido {rewards}.",
+  "quest_today": "Hoy",
+  "quest_about": "Sobre las misiones",
+  "quest_hint_rotation": "Se renuevan {count} diarias cada día a medianoche UTC, y una caza semanal cada lunes.",
+  "quest_hint_after": "Solo cuenta lo que hagas después de que empiece una diaria o una semanal.",
+  "quest_hint_chains": "Cada cadena de abajo se abre paso a paso, según terminas la anterior.",
+  "quest_hint_claim": "Una misión terminada espera a que reclames su recompensa.",
+  "quest_this_week": "Esta semana",
+  "quest_ready": "Listas: {count}",
+  "quest_asked_of_anybody": "Abierta a cualquiera",
+  "quest_done": "Hecha",
+  "profile_unknown": "desconocido",
+  "profile_not_walked": "Todavía no ha caminado por ningún sitio.",
+  "profile_cell": "casilla {x}, {y}",
+  "profile_last_moved": "último movimiento: {when}",
+  "profile_looking": "Buscando…",
+  "profile_trainer": "Entrenador",
+  "profile_dialog_description": "Quién es este Entrenador, quién camina con él y qué ha hecho.",
+  "profile_sprite_none": "Todavía no hay nada que elegir. Vence a un gimnasio o a una clase de Entrenador.",
+  "profile_character": "Personaje",
+  "profile_sprite_reading": "Leyendo lo que has conseguido…",
+  "profile_sprite_note": "Se consigue con medallas, el Alto Mando y las clases de Entrenador que has vencido. Es quien eres al recorrer el mundo.",
+  "profile_no_title": "Sin título",
+  "profile_edit_title": "Editar perfil",
+  "profile_edit_description": "Cómo te ven los demás: el nombre en tus lotes y en una sala, y el personaje a su lado.",
+  "profile_nickname": "Mote",
+  "profile_nickname_hint": "Se conservan letras, números, espacios y ' . - . Máximo {max}.",
+  "profile_title": "Título",
+  "profile_title_search": "Busca tus títulos…",
+  "profile_title_hint": "Se consigue con logros y la escalera de medallas; se lleva bajo tu nombre.",
+  "profile_saving": "Guardando…",
+  "profile_save": "Guardar",
+  "profile_team_gone": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} ya no es tuyo",
+        "countPlural=*": "{count} ya no son tuyos"
+      }
+    }
+  ],
+  "profile_edit": "Editar",
+  "profile_delete": "Borrar",
+  "profile_team_default": "Equipo {number}",
+  "profile_team_save_failed": "No se ha podido guardar ese equipo.",
+  "profile_teams_about": "Sobre los equipos",
+  "profile_teams_hint_size": "Un equipo tiene hasta {max} de tus Pokémon, guardados bajo un nombre.",
+  "profile_teams_hint_load": "Al cargar uno en una incursión o un duelo, el equipo se llena con los que puedan combatir.",
+  "profile_teams_hint_limit": "Puedes guardar {max} equipos.",
+  "profile_teams_full": "Ya tienes guardados {max} equipos.",
+  "profile_new_team": "Equipo nuevo",
+  "profile_no_teams": "Todavía no has guardado ningún equipo.",
+  "profile_edit_team": "Editar equipo",
+  "profile_team_description": "Pon nombre a un equipo que puedas llevar a una incursión o un duelo con una sola pulsación.",
+  "profile_team_name": "Nombre",
+  "profile_team_nobody": "Aún no has elegido a nadie.",
+  "profile_team_picked": "Elegidos: {count} de {max}.",
+  "profile_team_bring": "Llevar",
+  "profile_team_empty": "No tienes nada que meter en un equipo.",
+  "profile_group_record": "Historial",
+  "profile_group_social": "Social",
+  "profile_group_market": "Mercado",
+  "profile_section_battles": "Combates",
+  "profile_section_awards": "Galardones",
+  "profile_section_friends": "Amigos",
+  "profile_section_requests": "Solicitudes",
+  "profile_section_trades": "Intercambios",
+  "profile_section_bids": "Pujas",
+  "profile_section_selling": "Venta",
+  "profile_challenge_failed": "No se ha podido llamar: puede que tu sala ya tenga dos Entrenadores.",
+  "profile_loading": "Cargando perfil…",
+  "profile_actions": "Acciones",
+  "profile_battle": "Combatir",
+  "profile_block": "Bloquear",
+  "profile_saved": "Perfil guardado.",
+  "award_kind": "Galardón",
+  "award_beaten_label": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{name}, {count} victoria",
+        "countPlural=*": "{name}, {count} victorias"
+      }
+    }
+  ],
+  "award_unearned_label": "{name}, aún sin conseguir",
+  "award_beaten": "Victorias",
+  "award_times": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} vez",
+        "countPlural=*": "{count} veces"
+      }
+    }
+  ],
+  "award_unearned": "Aún sin conseguir.",
+  "award_summary_badges": "{region}: {badges} de {badgeTotal} medallas.",
+  "award_summary_elite": "{region}: {badges} de {badgeTotal} medallas, {honors} de {honorTotal} del Alto Mando.",
+  "award_summary_champion": "{region}: {badges} de {badgeTotal} medallas, {honors} de {honorTotal} del Alto Mando, Campeón.",
+  "award_progress_top": "{deed}: {count}. {tier}.",
+  "award_progress_next": "{deed}: {count}. {tier} con {next}.",
+  "award_achievement_kind": "Logro",
+  "award_line_label": "{name}, {tier}. {progress}",
+  "award_tier": "Rango",
+  "award_type_deed": "Pokémon de tipo {type} capturados",
+  "award_trainer_deed": "Victorias contra {name}",
+  "award_tab_badges": "Medallas",
+  "award_tab_achievements": "Logros",
+  "award_tab_types": "Especialistas de tipo",
+  "award_tab_trainers": "Entrenadores vencidos",
+  "award_reading": "Leyendo la estantería…",
+  "award_counting": "Contando toda la trayectoria…"
 }

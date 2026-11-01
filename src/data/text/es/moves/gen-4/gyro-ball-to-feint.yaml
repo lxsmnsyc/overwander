@@ -8,7 +8,7 @@ HealingWish:
   description: El usuario se debilita, y un aliado del campo recupera todos sus PS y se cura.
 Brine:
   name: Salmuera
-  description: x2 de potencia contra un objetivo con menos de 1/2 de PS.
+  description: El doble de potencia contra un objetivo con menos de 1/2 de PS.
 NaturalGift:
   name: Don Natural
   description: Lanza la baya del usuario con 80 de potencia, del tipo que la baya resiste o Normal. La baya se gasta.

@@ -7,3 +7,4 @@
 - Test: `REGISTRIES` gained the moves filed under gen-1 to gen-4, read from the English text folders; each entry has a `minimum` so an empty read cannot pass.
 - Lint caught an unsorted import and two unsafe assertions in the test; fixed.
 - The full suite had one timeout (`tera-sites`), which passes alone. `pnpm official-names` left no diff.
+- Review: applied in one commit (see outcome). English edits for Dig, Fly, Twister, Trump Card and Swallow went in the same commit.

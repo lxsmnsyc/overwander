@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 HelpingHand:
   name: Refuerzo
-  description: El siguiente movimiento de un aliado en los próximos 4 segundos hace x1,5 de daño.
+  description: El siguiente movimiento de un aliado en los próximos 4 segundos hace 1,5 veces el daño.
 Trick:
   name: Truco
   description: Intercambia los objetos que llevan el usuario y el objetivo.
@@ -29,7 +29,7 @@ Recycle:
   description: Recupera el último objeto que el usuario gastó.
 Revenge:
   name: Desquite
-  description: Tiene una preparación larga, y x2 de potencia si golpean al usuario mientras se prepara.
+  description: Tiene una preparación larga, y el doble de potencia si golpean al usuario mientras se prepara.
 BrickBreak:
   name: Demolición
   description: Rompe Reflejo y Pantalla de Luz del bando del objetivo, y luego golpea.
@@ -62,7 +62,7 @@ Snatch:
   description: Durante 4 segundos, se roba el siguiente movimiento que alguien lance sobre sí mismo.
 SecretPower:
   name: Daño Secreto
-  description: 30 % de probabilidad de causar un estado, y el terreno que se pisa decide cuál.
+  description: 30 % de probabilidad de causar un problema de estado, y el terreno que se pisa decide cuál.
 Dive:
   name: Buceo
-  description: Se sumerge, donde solo lo alcanzan Surf y Torbellino (x2), y emerge con el golpe.
+  description: Se sumerge, donde solo lo alcanzan Surf y Torbellino (el doble de daño), y emerge con el golpe.

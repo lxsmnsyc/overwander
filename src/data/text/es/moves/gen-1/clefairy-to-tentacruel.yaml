@@ -11,7 +11,7 @@ DoubleSlap:
   description: Golpea de 2 a 5 veces.
 Minimize:
   name: Reducción
-  description: Sube 2 niveles la Evasión del usuario, pero Golpe Cuerpo y Pisotón no fallan contra él y hacen x2 de daño.
+  description: Sube 2 niveles la Evasión del usuario, pero Golpe Cuerpo y Pisotón no fallan contra él y hacen el doble de daño.
 Metronome:
   name: Metrónomo
   description: Lanza un movimiento al azar, salvo Metrónomo, Espejo, Esquema y los tres que nadie aprende.

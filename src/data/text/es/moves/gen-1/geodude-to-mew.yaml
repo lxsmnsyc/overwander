@@ -11,7 +11,7 @@ Explosion:
   description: Golpea a todos los rivales y a los aliados del usuario, y le cuesta 250 PS al usuario.
 Stomp:
   name: Pisotón
-  description: 30 % de probabilidad de amedrentar. No falla contra un objetivo que haya usado Reducción, y le hace x2 de daño.
+  description: 30 % de probabilidad de amedrentar. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 Headbutt:
   name: Golpe Cabeza
   description: 30 % de probabilidad de amedrentar.
@@ -116,7 +116,7 @@ Mist:
   description: Durante 10 segundos, nadie más puede bajar un nivel de estadísticas del bando del usuario.
 Transform:
   name: Transformación
-  description: Copia el aspecto, los tipos, las estadísticas (salvo los PS), los niveles y los movimientos del objetivo hasta que el usuario abandone el campo.
+  description: Copia el aspecto, los tipos, las estadísticas (salvo los PS), los niveles de estadísticas y los movimientos del objetivo hasta que el usuario abandone el campo.
 AcidArmor:
   name: Armadura Ácida
   description: Sube 2 niveles la Defensa del usuario.

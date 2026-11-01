@@ -32,7 +32,7 @@ Toxic:
   description: 'Envenena gravemente al objetivo: el daño aumenta cuanto más dura.'
 BodySlam:
   name: Golpe Cuerpo
-  description: 30 % de probabilidad de paralizar. No falla contra un objetivo que haya usado Reducción, y le hace x2 de daño.
+  description: 30 % de probabilidad de paralizar. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 TakeDown:
   name: Derribo
   description: El usuario recibe 1/4 del daño que causa.
@@ -53,7 +53,7 @@ DoubleTeam:
   description: Sube 1 nivel la Evasión del usuario.
 Bide:
   name: Venganza
-  description: Se concentra el doble de tiempo y devuelve x2 del daño recibido mientras tanto.
+  description: Se concentra el doble de tiempo y devuelve el doble del daño recibido mientras tanto.
 Reflect:
   name: Reflejo
   description: Durante 10 segundos, reduce 1/3 el daño físico contra el bando del usuario.
@@ -107,7 +107,7 @@ DragonRage:
   description: Causa siempre 40 de daño.
 Dig:
   name: Excavar
-  description: El usuario se esconde bajo tierra y luego ataca. Solo lo alcanzan Terremoto y Magnitud (x2) y Fisura.
+  description: El usuario se esconde bajo tierra y luego ataca. Solo lo alcanzan Terremoto, Magnitud y Fisura, y Terremoto y Magnitud le hacen el doble de daño.
 FireBlast:
   name: Llamarada
   description: 10 % de probabilidad de quemar.
@@ -122,13 +122,13 @@ Strength:
   description: Solo daño por contacto.
 Earthquake:
   name: Terremoto
-  description: Golpea a todos los rivales y a los aliados del usuario. x2 contra lo que esté bajo tierra por Excavar.
+  description: Golpea a todos los rivales y a los aliados del usuario. Hace el doble de daño a lo que esté bajo tierra por Excavar.
 Fissure:
   name: Fisura
   description: Quita todos los PS del objetivo, con 30 % de precisión. Robustez lo anula.
 Fly:
   name: Vuelo
-  description: El usuario se eleva por los aires y luego ataca. Solo lo alcanzan Tornado y Ciclón (x2), Trueno y Gancho Alto.
+  description: El usuario se eleva por los aires y luego ataca. Solo lo alcanzan Tornado, Ciclón, Trueno y Gancho Alto, y Tornado y Ciclón le hacen el doble de daño.
 TailWhip:
   name: Agitacola
   description: Baja 1 nivel la Defensa de todos los rivales.
@@ -158,7 +158,7 @@ Blizzard:
   description: Golpea a todos los rivales, con 10 % de probabilidad de congelar, y nunca falla con granizo o nieve.
 Counter:
   name: Contraataque
-  description: Devuelve x2 el último golpe físico recibido, contra quien lo asestó y no contra el objetivo elegido.
+  description: Devuelve el doble del último golpe físico recibido, contra quien lo asestó y no contra el objetivo elegido.
 Surf:
   name: Surf
-  description: Golpea a todos los rivales y a los aliados del usuario. x2 contra lo que esté bajo el agua por Buceo.
+  description: Golpea a todos los rivales y a los aliados del usuario. Hace el doble de daño a lo que esté bajo el agua por Buceo.

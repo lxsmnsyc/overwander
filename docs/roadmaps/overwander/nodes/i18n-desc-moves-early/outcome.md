@@ -13,13 +13,19 @@
 ## Stubs left
 
 - The weather words (sun, rain, sandstorm, hail, snow, fog) are provisional until the weather batch.
-- `NaturalGift` ("typed as whatever the berry resists") and `TrumpCard` ("every one played") translate wordings that are hard to read in English; a reviewer should check them against the engine.
+- `NaturalGift` ("typed as whatever the berry resists") translates a wording that is hard to read in English; check it against the engine.
 - Items named in a line that the games name differently by language (Plate: プレート, Tabla) follow the official item names.
 
 ## Gotchas
 
 - A Spanish stat name ending in `Esp.` doubles the full stop at a sentence end; the lines end on "del usuario" or "del objetivo" instead, and the merge script rejects `Esp..`.
 - A line that names a move names it with its official ja or es move name, not the English key (Rizo Defensa, まるくなる).
+
+## Review fixes
+
+- English reworded for Dig, Fly, Twister, Trump Card and Swallow so the 2x covers the right moves, Trump Card names itself and Swallow heals; carried into ja and es.
+- ja: タイプあいしょう (Roost), Magnitude power, のうりょくランク everywhere. es: Transform, Defog, Evasión, problema de estado, tiempo, swap-in hazards, Trick Room, multipliers in prose (el doble, N veces), Attack, Hidden Power (valores individuales). Terms recorded.
+- After the fixes: `pnpm typecheck` exit 0, `rtk proxy pnpm exec oxlint src test` exit 0, `pnpm exec vitest run test/data test/i18n`: 37 files, 571 tests pass, `pnpm official-names` leaves no diff.
 
 ## Verification
 

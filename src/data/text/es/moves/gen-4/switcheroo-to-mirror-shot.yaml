@@ -14,7 +14,7 @@ BulletPunch:
   description: Se prepara más rápido que un movimiento normal.
 Avalanche:
   name: Alud
-  description: x2 de potencia si el usuario ha recibido daño en los últimos 2 segundos, pero con una preparación larga.
+  description: El doble de potencia si el usuario ha recibido daño en los últimos 2 segundos, pero con una preparación larga.
 IceShard:
   name: Esquirla Helada
   description: Se prepara más rápido que un movimiento normal.

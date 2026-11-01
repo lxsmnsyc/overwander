@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 Roost:
   name: はねやすめ
-  description: さいだいHPの 1/2を かいふくする。 2びょうの あいだ、 ひこうタイプは タイプそうせいに かんけいしないが、 じめんタイプの わざは やはり あたらない。
+  description: さいだいHPの 1/2を かいふくする。 2びょうの あいだ、 ひこうタイプは タイプあいしょうに かんけいしないが、 じめんタイプの わざは やはり あたらない。
 Gravity:
   name: じゅうりょく
   description: 10びょうの あいだ、 じめんタイプの わざが ひこうタイプや ふゆうの ポケモンにも あたる。

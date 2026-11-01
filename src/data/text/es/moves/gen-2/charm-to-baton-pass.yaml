@@ -47,7 +47,7 @@ Frustration:
   description: Cuanto menos cariño te tiene el usuario, más fuerte golpea, hasta 102 de potencia.
 Safeguard:
   name: Velo Sagrado
-  description: Durante 10 segundos, nada puede causar un estado alterado en el bando del usuario.
+  description: Durante 10 segundos, nada puede causar un problema de estado en el bando del usuario.
 PainSplit:
   name: Divide Dolor
   description: Suma los PS de ambos lados y los reparte a partes iguales.
@@ -56,7 +56,7 @@ SacredFire:
   description: 50 % de probabilidad de quemar. Al lanzarlo, el usuario se descongela.
 Magnitude:
   name: Magnitud
-  description: Sacude el suelo bajo todos los demás del campo, con 10 a 150 de potencia. Los que estén bajo tierra reciben x2.
+  description: Sacude el suelo bajo todos los demás del campo, con 10 a 150 de potencia. Los que estén bajo tierra reciben el doble de daño.
 DynamicPunch:
   name: Puño Dinámico
   description: Siempre confunde a lo que golpea.

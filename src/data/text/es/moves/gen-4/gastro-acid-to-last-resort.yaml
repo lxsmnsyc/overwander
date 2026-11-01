@@ -8,7 +8,7 @@ LuckyChant:
   description: Durante 10 segundos, nada puede asestar un golpe crítico al bando del usuario.
 MeFirst:
   name: Yo Primero
-  description: Interrumpe el movimiento que lanza el objetivo y lo dispara de vuelta con x1,5 de potencia.
+  description: Interrumpe el movimiento que lanza el objetivo y lo dispara de vuelta con 1,5 veces la potencia.
 Copycat:
   name: Copión
   description: Lanza el último movimiento que haya usado cualquiera.
@@ -20,7 +20,7 @@ GuardSwap:
   description: Intercambia los niveles de Defensa y Defensa Esp. del usuario con los del objetivo.
 Punishment:
   name: Castigo
-  description: Cuantos más niveles haya subido el objetivo, más fuerte golpea, hasta 200 de potencia.
+  description: Cuantos más niveles de estadísticas haya subido el objetivo, más fuerte golpea, hasta 200 de potencia.
 LastResort:
   name: Última Baza
   description: Solo se puede usar tras haber lanzado en este combate todos los demás movimientos que conoce el usuario.

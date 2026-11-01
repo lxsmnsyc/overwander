@@ -26,7 +26,7 @@ Psychic:
   description: 10 % de probabilidad de bajar 1 nivel la Defensa Esp. del objetivo.
 Psywave:
   name: Psicoonda
-  description: Causa un daño de entre x0,5 y x1,5 el nivel del usuario.
+  description: Causa un daño de entre 0,5 y 1,5 veces el nivel del usuario.
 Teleport:
   name: Teletransporte
   description: Cambia al usuario por su aliado más fuerte. Tarda en lanzarse.
@@ -53,7 +53,7 @@ Agility:
   description: Sube 2 niveles la Velocidad del usuario.
 Gust:
   name: Tornado
-  description: x2 contra lo que esté en el aire por Vuelo o Bote.
+  description: Hace el doble de daño a lo que esté en el aire por Vuelo o Bote.
 SandAttack:
   name: Ataque Arena
   description: Baja 1 nivel la Precisión del objetivo.

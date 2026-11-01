@@ -32,13 +32,13 @@ Memento:
   description: Baja 2 niveles el Ataque y el Ataque Esp. del objetivo. El usuario se debilita.
 Facade:
   name: Fachada
-  description: x2 de potencia mientras el usuario esté quemado, envenenado o paralizado.
+  description: El doble de potencia mientras el usuario esté quemado, envenenado o paralizado.
 FocusPunch:
   name: Puño Certero
   description: Tiene una preparación larga, y el puñetazo se pierde si golpean al usuario antes de que impacte.
 SmellingSalts:
   name: Estímulo
-  description: x2 de potencia contra un objetivo paralizado, y le cura la parálisis.
+  description: El doble de potencia contra un objetivo paralizado, y le cura la parálisis.
 FollowMe:
   name: Señuelo
   description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del usuario se desvía hacia él.
@@ -47,7 +47,7 @@ NaturePower:
   description: Lanza el movimiento que pida el terreno que pisa.
 Charge:
   name: Carga
-  description: Sube 1 nivel la Defensa Esp. del usuario, y su siguiente movimiento Eléctrico hace x2 de daño.
+  description: Sube 1 nivel la Defensa Esp. del usuario, y su siguiente movimiento Eléctrico hace el doble de daño.
 Taunt:
   name: Mofa
   description: Durante 10 segundos, el objetivo solo puede lanzar movimientos que causen daño.

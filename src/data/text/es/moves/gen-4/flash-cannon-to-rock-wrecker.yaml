@@ -8,10 +8,10 @@ RockClimb:
   description: 20 % de probabilidad de confundir.
 Defog:
   name: Despejar
-  description: Elimina Púas, Púas Tóxicas y Trampa Rocas de ambos bandos, y Reflejo, Pantalla de Luz, Neblina, Velo Sagrado y Conjuro del bando del objetivo. Baja 1 nivel su Evasión.
+  description: Elimina Púas, Púas Tóxicas y Trampa Rocas de ambos bandos, y Reflejo, Pantalla de Luz, Neblina, Velo Sagrado y Conjuro del bando del objetivo. Baja 1 nivel la Evasión del objetivo.
 TrickRoom:
   name: Espacio Raro
-  description: Durante 10 segundos, todas las preparaciones del campo se leen al revés. Si se vuelve a lanzar, termina.
+  description: Durante 10 segundos se invierte el orden de preparación de los movimientos del campo. Si se vuelve a usar, termina.
 DracoMeteor:
   name: Cometa Draco
   description: Tras acertar, baja 2 niveles el Ataque Esp. del usuario.

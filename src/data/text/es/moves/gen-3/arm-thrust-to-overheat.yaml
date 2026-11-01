@@ -59,7 +59,7 @@ Astonish:
   description: 30 % de probabilidad de amedrentar.
 WeatherBall:
   name: Meteorobola
-  description: Con sol, lluvia, tormenta de arena, granizo o nieve hace x2 de daño y adopta el tipo del clima.
+  description: Con sol, lluvia, tormenta de arena, granizo o nieve hace el doble de daño y adopta el tipo del tiempo.
 Aromatherapy:
   name: Aromaterapia
   description: Cura quemaduras, envenenamiento, parálisis, sueño y congelación de todo el equipo del usuario.

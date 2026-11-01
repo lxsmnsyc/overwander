@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 OdorSleuth:
   name: Rastreo
-  description: El objetivo pierde su evasión y sus inmunidades a los tipos Normal y Lucha.
+  description: El objetivo pierde su Evasión y sus inmunidades a los tipos Normal y Lucha.
 RockTomb:
   name: Tumba Rocas
   description: Siempre baja 1 nivel la Velocidad del objetivo.

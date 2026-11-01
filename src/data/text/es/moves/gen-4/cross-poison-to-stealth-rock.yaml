@@ -20,4 +20,4 @@ Captivate:
   description: Baja 2 niveles el Ataque Esp. del objetivo, pero solo si es del sexo opuesto.
 StealthRock:
   name: Trampa Rocas
-  description: 'Cuelga rocas sobre el bando contrario: lo que entre pierde 1/8 de sus PS, el doble o la mitad según cómo reciba un movimiento de tipo Roca.'
+  description: 'Cuelga rocas sobre el bando contrario: lo que entre por un cambio pierde 1/8 de sus PS, el doble o la mitad según cómo reciba un movimiento de tipo Roca.'

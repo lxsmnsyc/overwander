@@ -11,7 +11,7 @@ ToxicSpikes:
   description: Envenena a todo lo que entre pisando el suelo en el bando contrario, gravemente con dos capas. Un tipo Veneno que pise el suelo las elimina.
 HeartSwap:
   name: Cambiaalmas
-  description: Intercambia todos los niveles del usuario con los del objetivo.
+  description: Intercambia todos los niveles de estadísticas del usuario con los del objetivo.
 AquaRing:
   name: Acua Aro
   description: Restaura 1/16 de los PS máximos cada vez que actúa el usuario.

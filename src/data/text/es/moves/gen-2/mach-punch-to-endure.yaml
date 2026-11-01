@@ -26,13 +26,13 @@ Octazooka:
   description: 50 % de probabilidad de bajar 1 nivel la Precisión del objetivo.
 Spikes:
   name: Púas
-  description: 'Esparce púas: lo que entre en el bando rival pierde 1/8 de sus PS, 1/6 con dos capas y 1/4 con tres.'
+  description: 'Esparce púas: lo que entre por un cambio en el bando rival pierde 1/8 de sus PS, 1/6 con dos capas y 1/4 con tres.'
 ZapCannon:
   name: Electrocañón
   description: Siempre paraliza a lo que golpea.
 Foresight:
   name: Profecía
-  description: El objetivo pierde su evasión y sus inmunidades a los tipos Normal y Lucha.
+  description: El objetivo pierde su Evasión y sus inmunidades a los tipos Normal y Lucha.
 DestinyBond:
   name: Mismo Destino
   description: Durante 4 segundos, quien debilite al usuario cae con él.

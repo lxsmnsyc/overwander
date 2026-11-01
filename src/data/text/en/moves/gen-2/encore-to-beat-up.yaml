@@ -36,7 +36,7 @@ CrossChop:
   description: Crits more readily.
 Twister:
   name: Twister
-  description: Hits everything opposite, 20% to flinch, and reaches a target in the air at 2x.
+  description: Hits everything opposite, 20% to flinch, and reaches a target in the air, at 2x.
 Crunch:
   name: Crunch
   description: 20% to drop the target's Defense a stage.

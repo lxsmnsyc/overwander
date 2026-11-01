@@ -44,7 +44,7 @@ Reversal:
   description: Cuantos menos PS le queden al usuario, más fuerte golpea, hasta 200 de potencia.
 Spite:
   name: Rencor
-  description: Alarga x4 la recarga del último movimiento del objetivo.
+  description: Multiplica por 4 la recarga del último movimiento del objetivo.
 PowderSnow:
   name: Nieve Polvo
   description: Golpea a todos los rivales. 10 % de probabilidad de congelar.

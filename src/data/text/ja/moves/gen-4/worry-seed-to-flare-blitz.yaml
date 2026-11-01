@@ -11,7 +11,7 @@ ToxicSpikes:
   description: あいての がわに でてきた、 じめんに いる ポケモンを どくに する。 2かさねで もうどくに なる。 じめんに いる どくタイプが でてくると とりのぞかれる。
 HeartSwap:
   name: ハートスワップ
-  description: じぶんの ランクを ぜんぶ あいてと いれかえる。
+  description: じぶんの のうりょくランクを ぜんぶ あいてと いれかえる。
 AquaRing:
   name: アクアリング
   description: じぶんが こうどうする たびに、 さいだいHPの 1/16を かいふくする。

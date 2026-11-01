@@ -29,7 +29,7 @@ Thunderbolt:
   description: 10 % de probabilidad de paralizar.
 PayDay:
   name: Día de Pago
-  description: Esparce monedas por valor de x5 el nivel del usuario, que se cobran tras el combate.
+  description: Esparce monedas por valor de 5 veces el nivel del usuario, que se cobran tras el combate.
 FurySwipes:
   name: Golpes Furia
   description: Golpea de 2 a 5 veces.

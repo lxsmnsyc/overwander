@@ -12,7 +12,7 @@ SpitUp:
   description: 'Spends what Stockpile stored: 100 power a charge, and nothing without one.'
 Swallow:
   name: Swallow
-  description: "Spends what Stockpile stored: 1/4, 1/2 or all of the user's HP."
+  description: "Spends what Stockpile stored: heals 1/4, 1/2 or all of the user's HP."
 HeatWave:
   name: Heat Wave
   description: Hits everything opposite. 10% to burn.

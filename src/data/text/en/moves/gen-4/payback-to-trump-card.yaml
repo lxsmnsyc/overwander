@@ -15,4 +15,4 @@ PsychoShift:
   description: Passes the user's status to the target, which cures the user.
 TrumpCard:
   name: Trump Card
-  description: Every one played this fight makes the next hit harder, from 40 power up to 200.
+  description: 'Each time the user plays Trump Card this fight, the next one hits harder: from 40 power up to 200.'

@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 Hex:
   name: Infortunio
+  description: El doble de potencia contra un objetivo con un problema de estado.
 SkyDrop:
   name: Caída Libre
+  description: Eleva al objetivo, donde no puede actuar, y luego lo suelta. Falla contra 200 kg o más, y un tipo Volador cae ileso.
 ShiftGear:
   name: Cambio de Marcha
+  description: Sube 2 niveles la Velocidad del usuario y 1 nivel su Ataque.
 CircleThrow:
   name: Llave Giro
+  description: Expulsa al objetivo del campo y hace entrar a su aliado más débil. Tarda en lanzarse.
 Incinerate:
   name: Calcinación
+  description: Golpea a todos los rivales y quema la baya o la gema que lleve cada uno.
 Quash:
   name: Último Lugar
+  description: Un objetivo que se esté preparando debe empezar su preparación de nuevo.
 Acrobatics:
   name: Acróbata
+  description: El doble de potencia mientras el usuario no lleve objeto.
 ReflectType:
   name: Clonatipo
+  description: El usuario adopta los tipos del objetivo.
 Retaliate:
   name: Represalia
+  description: El doble de potencia si un aliado se debilitó en los últimos 2 segundos.
 FinalGambit:
   name: Sacrificio
+  description: Causa un daño igual a los PS del usuario, y si acierta el usuario se debilita.
 Bestow:
   name: Ofrenda
+  description: Entrega el objeto del usuario a un aliado que pueda llevarlo.

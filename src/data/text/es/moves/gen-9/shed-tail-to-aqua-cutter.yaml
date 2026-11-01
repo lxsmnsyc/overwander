@@ -2,33 +2,49 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShedTail:
   name: Autotomía
+  description: Gasta 1/2 de los PS del usuario en un sustituto y se cambia por su aliado más fuerte, que se queda detrás de él.
 ChillyReception:
   name: Fría Acogida
+  description: Provoca nieve y luego el usuario se cambia por su aliado más fuerte.
 TidyUp:
   name: Limpieza General
+  description: Elimina todas las trampas y sustitutos del campo, y sube 1 nivel el Ataque y la Velocidad del usuario.
 Snowscape:
   name: Paisaje Nevado
+  description: Provoca nieve durante 10 segundos, que multiplica por 1,5 la Defensa de los tipos Hielo.
 Pounce:
   name: Brinco
+  description: Baja 1 nivel la Velocidad del objetivo.
 Trailblaze:
   name: Abrecaminos
+  description: Sube 1 nivel la Velocidad del usuario.
 ChillingWater:
   name: Agua Fría
+  description: Baja 1 nivel el Ataque del objetivo.
 HyperDrill:
   name: Hipertaladro
+  description: Atraviesa Protección y las demás guardias, y rompe la guardia que atravesó.
 TwinBeam:
   name: Láser Doble
+  description: Golpea 2 veces.
 RageFist:
   name: Puño Furia
+  description: Por cada golpe que el usuario ha recibido en este combate suma 50 de potencia, hasta 350.
 ArmorCannon:
   name: Cañón Armadura
+  description: Baja 1 nivel la Defensa y la Defensa Esp. del usuario.
 BitterBlade:
   name: Espada Lamento
+  description: Restaura al usuario 1/2 del daño causado.
 DoubleShock:
   name: Electropalmas
+  description: Solo puede usarlo un tipo Eléctrico, y después el usuario deja de serlo.
 GigatonHammer:
   name: Martillo Colosal
+  description: No se puede usar dos veces seguidas.
 Comeuppance:
   name: Resarcimiento
+  description: Devuelve 1,5 veces el último golpe recibido de un movimiento, contra quien lo asestó. Falla si nada ha golpeado al usuario.
 AquaCutter:
   name: Tajo Acuático
+  description: Más probabilidad de golpe crítico.

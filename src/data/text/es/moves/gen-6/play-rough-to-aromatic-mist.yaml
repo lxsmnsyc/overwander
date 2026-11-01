@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 PlayRough:
   name: Carantoña
+  description: 10 % de probabilidad de bajar 1 nivel el Ataque del objetivo.
 FairyWind:
   name: Viento Feérico
+  description: Solo daño a distancia.
 Moonblast:
   name: Fuerza Lunar
+  description: 30 % de probabilidad de bajar 1 nivel el Ataque Esp. del objetivo.
 Boomburst:
   name: Estruendo
+  description: Golpea a todos los rivales y a los aliados del usuario. Es un sonido.
 FairyLock:
   name: Cerrojo Feérico
+  description: Durante 2 segundos, nadie en el campo puede ser cambiado, salvo los de tipo Fantasma.
 KingsShield:
   name: Escudo Real
+  description: Bloquea todos los movimientos de daño dirigidos al usuario durante 2 segundos, y baja 1 nivel el Ataque de lo que lo toque. Los movimientos de estado pasan. Falla si se usa dos veces seguidas.
 PlayNice:
   name: Camaradería
+  description: Baja 1 nivel el Ataque del objetivo y nunca falla.
 Confide:
   name: Confidencia
+  description: Baja 1 nivel el Ataque Esp. del objetivo y nunca falla. Es un sonido.
 DiamondStorm:
   name: Tormenta de Diamantes
+  description: Golpea a todos los rivales. 50 % de probabilidad de subir 2 niveles la Defensa del usuario.
 SteamEruption:
   name: Chorro de Vapor
+  description: 30 % de probabilidad de quemar.
 HyperspaceHole:
   name: Paso Dimensional
+  description: Atraviesa Protección y Detección, rompe la guardia que atravesó y nunca falla.
 WaterShuriken:
   name: Shuriken de Agua
+  description: Golpea de 2 a 5 veces. Se prepara más rápido que un movimiento normal.
 MysticalFire:
   name: Llama Embrujada
+  description: Siempre baja 1 nivel el Ataque Esp. del objetivo.
 SpikyShield:
   name: Barrera Espinosa
+  description: Bloquea todo lo dirigido al usuario durante 2 segundos, y lo que lo toque pierde 1/8 de sus PS. Falla si se usa dos veces seguidas.
 AromaticMist:
   name: Niebla Aromática
+  description: Sube 1 nivel la Defensa Esp. de un aliado.

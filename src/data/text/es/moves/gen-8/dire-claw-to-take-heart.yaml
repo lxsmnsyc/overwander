@@ -2,49 +2,73 @@
 # Every other field is written by hand, and a rerun keeps it.
 DireClaw:
   name: Garra Nociva
+  description: 50 % de probabilidad de envenenar, paralizar o dormir al objetivo.
 PsyshieldBash:
   name: Asalto Barrera
+  description: Sube 1 nivel la Defensa del usuario.
 PowerShift:
   name: Cambiapoder
+  description: Intercambia el Ataque del usuario con su Defensa, y su Ataque Esp. con su Defensa Esp.
 StoneAxe:
   name: Hachazo Pétreo
+  description: Deja rocas suspendidas sobre el bando del objetivo, como hace Trampa Rocas.
 SpringtideStorm:
   name: Ciclón Primavera
+  description: Golpea a todos los rivales, con 30 % de probabilidad de bajar 1 nivel el Ataque de cada uno.
 MysticalPower:
   name: Poder Místico
+  description: Sube 1 nivel el Ataque Esp. del usuario.
 RagingFury:
   name: Erupción de Ira
+  description: Repite el mismo golpe 3 veces y deja confuso al usuario.
 WaveCrash:
   name: Envite Acuático
+  description: El usuario recibe 1/3 del daño que causa.
 Chloroblast:
   name: Clorofiláser
+  description: Cuesta 1/2 de los PS del usuario, acierte o no.
 MountainGale:
   name: Viento Carámbano
+  description: 30 % de probabilidad de amedrentar.
 VictoryDance:
   name: Danza Triunfal
+  description: Sube 1 nivel el Ataque, la Defensa y la Velocidad del usuario.
 HeadlongRush:
   name: Arremetida
+  description: Baja 1 nivel la Defensa y la Defensa Esp. del usuario.
 BarbBarrage:
   name: Mil Púas Tóxicas
+  description: 50 % de probabilidad de envenenar, y el doble de potencia contra un objetivo envenenado.
 EsperWing:
   name: Ala Aural
+  description: Más probabilidad de golpe crítico, y sube 1 nivel la Velocidad del usuario.
 BitterMalice:
   name: Rencor Reprimido
+  description: Baja 1 nivel el Ataque del objetivo.
 Shelter:
   name: Retracción
+  description: Sube 2 niveles la Defensa del usuario.
 TripleArrows:
   name: Triple Flecha
+  description: Más probabilidad de golpe crítico. 50 % de probabilidad de bajar 1 nivel la Defensa del objetivo y 30 % de amedrentarlo.
 InfernalParade:
   name: Marcha Espectral
+  description: 30 % de probabilidad de quemar, y el doble de potencia contra un objetivo con un problema de estado.
 CeaselessEdge:
   name: Tajo Metralla
+  description: Deja una capa de púas en el bando del objetivo.
 BleakwindStorm:
   name: Vendaval Gélido
+  description: Golpea a todos los rivales, con 30 % de probabilidad de bajar 1 nivel la Velocidad de cada uno. No falla con lluvia.
 WildboltStorm:
   name: Electormenta
+  description: Golpea a todos los rivales, con 20 % de probabilidad de paralizar. No falla con lluvia.
 SandsearStorm:
   name: Simún de Arena
+  description: Golpea a todos los rivales, con 20 % de probabilidad de quemar. No falla con lluvia.
 LunarBlessing:
   name: Plegaria Lunar
+  description: Restaura 1/4 de los PS del usuario y de sus aliados, y cura sus problemas de estado.
 TakeHeart:
   name: Bálsamo Osado
+  description: Sube 1 nivel el Ataque Esp. y la Defensa Esp. del usuario, y cura su problema de estado.

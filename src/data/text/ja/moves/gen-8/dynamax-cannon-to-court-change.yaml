@@ -2,27 +2,40 @@
 # Every other field is written by hand, and a rerun keeps it.
 DynamaxCannon:
   name: ダイマックスほう
+  description: ムゲンダイナの ちから そのものの ビーム。 ダイマックスした あいてには いりょくが 2ばいに なる。
 SnipeShot:
   name: ねらいうち
+  description: きゅうしょに あたりやすい。 こうげきを ひきつける ものが いても、 ねらった あいてに とどく。
 JawLock:
   name: くらいつく
+  description: じぶんと あいてを くみあわせ、 ふたりとも たっている あいだは こうたい できない。
 StuffCheeks:
   name: ほおばる
+  description: もっている きのみを たべて、 じぶんの ぼうぎょを 2だん あげる。 きのみが ないと しっぱいする。
 NoRetreat:
   name: はいすいのじん
+  description: じぶんの ステータスを ぜんぶ 1だん あげるが、 もう こうたい できなく なる。 1かい だけ。
 TarShot:
   name: タールショット
+  description: あいての すばやさを 1だん さげ、 バトルが おわるまで ほのおタイプの わざの ダメージが 2ばいに なる。
 MagicPowder:
   name: まほうのこな
+  description: あいてを エスパータイプだけに する。
 DragonDarts:
   name: ドラゴンアロー
+  description: 2かい こうげきする。
 Teatime:
   name: おちゃかい
+  description: フィールドの ぜんいんが、 もっている きのみを いっせいに たべる。
 Octolock:
   name: たこがため
+  description: あいてを とらえて こうたい できなく し、 こうどうする たびに ぼうぎょと とくぼうを 1だん ずつ さげる。
 BoltBeak:
   name: でんげきくちばし
+  description: 2びょう いないに あいてが わざを だしはじめて いないと、 いりょくが 2ばいに なる。
 FishiousRend:
   name: エラがみ
+  description: 2びょう いないに あいてが わざを だしはじめて いないと、 いりょくが 2ばいに なる。
 CourtChange:
   name: コートチェンジ
+  description: りょうほうの がわの わな、 かべ、 しろいきり、 しんぴのまもり、 おいかぜを いれかえる。

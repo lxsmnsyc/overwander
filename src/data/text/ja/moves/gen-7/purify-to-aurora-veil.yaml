@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 Purify:
   name: じょうか
+  description: あいての じょうたいいじょうを なおし、 じぶんの HPを 1/2 かいふくする。 なおす ものが ないと しっぱいする。
 RevelationDance:
   name: めざめるダンス
+  description: じぶんの いちばん さいしょの タイプで くりだす。
 CoreEnforcer:
   name: コアパニッシャー
+  description: あいて ぜんいんに あたり、 じゅんびちゅうで ない あいての とくせいを なくす。
 TropKick:
   name: トロピカルキック
+  description: かならず あいての こうげきを 1だん さげる。
 Instruct:
   name: さいはい
+  description: あいては、 さいごに だした わざを すぐ もう いちど だす。
 BeakBlast:
   name: くちばしキャノン
+  description: じゅんびが ながい。 じゅんびちゅうに じぶんに ふれた あいては やけどに なる。
 ClangingScales:
   name: スケイルノイズ
+  description: あいて ぜんいんに あたり、 そのあと じぶんの ぼうぎょを 1だん さげる。 おとの わざ。
 DragonHammer:
   name: ドラゴンハンマー
+  description: ふれて ダメージを あたえる だけ。
 BrutalSwing:
   name: ぶんまわす
+  description: あいて ぜんいんと みかたに あたる。
 AuroraVeil:
   name: オーロラベール
+  description: 10びょうの あいだ、 じぶんの がわが うける ぶつりダメージと とくしゅダメージを 1/3 へらす。 あられや ゆき いがいでは しっぱいする。

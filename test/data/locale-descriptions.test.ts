@@ -33,20 +33,19 @@ afterEach(() => {
 
 const MOVE_TEXT = join(import.meta.dirname, '../../src/data/text/en/moves');
 
-/** The moves filed under the generations whose descriptions are translated */
-const MOVE_GENERATIONS = ['gen-1', 'gen-2', 'gen-3', 'gen-4'];
-
-/** The name of every move written in the folders of `MOVE_GENERATIONS` */
+/** The name of every move written in the English move text, in every generation folder and the weather file */
 function listFiledMoves(): string[] {
   const names: string[] = [];
 
-  for (const generation of MOVE_GENERATIONS) {
-    for (const file of readdirSync(join(MOVE_TEXT, generation))) {
-      const text: unknown = parse(readFileSync(join(MOVE_TEXT, generation, file), 'utf8'));
+  for (const entry of readdirSync(MOVE_TEXT, { recursive: true, encoding: 'utf8' })) {
+    if (!entry.endsWith('.yaml')) {
+      continue;
+    }
 
-      if (typeof text === 'object' && text !== null) {
-        names.push(...Object.keys(text));
-      }
+    const text: unknown = parse(readFileSync(join(MOVE_TEXT, entry), 'utf8'));
+
+    if (typeof text === 'object' && text !== null) {
+      names.push(...Object.keys(text));
     }
   }
   return names;
@@ -79,7 +78,7 @@ const REGISTRIES: Registry[] = [
     minimum: 500,
   },
   {
-    name: 'moves (generations 1 to 4)',
+    name: 'moves',
     describe() {
       const found = new Map<string, string>();
 
@@ -95,7 +94,7 @@ const REGISTRIES: Registry[] = [
       }
       return found;
     },
-    minimum: 400,
+    minimum: 900,
   },
 ];
 

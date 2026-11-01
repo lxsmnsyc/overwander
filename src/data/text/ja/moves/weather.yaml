@@ -2,9 +2,13 @@
 # Every other field is written by hand, and a rerun keeps it.
 RainDance:
   name: あまごい
+  description: 10びょうの あいだ、 あめを ふらせる。
 SunnyDay:
   name: にほんばれ
+  description: 10びょうの あいだ、 はれに する。
 Sandstorm:
   name: すなあらし
+  description: 10びょうの あいだ、 すなあらしを おこす。
 Hail:
   name: あられ
+  description: 10びょうの あいだ、 あられを ふらせる。

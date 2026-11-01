@@ -2,65 +2,97 @@
 # Every other field is written by hand, and a rerun keeps it.
 Eternabeam:
   name: Rayo Infinito
+  description: Tras acertar, el usuario debe recargar durante 2 segundos.
 SteelBeam:
   name: Metaláser
+  description: Cuesta 1/2 de los PS del usuario, acierte o no.
 ExpandingForce:
   name: Vasta Fuerza
+  description: Mientras el usuario esté sobre Campo Psíquico, hace 1,5 veces el daño y golpea a todos los rivales.
 SteelRoller:
   name: Allanador Férreo
+  description: Allana el campo y acaba con su efecto. Falla si no hay ningún campo activo.
 ScaleShot:
   name: Ráfaga Escamas
+  description: Golpea de 2 a 5 veces y luego sube 1 nivel la Velocidad del usuario y baja 1 nivel su Defensa.
 MeteorBeam:
   name: Rayo Meteórico
+  description: Sube 1 nivel el Ataque Esp. del usuario mientras se prepara, y luego golpea.
 ShellSideArm:
   name: Moluscañón
+  description: Es físico o especial, el que más daño haga al objetivo. 20 % de probabilidad de envenenar.
 MistyExplosion:
   name: Bruma Explosiva
+  description: Golpea a todos los rivales y a los aliados del usuario, y le cuesta 100 PS al usuario. 1,5 veces el daño en Campo de Niebla.
 GrassyGlide:
   name: Fitoimpulso
+  description: Se prepara más rápido que un movimiento normal mientras el usuario esté sobre Campo de Hierba.
 RisingVoltage:
   name: Alto Voltaje
+  description: El doble de potencia contra un objetivo que esté en el suelo en Campo Eléctrico.
 TerrainPulse:
   name: Pulso de Campo
+  description: Adopta el tipo del campo en el que está el usuario, con el doble de potencia, mientras haya uno.
 SkitterSmack:
   name: Golpe Rastrero
+  description: Baja 1 nivel el Ataque Esp. del objetivo.
 BurningJealousy:
   name: Envidia Ardiente
+  description: Golpea a todos los rivales y quema a los que hayan subido sus estadísticas en los últimos 2 segundos.
 LashOut:
   name: Desahogo
+  description: El doble de potencia si bajaron las estadísticas del usuario en los últimos 2 segundos.
 Poltergeist:
   name: Poltergeist
+  description: Usa contra el objetivo su propio objeto. Falla si no lleva ninguno.
 CorrosiveGas:
   name: Gas Corrosivo
+  description: Derrite los objetos que llevan todos los que rodean al usuario.
 Coaching:
   name: Motivación
+  description: Sube 1 nivel el Ataque y la Defensa de los aliados del usuario.
 FlipTurn:
   name: Viraje
+  description: Si acierta, el usuario se cambia por un aliado.
 TripleAxel:
   name: Triple Axel
+  description: Patea 3 veces, y cada patada es más fuerte que la anterior.
 DualWingbeat:
   name: Ala Bis
+  description: Golpea 2 veces.
 ScorchingSands:
   name: Arenas Ardientes
+  description: 30 % de probabilidad de quemar. Descongela al usuario y al objetivo.
 JungleHealing:
   name: Cura Selvática
+  description: Restaura 1/4 de los PS del usuario y de sus aliados, y cura sus problemas de estado.
 WickedBlow:
   name: Golpe Oscuro
+  description: Siempre es golpe crítico.
 SurgingStrikes:
   name: Azote Torrencial
+  description: Golpea 3 veces, y todos los golpes son críticos.
 ThunderCage:
   name: Electrojaula
+  description: 'Enjaula al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 DragonEnergy:
   name: Dracoenergía
+  description: Golpea a todos los rivales, y es más débil cuantos menos PS le queden al usuario.
 FreezingGlare:
   name: Mirada Heladora
+  description: 10 % de probabilidad de congelar.
 FieryWrath:
   name: Furia Candente
+  description: Golpea a todos los rivales, con 20 % de probabilidad de amedrentar.
 ThunderousKick:
   name: Patada Relámpago
+  description: Baja 1 nivel la Defensa del objetivo.
 GlacialLance:
   name: Lanza Glacial
+  description: Golpea a todos los rivales.
 AstralBarrage:
   name: Orbes Espectro
+  description: Golpea a todos los rivales.
 EerieSpell:
   name: Conjuro Funesto
+  description: Multiplica por 4 la recarga del último movimiento del objetivo.

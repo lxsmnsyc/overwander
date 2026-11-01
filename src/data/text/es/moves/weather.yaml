@@ -2,9 +2,13 @@
 # Every other field is written by hand, and a rerun keeps it.
 RainDance:
   name: Danza Lluvia
+  description: Provoca lluvia durante 10 segundos.
 SunnyDay:
   name: Día Soleado
+  description: Provoca sol durante 10 segundos.
 Sandstorm:
   name: Tormenta de Arena
+  description: Provoca una tormenta de arena durante 10 segundos.
 Hail:
   name: Granizo
+  description: Provoca granizo durante 10 segundos.

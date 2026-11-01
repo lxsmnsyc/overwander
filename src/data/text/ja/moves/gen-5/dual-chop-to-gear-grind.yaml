@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 DualChop:
   name: ダブルチョップ
+  description: 2かい こうげきする。
 HeartStamp:
   name: ハートスタンプ
+  description: 30%の かくりつで ひるませる。
 HornLeech:
   name: ウッドホーン
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 SacredSword:
   name: せいなるつるぎ
+  description: あいての のうりょくランクを むしする。
 RazorShell:
   name: シェルブレード
+  description: 50%の かくりつで あいての ぼうぎょを 1だん さげる。
 HeatCrash:
   name: ヒートスタンプ
+  description: あいてより じぶんが おもい ほど いりょくが あがる。 いりょく 40から、 じぶんが あいての 5ばい おもいと 120まで。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 LeafTornado:
   name: グラスミキサー
+  description: 50%の かくりつで あいての めいちゅうを 1だん さげる。
 Steamroller:
   name: ハードローラー
+  description: 30%の かくりつで ひるませる。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 CottonGuard:
   name: コットンガード
+  description: じぶんの ぼうぎょを 3だん あげる。
 NightDaze:
   name: ナイトバースト
+  description: 40%の かくりつで あいての めいちゅうを 1だん さげる。
 Psystrike:
   name: サイコブレイク
+  description: あいての とくぼうでは なく ぼうぎょで ダメージを けいさんする。
 TailSlap:
   name: スイープビンタ
+  description: 2から 5かい こうげきする。
 Hurricane:
   name: ぼうふう
+  description: 30%の かくりつで こんらんさせる。 あめの ときは かならず あたり、 はれの ときは めいちゅうが 50%に なる。 そらに いる あいてにも とどく。
 HeadCharge:
   name: アフロブレイク
+  description: あたえた ダメージの 1/4を じぶんも うける。
 GearGrind:
   name: ギアソーサー
+  description: 2かい こうげきする。

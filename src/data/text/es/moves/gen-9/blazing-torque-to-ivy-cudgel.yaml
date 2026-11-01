@@ -2,19 +2,28 @@
 # Every other field is written by hand, and a rerun keeps it.
 BlazingTorque:
   name: Pirochoque
+  description: 30 % de probabilidad de quemar.
 WickedTorque:
   name: Ominochoque
+  description: 10 % de probabilidad de dormir al objetivo.
 NoxiousTorque:
   name: Ponzochoque
+  description: 30 % de probabilidad de envenenar.
 CombatTorque:
   name: Pugnachoque
+  description: 30 % de probabilidad de paralizar.
 MagicalTorque:
   name: Feerichoque
+  description: 30 % de probabilidad de confundir.
 BloodMoon:
   name: Luna Roja
+  description: No se puede usar dos veces seguidas.
 MatchaGotcha:
   name: Cañón Batidor
+  description: Golpea a todos los rivales, restaura al usuario 1/2 del daño causado y quema el 20 % de las veces. Descongela al usuario.
 SyrupBomb:
   name: Bomba Caramelo
+  description: 'Cubre al objetivo de almíbar: pierde 1 nivel de Velocidad cada vez que actúa, 3 veces.'
 IvyCudgel:
   name: Garrote Liana
+  description: Más probabilidad de golpe crítico. Ogerpon lo usa con el tipo de su máscara.

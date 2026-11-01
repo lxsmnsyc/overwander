@@ -2,49 +2,73 @@
 # Every other field is written by hand, and a rerun keeps it.
 DireClaw:
   name: フェイタルクロー
+  description: 50%の かくりつで どく、 まひ、 ねむりの どれかに する。
 PsyshieldBash:
   name: バリアーラッシュ
+  description: じぶんの ぼうぎょを 1だん あげる。
 PowerShift:
   name: パワーシフト
+  description: じぶんの こうげきと ぼうぎょ、 とくこうと とくぼうを それぞれ いれかえる。
 StoneAxe:
   name: がんせきアックス
+  description: ステルスロックと おなじく、 あいての がわに いしを つるす。
 SpringtideStorm:
   name: はるのあらし
+  description: あいて ぜんいんに あたり、 30%の かくりつで それぞれの こうげきを 1だん さげる。
 MysticalPower:
   name: しんぴのちから
+  description: じぶんの とくこうを 1だん あげる。
 RagingFury:
   name: だいふんげき
+  description: おなじ こうげきを 3かい くりかえし、 おわると じぶんが こんらんする。
 WaveCrash:
   name: ウェーブタックル
+  description: あたえた ダメージの 1/3を じぶんも うける。
 Chloroblast:
   name: クロロブラスト
+  description: あたっても はずれても、 じぶんは HPの 1/2を うしなう。
 MountainGale:
   name: ひょうざんおろし
+  description: 30%の かくりつで ひるませる。
 VictoryDance:
   name: しょうりのまい
+  description: じぶんの こうげき、 ぼうぎょ、 すばやさを 1だん あげる。
 HeadlongRush:
   name: ぶちかまし
+  description: じぶんの ぼうぎょと とくぼうを 1だん ずつ さげる。
 BarbBarrage:
   name: どくばりセンボン
+  description: 50%の かくりつで どくに する。 どくに なっている あいてには いりょくが 2ばいに なる。
 EsperWing:
   name: オーラウイング
+  description: きゅうしょに あたりやすく、 じぶんの すばやさを 1だん あげる。
 BitterMalice:
   name: うらみつらみ
+  description: あいての こうげきを 1だん さげる。
 Shelter:
   name: たてこもる
+  description: じぶんの ぼうぎょを 2だん あげる。
 TripleArrows:
   name: ３ぼんのや
+  description: きゅうしょに あたりやすい。 50%の かくりつで あいての ぼうぎょを 1だん さげ、 30%の かくりつで ひるませる。
 InfernalParade:
   name: ひゃっきやこう
+  description: 30%の かくりつで やけどに する。 じょうたいいじょうの あいてには いりょくが 2ばいに なる。
 CeaselessEdge:
   name: ひけん・ちえなみ
+  description: あいての がわに まきびしを 1かさね まく。
 BleakwindStorm:
   name: こがらしあらし
+  description: あいて ぜんいんに あたり、 30%の かくりつで それぞれの すばやさを 1だん さげる。 あめの ときは かならず あたる。
 WildboltStorm:
   name: かみなりあらし
+  description: あいて ぜんいんに あたり、 20%の かくりつで まひに する。 あめの ときは かならず あたる。
 SandsearStorm:
   name: ねっさのあらし
+  description: あいて ぜんいんに あたり、 20%の かくりつで やけどに する。 あめの ときは かならず あたる。
 LunarBlessing:
   name: みかづきのいのり
+  description: じぶんと みかたの HPを 1/4 かいふくし、 じょうたいいじょうを なおす。
 TakeHeart:
   name: ブレイブチャージ
+  description: じぶんの とくこうと とくぼうを 1だん あげ、 じょうたいいじょうを なおす。

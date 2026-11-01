@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 Spotlight:
   name: スポットライト
+  description: 4びょうの あいだ、 あいての がわへ むけた ひとりを ねらう わざは すべて あいてに あつまる。
 ToxicThread:
   name: どくのいと
+  description: あいてを どくに し、 すばやさを 1だん さげる。
 LaserFocus:
   name: とぎすます
+  description: 4びょうの あいだ、 じぶんの つぎの わざは きゅうしょに あたる。
 GearUp:
   name: アシストギア
+  description: プラスか マイナスの とくせいを もつ じぶんの がわの ぜんいんの こうげきと とくこうを 1だん ずつ あげる。
 ThroatChop:
   name: じごくづき
+  description: 4びょうの あいだ、 あいては おとの わざを つかえない。
 PollenPuff:
   name: かふんだんご
+  description: あいてに むけると はじける。 みかたに むけると、 かわりに HPを 1/2 かいふくする。
 AnchorShot:
   name: アンカーショット
+  description: 10びょうの あいだ、 あいてを こうたい できなく する。 ゴーストタイプは のぞく。
 PsychicTerrain:
   name: サイコフィールド
+  description: 10びょうの あいだ、 じめんに いる ポケモンは、 ふつうの わざより じゅんびが はやく おわる わざを うけない。 エスパータイプの わざは 1.3ばいに なる。
 Lunge:
   name: とびかかる
+  description: かならず あいての こうげきを 1だん さげる。
 FireLash:
   name: ほのおのムチ
+  description: かならず あいての ぼうぎょを 1だん さげる。
 PowerTrip:
   name: つけあがる
+  description: じぶんの のうりょくランクが 1だん あがっている ごとに、 いりょくが 20 あがる。
 BurnUp:
   name: もえつきる
+  description: ほのおタイプしか つかえず、 つかった あと じぶんは ほのおタイプでは なくなる。
 SpeedSwap:
   name: スピードスワップ
+  description: フィールドを はなれるまで、 じぶんと あいての すばやさを いれかえる。
 SmartStrike:
   name: スマートホーン
+  description: かならず あたる。

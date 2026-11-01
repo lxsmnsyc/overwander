@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 PlayRough:
   name: じゃれつく
+  description: 10%の かくりつで あいての こうげきを 1だん さげる。
 FairyWind:
   name: ようせいのかぜ
+  description: はなれて ダメージを あたえる だけ。
 Moonblast:
   name: ムーンフォース
+  description: 30%の かくりつで あいての とくこうを 1だん さげる。
 Boomburst:
   name: ばくおんぱ
+  description: あいて ぜんいんと みかたに あたる。 おとの わざ。
 FairyLock:
   name: フェアリーロック
+  description: 2びょうの あいだ、 フィールドの だれも こうたい できなく なる。 ゴーストタイプは のぞく。
 KingsShield:
   name: キングシールド
+  description: 2びょうの あいだ、 じぶんへの ダメージを あたえる わざを すべて ふせぎ、 ふれた あいての こうげきを 1だん さげる。 へんかわざは とおる。 れんぞくで つかうと しっぱいする。
 PlayNice:
   name: なかよくする
+  description: あいての こうげきを 1だん さげる。 かならず あたる。
 Confide:
   name: ないしょばなし
+  description: あいての とくこうを 1だん さげる。 かならず あたる。 おとの わざ。
 DiamondStorm:
   name: ダイヤストーム
+  description: あいて ぜんいんに あたる。 50%の かくりつで じぶんの ぼうぎょを 2だん あげる。
 SteamEruption:
   name: スチームバースト
+  description: 30%の かくりつで やけどに する。
 HyperspaceHole:
   name: いじげんホール
+  description: まもると みきりを つらぬき、 その まもりを やぶり、 かならず あたる。
 WaterShuriken:
   name: みずしゅりけん
+  description: 2から 5かい こうげきする。 ふつうの わざより じゅんびが はやく おわる。
 MysticalFire:
   name: マジカルフレイム
+  description: かならず あいての とくこうを 1だん さげる。
 SpikyShield:
   name: ニードルガード
+  description: 2びょうの あいだ、 じぶんへの こうげきを すべて ふせぎ、 ふれた あいては HPの 1/8を うしなう。 れんぞくで つかうと しっぱいする。
 AromaticMist:
   name: アロマミスト
+  description: みかたの とくぼうを 1だん あげる。

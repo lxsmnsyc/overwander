@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 BabyDollEyes:
   name: Ojitos Tiernos
+  description: Baja 1 nivel el Ataque del objetivo. Se prepara más rápido que un movimiento normal.
 Nuzzle:
   name: Moflete Estático
+  description: Siempre paraliza.
 HoldBack:
   name: Clemencia
+  description: Siempre deja al objetivo con al menos 1 PS.
 Infestation:
   name: Acoso
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 PowerUpPunch:
   name: Puño Incremento
+  description: Siempre sube 1 nivel el Ataque del usuario.
 OblivionWing:
   name: Ala Mortífera
+  description: Restaura al usuario 3/4 del daño causado.
 ThousandArrows:
   name: Mil Flechas
+  description: Golpea a todos los rivales, alcanza a lo que esté en el aire y lo derriba al suelo.
 ThousandWaves:
   name: Mil Temblores
+  description: Golpea a todos los rivales, y ninguno puede ser cambiado durante 10 segundos, salvo los de tipo Fantasma.
 LandsWrath:
   name: Fuerza Telúrica
+  description: Golpea a todos los rivales.
 LightOfRuin:
   name: Luz Aniquiladora
+  description: El usuario recibe 1/2 del daño que causa.
 OriginPulse:
   name: Pulso Primigenio
+  description: Golpea a todos los rivales.
 PrecipiceBlades:
   name: Filo del Abismo
+  description: Golpea a todos los rivales.
 DragonAscent:
   name: Ascenso Draco
+  description: Baja 1 nivel la Defensa y la Defensa Esp. del usuario.
 HyperspaceFury:
   name: Cerco Dimensión
+  description: Atraviesa Protección y Detección, rompe la guardia y nunca falla. Baja 1 nivel la Defensa del usuario.

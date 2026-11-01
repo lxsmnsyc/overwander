@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 Entrainment:
   name: Danza Amiga
+  description: Sustituye las habilidades del objetivo por las del usuario.
 AfterYou:
   name: Cede Paso
+  description: Un aliado que se esté preparando lanza su movimiento de inmediato.
 Round:
   name: Canon
+  description: El doble de potencia si Canon de un aliado acertó en los últimos 2 segundos. Es un sonido.
 EchoedVoice:
   name: Eco Voz
+  description: Cada Eco Voz lanzado a menos de 2 segundos del anterior suma 40 de potencia, hasta 200. Es un sonido.
 ChipAway:
   name: Guardia Baja
+  description: Ignora los niveles de estadísticas del objetivo.
 ClearSmog:
   name: Niebla Clara
+  description: Nunca falla y restablece los niveles de estadísticas del objetivo.
 StoredPower:
   name: Poder Reserva
+  description: 20 de potencia más por cada nivel de estadísticas que haya subido el usuario.
 QuickGuard:
   name: Anticipo
+  description: Durante 2 segundos, se desvían del bando del usuario los movimientos que se preparan más rápido.
 AllySwitch:
   name: Cambio de Banda
+  description: El usuario intercambia su lugar con un aliado, y lo dirigido a cualquiera de los dos sigue el cambio.
 Scald:
   name: Escaldar
+  description: 30 % de probabilidad de quemar. Descongela al usuario y al objetivo.
 ShellSmash:
   name: Rompecoraza
+  description: Sube 2 niveles el Ataque, el Ataque Esp. y la Velocidad del usuario, y baja 1 nivel su Defensa y su Defensa Esp.
 HealPulse:
   name: Pulso Cura
+  description: Restaura 1/2 de los PS de un aliado.

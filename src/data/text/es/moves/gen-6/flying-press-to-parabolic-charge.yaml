@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 FlyingPress:
   name: Plancha Voladora
+  description: Cuenta como movimiento de tipo Lucha y de tipo Volador a la vez. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 MatBlock:
   name: Escudo Tatami
+  description: Durante 2 segundos, los movimientos que causan daño se desvían del bando del usuario. Solo una vez cada vez que entra al campo, compartida con Sorpresa.
 Belch:
   name: Eructo
+  description: Solo funciona si el usuario ha comido una baya en este combate.
 Rototiller:
   name: Fertilizante
+  description: Sube 1 nivel el Ataque y el Ataque Esp. de todos los tipos Planta que están en el suelo.
 StickyWeb:
   name: Red Viscosa
+  description: 'Teje una red sobre el bando contrario: lo que entre por un cambio y esté en el suelo pierde 1 nivel de Velocidad.'
 FellStinger:
   name: Aguijón Letal
+  description: Si debilita al objetivo, sube 3 niveles el Ataque del usuario.
 PhantomForce:
   name: Golpe Fantasma
+  description: Desaparece y luego golpea atravesando Protección y Detección, y rompe la guardia. Un Sustituto aún lo bloquea.
 TrickOrTreat:
   name: Halloween
+  description: Añade el tipo Fantasma a los tipos del objetivo, en lugar de lo que añadiera Condena Silvana.
 NobleRoar:
   name: Rugido de Guerra
+  description: Baja 1 nivel el Ataque y el Ataque Esp. del objetivo. Es un sonido.
 IonDeluge:
   name: Cortina Plasma
+  description: Durante 2 segundos, todo movimiento de tipo Normal que lance cualquiera se convierte en Eléctrico. Se prepara más rápido que un movimiento normal.
 ParabolicCharge:
   name: Carga Parábola
+  description: Golpea a todos los rivales y a los aliados del usuario, y restaura al usuario 1/2 del daño causado.

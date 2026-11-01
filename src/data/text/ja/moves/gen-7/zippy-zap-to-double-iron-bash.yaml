@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 ZippyZap:
   name: ばちばちアクセル
+  description: ふつうの わざより ずっと はやく じゅんびが おわり、 じぶんの かいひを 1だん あげる。
 SplishySplash:
   name: ざぶざぶサーフ
+  description: あいて ぜんいんに あたる。 30%の かくりつで まひに する。
 FloatyFall:
   name: ふわふわフォール
+  description: 30%の かくりつで ひるませる。
 PikaPapow:
   name: ピカピカサンダー
+  description: じぶんが きみに なついている ほど いりょくが あがる。 さいだい 102。 かならず あたる。
 BouncyBubble:
   name: いきいきバブル
+  description: あたえた ダメージと おなじ ぶん HPを かいふくする。
 BuzzyBuzz:
   name: びりびりエレキ
+  description: かならず まひに する。
 SizzlySlide:
   name: めらめらバーン
+  description: かならず やけどに する。
 GlitzyGlow:
   name: どばどばオーラ
+  description: あたると、 じぶんの がわに ひかりのかべを はる。
 BaddyBad:
   name: わるわるゾーン
+  description: あたると、 じぶんの がわに リフレクターを はる。
 SappySeed:
   name: すくすくボンバー
+  description: あたると、 あいてに やどりぎのタネを うえつける。
 FreezyFrost:
   name: こちこちフロスト
+  description: あたると、 フィールドの ぜんいんの のうりょくランクを もとに もどす。 じぶんも ふくむ。
 SparklySwirl:
   name: きらきらストーム
+  description: あたると、 じぶんの てもち ぜんいんの じょうたいいじょうを なおす。
 VeeveeVolley:
   name: ブイブイブレイク
+  description: じぶんが きみに なついている ほど いりょくが あがる。 さいだい 102。 かならず あたる。
 DoubleIronBash:
   name: ダブルパンツァー
+  description: 2かい こうげきする。 それぞれ 30%の かくりつで ひるませる。

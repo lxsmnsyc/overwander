@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 TripleDive:
   name: トリプルダイブ
+  description: 3かい こうげきする。
 MortalSpin:
   name: キラースピン
+  description: あいて ぜんいんに あたり、 どくに する。 じぶんの がわの わなを すべて とりのぞき、 バインドや やどりぎのタネから ぬけだす。
 Doodle:
   name: うつしえ
+  description: じぶんと みかたは、 じぶんの とくせいを あいての とくせいに うわがきする。
 FilletAway:
   name: みをけずる
+  description: じぶんの HPの 1/2を つかって、 こうげき、 とくこう、 すばやさを 2だん ずつ あげる。
 KowtowCleave:
   name: ドゲザン
+  description: かならず あたる。
 FlowerTrick:
   name: トリックフラワー
+  description: かならず あたり、 かならず きゅうしょに あたる。
 TorchSong:
   name: フレアソング
+  description: じぶんの とくこうを 1だん あげる。
 AquaStep:
   name: アクアステップ
+  description: じぶんの すばやさを 1だん あげる。
 RagingBull:
   name: レイジングブル
+  description: あいての がわの リフレクター、 ひかりのかべ、 オーロラベールを こわしてから こうげきする。 パルデアの ケンタロスが つかうと、 その すがたの タイプに なる。
 MakeItRain:
   name: ゴールドラッシュ
+  description: あいて ぜんいんに あたり、 ネコにこばんと おなじく おかねを ばらまき、 じぶんの とくこうを 1だん さげる。
 Psyblade:
   name: サイコブレイド
+  description: エレキフィールドの あいだは 1.5ばいに なる。
 HydroSteam:
   name: ハイドロスチーム
+  description: はれの ときは、 よわまらずに 1.5ばいに なる。
 Ruination:
   name: カタストロフィ
+  description: あいての のこりHPを はんぶんに する。
 CollisionCourse:
   name: アクセルブレイク
+  description: こうかばつぐんの あいてには 1.33ばいに なる。
 ElectroDrift:
   name: イナズマドライブ
+  description: こうかばつぐんの あいてには 1.33ばいに なる。

@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 FlyingPress:
   name: フライングプレス
+  description: かくとうタイプと ひこうタイプの りょうほうの わざとして あたる。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 MatBlock:
   name: たたみがえし
+  description: 2びょうの あいだ、 ダメージを あたえる わざを じぶんの がわから ふせぐ。 フィールドに でる たびに 1かい だけで、 ねこだましと きょうゆうする。
 Belch:
   name: ゲップ
+  description: このバトルで きのみを たべた あとでないと つかえない。
 Rototiller:
   name: たがやす
+  description: じめんに いる くさタイプ ぜんいんの こうげきと とくこうを 1だん ずつ あげる。
 StickyWeb:
   name: ねばねばネット
+  description: あいての がわに ネットを はる。 こうたいで でてきた じめんの ポケモンは すばやさが 1だん さがる。
 FellStinger:
   name: とどめばり
+  description: あいてを たおすと、 じぶんの こうげきが 3だん あがる。
 PhantomForce:
   name: ゴーストダイブ
+  description: すがたを けしてから こうげきし、 まもると みきりを つらぬいて その まもりを やぶる。 みがわりには ふせがれる。
 TrickOrTreat:
   name: ハロウィン
+  description: あいての タイプに ゴーストを くわえる。 もりののろいで くわえた タイプは なくなる。
 NobleRoar:
   name: おたけび
+  description: あいての こうげきと とくこうを 1だん ずつ さげる。 おとの わざ。
 IonDeluge:
   name: プラズマシャワー
+  description: 2びょうの あいだ、 だれが だす ノーマルタイプの わざも でんきタイプに なる。 ふつうの わざより じゅんびが はやく おわる。
 ParabolicCharge:
   name: パラボラチャージ
+  description: あいて ぜんいんと みかたに あたり、 あたえた ダメージの 1/2を HPとして かいふくする。

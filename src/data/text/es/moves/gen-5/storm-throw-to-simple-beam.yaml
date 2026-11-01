@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 StormThrow:
   name: Llave Corsé
+  description: Siempre es golpe crítico.
 FlameBurst:
   name: Pirotecnia
+  description: Sus salpicaduras queman a cada aliado del objetivo, que pierde 1/16 de sus PS.
 SludgeWave:
   name: Onda Tóxica
+  description: Golpea a todos los rivales y a los aliados del usuario. 10 % de probabilidad de envenenar.
 QuiverDance:
   name: Danza Aleteo
+  description: Sube 1 nivel el Ataque Esp., la Defensa Esp. y la Velocidad del usuario.
 HeavySlam:
   name: Cuerpo Pesado
+  description: 'Cuanto más pesado es el usuario que el objetivo, más fuerte golpea: 40 de potencia, hasta 120 con 5 veces el peso del objetivo. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.'
 Synchronoise:
   name: Sincrorruido
+  description: Golpea a todos los rivales y a los aliados del usuario, pero solo a los que comparten un tipo con él.
 ElectroBall:
   name: Bola Voltio
+  description: 'Cuanto más rápido es el usuario que el objetivo, más fuerte golpea: 40 de potencia, hasta 150 con 4 veces la Velocidad del objetivo.'
 Soak:
   name: Empapar
+  description: Convierte al objetivo en un tipo Agua puro.
 FlameCharge:
   name: Nitrocarga
+  description: Sube 1 nivel la Velocidad del usuario.
 Coil:
   name: Enrosque
+  description: Sube 1 nivel el Ataque, la Defensa y la Precisión del usuario.
 LowSweep:
   name: Puntapié
+  description: Baja 1 nivel la Velocidad del objetivo.
 AcidSpray:
   name: Bomba Ácida
+  description: Baja 2 niveles la Defensa Esp. del objetivo.
 FoulPlay:
   name: Juego Sucio
+  description: Golpea con el Ataque y los niveles de estadísticas del objetivo, no con los del usuario.
 SimpleBeam:
   name: Onda Simple
+  description: Cambia 1 de las habilidades del objetivo por Simple, así que sus niveles de estadísticas cuentan el doble.

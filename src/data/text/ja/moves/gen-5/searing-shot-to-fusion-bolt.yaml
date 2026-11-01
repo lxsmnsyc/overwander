@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 SearingShot:
   name: かえんだん
+  description: あいて ぜんいんと みかたに あたる。 30%の かくりつで やけどに する。
 TechnoBlast:
   name: テクノバスター
+  description: じぶんが もっている カセットの タイプに なる。 もっていないと ノーマルタイプ。
 RelicSong:
   name: いにしえのうた
+  description: あいて ぜんいんに あたる。 それぞれ 10%の かくりつで ねむらせる。 おとの わざ。
 SecretSword:
   name: しんぴのつるぎ
+  description: あいての とくぼうでは なく ぼうぎょで ダメージを けいさんする。
 Glaciate:
   name: こごえるせかい
+  description: あいて ぜんいんに あたり、 それぞれの すばやさを 1だん さげる。
 BoltStrike:
   name: らいげき
+  description: 20%の かくりつで まひに する。
 BlueFlare:
   name: あおいほのお
+  description: 20%の かくりつで やけどに する。
 FieryDance:
   name: ほのおのまい
+  description: 50%の かくりつで じぶんの とくこうを 1だん あげる。
 FreezeShock:
   name: フリーズボルト
+  description: じゅんびを してから こうげきする。 30%の かくりつで まひに する。
 IceBurn:
   name: コールドフレア
+  description: じゅんびを してから こうげきする。 30%の かくりつで やけどに する。
 Snarl:
   name: バークアウト
+  description: あいて ぜんいんに あたり、 それぞれの とくこうを 1だん さげる。 おとの わざ。
 IcicleCrash:
   name: つららおとし
+  description: 30%の かくりつで ひるませる。
 VCreate:
   name: Ｖジェネレート
+  description: じぶんの ぼうぎょ、 とくぼう、 すばやさを 1だん ずつ さげる。
 FusionFlare:
   name: クロスフレイム
+  description: 2びょう いないに どこかで クロスサンダーが あたっていると、 いりょくが 2ばいに なる。 じぶんの こおりが とける。
 FusionBolt:
   name: クロスサンダー
+  description: 2びょう いないに どこかで クロスフレイムが あたっていると、 いりょくが 2ばいに なる。

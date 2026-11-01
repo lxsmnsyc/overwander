@@ -2,71 +2,106 @@
 # Every other field is written by hand, and a rerun keeps it.
 BreakneckBlitz:
   name: ウルトラダッシュアタック
+  description: ノーマルＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 AllOutPummeling:
   name: ぜんりょくむそうげきれつけん
+  description: カクトウＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 SupersonicSkystrike:
   name: ファイナルダイブクラッシュ
+  description: ヒコウＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 AcidDownpour:
   name: アシッドポイズンデリート
+  description: ドクＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 TectonicRage:
   name: ライジングランドオーバー
+  description: ジメンＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 ContinentalCrush:
   name: ワールズエンドフォール
+  description: イワＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 SavageSpinOut:
   name: ぜったいほしょくかいてんざん
+  description: ムシＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 NeverEndingNightmare:
   name: むげんあんやへのいざない
+  description: ゴーストＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 CorkscrewCrash:
   name: ちょうぜつらせんれんげき
+  description: ハガネＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 InfernoOverdrive:
   name: ダイナミックフルフレイム
+  description: ホノオＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 HydroVortex:
   name: スーパーアクアトルネード
+  description: ミズＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 BloomDoom:
   name: ブルームシャインエクストラ
+  description: クサＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 GigavoltHavoc:
   name: スパーキングギガボルト
+  description: デンキＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 ShatteredPsyche:
   name: マキシマムサイブレイカー
+  description: エスパーＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 SubzeroSlammer:
   name: レイジングジオフリーズ
+  description: コオリＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 DevastatingDrake:
   name: アルティメットドラゴンバーン
+  description: ドラゴンＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 BlackHoleEclipse:
   name: ブラックホールイクリプス
+  description: アクＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 TwinkleTackle:
   name: ラブリースターインパクト
+  description: フェアリーＺの Ｚワザ。 いりょくと、 ぶつりか とくしゅかは、 かわりに なる もとの わざで きまる。
 Catastropika:
   name: ひっさつのピカチュート
+  description: ピカチュウ せんようの Ｚワザ。
 SinisterArrowRaid:
   name: シャドーアローズストライク
+  description: ジュナイパー せんようの Ｚワザ。
 MaliciousMoonsault:
   name: ハイパーダーククラッシャー
+  description: ガオガエン せんようの Ｚワザ。
 OceanicOperetta:
   name: わだつみのシンフォニア
+  description: アシレーヌ せんようの Ｚワザ。
 GuardianOfAlola:
   name: ガーディアン・デ・アローラ
+  description: あいての のこりHPの 3/4を うばう。 カプ せんようの Ｚワザ。
 SoulStealing7StarStrike:
   name: しちせいだっこんたい
+  description: マーシャドー せんようの Ｚワザ。
 StokedSparksurfer:
   name: ライトニングサーフライド
+  description: かならず まひに する。 アローラの ライチュウ せんようの Ｚワザ。
 PulverizingPancake:
   name: ほんきをだす　こうげき
+  description: カビゴン せんようの Ｚワザ。
 ExtremeEvoboost:
   name: ナインエボルブースト
+  description: じぶんの ステータスを ぜんぶ 2だん あげる。 イーブイ せんようの Ｚワザ。
 GenesisSupernova:
   name: オリジンズスーパーノヴァ
+  description: あとに サイコフィールドを つくる。 ミュウ せんようの Ｚワザ。
 TenMillionVoltThunderbolt:
   name: １０００まんボルト
+  description: きゅうしょに あたりやすい。 サトシの ぼうしを かぶった ピカチュウの Ｚワザ。
 LightThatBurnsTheSky:
   name: てんこがすめつぼうのひかり
+  description: じぶんの こうげきが たかい ときは ぶつりわざに なる。 あいての とくせいを むしする。 がったいした ネクロズマ せんようの Ｚワザ。
 SearingSunrazeSmash:
   name: サンシャインスマッシャー
+  description: あいての とくせいを むしする。 ソルガレオ せんようの Ｚワザ。
 MenacingMoonrazeMaelstrom:
   name: ムーンライトブラスター
+  description: あいての とくせいを むしする。 ルナアーラ せんようの Ｚワザ。
 LetsSnuggleForever:
   name: ぽかぼかフレンドタイム
+  description: ミミッキュ せんようの Ｚワザ。
 SplinteredStormshards:
   name: ラジアルエッジストーム
+  description: フィールドを なくす。 ルガルガン せんようの Ｚワザ。
 ClangorousSoulblaze:
   name: ブレイジングソウルビート
+  description: あいて ぜんいんに あたり、 そのあと じぶんの ステータスを ぜんぶ 1だん あげる。 ジャラランガ せんようの Ｚワザ。 おとの わざ。

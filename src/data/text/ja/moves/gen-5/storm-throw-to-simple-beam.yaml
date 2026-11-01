@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 StormThrow:
   name: やまあらし
+  description: かならず きゅうしょに あたる。
 FlameBurst:
   name: はじけるほのお
+  description: はじけた ほのおが、 あいての みかた それぞれの HPの 1/16を もやす。
 SludgeWave:
   name: ヘドロウェーブ
+  description: あいて ぜんいんと みかたに あたる。 10%の かくりつで どくに する。
 QuiverDance:
   name: ちょうのまい
+  description: じぶんの とくこう、 とくぼう、 すばやさを 1だん ずつ あげる。
 HeavySlam:
   name: ヘビーボンバー
+  description: あいてより じぶんが おもい ほど いりょくが あがる。 いりょく 40から、 じぶんが あいての 5ばい おもいと 120まで。 ちいさくなるを つかった あいてには かならず あたり、 ダメージが 2ばいに なる。
 Synchronoise:
   name: シンクロノイズ
+  description: あいて ぜんいんと みかたに あたるが、 じぶんと おなじ タイプの ものだけ。
 ElectroBall:
   name: エレキボール
+  description: あいてより じぶんが はやい ほど いりょくが あがる。 いりょく 40から、 じぶんが あいての 4ばい はやいと 150まで。
 Soak:
   name: みずびたし
+  description: あいてを みずタイプだけに する。
 FlameCharge:
   name: ニトロチャージ
+  description: じぶんの すばやさを 1だん あげる。
 Coil:
   name: とぐろをまく
+  description: じぶんの こうげき、 ぼうぎょ、 めいちゅうを 1だん ずつ あげる。
 LowSweep:
   name: ローキック
+  description: あいての すばやさを 1だん さげる。
 AcidSpray:
   name: アシッドボム
+  description: あいての とくぼうを 2だん さげる。
 FoulPlay:
   name: イカサマ
+  description: じぶんでは なく、 あいての こうげきと のうりょくランクを つかって ダメージを あたえる。
 SimpleBeam:
   name: シンプルビーム
+  description: あいての とくせいの 1つを たんじゅんに かえ、 のうりょくランクの こうかが 2ばいに なる。

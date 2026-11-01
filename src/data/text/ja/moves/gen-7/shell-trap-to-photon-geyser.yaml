@@ -2,37 +2,55 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShellTrap:
   name: トラップシェル
+  description: じゅんびが ながく、 ぶつりわざを うけた ときだけ すぐに はつどうする。 あいて ぜんいんに あたる。
 FleurCannon:
   name: フルールカノン
+  description: あたった あと、 じぶんの とくこうが 2だん さがる。
 PsychicFangs:
   name: サイコファング
+  description: あいての がわの リフレクターと ひかりのかべを こわしてから かみつく。
 StompingTantrum:
   name: じだんだ
+  description: じぶんの さいごの わざが しっぱいしていると、 ダメージが 2ばいに なる。
 ShadowBone:
   name: シャドーボーン
+  description: 20%の かくりつで あいての ぼうぎょを 1だん さげる。
 Accelerock:
   name: アクセルロック
+  description: ふつうの わざより じゅんびが はやく おわる。
 Liquidation:
   name: アクアブレイク
+  description: 20%の かくりつで あいての ぼうぎょを 1だん さげる。
 PrismaticLaser:
   name: プリズムレーザー
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 SpectralThief:
   name: シャドースチール
+  description: あたる まえに、 あいてが あげた のうりょくランクを すべて うばう。
 SunsteelStrike:
   name: メテオドライブ
+  description: あいての とくせいを むしする。
 MoongeistBeam:
   name: シャドーレイ
+  description: あいての とくせいを むしする。
 TearfulLook:
   name: なみだめ
+  description: あいての こうげきと とくこうを 1だん ずつ さげる。 まもりでは ふせげない。
 ZingZap:
   name: びりびりちくちく
+  description: 30%の かくりつで ひるませる。
 NaturesMadness:
   name: しぜんのいかり
+  description: あいての のこりHPを はんぶんに する。
 MultiAttack:
   name: マルチアタック
+  description: もっている メモリの タイプで くりだす。
 MindBlown:
   name: ビックリヘッド
+  description: あいて ぜんいんと みかたに あたるが、 じぶんは HPの 1/2を うしなう。
 PlasmaFists:
   name: プラズマフィスト
+  description: これから 2びょうの あいだ、 だされる ノーマルタイプの わざは すべて でんきタイプに なる。
 PhotonGeyser:
   name: フォトンゲイザー
+  description: じぶんの こうげきが たかい ときは ぶつりわざに なる。 あいての とくせいを むしする。

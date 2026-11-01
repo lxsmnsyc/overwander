@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 DualChop:
   name: Golpe Bis
+  description: Golpea 2 veces.
 HeartStamp:
   name: Arrumaco
+  description: 30 % de probabilidad de amedrentar.
 HornLeech:
   name: Asta Drenaje
+  description: Restaura al usuario 1/2 del daño causado.
 SacredSword:
   name: Espada Santa
+  description: Ignora los niveles de estadísticas del objetivo.
 RazorShell:
   name: Concha Filo
+  description: 50 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 HeatCrash:
   name: Golpe Calor
+  description: 'Cuanto más pesado es el usuario que el objetivo, más fuerte golpea: 40 de potencia, hasta 120 con 5 veces el peso del objetivo. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.'
 LeafTornado:
   name: Ciclón de Hojas
+  description: 50 % de probabilidad de bajar 1 nivel la Precisión del objetivo.
 Steamroller:
   name: Rodillo de Púas
+  description: 30 % de probabilidad de amedrentar. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 CottonGuard:
   name: Rizo Algodón
+  description: Sube 3 niveles la Defensa del usuario.
 NightDaze:
   name: Pulso Noche
+  description: 40 % de probabilidad de bajar 1 nivel la Precisión del objetivo.
 Psystrike:
   name: Onda Mental
+  description: Calcula el daño con la Defensa del objetivo, no con su Defensa Esp.
 TailSlap:
   name: Plumerazo
+  description: Golpea de 2 a 5 veces.
 Hurricane:
   name: Vendaval
+  description: 30 % de probabilidad de confundir. No falla con lluvia, baja al 50 % de precisión con sol y alcanza a lo que esté en el aire.
 HeadCharge:
   name: Ariete
+  description: El usuario recibe 1/4 del daño que causa.
 GearGrind:
   name: Rueda Doble
+  description: Golpea 2 veces.

@@ -2,37 +2,55 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShellTrap:
   name: Coraza Trampa
+  description: Tiene una preparación larga y solo se activa, de inmediato, cuando un movimiento físico golpea al usuario. Golpea a todos los rivales.
 FleurCannon:
   name: Cañón Floral
+  description: Tras acertar, baja 2 niveles el Ataque Esp. del usuario.
 PsychicFangs:
   name: Psicocolmillo
+  description: Rompe Reflejo y Pantalla de Luz del bando del objetivo, y luego muerde.
 StompingTantrum:
   name: Pataleta
+  description: El doble de daño si el último movimiento del usuario falló.
 ShadowBone:
   name: Hueso Sombrío
+  description: 20 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 Accelerock:
   name: Roca Veloz
+  description: Se prepara más rápido que un movimiento normal.
 Liquidation:
   name: Hidroariete
+  description: 20 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 PrismaticLaser:
   name: Láser Prisma
+  description: Tras acertar, el usuario debe recargar durante 2 segundos.
 SpectralThief:
   name: Robasombra
+  description: Antes de golpear, roba todos los niveles de estadísticas que haya subido el objetivo.
 SunsteelStrike:
   name: Meteoimpacto
+  description: Ignora las habilidades del objetivo.
 MoongeistBeam:
   name: Rayo Umbrío
+  description: Ignora las habilidades del objetivo.
 TearfulLook:
   name: Ojos Llorosos
+  description: Baja 1 nivel el Ataque y el Ataque Esp. del objetivo. Las guardias no lo detienen.
 ZingZap:
   name: Electropunzada
+  description: 30 % de probabilidad de amedrentar.
 NaturesMadness:
   name: Furia Natural
+  description: Reduce a la mitad los PS que le queden al objetivo.
 MultiAttack:
   name: Multiataque
+  description: Se usa con el tipo del Disco que lleve el usuario.
 MindBlown:
   name: Cabeza Sorpresa
+  description: Golpea a todos los rivales y a los aliados del usuario, y le cuesta 1/2 de sus PS al usuario.
 PlasmaFists:
   name: Puños Plasma
+  description: Todo movimiento de tipo Normal lanzado en los próximos 2 segundos se convierte en Eléctrico.
 PhotonGeyser:
   name: Géiser Fotónico
+  description: Es físico si el Ataque del usuario es mayor. Ignora las habilidades del objetivo.

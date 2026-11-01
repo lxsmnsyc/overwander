@@ -2,13 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 Pluck:
   name: ついばむ
+  description: あいての きのみを たべて、 あいてが うけるはずの こうかを うける。
 Tailwind:
   name: おいかぜ
+  description: 6びょうの あいだ、 じぶんの がわ ぜんいんの すばやさが 2ばいに なる。
 Acupressure:
   name: つぼをつく
+  description: じぶんか みかたの のうりょくを ランダムに 1つ えらび、 2だん あげる。
 MetalBurst:
   name: メタルバースト
+  description: わざで さいごに うけた ダメージの 1.5ばいを、 こうげきした あいてに かえす。 だれにも うたれて いないと しっぱいする。
 UTurn:
   name: とんぼがえり
+  description: あたった あと、 じぶんは みかたと こうたいする。
 CloseCombat:
   name: インファイト
+  description: じぶんの ぼうぎょと とくぼうが 1だん ずつ さがる。

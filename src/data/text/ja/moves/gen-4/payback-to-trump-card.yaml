@@ -2,13 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 Payback:
   name: しっぺがえし
+  description: この 2びょうの うちに あいてが わざを だしはじめて いれば いりょくが 2ばいに なる。
 Assurance:
   name: ダメおし
+  description: この 2びょうの うちに あいてが ダメージを うけて いれば いりょくが 2ばいに なる。
 Embargo:
   name: さしおさえ
+  description: 10びょうの あいだ、 あいては もちものを つかえない。
 Fling:
   name: なげつける
+  description: もっている もちものを なげる。 きのみは いりょく 10、 ほかは 60。 もちものは なくなる。
 PsychoShift:
   name: サイコシフト
+  description: じぶんの じょうたいいじょうを あいてに うつし、 じぶんは なおる。
 TrumpCard:
   name: きりふだ
+  description: この バトルで だした ぶんだけ つぎの いりょくが あがり、 40から 200まで。

@@ -2,43 +2,64 @@
 # Every other field is written by hand, and a rerun keeps it.
 OdorSleuth:
   name: かぎわける
+  description: あいての かいひと、 ノーマルと かくとうに たいする めんえきが なくなる。
 RockTomb:
   name: がんせきふうじ
+  description: かならず あいての すばやさを 1だん さげる。
 SilverWind:
   name: ぎんいろのかぜ
+  description: 10%の かくりつで じぶんの ステータスを ぜんぶ 1だん あげる。
 MetalSound:
   name: きんぞくおん
+  description: あいての とくぼうを 2だん さげる。 おとの わざ。
 GrassWhistle:
   name: くさぶえ
+  description: あいてを ねむらせる。 おとの わざ。
 Tickle:
   name: くすぐる
+  description: あいての こうげきと ぼうぎょを 1だん ずつ さげる。
 CosmicPower:
   name: コスモパワー
+  description: じぶんの ぼうぎょと とくぼうを 1だん ずつ あげる。
 WaterSpout:
   name: しおふき
+  description: のこりHPが おおい ほど いりょくが あがる。 さいだい 150。
 SignalBeam:
   name: シグナルビーム
+  description: 10%の かくりつで こんらんさせる。
 ShadowPunch:
   name: シャドーパンチ
+  description: かならず あたる。
 Extrasensory:
   name: じんつうりき
+  description: 10%の かくりつで ひるませる。
 SkyUppercut:
   name: スカイアッパー
+  description: そらに いる ポケモンにも とどく。
 SandTomb:
   name: すなじごく
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 SheerCold:
   name: ぜったいれいど
+  description: あいてを いちげきで ひんしに する。 あたる かくりつは 30%。
 MuddyWater:
   name: だくりゅう
+  description: あいて ぜんいんに あたる。 30%の かくりつで あいての めいちゅうを 1だん さげる。
 BulletSeed:
   name: タネマシンガン
+  description: 2から 5かい こうげきする。
 AerialAce:
   name: つばめがえし
+  description: かならず あたる。
 IcicleSpear:
   name: つららばり
+  description: 2から 5かい こうげきする。
 IronDefense:
   name: てっぺき
+  description: じぶんの ぼうぎょを 2だん あげる。
 Block:
   name: とおせんぼう
+  description: 10びょうの あいだ、 あいてを こうたい できなく する。 ゴーストタイプは のぞく。
 Howl:
   name: とおぼえ
+  description: じぶんの こうげきを 1だん あげる。 おとの わざ。

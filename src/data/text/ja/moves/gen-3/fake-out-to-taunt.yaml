@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 FakeOut:
   name: ねこだまし
+  description: かならず ひるませる。 フィールドに でる たびに 1かい だけ。
 Uproar:
   name: さわぐ
+  description: おなじ こうげきを 3かい くりかえす。 さわいでいる あいだ、 だれも ねむれない。 おとの わざ。
 Stockpile:
   name: たくわえる
+  description: 3かいに わけて 3つ ためる。 じぶんの ぼうぎょと とくぼうが 1だん ずつ あがる。
 SpitUp:
   name: はきだす
+  description: たくわえるで ためた ぶんを つかう。 1つに つき いりょく 100。 ためて いないと なにも おきない。
 Swallow:
   name: のみこむ
+  description: たくわえるで ためた ぶんを つかい、 じぶんの HPを 1/4、 1/2、 または ぜんぶ かいふくする。
 HeatWave:
   name: ねっぷう
+  description: あいて ぜんいんに あたる。 10%の かくりつで やけどに する。
 Torment:
   name: いちゃもん
+  description: 10びょうの あいだ、 あいては おなじ わざを つづけて だせない。
 Flatter:
   name: おだてる
+  description: あいてを こんらんさせ、 とくこうを 1だん あげる。
 WillOWisp:
   name: おにび
+  description: あてた あいてを かならず やけどに する。
 Memento:
   name: おきみやげ
+  description: あいての こうげきと とくこうを 2だん ずつ さげる。 じぶんは ひんしに なる。
 Facade:
   name: からげんき
+  description: じぶんが やけど、 どく、 まひの あいだは いりょくが 2ばいに なる。
 FocusPunch:
   name: きあいパンチ
+  description: じゅんびが ながい。 あたる まえに うたれると、 パンチは だせなく なる。
 SmellingSalts:
   name: きつけ
+  description: まひ している あいてには いりょくが 2ばいに なり、 まひも なおす。
 FollowMe:
   name: このゆびとまれ
+  description: 4びょうの あいだ、 じぶんの がわへ むけた ひとりを ねらう わざは すべて じぶんに あつまる。
 NaturePower:
   name: しぜんのちから
+  description: あしもとの ちけいに あった わざを だす。
 Charge:
   name: じゅうでん
+  description: じぶんの とくぼうを 1だん あげ、 つぎの でんきタイプの わざは 2ばいに なる。
 Taunt:
   name: ちょうはつ
+  description: 10びょうの あいだ、 あいては ダメージを あたえる わざしか だせない。

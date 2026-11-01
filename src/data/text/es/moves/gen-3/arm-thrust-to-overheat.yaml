@@ -2,49 +2,73 @@
 # Every other field is written by hand, and a rerun keeps it.
 ArmThrust:
   name: Empujón
+  description: Golpea de 2 a 5 veces.
 Camouflage:
   name: Camuflaje
+  description: El usuario adopta el tipo del terreno que pisa.
 TailGlow:
   name: Luminicola
+  description: Sube 3 niveles el Ataque Esp. del usuario.
 LusterPurge:
   name: Resplandor
+  description: 50 % de probabilidad de bajar 1 nivel la Defensa Esp. del objetivo.
 MistBall:
   name: Bola Neblina
+  description: 50 % de probabilidad de bajar 1 nivel el Ataque Esp. del objetivo.
 FeatherDance:
   name: Danza Pluma
+  description: Baja 2 niveles el Ataque del objetivo.
 TeeterDance:
   name: Danza Caos
+  description: Confunde a todos los demás del campo, incluido su propio bando.
 BlazeKick:
   name: Patada Ígnea
+  description: Más probabilidad de golpe crítico. 10 % de probabilidad de quemar.
 MudSport:
   name: Chapoteo Lodo
+  description: Durante 10 segundos, los movimientos de tipo Eléctrico hacen 1/2 de daño.
 IceBall:
   name: Bola Hielo
+  description: Rueda 5 veces, y cada pasada tiene el doble de potencia que la anterior. Rizo Defensa la duplica de nuevo.
 NeedleArm:
   name: Brazo Pincho
+  description: 30 % de probabilidad de amedrentar.
 SlackOff:
   name: Relajo
+  description: Restaura 1/2 de los PS del usuario.
 HyperVoice:
   name: Vozarrón
+  description: Golpea a todos los rivales. Es un sonido.
 PoisonFang:
   name: Colmillo Veneno
+  description: 50 % de probabilidad de envenenar gravemente.
 CrushClaw:
   name: Garra Brutal
+  description: 50 % de probabilidad de bajar 1 nivel la Defensa del objetivo.
 BlastBurn:
   name: Anillo Ígneo
+  description: Después, el usuario debe recargar durante 2 segundos.
 HydroCannon:
   name: Hidrocañón
+  description: Después, el usuario debe recargar durante 2 segundos.
 MeteorMash:
   name: Puño Meteoro
+  description: 20 % de probabilidad de subir 1 nivel el Ataque del usuario.
 Astonish:
   name: Impresionar
+  description: 30 % de probabilidad de amedrentar.
 WeatherBall:
   name: Meteorobola
+  description: Con sol, lluvia, tormenta de arena, granizo o nieve hace x2 de daño y adopta el tipo del clima.
 Aromatherapy:
   name: Aromaterapia
+  description: Cura quemaduras, envenenamiento, parálisis, sueño y congelación de todo el equipo del usuario.
 FakeTears:
   name: Llanto Falso
+  description: Baja 2 niveles la Defensa Esp. del objetivo.
 AirCutter:
   name: Aire Afilado
+  description: Golpea a todos los rivales. Más probabilidad de golpe crítico.
 Overheat:
   name: Sofoco
+  description: Tras acertar, baja 2 niveles el Ataque Esp. del usuario.

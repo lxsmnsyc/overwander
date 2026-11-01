@@ -2,17 +2,25 @@
 # Every other field is written by hand, and a rerun keeps it.
 GrassKnot:
   name: くさむすび
+  description: あいての おもさで いりょくが かわる。 10kg みまんは 20、 200kg いじょうで 120まで あがる。
 Chatter:
   name: おしゃべり
+  description: かならず こんらんさせる。
 Judgment:
   name: さばきのつぶて
+  description: もたせた プレートの タイプで はなつ。
 BugBite:
   name: むしくい
+  description: あいての きのみを たべて、 その こうかを うける。
 ChargeBeam:
   name: チャージビーム
+  description: 70%の かくりつで じぶんの とくこうを 1だん あげる。
 WoodHammer:
   name: ウッドハンマー
+  description: あたえた ダメージの 1/3を じぶんも うける。
 AquaJet:
   name: アクアジェット
+  description: ふつうの わざより じゅんびが はやく おわる。
 AttackOrder:
   name: こうげきしれい
+  description: きゅうしょに あたりやすい。

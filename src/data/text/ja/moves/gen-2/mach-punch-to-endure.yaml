@@ -2,41 +2,61 @@
 # Every other field is written by hand, and a rerun keeps it.
 MachPunch:
   name: マッハパンチ
+  description: ふつうの わざより じゅんびが はやく おわる。
 ScaryFace:
   name: こわいかお
+  description: あいての すばやさを 2だん さげる。
 FeintAttack:
   name: だましうち
+  description: かならず あたる。
 SweetKiss:
   name: てんしのキッス
+  description: あいてを こんらんさせる。
 BellyDrum:
   name: はらだいこ
+  description: じぶんの HPの 1/2を つかって、 こうげきを さいだいまで あげる。
 SludgeBomb:
   name: ヘドロばくだん
+  description: 30%の かくりつで どくに する。
 MudSlap:
   name: どろかけ
+  description: かならず あいての めいちゅうを 1だん さげる。
 Octazooka:
   name: オクタンほう
+  description: 50%の かくりつで あいての めいちゅうを 1だん さげる。
 Spikes:
   name: まきびし
+  description: まきびしを まく。 あいての がわに こうたいで でてきた ポケモンは HPの 1/8を うしなう。 2かさねで 1/6、 3かさねで 1/4。
 ZapCannon:
   name: でんじほう
+  description: あてた あいてを かならず まひに する。
 Foresight:
   name: みやぶる
+  description: あいての かいひと、 ノーマルと かくとうに たいする めんえきが なくなる。
 DestinyBond:
   name: みちづれ
+  description: 4びょうの あいだ、 じぶんを たおした あいては いっしょに ひんしに なる。
 PerishSong:
   name: ほろびのうた
+  description: きいた ぜんいんが 8びょうごに ひんしに なる。 さきに こうたいすれば まぬがれる。
 IcyWind:
   name: こごえるかぜ
+  description: あいて ぜんいんに あたり、 かならず すばやさを 1だん さげる。
 Detect:
   name: みきり
+  description: 2びょうの あいだ、 じぶんへの こうげきを すべて ふせぐ。 れんぞくで つかうと しっぱいする。
 BoneRush:
   name: ボーンラッシュ
+  description: 2から 5かい こうげきする。
 LockOn:
   name: ロックオン
+  description: 4びょうの あいだ、 じぶんの つぎの わざは あいてに かならず あたる。
 Outrage:
   name: げきりん
+  description: おなじ こうげきを 3かい くりかえし、 おわると じぶんが こんらんする。
 GigaDrain:
   name: ギガドレイン
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 Endure:
   name: こらえる
+  description: 2びょうの あいだ、 じぶんの HPは 1より さがらない。 れんぞくで つかうと しっぱいする。

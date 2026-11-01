@@ -2,15 +2,22 @@
 # Every other field is written by hand, and a rerun keeps it.
 CrossPoison:
   name: Veneno X
+  description: Más probabilidad de golpe crítico. 10 % de probabilidad de envenenar.
 GunkShot:
   name: Lanzamugre
+  description: 30 % de probabilidad de envenenar.
 IronHead:
   name: Cabeza de Hierro
+  description: 30 % de probabilidad de amedrentar.
 MagnetBomb:
   name: Bomba Imán
+  description: Nunca falla.
 StoneEdge:
   name: Roca Afilada
+  description: Más probabilidad de golpe crítico.
 Captivate:
   name: Seducción
+  description: Baja 2 niveles el Ataque Esp. del objetivo, pero solo si es del sexo opuesto.
 StealthRock:
   name: Trampa Rocas
+  description: 'Cuelga rocas sobre el bando contrario: lo que entre pierde 1/8 de sus PS, el doble o la mitad según cómo reciba un movimiento de tipo Roca.'

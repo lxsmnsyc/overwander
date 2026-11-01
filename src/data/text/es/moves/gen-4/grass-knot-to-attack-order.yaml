@@ -2,17 +2,25 @@
 # Every other field is written by hand, and a rerun keeps it.
 GrassKnot:
   name: Hierba Lazo
+  description: 'Su potencia depende del peso del objetivo: 20 por debajo de 10 kg, hasta 120 con 200 kg o más.'
 Chatter:
   name: Cháchara
+  description: Siempre confunde.
 Judgment:
   name: Sentencia
+  description: Se lanza con el tipo de la Tabla que lleve el usuario.
 BugBite:
   name: Picadura
+  description: Se come la baya del objetivo y obtiene el efecto que esta tenga.
 ChargeBeam:
   name: Rayo Carga
+  description: 70 % de probabilidad de subir 1 nivel el Ataque Esp. del usuario.
 WoodHammer:
   name: Mazazo
+  description: El usuario recibe 1/3 del daño que causa.
 AquaJet:
   name: Acua Jet
+  description: Se prepara más rápido que un movimiento normal.
 AttackOrder:
   name: Al Ataque
+  description: Más probabilidad de golpe crítico.

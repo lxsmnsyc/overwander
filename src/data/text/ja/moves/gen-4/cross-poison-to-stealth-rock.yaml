@@ -2,15 +2,22 @@
 # Every other field is written by hand, and a rerun keeps it.
 CrossPoison:
   name: クロスポイズン
+  description: きゅうしょに あたりやすい。 10%の かくりつで どくに する。
 GunkShot:
   name: ダストシュート
+  description: 30%の かくりつで どくに する。
 IronHead:
   name: アイアンヘッド
+  description: 30%の かくりつで ひるませる。
 MagnetBomb:
   name: マグネットボム
+  description: かならず あたる。
 StoneEdge:
   name: ストーンエッジ
+  description: きゅうしょに あたりやすい。
 Captivate:
   name: ゆうわく
+  description: ぎゃくの せいべつの あいてだけ、 とくこうを 2だん さげる。
 StealthRock:
   name: ステルスロック
+  description: あいての がわに いしを つるす。 こうたいで でてきた ポケモンは HPの 1/8を うしない、 いわタイプの わざの うけかたで 2ばいか はんぶんに なる。

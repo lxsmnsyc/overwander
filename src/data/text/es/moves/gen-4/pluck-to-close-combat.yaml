@@ -2,13 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 Pluck:
   name: Picoteo
+  description: Se come la baya del objetivo y obtiene el efecto que habría tenido este.
 Tailwind:
   name: Viento Afín
+  description: x2 de Velocidad para todo el bando del usuario durante 6 segundos.
 Acupressure:
   name: Acupresión
+  description: Sube 2 niveles 1 estadística del usuario o de un aliado, elegida al azar.
 MetalBurst:
   name: Represión Metal
+  description: Devuelve x1,5 el último golpe recibido de un movimiento, contra quien lo asestó. Falla si nada ha golpeado al usuario.
 UTurn:
   name: Ida y Vuelta
+  description: Tras acertar, el usuario se cambia por un aliado.
 CloseCombat:
   name: A Bocajarro
+  description: Baja 1 nivel la Defensa y la Defensa Esp. del usuario.

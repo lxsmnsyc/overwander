@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 Sketch:
   name: スケッチ
+  description: あいてが さいごに つかった わざを スケッチと いれかえて、 ずっと おぼえる。
 TripleKick:
   name: トリプルキック
+  description: 3かい けり、 1かい ごとに つよく なる。
 Thief:
   name: どろぼう
+  description: じぶんが なにも もっていないと、 あいての もちものを うばう。
 SpiderWeb:
   name: クモのす
+  description: 10びょうの あいだ、 あいてを こうたい できなく する。 ゴーストタイプは のぞく。 ダメージは あたえない。
 MindReader:
   name: こころのめ
+  description: 4びょうの あいだ、 じぶんの つぎの わざは あいてに かならず あたる。
 Nightmare:
   name: あくむ
+  description: ねむっている あいては、 こうどうしようと する たびに HPの 1/4を うしなう。
 FlameWheel:
   name: かえんぐるま
+  description: 10%の かくりつで やけどに する。 だすと、 じぶんの こおりが とける。
 Snore:
   name: いびき
+  description: じぶんが ねむっている ときだけ つかえる。 30%の かくりつで ひるませる。 おとの わざ。
 Curse:
   name: のろい
+  description: ゴーストタイプは HPの 1/2を つかい、 こうどうの たびに あいての HPの 1/4を うばう。 ほかの タイプは すばやさを 1だん さげて、 こうげきと ぼうぎょを 1だん ずつ あげる。
 Flail:
   name: じたばた
+  description: のこりHPが すくない ほど いりょくが あがる。 さいだい 200。
 Conversion2:
   name: テクスチャー２
+  description: あいてが さいごに つかった わざに たいせいの ある タイプに なる。
 Aeroblast:
   name: エアロブラスト
+  description: きゅうしょに あたりやすい。
 CottonSpore:
   name: わたほうし
+  description: あいて ぜんいんの すばやさを 2だん さげる。 ほうしの わざ なので、 くさタイプには きかない。
 Reversal:
   name: きしかいせい
+  description: のこりHPが すくない ほど いりょくが あがる。 さいだい 200。
 Spite:
   name: うらみ
+  description: あいてが さいごに つかった わざの まちじかんを 4ばいに する。
 PowderSnow:
   name: こなゆき
+  description: あいて ぜんいんに あたる。 10%の かくりつで こおりに する。
 Protect:
   name: まもる
+  description: 2びょうの あいだ、 じぶんへの こうげきを すべて ふせぐ。 れんぞくで つかうと しっぱいする。

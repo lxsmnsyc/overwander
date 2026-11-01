@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 FlashCannon:
   name: ラスターカノン
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。
 RockClimb:
   name: ロッククライム
+  description: 20%の かくりつで こんらんさせる。
 Defog:
   name: きりばらい
+  description: りょうほうの がわの まきびし、 どくびし、 ステルスロックと、 あいての がわの リフレクター、 ひかりのかべ、 しろいきり、 しんぴのまもり、 おまじないを とりのぞく。 あいての かいひを 1だん さげる。
 TrickRoom:
   name: トリックルーム
+  description: 10びょうの あいだ、 フィールドの じゅんびの はやさが ぎゃくに なる。 もういちど だすと おわる。
 DracoMeteor:
   name: りゅうせいぐん
+  description: あたった あと、 じぶんの とくこうが 2だん さがる。
 Discharge:
   name: ほうでん
+  description: 30%の かくりつで まひに する。
 LavaPlume:
   name: ふんえん
+  description: 30%の かくりつで やけどに する。
 LeafStorm:
   name: リーフストーム
+  description: あたった あと、 じぶんの とくこうが 2だん さがる。
 PowerWhip:
   name: パワーウィップ
+  description: ふれて ダメージを あたえる だけ。
 RockWrecker:
   name: がんせきほう
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。

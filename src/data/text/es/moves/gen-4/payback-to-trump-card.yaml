@@ -2,13 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 Payback:
   name: Vendetta
+  description: x2 de potencia si el objetivo ha empezado un lanzamiento en los últimos 2 segundos.
 Assurance:
   name: Buena Baza
+  description: x2 de potencia si el objetivo ya ha recibido daño en los últimos 2 segundos.
 Embargo:
   name: Embargo
+  description: El objetivo no puede usar su objeto durante 10 segundos.
 Fling:
   name: Lanzamiento
+  description: 'Lanza el objeto que lleva el usuario: 10 de potencia si es una baya, 60 si es otra cosa. El objeto se pierde después.'
 PsychoShift:
   name: Psicocambio
+  description: Pasa el estado del usuario al objetivo, y así el usuario se cura.
 TrumpCard:
   name: As Oculto
+  description: Cada uno que se juega en este combate hace más fuerte el siguiente golpe, de 40 a 200 de potencia.

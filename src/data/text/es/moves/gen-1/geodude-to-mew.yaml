@@ -2,89 +2,133 @@
 # Every other field is written by hand, and a rerun keeps it.
 RockThrow:
   name: Lanzarrocas
+  description: Solo daño.
 SelfDestruct:
   name: Autodestrucción
+  description: Golpea a todos los rivales y a los aliados del usuario, y le cuesta 200 PS al usuario.
 Explosion:
   name: Explosión
+  description: Golpea a todos los rivales y a los aliados del usuario, y le cuesta 250 PS al usuario.
 Stomp:
   name: Pisotón
+  description: 30 % de probabilidad de amedrentar. No falla contra un objetivo que haya usado Reducción, y le hace x2 de daño.
 Headbutt:
   name: Golpe Cabeza
+  description: 30 % de probabilidad de amedrentar.
 SonicBoom:
   name: Bomba Sónica
+  description: Causa siempre 20 de daño.
 TriAttack:
   name: Triataque
+  description: 20 % de probabilidad de quemar, congelar o paralizar, repartida a partes iguales entre los tres.
 AuroraBeam:
   name: Rayo Aurora
+  description: 10 % de probabilidad de bajar 1 nivel el Ataque del objetivo.
 PoisonGas:
   name: Gas Venenoso
+  description: Envenena al objetivo.
 Sludge:
   name: Residuos
+  description: 30 % de probabilidad de envenenar.
 Clamp:
   name: Tenaza
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 SpikeCannon:
   name: Clavo Cañón
+  description: Golpea de 2 a 5 veces.
 Lick:
   name: Lengüetazo
+  description: 30 % de probabilidad de paralizar.
 NightShade:
   name: Tinieblas
+  description: Causa un daño igual al nivel del usuario, sin importar las estadísticas.
 DreamEater:
   name: Comesueños
+  description: Solo funciona con un objetivo dormido. Restaura al usuario 1/2 del daño causado.
 Bind:
   name: Atadura
+  description: 'Atrapa al objetivo: pierde 1/8 de sus PS cada 2 segundos durante 8 segundos y no puede escapar, salvo si es de tipo Fantasma.'
 Meditate:
   name: Meditación
+  description: Sube 1 nivel el Ataque del usuario.
 ViceGrip:
   name: Agarre
+  description: Solo daño por contacto.
 Guillotine:
   name: Guillotina
+  description: Quita todos los PS del objetivo, con 30 % de precisión. Robustez lo anula.
 Crabhammer:
   name: Martillazo
+  description: Más probabilidad de golpe crítico.
 Barrage:
   name: Bombardeo
+  description: Golpea de 2 a 5 veces.
 EggBomb:
   name: Bomba Huevo
+  description: Solo daño.
 BoneClub:
   name: Hueso Palo
+  description: 10 % de probabilidad de amedrentar.
 Bonemerang:
   name: Huesomerang
+  description: Golpea 2 veces.
 CometPunch:
   name: Puño Cometa
+  description: Golpea de 2 a 5 veces.
 FirePunch:
   name: Puño Fuego
+  description: 10 % de probabilidad de quemar.
 IcePunch:
   name: Puño Hielo
+  description: 10 % de probabilidad de congelar.
 ThunderPunch:
   name: Puño Trueno
+  description: 10 % de probabilidad de paralizar.
 RollingKick:
   name: Patada Giro
+  description: 30 % de probabilidad de amedrentar.
 JumpKick:
   name: Patada Salto
+  description: Si falla, el usuario pierde 1/2 de sus PS.
 HiJumpKick:
   name: Patada Salto Alta
+  description: Si falla, el usuario pierde 1/2 de sus PS.
 Smog:
   name: Polución
+  description: 40 % de probabilidad de envenenar.
 SmokeScreen:
   name: Pantalla de Humo
+  description: Baja 1 nivel la Precisión del objetivo.
 DizzyPunch:
   name: Puño Mareo
+  description: 20 % de probabilidad de confundir.
 Waterfall:
   name: Cascada
+  description: 20 % de probabilidad de amedrentar.
 LovelyKiss:
   name: Beso Amoroso
+  description: Duerme al objetivo.
 Splash:
   name: Salpicadura
+  description: No hace absolutamente nada.
 Mist:
   name: Neblina
+  description: Durante 10 segundos, nadie más puede bajar un nivel de estadísticas del bando del usuario.
 Transform:
   name: Transformación
+  description: Copia el aspecto, los tipos, las estadísticas (salvo los PS), los niveles y los movimientos del objetivo hasta que el usuario abandone el campo.
 AcidArmor:
   name: Armadura Ácida
+  description: Sube 2 niveles la Defensa del usuario.
 Sharpen:
   name: Afilar
+  description: Sube 1 nivel el Ataque del usuario.
 Conversion:
   name: Conversión
+  description: El usuario adopta el tipo del primer movimiento que lleva y pierde los tipos que tenía.
 Kinesis:
   name: Kinético
+  description: Baja 1 nivel la Precisión del objetivo.
 SoftBoiled:
   name: Ovocuración
+  description: Restaura 1/2 de los PS del usuario o de un Pokémon del equipo.

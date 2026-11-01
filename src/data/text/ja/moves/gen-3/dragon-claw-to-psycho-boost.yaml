@@ -2,37 +2,55 @@
 # Every other field is written by hand, and a rerun keeps it.
 DragonClaw:
   name: ドラゴンクロー
+  description: ふれて ダメージを あたえる だけ。
 FrenzyPlant:
   name: ハードプラント
+  description: つかった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 BulkUp:
   name: ビルドアップ
+  description: じぶんの こうげきと ぼうぎょを 1だん ずつ あげる。
 Bounce:
   name: とびはねる
+  description: そらをとぶ のように とびあがって とどかなく なり、 そのあと あいてに おちてくる。 30%の かくりつで まひに する。
 MudShot:
   name: マッドショット
+  description: かならず あいての すばやさを 1だん さげる。
 PoisonTail:
   name: ポイズンテール
+  description: きゅうしょに あたりやすい。 10%の かくりつで どくに する。
 Covet:
   name: ほしがる
+  description: じぶんが なにも もっていないと、 あいての もちものを うばう。
 VoltTackle:
   name: ボルテッカー
+  description: あたえた ダメージの 1/3を じぶんも うける。 10%の かくりつで まひに する。
 MagicalLeaf:
   name: マジカルリーフ
+  description: かならず あたる。
 WaterSport:
   name: みずあそび
+  description: 10びょうの あいだ、 ほのおタイプの わざの ダメージが 1/2に なる。
 CalmMind:
   name: めいそう
+  description: じぶんの とくこうと とくぼうを 1だん ずつ あげる。
 LeafBlade:
   name: リーフブレード
+  description: きゅうしょに あたりやすい。
 DragonDance:
   name: りゅうのまい
+  description: じぶんの こうげきと すばやさを 1だん ずつ あげる。
 RockBlast:
   name: ロックブラスト
+  description: 2から 5かい こうげきする。
 ShockWave:
   name: でんげきは
+  description: かならず あたる。
 WaterPulse:
   name: みずのはどう
+  description: 20%の かくりつで こんらんさせる。
 DoomDesire:
   name: はめつのねがい
+  description: だしてから 4びょう あとに、 そのとき あいてが いる ばしょに あたる。
 PsychoBoost:
   name: サイコブースト
+  description: あたった あと、 じぶんの とくこうが 2だん さがる。

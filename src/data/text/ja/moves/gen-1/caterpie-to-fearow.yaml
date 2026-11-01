@@ -2,57 +2,85 @@
 # Every other field is written by hand, and a rerun keeps it.
 StringShot:
   name: いとをはく
+  description: あいて ぜんいんの すばやさを 2だん さげる。
 Harden:
   name: かたくなる
+  description: じぶんの ぼうぎょを 1だん あげる。
 Confusion:
   name: ねんりき
+  description: 10%の かくりつで こんらんさせる。
 StunSpore:
   name: しびれごな
+  description: あいてを まひに する。 こなの わざ なので、 くさタイプには きかない。
 Supersonic:
   name: ちょうおんぱ
+  description: あいてを こんらんさせる。 おとの わざ。
 Whirlwind:
   name: ふきとばし
+  description: あいてを フィールドから ふきとばし、 あいての みかたで いちばん よわい ポケモンを ひきずりだす。 だすのに じかんが かかる。
 Psybeam:
   name: サイケこうせん
+  description: 10%の かくりつで こんらんさせる。
 Psychic:
   name: サイコキネシス
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。
 Psywave:
   name: サイコウェーブ
+  description: じぶんの レベルの 0.5ばいから 1.5ばいの ダメージを あたえる。
 Teleport:
   name: テレポート
+  description: じぶんを いちばん つよい みかたと いれかえる。 だすのに じかんが かかる。
 Flash:
   name: フラッシュ
+  description: あいての めいちゅうを 1だん さげる。
 PoisonSting:
   name: どくばり
+  description: 30%の かくりつで どくに する。
 FuryAttack:
   name: みだれづき
+  description: 0.25びょうごとに 2から 5かい こうげきする。
 FocusEnergy:
   name: きあいだめ
+  description: フィールドを はなれるまで、 じぶんは きゅうしょに とても あたりやすく なる。
 Twineedle:
   name: ダブルニードル
+  description: 2かい こうげきする。 それぞれ 20%の かくりつで どくに する。
 PinMissile:
   name: ミサイルばり
+  description: 2から 5かい こうげきする。
 Agility:
   name: こうそくいどう
+  description: じぶんの すばやさを 2だん あげる。
 Gust:
   name: かぜおこし
+  description: そらをとぶ や とびはねる で そらに いる あいてには 2ばい。
 SandAttack:
   name: すなかけ
+  description: あいての めいちゅうを 1だん さげる。
 QuickAttack:
   name: でんこうせっか
+  description: ふつうの わざより じゅんびが はやく おわる。
 WingAttack:
   name: つばさでうつ
+  description: ふれて ダメージを あたえる だけ。
 MirrorMove:
   name: オウムがえし
+  description: あいてが さいごに つかった わざを あいてに かえす。
 RazorWind:
   name: かまいたち
+  description: じゅんびを してから はなつ。 きゅうしょに あたりやすい。
 SkyAttack:
   name: ゴッドバード
+  description: じゅんびを してから とびこむ。 きゅうしょに あたりやすく、 30%の かくりつで ひるませる。
 HyperFang:
   name: ひっさつまえば
+  description: 10%の かくりつで ひるませる。
 SuperFang:
   name: いかりのまえば
+  description: あいての のこりHPを はんぶんに する。
 Peck:
   name: つつく
+  description: ふれて ダメージを あたえる だけ。
 DrillPeck:
   name: ドリルくちばし
+  description: ふれて ダメージを あたえる だけ。

@@ -2,7 +2,10 @@
 # Every other field is written by hand, and a rerun keeps it.
 HealBlock:
   name: かいふくふうじ
+  description: 10びょうの あいだ、 あいては かいふく できない。
 WringOut:
   name: しぼりとる
+  description: あいての のこりHPが おおい ほど いりょくが あがる。 さいだい 120。
 PowerTrick:
   name: パワートリック
+  description: じぶんの こうげきと ぼうぎょを いれかえる。

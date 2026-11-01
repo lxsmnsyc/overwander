@@ -2,47 +2,70 @@
 # Every other field is written by hand, and a rerun keeps it.
 Pound:
   name: はたく
+  description: ふれて ダメージを あたえる だけ。
 Sing:
   name: うたう
+  description: あいてを ねむらせる。 おとの わざ。
 DoubleSlap:
   name: おうふくビンタ
+  description: 2から 5かい こうげきする。
 Minimize:
   name: ちいさくなる
+  description: じぶんの かいひを 2だん あげるが、 のしかかりと ふみつけは かならず あたり、 ダメージが 2ばいに なる。
 Metronome:
   name: ゆびをふる
+  description: わざを ランダムに だす。 ゆびをふる、 オウムがえし、 スケッチ、 だれも おぼえない 3つの わざは のぞく。
 DefenseCurl:
   name: まるくなる
+  description: じぶんの ぼうぎょを 1だん あげる。
 LightScreen:
   name: ひかりのかべ
+  description: 10びょうの あいだ、 じぶんの がわが うける とくしゅダメージを 1/3 へらす。
 Roar:
   name: ほえる
+  description: あいてを フィールドから ふきとばし、 あいての みかたで いちばん よわい ポケモンを ひきずりだす。 だすのに じかんが かかる。 おとの わざ。
 ConfuseRay:
   name: あやしいひかり
+  description: あいてを こんらんさせる。
 Disable:
   name: かなしばり
+  description: あいてが いま つかっている か さいごに つかった わざを 8びょうの あいだ つかえなく する。 だしている さいちゅうの わざは ちゅうだんされる。
 LeechLife:
   name: きゅうけつ
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 Haze:
   name: くろいきり
+  description: フィールドの ぜんいんの のうりょくランクを もとに もどす。 じぶんも ふくむ。
 Absorb:
   name: すいとる
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 PetalDance:
   name: はなびらのまい
+  description: おなじ こうげきを 3かい くりかえし、 おわると じぶんが こんらんする。
 Spore:
   name: キノコのほうし
+  description: あいてを ねむらせる。 ほうしの わざ なので、 くさタイプには きかない。
 KarateChop:
   name: からてチョップ
+  description: きゅうしょに あたりやすい。
 Hypnosis:
   name: さいみんじゅつ
+  description: あいてを ねむらせる。
 Amnesia:
   name: ドわすれ
+  description: じぶんの とくぼうを 2だん あげる。
 Recover:
   name: じこさいせい
+  description: じぶんの HPを 1/2 かいふくする。
 LowKick:
   name: けたぐり
+  description: あいての おもさで いりょくが かわる。 10kg みまんは 20、 200kg いじょうで 120まで あがる。
 Slam:
   name: たたきつける
+  description: ふれて ダメージを あたえる だけ。
 Constrict:
   name: からみつく
+  description: 10%の かくりつで あいての すばやさを 1だん さげる。
 Barrier:
   name: バリアー
+  description: じぶんの ぼうぎょを 2だん あげる。

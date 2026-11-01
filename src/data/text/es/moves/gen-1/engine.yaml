@@ -2,3 +2,6 @@
 # Every other field is written by hand, and a rerun keeps it.
 Struggle:
   name: Forcejeo
+  description: Se usa cuando todos los movimientos están anulados. Nada lo resiste y cuesta 1/4 de los PS del usuario.
+Attack:
+  description: Un golpe débil hecho con lo que sea el usuario, para los huecos mientras los movimientos de verdad se recargan.

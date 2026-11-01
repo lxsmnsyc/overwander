@@ -2,11 +2,16 @@
 # Every other field is written by hand, and a rerun keeps it.
 Roost:
   name: Respiro
+  description: Restaura 1/2 de los PS máximos. Durante 2 segundos su tipo Volador no cuenta en las relaciones de tipos, aunque los movimientos de tipo Tierra siguen fallando.
 Gravity:
   name: Gravedad
+  description: Durante 10 segundos, los movimientos de tipo Tierra golpean a los tipo Volador y a todo lo que tenga Levitación.
 MiracleEye:
   name: Gran Ojo
+  description: Los movimientos de tipo Psíquico golpean al objetivo aunque sea de tipo Siniestro, y su Evasión deja de contar.
 WakeUpSlap:
   name: Espabila
+  description: x2 de potencia contra un objetivo dormido, y lo despierta.
 HammerArm:
   name: Machada
+  description: Baja 1 nivel la Velocidad del usuario.

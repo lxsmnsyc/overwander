@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 BugBuzz:
   name: むしのさざめき
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。
 DragonPulse:
   name: りゅうのはどう
+  description: はなれて ダメージを あたえる だけ。
 DragonRush:
   name: ドラゴンダイブ
+  description: 20%の かくりつで ひるませる。
 PowerGem:
   name: パワージェム
+  description: はなれて ダメージを あたえる だけ。
 DrainPunch:
   name: ドレインパンチ
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 VacuumWave:
   name: しんくうは
+  description: ふつうの わざより じゅんびが はやく おわる。
 FocusBlast:
   name: きあいだま
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。
 EnergyBall:
   name: エナジーボール
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。
 BraveBird:
   name: ブレイブバード
+  description: あたえた ダメージの 1/3を じぶんも うける。
 EarthPower:
   name: だいちのちから
+  description: 10%の かくりつで あいての とくぼうを 1だん さげる。

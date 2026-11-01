@@ -2,15 +2,22 @@
 # Every other field is written by hand, and a rerun keeps it.
 WorrySeed:
   name: なやみのタネ
+  description: あいての とくせいの うち 1つを ふみんに かえる。 ねむらせる ことが できなく なる。
 SuckerPunch:
   name: ふいうち
+  description: ダメージを あたえる わざを だしている あいてにしか あたらない。
 ToxicSpikes:
   name: どくびし
+  description: あいての がわに でてきた、 じめんに いる ポケモンを どくに する。 2かさねで もうどくに なる。 じめんに いる どくタイプが でてくると とりのぞかれる。
 HeartSwap:
   name: ハートスワップ
+  description: じぶんの ランクを ぜんぶ あいてと いれかえる。
 AquaRing:
   name: アクアリング
+  description: じぶんが こうどうする たびに、 さいだいHPの 1/16を かいふくする。
 MagnetRise:
   name: でんじふゆう
+  description: 10びょうの あいだ、 じぶんは じめんから うくので、 じめんタイプの わざは あたらない。
 FlareBlitz:
   name: フレアドライブ
+  description: あたえた ダメージの 1/3を じぶんも うける。 10%の かくりつで やけどに する。

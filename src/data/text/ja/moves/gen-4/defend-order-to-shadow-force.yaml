@@ -2,27 +2,40 @@
 # Every other field is written by hand, and a rerun keeps it.
 DefendOrder:
   name: ぼうぎょしれい
+  description: じぶんの ぼうぎょと とくぼうを 1だん ずつ あげる。
 HealOrder:
   name: かいふくしれい
+  description: じぶんの HPを 1/2 かいふくする。
 HeadSmash:
   name: もろはのずつき
+  description: あたえた ダメージの 1/2を じぶんも うける。
 DoubleHit:
   name: ダブルアタック
+  description: 2かい こうげきする。
 RoarOfTime:
   name: ときのほうこう
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 SpacialRend:
   name: あくうせつだん
+  description: きゅうしょに あたりやすい。
 LunarDance:
   name: みかづきのまい
+  description: じぶんは ひんしに なり、 フィールドの みかたの HPが ぜんかいふくし、 じょうたいいじょうが なおり、 すべての わざが すぐ だせる ように なる。
 CrushGrip:
   name: にぎりつぶす
+  description: HPが まんたんの あいてに いちばん つよく、 よわった あいてには ほとんど きかない。
 MagmaStorm:
   name: マグマストーム
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 DarkVoid:
   name: ダークホール
+  description: あいてを ねむらせる。
 SeedFlare:
   name: シードフレア
+  description: 40%の かくりつで あいての とくぼうを 2だん さげる。
 OminousWind:
   name: あやしいかぜ
+  description: 10%の かくりつで じぶんの ステータスを ぜんぶ 1だん あげる。
 ShadowForce:
   name: シャドーダイブ
+  description: すがたを けしてから こうげきし、 まもると みきりを つらぬいて その まもりを やぶる。 みがわりには ふせがれる。

@@ -2,17 +2,25 @@
 # Every other field is written by hand, and a rerun keeps it.
 GastroAcid:
   name: Bilis
+  description: Anula 1 de las habilidades del objetivo, elegida al azar, durante el resto del combate.
 LuckyChant:
   name: Conjuro
+  description: Durante 10 segundos, nada puede asestar un golpe crítico al bando del usuario.
 MeFirst:
   name: Yo Primero
+  description: Interrumpe el movimiento que lanza el objetivo y lo dispara de vuelta con x1,5 de potencia.
 Copycat:
   name: Copión
+  description: Lanza el último movimiento que haya usado cualquiera.
 PowerSwap:
   name: Cambiafuerza
+  description: Intercambia los niveles de Ataque y Ataque Esp. del usuario con los del objetivo.
 GuardSwap:
   name: Cambiadefensa
+  description: Intercambia los niveles de Defensa y Defensa Esp. del usuario con los del objetivo.
 Punishment:
   name: Castigo
+  description: Cuantos más niveles haya subido el objetivo, más fuerte golpea, hasta 200 de potencia.
 LastResort:
   name: Última Baza
+  description: Solo se puede usar tras haber lanzado en este combate todos los demás movimientos que conoce el usuario.

@@ -8,3 +8,5 @@
 - Lists joined in sentences keep their English joiners as messages (`catch_and`, `catch_or`, `dex_fossil_and`) so English reads exactly as before.
 - Left English (not owned, registry text for batch 8 or 9): stat names (`STAT_NAMES` is a plain `stringTable`; there is no `text/ja/stats.yaml`, though the brief says stat names follow the locale), biome, time-of-day and spawn-rarity names, encounter type names, lair titles, feat descriptions, family names, species categories, item and ability descriptions.
 - Checks after extraction: typecheck passes, lint exits 0, `test/i18n` fails only on the missing ja and es keys, `test/game` and `test/components` pass.
+- Translation: ja and es for all 580 keys. Japanese conditions for evolving are noun phrases after しんかの じょうけん:, joined with 、. Spanish counts that can be one are plural messages (candy, steps, gaps, the bulk toasts, seen and caught). Term list extended: official terms for the catch sheet, bag pockets, regions and move categories, plus the engine's own (signature ability, Default box, slot, cooldown, relic, Dojo Master).
+- `test/i18n` passes (37 tests).

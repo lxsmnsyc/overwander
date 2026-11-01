@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 TeraBlast:
   name: テラバースト
-  description: とくしゅダメージを あたえる だけ。
+  description: ノーマルタイプの とくしゅわざ。 テラスタルした あとは じぶんの テラスタイプに なり、 のうりょくランクを ふくめて こうげきが とくこうより たかい ときは ぶつりわざに なる。
 SilkTrap:
   name: スレッドトラップ
   description: 2びょうの あいだ、 じぶんへの ダメージを あたえる わざを すべて ふせぎ、 ふれた あいての すばやさを 1だん さげる。 へんかわざは とおる。 れんぞくで つかうと しっぱいする。

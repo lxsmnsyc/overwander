@@ -29,4 +29,4 @@ BrutalSwing:
   description: Golpea a todos los rivales y a los aliados del usuario.
 AuroraVeil:
   name: Velo Aurora
-  description: Durante 10 segundos, reduce 1/3 el daño físico y especial contra el bando del usuario. Falla salvo con granizo o nieve.
+  description: Durante 10 segundos, reduce en 1/3 el daño físico y especial contra el bando del usuario. Falla salvo con granizo o nieve.

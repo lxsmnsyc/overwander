@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShedTail:
   name: Autotomía
-  description: Gasta 1/2 de los PS del usuario en un sustituto y se cambia por su aliado más fuerte, que se queda detrás de él.
+  description: Gasta 1/2 de los PS del usuario en un sustituto y se cambia por su aliado más fuerte, que se queda detrás del sustituto.
 ChillyReception:
   name: Fría Acogida
   description: Provoca nieve y luego el usuario se cambia por su aliado más fuerte.

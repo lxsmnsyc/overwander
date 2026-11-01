@@ -32,7 +32,7 @@ AlluringVoice:
   description: 2びょう いないに ステータスが あがった あいてを こんらんさせる。
 TemperFlare:
   name: やけっぱち
-  description: じぶんの さいごの わざが しっぱいしていると、 ダメージが 2ばいに なる。
+  description: じぶんの さいごの わざが しっぱいしていると、 いりょくが 2ばいに なる。
 SupercellSlam:
   name: サンダーダイブ
   description: はずすと、 じぶんの HPの 1/2を うしなう。

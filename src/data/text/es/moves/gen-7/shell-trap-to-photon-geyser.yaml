@@ -11,7 +11,7 @@ PsychicFangs:
   description: Rompe Reflejo y Pantalla de Luz del bando del objetivo, y luego muerde.
 StompingTantrum:
   name: Pataleta
-  description: El doble de daño si el último movimiento del usuario falló.
+  description: El doble de potencia si el último movimiento del usuario falló.
 ShadowBone:
   name: Hueso Sombrío
   description: 20 % de probabilidad de bajar 1 nivel la Defensa del objetivo.

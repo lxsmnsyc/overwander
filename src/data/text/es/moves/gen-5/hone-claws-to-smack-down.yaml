@@ -26,7 +26,7 @@ Autotomize:
   description: Sube 2 niveles la Velocidad del usuario y lo hace 100 kg más ligero.
 RagePowder:
   name: Polvo Ira
-  description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del usuario se desvía hacia él. Los tipos Planta y los Pokémon inmunes a los polvos apuntan sin desviarse.
+  description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del usuario se desvía hacia él. Los movimientos de los Pokémon de tipo Planta y de los inmunes a los polvos no se desvían.
 Telekinesis:
   name: Telequinesis
   description: Mantiene al objetivo en el aire durante 6 segundos, y nada de lo dirigido a él falla.

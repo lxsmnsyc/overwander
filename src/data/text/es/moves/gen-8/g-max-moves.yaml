@@ -5,7 +5,7 @@ GMaxVineLash:
 GMaxWildfire:
   description: 'Movimiento de tipo Fuego de Charizard Gigamax, tan fuerte como el movimiento al que sustituye. Quema a todos los rivales que no son de tipo Fuego: pierden 1/6 de sus PS cada 2 segundos durante 8 segundos.'
 GMaxCannonade:
-  description: 'Movimiento de tipo Agua de Blastoise Gigamax, tan fuerte como el movimiento al que sustituye. Bombardea a todos los rivales que no son de tipo Agua: pierden 1/6 de sus PS cada 2 segundos durante 8 segundos.'
+  description: 'Movimiento de tipo Agua de Blastoise Gigamax, tan fuerte como el movimiento al que sustituye. Cañonea a todos los rivales que no son de tipo Agua: pierden 1/6 de sus PS cada 2 segundos durante 8 segundos.'
 GMaxBefuddle:
   description: Movimiento de tipo Bicho de Butterfree Gigamax, tan fuerte como el movimiento al que sustituye. Envenena, paraliza o duerme a todos los rivales.
 GMaxVoltCrash:
@@ -13,7 +13,7 @@ GMaxVoltCrash:
 GMaxGoldRush:
   description: Movimiento de tipo Normal de Meowth Gigamax, tan fuerte como el movimiento al que sustituye. Confunde a todos los rivales y esparce monedas como hace Día de Pago.
 GMaxChiStrike:
-  description: Movimiento de tipo Lucha de Machamp Gigamax, tan fuerte como el movimiento al que sustituye. Sube 1 nivel la probabilidad de golpe crítico de todo el bando del usuario, hasta 3, hasta que cada uno abandone el campo.
+  description: Movimiento de tipo Lucha de Machamp Gigamax, tan fuerte como el movimiento al que sustituye. Sube 1 nivel la probabilidad de golpe crítico de todo el bando del usuario, con un máximo de 3, hasta que cada uno abandone el campo.
 GMaxTerror:
   description: Movimiento de tipo Fantasma de Gengar Gigamax, tan fuerte como el movimiento al que sustituye. Ningún rival puede huir ni ser cambiado.
 GMaxFoamBurst:
@@ -63,6 +63,6 @@ GMaxSteelsurge:
 GMaxDepletion:
   description: Movimiento de tipo Dragón de Duraludon Gigamax, tan fuerte como el movimiento al que sustituye. Multiplica por 4 la recarga del último movimiento de todos los rivales.
 GMaxOneBlow:
-  description: Movimiento de tipo Siniestro de Urshifu Estilo Brusco Gigamax, tan fuerte como el movimiento al que sustituye. Atraviesa Protección y cualquier otra guardia.
+  description: Movimiento de tipo Siniestro de Urshifu Gigamax de Estilo Brusco, tan fuerte como el movimiento al que sustituye. Atraviesa Protección y cualquier otra guardia.
 GMaxRapidFlow:
-  description: Movimiento de tipo Agua de Urshifu Estilo Fluido Gigamax, tan fuerte como el movimiento al que sustituye. Atraviesa Protección y cualquier otra guardia.
+  description: Movimiento de tipo Agua de Urshifu Gigamax de Estilo Fluido, tan fuerte como el movimiento al que sustituye. Atraviesa Protección y cualquier otra guardia.

@@ -5,7 +5,7 @@ ShoreUp:
   description: Restaura 1/2 de los PS del usuario, o 2/3 con tormenta de arena.
 FirstImpression:
   name: Escaramuza
-  description: Se prepara mucho más rápido que un movimiento normal. Solo una vez cada vez que entra al campo.
+  description: Se prepara mucho más rápido que un movimiento normal. Solo se puede usar una vez por entrada al campo.
 BanefulBunker:
   name: Búnker
   description: Bloquea todo lo dirigido al usuario durante 2 segundos, y envenena lo que lo toque. Falla si se usa dos veces seguidas.

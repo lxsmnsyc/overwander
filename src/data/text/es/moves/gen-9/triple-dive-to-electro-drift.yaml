@@ -5,7 +5,7 @@ TripleDive:
   description: Golpea 3 veces.
 MortalSpin:
   name: Giro Mortífero
-  description: Golpea a todos los rivales y los envenena, elimina todas las trampas del bando del usuario y libera al usuario de una atadura o de Drenadoras.
+  description: Golpea a todos los rivales y los envenena, elimina todas las trampas del bando del usuario y libera al usuario de lo que lo atrape y de Drenadoras.
 Doodle:
   name: Decalcomanía
   description: El usuario y sus aliados adoptan las habilidades del objetivo en lugar de las suyas.

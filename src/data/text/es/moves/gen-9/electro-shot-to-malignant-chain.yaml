@@ -32,7 +32,7 @@ AlluringVoice:
   description: Confunde a un objetivo cuyas estadísticas subieron en los últimos 2 segundos.
 TemperFlare:
   name: Cólera Ardiente
-  description: El doble de daño si el último movimiento del usuario falló.
+  description: El doble de potencia si el último movimiento del usuario falló.
 SupercellSlam:
   name: Plancha Voltaica
   description: Si falla, el usuario pierde 1/2 de sus PS.

@@ -5,7 +5,7 @@ FlyingPress:
   description: Cuenta como movimiento de tipo Lucha y de tipo Volador a la vez. No falla contra un objetivo que haya usado Reducción, y le hace el doble de daño.
 MatBlock:
   name: Escudo Tatami
-  description: Durante 2 segundos, los movimientos que causan daño se desvían del bando del usuario. Solo una vez cada vez que entra al campo, compartida con Sorpresa.
+  description: Durante 2 segundos, los movimientos que causan daño se desvían del bando del usuario. Solo se puede usar una vez por entrada al campo, y comparte ese límite con Sorpresa.
 Belch:
   name: Eructo
   description: Solo funciona si el usuario ha comido una baya en este combate.

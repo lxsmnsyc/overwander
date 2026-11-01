@@ -13,13 +13,15 @@
 
 ## English changed
 
+- Tera Blast: takes the user's Tera type once Terastallized, physical when Attack beats Special Attack (stages included).
+- Stomping Tantrum, Temper Flare: "2x power if the user's last move failed."
 - Misty Explosion: "Hits everything opposite and the user's teammates, and costs the user 100 HP. 1.5x on Misty Terrain." (the engine charges the user the move's power, like Explosion).
 - Electric and Ice Z-Move lines: "An Electric", "An Ice".
 
 ## Stubs left
 
-- Hangry is ハラペコもよう / Forma Voraz until a registry text names Morpeko's forms.
-- "Gigantamax Alcremie" and the other G-Max lines name species without a form; the Hisuian and Alolan forms read "ヒスイの ウインディ", "Arcanine de Hisui", as the forms have no ja or es name of their own.
+- Hangry is はらぺこもよう / Forma Voraz until a registry text names Morpeko's forms.
+- Regional forms read ヒスイのすがたの ウインディ, Arcanine de Hisui (the official form name), and a breed is the しゅ of its type.
 - Spanish for the frenzy burst ("estallido") and the Pledge swamp ("pantano") are unreviewed wordings.
 
 ## Gotchas

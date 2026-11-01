@@ -2,7 +2,7 @@
 # Every other field is written by hand, and a rerun keeps it.
 TeraBlast:
   name: Teraexplosión
-  description: Solo daño especial.
+  description: Daño especial de tipo Normal. Tras teracristalizarse, adopta el teratipo del usuario, y es físico si el Ataque del usuario supera a su Ataque Esp., con los niveles de estadísticas incluidos.
 SilkTrap:
   name: Telatrampa
   description: Bloquea todos los movimientos de daño dirigidos al usuario durante 2 segundos, y baja 1 nivel la Velocidad de lo que lo toque. Los movimientos de estado pasan. Falla si se usa dos veces seguidas.

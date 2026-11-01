@@ -1,7 +1,8 @@
 import type { JSX } from 'solid-js';
 import AtlasSprite from './AtlasSprite';
 import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
-import { MOVE_CATEGORY_NAMES, MoveCategories } from '../../data/ids/moves';
+import { MoveCategories } from '../../data/ids/moves';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Which of the three kinds a move is, drawn the way the series draws
@@ -25,6 +26,13 @@ const PICTURES: Record<MoveCategories, string> = {
   [MoveCategories.Status]: 'move-status',
 };
 
+/** What each category is called, in the player's language */
+export const MOVE_CATEGORY_LABELS: Record<MoveCategories, () => string> = {
+  [MoveCategories.Physical]: m.move_category_physical,
+  [MoveCategories.Special]: m.move_category_special,
+  [MoveCategories.Status]: m.move_category_status,
+};
+
 /**
  * How wide the badge is drawn. The sheet cuts them at 32x14, so this
  * is one to one — a pixel badge drawn at any other size is a smudge
@@ -44,7 +52,7 @@ export default function MoveCategorySprite(props: MoveCategorySpriteProps): JSX.
       sheet={SHEET}
       name={PICTURES[props.category]}
       size={props.size ?? WIDTH}
-      label={MOVE_CATEGORY_NAMES[props.category]}
+      label={MOVE_CATEGORY_LABELS[props.category]()}
       class={props.class}
     />
   );

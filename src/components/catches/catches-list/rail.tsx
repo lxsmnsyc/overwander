@@ -3,6 +3,7 @@ import { BOX_LIMIT } from '../../../model/box-record';
 import { ClockIcon, GripIcon, PlusIcon, SearchIcon } from '../../icons';
 import { Meta } from '../../styled';
 import BoxForm from './box-form';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * The boxes down the side: Default first, then the player's own in
@@ -121,17 +122,17 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
   /** What the hint at the foot of the rail says */
   const hint = (): string | null => {
     if (props.counting) {
-      return 'While searching all boxes, each count is how many match there.';
+      return m.catch_rail_counting();
     }
     if (props.picked > 0) {
-      return `Or drag the ${props.picked} onto a box.`;
+      return m.catch_rail_drag_picked({ count: props.picked });
     }
-    return 'Drag a pokemon onto a box to file it.';
+    return m.catch_rail_drag();
   };
 
   return (
     <nav
-      aria-label="Boxes"
+      aria-label={m.panel_boxes()}
       class="flex shrink-0 gap-1.5 overflow-x-auto pb-1 sm:w-60 sm:flex-col sm:self-stretch
         sm:overflow-x-visible sm:rounded-2xl sm:bg-line-soft/60 sm:p-3"
     >
@@ -141,10 +142,10 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
           py-1.5 sm:flex"
       >
         <SearchIcon class="size-4 shrink-0 text-muted" aria-hidden="true" />
-        <span class="sr-only">Find a box</span>
+        <span class="sr-only">{m.catch_rail_find()}</span>
         <input
           type="text"
-          placeholder="Find a box"
+          placeholder={m.catch_rail_find()}
           value={find()}
           onInput={(event) => {
             setFind(event.currentTarget.value);
@@ -229,7 +230,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
       {/* On a phone the header has no room for New box, so it ends the chips */}
       <button
         type="button"
-        aria-label="New box"
+        aria-label={m.catch_box_new()}
         class="flex shrink-0 cursor-pointer items-center justify-center rounded-full border-2
           border-dashed border-line bg-paper px-3 text-tide-dark sm:hidden"
         onClick={props.onStartMake}
@@ -240,8 +241,12 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
       <Show when={props.making}>
         <div class="flex w-64 shrink-0 flex-col gap-1 sm:w-auto">
           <BoxForm
-            heading={props.makingWith > 0 ? `New box with these ${props.makingWith}` : 'New box'}
-            verb="Make it"
+            heading={
+              props.makingWith > 0
+                ? m.catch_rail_new_with({ count: props.makingWith })
+                : m.catch_box_new()
+            }
+            verb={m.catch_box_make_it()}
             busy={props.busy}
             onSubmit={props.onMake}
             onCancel={props.onCancelMake}
@@ -265,7 +270,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
         >
           <span class="flex items-center gap-2">
             <ClockIcon class="size-4" aria-hidden="true" />
-            Let go today
+            {m.catch_let_go_title()}
           </span>
           <span class="tabular-nums">{props.letGo}</span>
         </button>
@@ -279,7 +284,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
         )}
       </Show>
       <Meta class="hidden px-3 sm:block">
-        {made()} of {BOX_LIMIT} boxes used
+        {m.catch_rail_used({ count: made(), max: BOX_LIMIT })}
       </Meta>
     </nav>
   );

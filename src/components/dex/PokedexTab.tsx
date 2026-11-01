@@ -9,7 +9,7 @@ import {
   createSignal,
 } from 'solid-js';
 import Regions from '../../data/ids/regions';
-import { REGIONS, REGION_NAMES, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
+import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import type { Species } from '../../data/ids/species';
@@ -18,6 +18,7 @@ import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/specie
 import PokedexGrid, { DEX_PAGE, type DexEntry, dexLabel } from './PokedexGrid';
 import { Badge, Button, Meta, Note, Panel, Row, TextField } from '../styled';
 import { useGame } from '../app/game-context';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Every pokemon there is, and how much of each one the player has
@@ -46,10 +47,10 @@ export interface PokedexTabProps {
  */
 type DexFilter = 'all' | 'caught' | 'missing';
 
-const FILTERS: [DexFilter, string][] = [
-  ['all', 'All'],
-  ['caught', 'Caught'],
-  ['missing', 'Missing'],
+const FILTERS: [DexFilter, () => string][] = [
+  ['all', m.item_pocket_all],
+  ['caught', m.dex_filter_caught],
+  ['missing', m.dex_filter_missing],
 ];
 
 const FILTER_CHIP = `cursor-pointer rounded-full border-2 border-line bg-paper px-3 py-1 text-xs
@@ -66,11 +67,24 @@ interface RegionTally {
   caught: number;
 }
 
-/** A region's name for reading; the stored one is lower case for the sheet folders */
-function regionName(region: Regions): string {
-  const name = REGION_NAMES[region];
+/** What each region is called, as the games name it in the player's language */
+const REGION_LABELS: Record<Regions, () => string> = {
+  [Regions.Unknown]: m.dex_region_unknown,
+  [Regions.Kanto]: m.dex_region_kanto,
+  [Regions.Johto]: m.dex_region_johto,
+  [Regions.Hoenn]: m.dex_region_hoenn,
+  [Regions.Sinnoh]: m.dex_region_sinnoh,
+  [Regions.Unova]: m.dex_region_unova,
+  [Regions.Kalos]: m.dex_region_kalos,
+  [Regions.Alola]: m.dex_region_alola,
+  [Regions.Galar]: m.dex_region_galar,
+  [Regions.Hisui]: m.dex_region_hisui,
+  [Regions.Paldea]: m.dex_region_paldea,
+};
 
-  return `${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+/** A region's name for reading */
+function regionName(region: Regions): string {
+  return REGION_LABELS[region]();
 }
 
 function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
@@ -231,7 +245,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
     const last = onPage.at(-1);
 
     if (first == null || last == null) {
-      return 'Nothing here';
+      return m.dex_nothing_here();
     }
     return `${dexLabel(first.dexNumber)} – ${dexLabel(last.dexNumber)} · ${regionName(
       getSpeciesRegion(first.species),
@@ -241,9 +255,9 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
   return (
     <Panel>
       <Row class="justify-center">
-        <Badge tone="tide">{props.dex()?.seenSpecies ?? 0} seen</Badge>
-        <Badge tone="leaf">{props.dex()?.caughtSpecies ?? 0} caught</Badge>
-        <Badge>of {entries().length}</Badge>
+        <Badge tone="tide">{m.dex_seen({ count: props.dex()?.seenSpecies ?? 0 })}</Badge>
+        <Badge tone="leaf">{m.dex_caught({ count: props.dex()?.caughtSpecies ?? 0 })}</Badge>
+        <Badge>{m.dex_of({ count: entries().length })}</Badge>
       </Row>
 
       {/* A chip per region: seen out of how many, with the caught share as a bar under it */}
@@ -256,7 +270,12 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
                 py-1 text-left text-xs font-bold text-ink shadow-pop-sm transition-colors
                 hover:border-tide active:translate-y-0 focus-visible:outline-2
                 focus-visible:outline-offset-2 focus-visible:outline-tide"
-              aria-label={`${regionName(tally.region)}: ${tally.seen} of ${tally.total} seen, ${tally.caught} caught`}
+              aria-label={m.dex_region_label({
+                region: regionName(tally.region),
+                seen: tally.seen,
+                total: tally.total,
+                caught: tally.caught,
+              })}
               onClick={() => {
                 turnTo(tally.first);
               }}
@@ -281,14 +300,14 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
       <div class="flex flex-col gap-2 sm:flex-row sm:items-end">
         <TextField
           class="grow"
-          label="Find"
-          placeholder="A number, or the name of one you have met"
+          label={m.dex_find()}
+          placeholder={m.dex_find_placeholder()}
           value={query()}
           onChange={(typed) => {
             setQuery(typed);
           }}
         />
-        <div role="radiogroup" aria-label="Show" class="flex shrink-0 gap-1">
+        <div role="radiogroup" aria-label={m.dex_show()} class="flex shrink-0 gap-1">
           <For each={FILTERS}>
             {([value, said]) => (
               <button
@@ -300,7 +319,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
                   setFilter(value);
                 }}
               >
-                {said}
+                {said()}
               </button>
             )}
           </For>
@@ -311,7 +330,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
           paging under them is paging a player has to scroll to reach */}
       <Row class="justify-center">
         <Button
-          label="Earlier pokemon"
+          label={m.dex_earlier()}
           disabled={page() === 0}
           onClick={() => {
             setPage((at) => Math.max(0, at - 1));
@@ -321,7 +340,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
         </Button>
         <Meta class="tabular-nums">{span()}</Meta>
         <Button
-          label="Later pokemon"
+          label={m.dex_later()}
           disabled={page() >= pages() - 1}
           onClick={() => {
             setPage((at) => Math.min(pages() - 1, at + 1));
@@ -351,7 +370,7 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
     <Suspense
       fallback={
         <Panel>
-          <Note>Reading the dex…</Note>
+          <Note>{m.dex_loading()}</Note>
         </Panel>
       }
     >

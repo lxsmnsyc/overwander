@@ -17,11 +17,14 @@ import { Slots, countAbilitySlots, countsAgainstSlots } from '../../data/constan
 import type Abilities from '../../data/ids/abilities';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import { Genders, Species } from '../../data/ids/species';
+import { Items } from '../../data/ids/items';
+import { getItemData } from '../../data/items';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Meta, Note, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Spending an Ability Patch on one pokemon.
@@ -107,9 +110,9 @@ function PatchBody(
     const record = props.caught();
 
     if (record == null) {
-      return 'This pokemon';
+      return m.teach_this_pokemon();
     }
-    return isEgg(record) ? 'Egg' : getSpeciesData(record.species).name;
+    return isEgg(record) ? m.ui_egg() : getSpeciesData(record.species).name;
   };
 
   const close = (): void => {
@@ -134,9 +137,7 @@ function PatchBody(
         setBusy(false);
 
         if (ability == null) {
-          setStatus(
-            'The patch could not be used — it may already keep its signature, or you may no longer have one.',
-          );
+          setStatus(m.catch_patch_failed());
           props.onRefused();
           return;
         }
@@ -144,8 +145,11 @@ function PatchBody(
         playEffect(Effect.SignatureLearned);
         props.onUsed?.(
           dropped == null
-            ? `It has ${getAbilityData(ability).name} now.`
-            : `${getAbilityData(dropped).name} gave way to ${getAbilityData(ability).name}.`,
+            ? m.catch_patch_gained({ ability: getAbilityData(ability).name })
+            : m.catch_patch_replaced({
+                dropped: getAbilityData(dropped).name,
+                ability: getAbilityData(ability).name,
+              }),
         );
         close();
       })
@@ -157,7 +161,7 @@ function PatchBody(
 
   return (
     <>
-      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
+      <Show when={props.caught()} fallback={<Note>{m.catch_reading_record()}</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -174,18 +178,18 @@ function PatchBody(
         )}
       </Show>
 
-      <Show when={signature()} fallback={<Note>Its family has no signature to write.</Note>}>
+      <Show when={signature()} fallback={<Note>{m.catch_patch_no_signature()}</Note>}>
         {(written) => (
           <>
             <Note>
-              {named()} gains {getAbilityData(written()).name}:{' '}
-              {getAbilityData(written()).description}
+              {m.catch_patch_gains({
+                name: named(),
+                ability: getAbilityData(written()).name,
+                description: getAbilityData(written()).description,
+              })}
             </Note>
 
-            <Show
-              when={!roomy()}
-              fallback={<Note>It has a slot standing empty, so nothing is given up.</Note>}
-            >
+            <Show when={!roomy()} fallback={<Note>{m.catch_patch_room()}</Note>}>
               <RadioGroup<number>
                 toggleable={false}
                 value={chosen()}
@@ -217,10 +221,12 @@ function PatchBody(
           disabled={busy() || signature() == null || (!roomy() && given().length === 0)}
           onClick={use}
         >
-          {busy() ? 'Using…' : 'Use Ability Patch'}
+          {busy()
+            ? m.catch_using()
+            : m.catch_use_item({ item: getItemData(Items.AbilityPatch).name })}
         </Button>
         <Button disabled={busy()} onClick={close}>
-          Cancel
+          {m.battle_cancel()}
         </Button>
       </DialogActions>
     </>
@@ -241,11 +247,10 @@ export default function AbilityPatchDialog(props: AbilityPatchDialogProps): JSX.
     <Dialog
       isOpen={props.catchId != null}
       onClose={props.onClose}
-      title="Write its signature"
-      description="A signature cannot be taken back off. Where there is no room for it, choose the
-        ability it takes the place of."
+      title={m.catch_patch_title()}
+      description={m.catch_patch_description()}
     >
-      <Suspense fallback={<Note>Reading the record…</Note>}>
+      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
         <PatchBody
           {...props}
           caught={caught}

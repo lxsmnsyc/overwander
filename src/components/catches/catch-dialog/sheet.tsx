@@ -47,7 +47,7 @@ import { MAX_LEVEL } from '../../../data/constants/levels';
 
 import type { Stats } from '../../../data/constants/stats';
 import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
-import { MAX_FRIENDSHIP, describeFriendship } from '../../../data/constants/friendship';
+import { MAX_FRIENDSHIP } from '../../../data/constants/friendship';
 import ItemSprite from '../../items/ItemSprite';
 import { Genders, Species } from '../../../data/ids/species';
 
@@ -61,7 +61,7 @@ import { teraTypeOf } from '../../../data/species/tera-type';
 
 import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
 import TypeBadge from '../../sprites/TypeBadge';
-import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
+import { GENDER_LABELS, GENDER_MARKS, sayFriendship } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
@@ -104,6 +104,8 @@ import {
   onCleanup,
 } from 'solid-js';
 import describeFailure from '../../../i18n/refusals';
+import { m } from '../../../i18n/paraglide/messages.js';
+import { joinSentences } from '../../../i18n/format';
 
 /**
  * Re-exported from where the battle card reads them too: an ability on
@@ -171,6 +173,16 @@ const CANDY_BADGE = '-m-2';
 
 /** How large a candy is drawn on the toast that says a release paid it */
 const CANDY_ART = 24;
+
+/** What handing an item over or taking it back comes to, said in a toast */
+function sayMoved(item: Items, give: boolean, moved: boolean): string {
+  const named = { item: describeItem(item) };
+
+  if (give) {
+    return moved ? m.catch_item_given(named) : m.catch_item_give_failed(named);
+  }
+  return moved ? m.catch_item_taken(named) : m.catch_item_take_failed(named);
+}
 
 function describeItems(items: readonly Items[]): string {
   const names: string[] = [];
@@ -273,11 +285,11 @@ export function CatchSheetBody(
    */
   const describeOwner = (entry: { owner: string; name?: string }): string => {
     if (entry.owner === auth.user()?.uid) {
-      return 'You';
+      return m.catch_owner_you();
     }
     // A distributed pokemon names the trainer it came from, who has no
     // account to look up — so what the record says is what it is called
-    return props.owners.latest?.get(entry.owner) ?? entry.name ?? 'A trainer';
+    return props.owners.latest?.get(entry.owner) ?? entry.name ?? m.catch_owner_unknown();
   };
 
   /**
@@ -360,7 +372,7 @@ export function CatchSheetBody(
       if (here && levelledUp) {
         playEffect(Effect.LevelUp);
       }
-      say(level == null ? 'That candy could not be used.' : `Grew to level ${level}.`);
+      say(level == null ? m.catch_candy_failed() : m.catch_candy_grew({ level }));
       props.onRecordChanged();
       props.onCandiesChanged();
       props.onEvolutionsChanged();
@@ -384,7 +396,7 @@ export function CatchSheetBody(
   // A machine and a level ask the same question, so they share the form;
   // answering one steps to whatever else the level offered
   askTeachings(teaching, candy.nextTeaching, (levelled) => {
-    say(levelled ? 'Learned.' : 'Taught.', 'leaf');
+    say(levelled ? m.catch_learned() : m.catch_taught(), 'leaf');
     props.onRecordChanged();
     props.onBagChanged();
     props.onChange?.();
@@ -445,10 +457,10 @@ export function CatchSheetBody(
     const loaded = view();
 
     if (loaded == null) {
-      return 'Catch';
+      return m.catch_sheet_catch();
     }
     if (isEgg(loaded)) {
-      return 'Egg';
+      return m.ui_egg();
     }
     return getCatchName(loaded);
   };
@@ -477,11 +489,7 @@ export function CatchSheetBody(
     }
     (give ? giveItem(catchId, item) : takeItem(catchId, item))
       .then((moved) => {
-        say(
-          moved
-            ? `${describeItem(item)} ${give ? 'handed over' : 'taken back'}.`
-            : `${describeItem(item)} could not be ${give ? 'handed over' : 'taken back'}.`,
-        );
+        say(sayMoved(item, give, moved));
         props.onRecordChanged();
         props.onBagChanged();
         props.onEvolutionsChanged();
@@ -508,7 +516,7 @@ export function CatchSheetBody(
     arrangeCatch(catchId, order)
       .then((laid) => {
         if (!laid) {
-          say('That order could not be saved.', 'ember');
+          say(m.catch_order_failed(), 'ember');
         }
         props.onRecordChanged();
         props.onChange?.();
@@ -536,7 +544,7 @@ export function CatchSheetBody(
     trainEfforts(catchId, spread)
       .then((result) => {
         if (result == null) {
-          say('Those points could not be moved.', 'ember');
+          say(m.catch_train_failed(), 'ember');
         }
         props.onRecordChanged();
         props.onBagChanged();
@@ -556,7 +564,7 @@ export function CatchSheetBody(
     }
     setBuddy(uid, catchId)
       .then((set) => {
-        say(set ? 'Walking with you now.' : 'That one cannot come along.');
+        say(set ? m.catch_buddy_set() : m.catch_buddy_set_failed());
         props.onBuddyChanged();
       })
       .catch((caught: unknown) => {
@@ -577,8 +585,8 @@ export function CatchSheetBody(
         }
         say(
           species == null
-            ? 'It is not ready yet.'
-            : `It hatched into ${getSpeciesData(species).name}!`,
+            ? m.catch_hatch_not_ready()
+            : m.catch_hatched({ name: getSpeciesData(species).name }),
         );
         props.onRecordChanged();
         props.onCandiesChanged();
@@ -604,7 +612,7 @@ export function CatchSheetBody(
   const dragonName = (): string => {
     const dragon = dragonWanted();
 
-    return dragon == null ? 'partner' : getSpeciesData(dragon).name;
+    return dragon == null ? m.catch_fusion_partner() : getSpeciesData(dragon).name;
   };
 
   /** What it is folded into, named for the picker */
@@ -612,7 +620,7 @@ export function CatchSheetBody(
     const into = folding();
     const husk = into == null ? null : getFusionHusk(into);
 
-    return husk == null ? 'husk' : getSpeciesData(husk).name;
+    return husk == null ? m.catch_fusion_husk() : getSpeciesData(husk).name;
   };
 
   /**
@@ -622,7 +630,7 @@ export function CatchSheetBody(
    */
   const settleFusion = (species: Species | null, said: string): void => {
     if (species == null) {
-      say('That is no longer possible.');
+      say(m.catch_fusion_gone());
     } else {
       playEffect(Effect.Evolution);
       say(said, 'leaf');
@@ -651,7 +659,7 @@ export function CatchSheetBody(
     if (shape != null && isFusedSpecies(shape.species)) {
       unfuseCatch(catchId)
         .then((species) => {
-          settleFusion(species, 'They came apart.');
+          settleFusion(species, m.catch_fusion_apart());
         })
         .catch((caught: unknown) => {
           say(describeFailure(caught), 'ember');
@@ -686,11 +694,9 @@ export function CatchSheetBody(
           playEffect(Effect.Evolution);
         }
         if (species == null) {
-          say('That evolution is no longer available.');
+          say(m.catch_evolution_gone());
         } else {
-          say(
-            husk == null ? 'Evolution complete.' : `Evolution complete. A ${husk} was left behind.`,
-          );
+          say(husk == null ? m.catch_evolved() : m.catch_evolved_husk({ name: husk }));
         }
         props.onRecordChanged();
         props.onEvolutionsChanged();
@@ -742,11 +748,11 @@ export function CatchSheetBody(
     const loaded = view();
 
     if (drafted() !== '') {
-      return `It will be called ${drafted()}.`;
+      return m.catch_name_draft({ name: drafted() });
     }
     return loaded == null
-      ? 'It will go back to being called by its species.'
-      : `It will go back to being called ${getSpeciesData(loaded.species).name}.`;
+      ? m.catch_name_draft_species()
+      : m.catch_name_draft_back({ name: getSpeciesData(loaded.species).name });
   };
 
   const rename = (): void => {
@@ -762,11 +768,11 @@ export function CatchSheetBody(
         setRenaming(false);
 
         if (given == null) {
-          say('That name could not be given.', 'ember');
+          say(m.catch_name_failed(), 'ember');
           return;
         }
         setNaming(null);
-        say(given === '' ? 'Its name is its own again.' : `It answers to ${given} now.`);
+        say(given === '' ? m.catch_name_cleared() : m.catch_name_given({ name: given }));
         props.onRecordChanged();
         props.onChange?.();
       })
@@ -784,8 +790,8 @@ export function CatchSheetBody(
     }
     mark(
       setFavorite(catchId, on),
-      on ? 'Kept — it cannot be released, auctioned or traded.' : 'No longer a favorite.',
-      'That could not be changed.',
+      on ? m.catch_favorited() : m.catch_unfavorited(),
+      m.catch_mark_failed(),
     );
   };
 
@@ -797,8 +803,8 @@ export function CatchSheetBody(
     }
     mark(
       setGuarded(catchId, on),
-      on ? 'Locked — it will be left alone.' : 'Unlocked.',
-      'That could not be changed.',
+      on ? m.catch_locked() : m.catch_unlocked(),
+      m.catch_mark_failed(),
     );
   };
 
@@ -839,7 +845,7 @@ export function CatchSheetBody(
       .then((released) => {
         if (!released) {
           setReleasing(false);
-          say('It could not be released.', 'ember');
+          say(m.catch_release_failed(), 'ember');
           return;
         }
         // Said in passing rather than on the sheet, because the sheet
@@ -848,8 +854,11 @@ export function CatchSheetBody(
         // The family is named — candy is held per family, so "1 candy"
         // on its own does not say which pile grew
         toast.push({
-          title: `${paid} ${getFamilyName(family)} candy`,
-          message: `${name} was let go.${held > 0 ? ' What it was holding is back in the bag.' : ''}`,
+          title: m.battle_candy_earned({ count: paid, family: getFamilyName(family) }),
+          message:
+            held > 0
+              ? joinSentences([m.catch_released({ name }), m.catch_released_items()])
+              : m.catch_released({ name }),
           art: () => <CandySprite family={family} size={CANDY_ART} label="" />,
           tone: 'leaf',
         });
@@ -872,17 +881,17 @@ export function CatchSheetBody(
   /** Why this pokemon cannot be released right now, if it cannot */
   const blockedRelease = (loaded: CaughtPokemon): string | null => {
     if (props.fighting.latest === true) {
-      return 'It is in a raid, so it cannot be released.';
+      return m.catch_release_blocked_raid();
     }
     if (props.onlyOne() === true) {
       // A player with no pokemon has no way back into the game
-      return 'The only pokemon you have cannot be released.';
+      return m.catch_release_blocked_only();
     }
     if (isFavorite(loaded)) {
-      return 'A favorite cannot be released. Unfavorite it first.';
+      return m.catch_release_blocked_favorite();
     }
     if (isGuarded(loaded)) {
-      return 'A locked pokemon cannot be released. Unlock it first.';
+      return m.catch_release_blocked_locked();
     }
     return null;
   };
@@ -994,9 +1003,9 @@ export function CatchSheetBody(
    */
   const nameLabel = (loaded: CaughtPokemon, locked: boolean): string => {
     if (locked) {
-      return 'Named by its first trainer';
+      return m.catch_name_locked();
     }
-    return loaded.nickname === '' ? 'Set nickname' : 'Change nickname';
+    return loaded.nickname === '' ? m.catch_name_set() : m.catch_name_change();
   };
 
   const actions = (loaded: CaughtPokemon): MenuAction[] => {
@@ -1006,21 +1015,21 @@ export function CatchSheetBody(
 
     return [
       {
-        label: isFavorite(loaded) ? 'Unfavorite' : 'Favorite',
+        label: isFavorite(loaded) ? m.catch_unfavorite() : m.catch_favorite(),
         disabled: props.fighting.latest === true,
         onSelect: () => {
           favorite(!isFavorite(loaded));
         },
       },
       {
-        label: isGuarded(loaded) ? 'Unlock' : 'Lock',
+        label: isGuarded(loaded) ? m.catch_unlock() : m.catch_lock(),
         disabled: props.fighting.latest === true,
         onSelect: () => {
           guard(!isGuarded(loaded));
         },
       },
       {
-        label: 'Use item',
+        label: m.catch_use_item_action(),
         // Dead where there is nothing to spend. The panel it opens says
         // "Nothing in the bag would do it any good" — which is an
         // answer, but it appeared at the *top* of the sheet, a screen
@@ -1033,7 +1042,7 @@ export function CatchSheetBody(
         },
       },
       {
-        label: 'Auction',
+        label: m.catch_auction(),
         // A favorite is not to be parted with, and a lot cannot be taken
         // back off the block once it is on it. Nobody listening for the
         // listing is the same as nowhere to list it.
@@ -1077,7 +1086,8 @@ export function CatchSheetBody(
         },
       },
       {
-        label: props.buddy.latest === props.catchId ? 'Walking with you' : 'Set buddy',
+        label:
+          props.buddy.latest === props.catchId ? m.catch_walking_with_you() : m.catch_set_buddy(),
         disabled: props.buddy.latest === props.catchId,
         onSelect: takeAlong,
       },
@@ -1099,7 +1109,7 @@ export function CatchSheetBody(
         ? []
         : [
             {
-              label: 'View in Pokedex',
+              label: m.catch_view_in_dex(),
               // What is inside a shell has not been met yet
               disabled: isEgg(loaded),
               onSelect: () => {
@@ -1115,7 +1125,7 @@ export function CatchSheetBody(
       ...actions(loaded),
       ...lookup,
       {
-        label: 'Release',
+        label: m.catch_release(),
         tone: 'danger',
         separated: true,
         // Opened even when refused, so the dialog can say why
@@ -1159,32 +1169,32 @@ export function CatchSheetBody(
             <Show when={isFavorite(record())}>
               <Badge tone="gold">
                 <StarIcon class="size-3.5" aria-hidden="true" />
-                Favorite
+                {m.catch_favorite()}
               </Badge>
             </Show>
             <Show when={isGuarded(record())}>
               <Badge tone="tide">
                 <LockIcon class="size-3.5" aria-hidden="true" />
-                Locked
+                {m.catch_badge_locked()}
               </Badge>
             </Show>
             <Show when={isShadow(record())}>
-              <Badge>Shadow</Badge>
+              <Badge>{m.catch_badge_shadow()}</Badge>
             </Show>
             <Show when={record().gigantamax}>
-              <Badge tone="arcane">Gigantamax</Badge>
+              <Badge tone="arcane">{m.catch_badge_gigantamax()}</Badge>
             </Show>
             <Show when={props.buddy.latest === props.catchId}>
-              <Badge tone="leaf">Buddy</Badge>
+              <Badge tone="leaf">{m.catch_badge_buddy()}</Badge>
             </Show>
             <Show when={owned() != null && props.fighting.latest === true}>
-              <Badge tone="ember">In a raid</Badge>
+              <Badge tone="ember">{m.catch_badge_in_raid()}</Badge>
             </Show>
           </span>
         )}
       </Show>
       <Show when={owned() != null || props.onDex != null}>
-        <Menu label="Actions" actions={menuActions()} />
+        <Menu label={m.catch_actions()} actions={menuActions()} />
       </Show>
     </div>
   );
@@ -1223,11 +1233,11 @@ export function CatchSheetBody(
         // The name box carries who it is: its name, its species where a
         // nickname took its place, and its marks, with its ball as the face
         title={
-          <Show when={view()} fallback="Pokemon Info">
+          <Show when={view()} fallback={m.catch_sheet_title()}>
             {(record) => (
               <span class="flex min-w-0 items-center gap-1.5">
                 {/* What the sheet is announced as, the same for every catch */}
-                <span class="sr-only">Pokemon Info: </span>
+                <span class="sr-only">{m.catch_sheet_title_lead()}</span>
                 <span class="truncate" data-name>
                   {named()}
                 </span>
@@ -1239,14 +1249,14 @@ export function CatchSheetBody(
                 <Show when={!isEgg(record()) && GENDER_MARKS[record().gender] !== ''}>
                   <span
                     class="shrink-0"
-                    title={GENDER_LABELS[record().gender]}
-                    aria-label={GENDER_LABELS[record().gender]}
+                    title={GENDER_LABELS[record().gender]()}
+                    aria-label={GENDER_LABELS[record().gender]()}
                   >
                     {GENDER_MARKS[record().gender]}
                   </span>
                 </Show>
                 <Show when={!isEgg(record()) && isShiny(record())}>
-                  <SparklesIcon class="size-4 shrink-0" aria-label="Shiny" />
+                  <SparklesIcon class="size-4 shrink-0" aria-label={m.catch_shiny()} />
                 </Show>
               </span>
             )}
@@ -1261,20 +1271,20 @@ export function CatchSheetBody(
         // Beside the nameplate, filling the band that would otherwise stand empty
         aside={actionsRow()}
         description={
-          props.readOnly === true
-            ? 'One pokemon in full, as it stands. Nothing here can be changed, since it is not yours.'
-            : 'One pokemon in full: what it is, what it is carrying, and what can be done to it.'
+          props.readOnly === true ? m.catch_sheet_description_theirs() : m.catch_sheet_description()
         }
       >
         {/* The record is read through `latest`, so a write that re-reads
             it keeps showing the old record instead of suspending, which
             would tear the panel and the page down. The sheet also waits
             for the move, item and ability registries */}
-        <BattleData fallback={<Note>Loading catch…</Note>}>
+        <BattleData fallback={<Note>{m.catch_sheet_loading()}</Note>}>
           <Show
             when={view()}
             fallback={
-              <Note>{props.detail.latest == null ? 'Loading catch…' : 'No such catch.'}</Note>
+              <Note>
+                {props.detail.latest == null ? m.catch_sheet_loading() : m.catch_sheet_missing()}
+              </Note>
             }
           >
             {(loaded) => (
@@ -1300,7 +1310,7 @@ export function CatchSheetBody(
                       </div>
 
                       <section class="flex w-full max-w-sm flex-col gap-2">
-                        <h3>Hatching</h3>
+                        <h3>{m.catch_buddy_hatching()}</h3>
                         <div class="h-2 overflow-hidden rounded-full bg-line-soft">
                           <div
                             class="h-full rounded-full bg-leaf transition-[width]"
@@ -1310,15 +1320,20 @@ export function CatchSheetBody(
                           />
                         </div>
                         <Note>
-                          {loaded().steps} / {loaded().hatchSteps} steps
                           {props.buddy.latest === props.catchId
-                            ? '.'
-                            : '. It only moves while it is the one being carried.'}
+                            ? m.catch_egg_progress({
+                                steps: loaded().steps,
+                                hatch: loaded().hatchSteps,
+                              })
+                            : m.catch_egg_progress_idle({
+                                steps: loaded().steps,
+                                hatch: loaded().hatchSteps,
+                              })}
                         </Note>
                         <Show when={owned()}>
                           <Row class="justify-center">
                             <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
-                              Hatch it
+                              {m.catch_hatch_it()}
                             </Button>
                           </Row>
                         </Show>
@@ -1368,21 +1383,22 @@ export function CatchSheetBody(
                             kg
                           </Badge>
                           <TooltipHost
-                            name="Friendship"
-                            description={`${loaded().friendship} of ${MAX_FRIENDSHIP}`}
+                            name={m.catch_friendship()}
+                            description={m.catch_friendship_of({
+                              count: loaded().friendship,
+                              max: MAX_FRIENDSHIP,
+                            })}
                           >
                             <Badge tone="leaf">
                               <HeartIcon class="size-3.5" aria-hidden="true" />
-                              {describeFriendship(loaded().friendship)}
+                              {sayFriendship(loaded().friendship)}
                             </Badge>
                           </TooltipHost>
-                          <Badge>
-                            {loaded().walked} {loaded().walked === 1 ? 'step' : 'steps'}
-                          </Badge>
+                          <Badge>{m.catch_steps({ count: loaded().walked })}</Badge>
                         </div>
                         <div class="flex items-center justify-center gap-1.5">
                           <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
-                            Tera type
+                            {m.catch_tera_type()}
                           </span>
                           <TypeBadge type={teraTypeOf(loaded())} />
                         </div>
@@ -1416,14 +1432,14 @@ export function CatchSheetBody(
                             >
                               {/* The cost in candy, drawn, as a badge on the button */}
                               {shownLevel() >= MAX_LEVEL ? (
-                                `Lv. ${shownLevel()}`
+                                m.catch_level({ level: shownLevel() })
                               ) : (
                                 <>
-                                  Level Up
+                                  {m.catch_level_up()}
                                   <Badge tone="gold">
                                     <CandySprite
                                       family={getSpeciesData(loaded().species).family}
-                                      label="Candy"
+                                      label={m.tooltip_kind_candy()}
                                       class={CANDY_BADGE}
                                     />
                                     x {getCandyCost(loaded())}
@@ -1510,10 +1526,10 @@ export function CatchSheetBody(
                         setTracing(true);
                       }}
                     >
-                      History ({loaded().history.length})
+                      {m.catch_history_count({ count: loaded().history.length })}
                     </Button>
                   </Show>
-                  <Button onClick={closeSheet}>Close</Button>
+                  <Button onClick={closeSheet}>{m.ui_close()}</Button>
                 </DialogActions>
               </>
             )}
@@ -1528,8 +1544,8 @@ export function CatchSheetBody(
           onClose={() => {
             setTracing(false);
           }}
-          title="History"
-          description="Everyone who has owned this pokemon, oldest first."
+          title={m.catch_history()}
+          description={m.catch_history_description()}
           terse
         >
           <Show when={view()}>
@@ -1551,7 +1567,7 @@ export function CatchSheetBody(
                 setTracing(false);
               }}
             >
-              Back
+              {m.ui_back()}
             </Button>
           </DialogActions>
         </Dialog>
@@ -1564,12 +1580,8 @@ export function CatchSheetBody(
         onClose={() => {
           setReleasing(false);
         }}
-        title="Release it?"
-        description={
-          answered(graced) === true
-            ? 'It can be taken back within a day, for the candy it paid.'
-            : 'Letting a pokemon go cannot be undone.'
-        }
+        title={m.catch_release_title()}
+        description={answered(graced) === true ? m.catch_release_graced() : m.catch_release_final()}
         terse
       >
         <Show when={view()}>
@@ -1579,11 +1591,15 @@ export function CatchSheetBody(
                 when={blockedRelease(loaded())}
                 fallback={
                   <Note>
-                    {named()} will be let go for {getReleaseCandy(loaded())} candy.
-                    <Show when={loaded().items.length > 0}>
-                      {' '}
-                      What it is holding comes back to the bag: {describeItems(loaded().items)}.
-                    </Show>
+                    {loaded().items.length > 0
+                      ? joinSentences([
+                          m.catch_release_pays({
+                            name: named(),
+                            candy: getReleaseCandy(loaded()),
+                          }),
+                          m.catch_release_returns({ items: describeItems(loaded().items) }),
+                        ])
+                      : m.catch_release_pays({ name: named(), candy: getReleaseCandy(loaded()) })}
                   </Note>
                 }
               >
@@ -1591,14 +1607,14 @@ export function CatchSheetBody(
               </Show>
               <DialogActions>
                 <Button tone="danger" disabled={blockedRelease(loaded()) != null} onClick={release}>
-                  Release
+                  {m.catch_release()}
                 </Button>
                 <Button
                   onClick={() => {
                     setReleasing(false);
                   }}
                 >
-                  Keep it
+                  {m.catch_heading_keep_it()}
                 </Button>
               </DialogActions>
             </>
@@ -1620,15 +1636,15 @@ export function CatchSheetBody(
         onClose={() => {
           setNaming(null);
         }}
-        title="Change nickname?"
+        title={m.catch_name_title()}
         // The sentence is for the screen reader alone: the box under
         // the heading is labelled, and the line below it already says
         // what an empty box does. A dialog this small should not
         // explain itself twice
         terse
-        description="What you call it. Left empty, it goes back to being called by its species."
+        description={m.catch_name_description()}
       >
-        <Field label="Name" stacked>
+        <Field label={m.catch_box_name()} stacked>
           <input
             type="text"
             value={naming() ?? ''}
@@ -1653,7 +1669,7 @@ export function CatchSheetBody(
             disabled={renaming() || drafted() === (view()?.nickname ?? '')}
             onClick={rename}
           >
-            Save
+            {m.catch_heading_save()}
           </Button>
           <Button
             disabled={renaming()}
@@ -1661,7 +1677,7 @@ export function CatchSheetBody(
               setNaming(null);
             }}
           >
-            Never mind
+            {m.ui_never_mind()}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1680,8 +1696,8 @@ export function CatchSheetBody(
         onClose={() => {
           setPanel(null);
         }}
-        title="Use item"
-        description={`Choose what to spend on ${named()}.`}
+        title={m.catch_use_item_action()}
+        description={m.catch_use_item_description({ name: named() })}
         terse
         lead={
           <Show when={view()}>
@@ -1717,15 +1733,15 @@ export function CatchSheetBody(
           const loaded = view();
 
           if (isAbilityPatch(entry.item)) {
-            return 'A signature cannot be taken back off, and neither can the ability it replaces.';
+            return m.catch_warn_patch();
           }
           return isPurifyingGem(entry.item) && loaded != null && isShadow(loaded)
-            ? 'Purifying cannot be undone. The Shadow ability goes for good, and it stops being a shadow.'
+            ? m.catch_warn_purify()
             : null;
         }}
         value={null}
-        verb="Use"
-        empty="Nothing in the bag would do it any good."
+        verb={m.catch_use()}
+        empty={m.catch_use_empty()}
         filter={(entry) => isUsable(entry.item)}
         onPick={(item) => {
           if (item != null) {
@@ -1744,10 +1760,10 @@ export function CatchSheetBody(
       <CatchPicker
         open={folding() != null}
         value={null}
-        title={`Fold in a ${dragonName()}?`}
-        description={`It goes inside the ${huskName()} until you take the two apart again.`}
-        verb="Fold in"
-        empty={`You have no ${dragonName()}.`}
+        title={m.catch_fold_title({ name: dragonName() })}
+        description={m.catch_fold_description({ name: huskName() })}
+        verb={m.catch_fold_verb()}
+        empty={m.catch_fold_empty({ name: dragonName() })}
         filter={(option) =>
           option.caught.species === dragonWanted() &&
           !option.fighting &&
@@ -1767,7 +1783,7 @@ export function CatchSheetBody(
           }
           fuseCatch(catchId, partnerId, into)
             .then((species) => {
-              settleFusion(species, 'The two are one.');
+              settleFusion(species, m.catch_fused());
             })
             .catch((caught: unknown) => {
               say(describeFailure(caught), 'ember');

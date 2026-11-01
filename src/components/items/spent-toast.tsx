@@ -6,6 +6,7 @@ import type { ToastRequest } from '../styled';
 import { describeItem } from '../details';
 import type { Spent, SpentCue } from '../../game/items/use-item';
 import playEffect, { Effect } from '../app/sound';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What using an item says, as a toast.
@@ -35,7 +36,7 @@ export default function spentToast(item: Items, spent: Spent): ToastRequest {
 
   return {
     art,
-    title: `${about.name} used ${describeItem(item)}`,
+    title: m.item_spent_title({ name: about.name, item: describeItem(item) }),
     // The arrow says which way it went, so a berry taking points off
     // reads as plainly as a vitamin putting them on
     message: `${STAT_LABELS[trained.stat]} ${trained.from} → ${trained.to}`,

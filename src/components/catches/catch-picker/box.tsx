@@ -1,10 +1,5 @@
 import matchesCatch, { type CatchContext, orderCatches } from '../../../model/search/catch';
-import {
-  type BoxRecord,
-  DEFAULT_BOX_NAME,
-  DEFAULT_BOX_TONE,
-  boxTone,
-} from '../../../model/box-record';
+import { type BoxRecord, DEFAULT_BOX_TONE, boxTone } from '../../../model/box-record';
 import { parseControls } from '../../../core/query';
 import { answered } from '../../app/resource-reads';
 import settings from '../../app/settings';
@@ -30,6 +25,7 @@ import {
 import { isServer } from 'solid-js/web';
 import type { CatchOption, CatchPickerProps } from './options';
 import { titleCatch } from '../../details';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * Whether a pokemon is allowed to hold it at all. An item the registry
@@ -159,7 +155,12 @@ export default function PickerBox(
     if (named == null) {
       return undefined;
     }
-    return named.get(option.caught.box ?? '') ?? { name: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE };
+    return (
+      named.get(option.caught.box ?? '') ?? {
+        name: m.catch_box_default(),
+        tone: DEFAULT_BOX_TONE,
+      }
+    );
   };
   /**
    * Whether these are the reader's own pokemon. Somebody else's box is
@@ -551,7 +552,7 @@ export default function PickerBox(
             ...square,
             mark: 'refused' as const,
             reason: refused,
-            label: `${square.label} — ${refused}`,
+            label: m.catch_refused_label({ label: square.label, reason: refused }),
           },
           caught: option.caught,
         });
@@ -572,12 +573,12 @@ export default function PickerBox(
    */
   const verb = (option: CatchOption): string => {
     if (props.viewOnly === true) {
-      return 'Open';
+      return m.catch_picker_open();
     }
     if (props.multiple === true) {
-      return isDrafted(option.id) ? 'Remove' : 'Add';
+      return isDrafted(option.id) ? m.ui_remove_action() : m.catch_picker_add();
     }
-    return props.verb ?? 'Pick';
+    return props.verb ?? m.catch_picker_pick_verb();
   };
 
   const pressById = (id: string, shift = false): void => {
@@ -604,17 +605,25 @@ export default function PickerBox(
    * does with this screen, and one of them was floating above a list
    * while the other sat in the corner
    */
+  const confirmLabel = (): string => {
+    // The second press asks, the first says how many are going
+    if (confirming()) {
+      return m.catch_picker_sure();
+    }
+    const taking = props.verb ?? m.catch_picker_take();
+
+    return limit() === Number.POSITIVE_INFINITY
+      ? m.catch_picker_take_count({ verb: taking, count: draft().length })
+      : m.catch_picker_take_of({ verb: taking, count: draft().length, max: limit() });
+  };
+
   const confirmButton = (): JSX.Element => (
     <Button
       tone="primary"
       disabled={props.disabled === true || draft().length === 0}
       onClick={finish}
     >
-      {confirming()
-        ? 'Sure?'
-        : `${props.verb ?? 'Take'} ${draft().length}${
-            limit() === Number.POSITIVE_INFINITY ? '' : `/${limit()}`
-          }`}
+      {confirmLabel()}
     </Button>
   );
 
@@ -665,8 +674,10 @@ export default function PickerBox(
         emptyCard={slotted() ? props.emptyCard : undefined}
         onDragStart={props.onDragStart}
         onDropOn={props.onDropOn}
-        empty={props.empty ?? 'You have nothing for this.'}
-        noMatch={`None of ${props.viewOnly === true ? 'theirs' : 'yours'} match that.`}
+        empty={props.empty ?? m.catch_picker_empty()}
+        noMatch={
+          props.viewOnly === true ? m.catch_picker_no_match_theirs() : m.catch_picker_no_match()
+        }
         cell={(entry) => (
           <Show when={carded() && optionById().get(entry().id)}>
             {(option) => (
@@ -674,7 +685,7 @@ export default function PickerBox(
                 class="block size-full"
                 trigger={<span class="block size-full" />}
                 title={titleCatch(option().caught)}
-                kind="Pokémon"
+                kind={m.battle_kind_pokemon()}
                 footer={
                   <>
                     <Button
@@ -719,14 +730,17 @@ export default function PickerBox(
                   pickOne(asked().id);
                 }}
               >
-                {props.verb ?? 'Pick'} {describeCatch(asked().caught)}?
+                {m.catch_picker_confirm({
+                  verb: props.verb ?? m.catch_picker_pick_verb(),
+                  name: describeCatch(asked().caught),
+                })}
               </Button>
               <Button
                 onClick={() => {
                   setPending(null);
                 }}
               >
-                Cancel
+                {m.battle_cancel()}
               </Button>
             </Row>
           </div>
@@ -752,12 +766,12 @@ export default function PickerBox(
           setGiving(null);
         }}
         player={owner()}
-        title="Give an item"
-        description="Choose what it should carry."
-        verb="Give"
+        title={m.catch_give_title()}
+        description={m.catch_give_description()}
+        verb={m.catch_give_verb()}
         value={null}
         filter={(entry) => isHoldable(entry.item)}
-        empty="Nothing in the bag can be held."
+        empty={m.catch_give_empty()}
         onPick={(item) => {
           const catchId = giving();
 

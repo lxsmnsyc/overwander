@@ -8,6 +8,7 @@ import type { CatchOption } from '../catch-picker';
 import { BoxIcon } from '../../icons';
 import { Badge, Button, Menu, type MenuAction, Meta } from '../../styled';
 import type { RailBox } from './rail';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * What to do with a handful of pokemon at once.
@@ -39,19 +40,28 @@ export interface CatchActionsProps {
  * locked one are both marks the player put on the record to stop
  * exactly this; a pokemon in a battle is held while the fight runs
  */
-function heldBack(option: CatchOption): string | null {
+type HeldBack = 'battle' | 'favorite' | 'locked';
+
+/** How many are held back for each reason, said with the count */
+const HELD_BACK: Record<HeldBack, (inputs: { count: number }) => string> = {
+  battle: m.catch_held_battle,
+  favorite: m.catch_held_favorite,
+  locked: m.catch_held_locked,
+};
+
+function heldBack(option: CatchOption): HeldBack | null {
   if (option.fighting) {
-    return 'in a battle';
+    return 'battle';
   }
   if (isFavorite(option.caught)) {
-    return 'a favorite';
+    return 'favorite';
   }
   return isGuarded(option.caught) ? 'locked' : null;
 }
 
 /** The same, counted, so the line under the buttons can say how many of each */
 function tally(chosen: CatchOption[]): string {
-  const counts = new Map<string, number>();
+  const counts = new Map<HeldBack, number>();
 
   for (const option of chosen) {
     const why = heldBack(option);
@@ -63,7 +73,7 @@ function tally(chosen: CatchOption[]): string {
   const parts: string[] = [];
 
   for (const [why, count] of counts) {
-    parts.push(`${count} ${why}`);
+    parts.push(HELD_BACK[why]({ count }));
   }
   return parts.join(', ');
 }
@@ -146,7 +156,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
       actions.push({
         label: box.name,
         swatch: box.tone,
-        note: already ? 'here now' : String(box.count),
+        note: already ? m.catch_move_here_now() : String(box.count),
         disabled: already,
         onSelect: () => {
           props.onMove(box.id);
@@ -154,7 +164,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
       });
     }
     actions.push({
-      label: `＋ New box with these ${count()}`,
+      label: m.catch_move_new_box({ count: count() }),
       separated: true,
       onSelect: props.onMoveToNew,
     });
@@ -177,18 +187,20 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
     >
       {/* Wraps on a phone rather than scrolling an action off the end */}
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <span class="text-base font-black text-leaf-dark tabular-nums">{count()} selected</span>
+        <span class="text-base font-black text-leaf-dark tabular-nums">
+          {m.catch_selected({ count: count() })}
+        </span>
         <div class="flex flex-wrap items-center justify-end gap-2">
           <Show when={count() > 0 && props.busy !== true}>
             <Menu
-              label={`Move ${count()} to`}
+              label={m.catch_move_to({ count: count() })}
               tone="accent"
               sheet
-              heading={`Move ${count()} to`}
+              heading={m.catch_move_to({ count: count() })}
               face={
                 <span class="inline-flex items-center gap-1.5">
                   <BoxIcon class="size-4" aria-hidden="true" />
-                  Move {count()} to
+                  {m.catch_move_to({ count: count() })}
                 </span>
               }
               actions={destinations()}
@@ -200,7 +212,9 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
               props.onFavorite(favoriting());
             }}
           >
-            {favoriting() ? 'Favorite' : 'Unfavorite'} {count()}
+            {favoriting()
+              ? m.catch_favorite_count({ count: count() })
+              : m.catch_unfavorite_count({ count: count() })}
           </Button>
           <Button
             disabled={props.busy === true || count() === 0}
@@ -208,7 +222,9 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
               props.onGuard(guarding());
             }}
           >
-            {guarding() ? 'Lock' : 'Unlock'} {count()}
+            {guarding()
+              ? m.catch_lock_count({ count: count() })
+              : m.catch_unlock_count({ count: count() })}
           </Button>
           {/* Two presses, the way the sheet asks: the second says what
               it is doing and what it pays */}
@@ -217,13 +233,15 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
             disabled={props.busy === true || going().length === 0}
             onClick={release}
           >
-            {releasing() ? `Let ${going().length} go?` : `Release ${going().length}`}
+            {releasing()
+              ? m.catch_release_ask({ count: going().length })
+              : m.catch_release_count({ count: going().length })}
           </Button>
           <Show
             when={releasing()}
             fallback={
               <Button tone="quiet" disabled={count() === 0} onClick={props.onClear}>
-                Clear
+                {m.catch_clear()}
               </Button>
             }
           >
@@ -233,7 +251,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
                 setReleasing(false);
               }}
             >
-              Keep them
+              {m.catch_keep_them()}
             </Button>
           </Show>
         </div>
@@ -246,17 +264,14 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
             {([family, paid]) => (
               <Badge tone="gold">
                 <CandySprite family={family} label="" />
-                {paid} {getFamilyName(family)}
+                {m.catch_candy_pile({ count: paid, family: getFamilyName(family) })}
               </Badge>
             )}
           </For>
           {/* The half a player forgets: a released pokemon hands back
               whatever it was carrying, and there is no undoing either */}
           <Show when={holding(going()) > 0}>
-            <Meta>
-              {holding(going())} held item{holding(going()) === 1 ? '' : 's'} come
-              {holding(going()) === 1 ? 's' : ''} back to the bag.
-            </Meta>
+            <Meta>{m.catch_release_items({ count: holding(going()) })}</Meta>
           </Show>
         </div>
       </Show>
@@ -265,7 +280,7 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
           other buttons take them all, so this is about Release alone */}
       <Show when={tally(props.chosen) !== ''}>
         <Meta class="text-right">
-          {count() - going().length} of these cannot be released: {tally(props.chosen)}
+          {m.catch_release_held({ count: count() - going().length, reasons: tally(props.chosen) })}
         </Meta>
       </Show>
     </div>

@@ -9,6 +9,7 @@ import {
   getTypeMatchups,
 } from '../../data/constants/types';
 import { Detail, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A type, drawn as the series draws it: the sigil on the colour that
@@ -135,10 +136,10 @@ function Matchups(props: { type: Types }): JSX.Element {
 
   return (
     <>
-      <Matchup label="Strong against" types={chart().strong} />
-      <Matchup label="Weak to" types={chart().weak} />
-      <Matchup label="Resists" types={chart().resists} />
-      <Matchup label="Immune to" types={chart().immune} />
+      <Matchup label={m.type_strong_against()} types={chart().strong} />
+      <Matchup label={m.type_weak_to()} types={chart().weak} />
+      <Matchup label={m.type_resists()} types={chart().resists} />
+      <Matchup label={m.type_immune_to()} types={chart().immune} />
     </>
   );
 }

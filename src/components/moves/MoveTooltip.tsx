@@ -1,9 +1,11 @@
 import type { JSX, ParentProps } from 'solid-js';
 import { TYPE_NAMES } from '../../data/constants/types';
-import { MOVE_CATEGORY_NAMES, type Moves } from '../../data/ids/moves';
+import type { Moves } from '../../data/ids/moves';
+import { MOVE_CATEGORY_LABELS } from '../sprites/MoveCategorySprite';
 import { type MoveData, getMoveCooldown, getMoveData, getMovePP } from '../../data/moves';
 import { detailMove } from '../details';
 import { Detail, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A move name with its entry in a tooltip: what it does, then its
@@ -40,21 +42,27 @@ export default function MoveTooltip(props: MoveTooltipProps): JSX.Element {
       {...detailMove(props.move)}
       extra={() => (
         <>
-          <Detail label="Type">{data() == null ? NONE : TYPE_NAMES[data()?.type ?? 0]}</Detail>
-          <Detail label="Category">
-            {data() == null ? NONE : MOVE_CATEGORY_NAMES[data()?.category ?? 0]}
+          <Detail label={m.tooltip_kind_type()}>
+            {data() == null ? NONE : TYPE_NAMES[data()?.type ?? 0]}
           </Detail>
-          <Detail label="Power">{data()?.power ?? NONE}</Detail>
-          <Detail label="Accuracy">
+          <Detail label={m.move_category()}>
+            {data() == null ? NONE : MOVE_CATEGORY_LABELS[data()?.category ?? 0]()}
+          </Detail>
+          <Detail label={m.teach_power()}>{data()?.power ?? NONE}</Detail>
+          <Detail label={m.move_accuracy()}>
             {data()?.accuracy == null ? NONE : `${data()?.accuracy}%`}
           </Detail>
-          <Detail label="PP">
+          <Detail label={m.teach_pp()}>
             {data() == null ? NONE : getMovePP(props.move, props.points ?? 0)}
           </Detail>
-          <Detail label="Cooldown">
+          <Detail label={m.move_cooldown()}>
             {data() == null
               ? NONE
-              : `${(getMoveCooldown(props.move, props.points ?? 0, props.speed ?? 0) / 1000).toFixed(1)}s`}
+              : m.move_seconds({
+                  seconds: (
+                    getMoveCooldown(props.move, props.points ?? 0, props.speed ?? 0) / 1000
+                  ).toFixed(1),
+                })}
           </Detail>
         </>
       )}

@@ -9,7 +9,7 @@ import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../dat
 import Biome, { TimeOfDay } from '../../../data/ids/biome';
 import type Natures from '../../../data/ids/natures';
 import { getNatureFactor } from '../../../data/ids/natures';
-import { EvolutionMethod, GENDER_NAMES } from '../../../data/ids/species';
+import { EvolutionMethod, Genders } from '../../../data/ids/species';
 import { getLairTitle } from '../../../data/overworld/lair';
 import { type EvolutionData, SUPPORTED_METHODS, getSpeciesData } from '../../../data/species';
 import { describeFeat, featOfEvolution } from '../../../data/species/feats';
@@ -26,6 +26,9 @@ import { type JSX, Show } from 'solid-js';
 import { getMaxHealth } from '../../../model/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
+import { currentLocale } from '../../../i18n/locale';
+import { GENDER_LABELS } from '../catch-summary';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export { describeIVs, withArticle };
 
@@ -61,7 +64,11 @@ export const NATURE_NUMBERS = ['text-tide', '', 'text-ember-dark'] as const;
  */
 export const NATURE_MARKS = ['▼', '', '▲'] as const;
 
-export const NATURE_WORDS = ['lowered by its nature', '', 'raised by its nature'] as const;
+export const NATURE_WORDS: readonly (() => string)[] = [
+  m.catch_nature_lowered,
+  () => '',
+  m.catch_nature_raised,
+];
 
 /**
  * Which of the three a nature does to this stat: −1, 0 or 1, shifted
@@ -126,14 +133,16 @@ function describeMet(caught: CaughtPokemon): string {
   ) {
     const name = ENCOUNTER_TYPE_NAMES[caught.type];
 
-    return `Caught in ${/^[AEIOU]/.test(name) ? 'an' : 'a'} ${name}`;
+    return m.catch_met_raid({ name: articled(name) });
   }
   if (isRaidEncounter(caught.type)) {
-    return `Caught at ${getLairTitle(
-      caught.lair,
-      caught.origin.biome,
-      caught.type === EncounterType.ShadowRaid,
-    )}`;
+    return m.catch_met_lair({
+      name: getLairTitle(
+        caught.lair,
+        caught.origin.biome,
+        caught.type === EncounterType.ShadowRaid,
+      ),
+    });
   }
   return ENCOUNTER_TYPE_NAMES[caught.type];
 }
@@ -152,8 +161,8 @@ export function describeHistory(caught: CaughtPokemon): string {
     // Where a distribution says it happened, which is a name rather
     // than a chunk: nobody walked anywhere to meet this one
     return caught.origin.place == null
-      ? 'Met in a fateful encounter.'
-      : `Met in a fateful encounter at ${caught.origin.place}.`;
+      ? m.catch_met_fateful()
+      : m.catch_met_fateful_at({ place: caught.origin.place });
   }
   // The ball is left out. It is on the record and it decides nothing
   // afterwards — what a pokemon was caught in says less about it than
@@ -161,7 +170,7 @@ export function describeHistory(caught: CaughtPokemon): string {
   const parts: string[] = [];
 
   for (const part of [
-    isEgg(caught) ? 'Found' : describeMet(caught),
+    isEgg(caught) ? m.catch_met_found() : describeMet(caught),
     describeDate(caught.caughtAt),
     describeOrigin(caught),
   ]) {
@@ -239,11 +248,23 @@ function timesOf(time: TimeOfDay | undefined): string {
       names.push(TIME_OF_DAY_NAMES[period]);
     }
   }
-  return names.join(' or ');
+  return names.join(m.catch_or());
 }
 
 const COMPARE_MARKS = { greater: '>', lesser: '<', equal: '=' } as const;
-const COMPARE_WORDS = { greater: 'higher than', lesser: 'lower than', equal: 'equal to' } as const;
+const COMPARE_STEPS = {
+  greater: m.catch_evolve_stat_higher,
+  lesser: m.catch_evolve_stat_lower,
+  equal: m.catch_evolve_stat_equal,
+} as const;
+
+/**
+ * An item or a species named inside a sentence. English puts an
+ * article before it; the other languages name it bare
+ */
+function articled(name: string): string {
+  return currentLocale() === 'en' ? withArticle(name) : name;
+}
 
 /**
  * What an evolution asks for, read straight off the row after the
@@ -271,22 +292,25 @@ export function EvolutionCondition(props: {
   const has = (flag: EvolutionMethod): boolean => (method() & flag) !== 0;
 
   return (
-    <Show when={isMeasurableEvolution(props.evolution)} fallback={<span>not possible here</span>}>
+    <Show
+      when={isMeasurableEvolution(props.evolution)}
+      fallback={<span>{m.catch_evolve_not_here()}</span>}
+    >
       <span class="inline-flex items-center gap-1">
         <Show when={has(EvolutionMethod.Level) ? props.evolution.level : null}>
-          {(level) => <span>Lv. {level()}</span>}
+          {(level) => <span>{m.catch_level({ level: level() })}</span>}
         </Show>
         <Show when={has(EvolutionMethod.Gender) ? props.evolution.gender : null}>
-          {(gender) => <span>{GENDER_NAMES[gender()]}</span>}
+          {(gender) => <span>{GENDER_LABELS[gender()]()}</span>}
         </Show>
         <Show when={has(EvolutionMethod.Friendship)}>
           <span class="inline-flex items-center gap-0.5">
             <HeartIcon class="size-3.5 text-ember" aria-hidden="true" />
-            {EVOLUTION_FRIENDSHIP} friendship
+            {m.catch_evolve_friendship_short({ count: EVOLUTION_FRIENDSHIP })}
           </span>
         </Show>
         <Show when={has(EvolutionMethod.KnownMove) ? props.evolution.move : null}>
-          {(move) => <span>knowing {getMoveData(move()).name}</span>}
+          {(move) => <span>{m.catch_evolve_knowing({ move: getMoveData(move()).name })}</span>}
         </Show>
         <Show when={has(EvolutionMethod.StatComparison) ? props.evolution.compare : null}>
           {(compare) => (
@@ -300,7 +324,9 @@ export function EvolutionCondition(props: {
           {(stone) => (
             <>
               {/* A shed is not spent on: it appears if one is in the bag */}
-              <span>{props.evolution.shed === true ? 'with' : 'use'}</span>
+              <span>
+                {props.evolution.shed === true ? m.catch_evolve_with() : m.catch_evolve_use()}
+              </span>
               <ItemSprite item={stone} size={CONDITION_ICON} label={describeItem(stone)} />
             </>
           )}
@@ -308,22 +334,21 @@ export function EvolutionCondition(props: {
         <Show when={has(EvolutionMethod.HeldItem) ? item() : null} keyed>
           {(carried) => (
             <>
-              <span>holding</span>
+              <span>{m.catch_evolve_holding()}</span>
               <ItemSprite item={carried} size={CONDITION_ICON} label={describeItem(carried)} />
             </>
           )}
         </Show>
         <Show when={has(EvolutionMethod.Trade)}>
           <span>
-            Trade
             {props.evolution.partner == null
-              ? ''
-              : ` for ${getSpeciesData(props.evolution.partner).name}`}
+              ? m.catch_evolve_trade()
+              : m.catch_evolve_trade_for({ name: getSpeciesData(props.evolution.partner).name })}
           </span>
           {/* The cord is an alternative rather than a second condition,
               and only where no stone is spent and no partner is named */}
           <Show when={!has(EvolutionMethod.UsedItem) && props.evolution.partner == null}>
-            <span>or use</span>
+            <span>{m.catch_evolve_or_use()}</span>
             <ItemSprite
               item={Items.LinkingCord}
               size={CONDITION_ICON}
@@ -332,7 +357,7 @@ export function EvolutionCondition(props: {
           </Show>
         </Show>
         <Show when={has(EvolutionMethod.TimeOfDay) ? timesOf(props.evolution.time) : null}>
-          {(when) => <span>at {when()}</span>}
+          {(when) => <span>{m.catch_evolve_at({ time: when() })}</span>}
         </Show>
         <Show when={has(EvolutionMethod.Special) ? featOfEvolution(props.evolution) : null}>
           {(feat) => <span>{describeFeat(feat(), props.progress)}</span>}
@@ -340,14 +365,16 @@ export function EvolutionCondition(props: {
         <Show when={has(EvolutionMethod.Walked) ? props.evolution.walked : null}>
           {(walked) => (
             <span>
-              walk {walked()} steps{tally(props.progress, walked())}
+              {m.catch_evolve_walk_short({ count: walked() })}
+              {tally(props.progress, walked())}
             </span>
           )}
         </Show>
         <Show when={has(EvolutionMethod.Candy) ? props.evolution.candies : null}>
           {(candies) => (
             <span>
-              spend {candies()} candies{tally(props.progress, candies())}
+              {m.catch_evolve_candy_short({ count: candies() })}
+              {tally(props.progress, candies())}
             </span>
           )}
         </Show>
@@ -371,57 +398,64 @@ export function describeEvolutionMethod(
   progress?: number,
 ): string {
   if (!isMeasurableEvolution(evolution)) {
-    return 'This evolution is not possible here.';
+    return m.catch_evolve_not_possible();
   }
   if (covered) {
-    return 'The handover it asked for is done. This evolution is ready.';
+    return m.catch_evolve_covered();
   }
 
   const { method, item } = evolution;
   const steps: string[] = [];
 
   if ((method & EvolutionMethod.Level) !== 0 && evolution.level != null) {
-    steps.push(`reach Lv. ${evolution.level}`);
+    steps.push(m.catch_evolve_reach_level({ level: evolution.level }));
   }
   if ((method & EvolutionMethod.Gender) !== 0 && evolution.gender != null) {
-    steps.push(`be ${GENDER_NAMES[evolution.gender].toLowerCase()}`);
+    steps.push(
+      evolution.gender === Genders.Female ? m.catch_evolve_be_female() : m.catch_evolve_be_male(),
+    );
   }
   if ((method & EvolutionMethod.Friendship) !== 0) {
-    steps.push(`reach ${EVOLUTION_FRIENDSHIP} friendship`);
+    steps.push(m.catch_evolve_reach_friendship({ count: EVOLUTION_FRIENDSHIP }));
   }
   if ((method & EvolutionMethod.KnownMove) !== 0 && evolution.move != null) {
-    steps.push(`know ${getMoveData(evolution.move).name}`);
+    steps.push(m.catch_evolve_know({ move: getMoveData(evolution.move).name }));
   }
   if ((method & EvolutionMethod.StatComparison) !== 0 && evolution.compare != null) {
     const { compare } = evolution;
 
     steps.push(
-      `have ${STAT_LABELS[compare.stat]} ${COMPARE_WORDS[compare.order]} ${STAT_LABELS[compare.against]}`,
+      COMPARE_STEPS[compare.order]({
+        stat: STAT_LABELS[compare.stat],
+        against: STAT_LABELS[compare.against],
+      }),
     );
   }
   if ((method & EvolutionMethod.UsedItem) !== 0 && item != null) {
     steps.push(
       evolution.shed === true
-        ? `carry ${withArticle(describeItem(item))} in the bag`
-        : `use ${withArticle(describeItem(item))}`,
+        ? m.catch_evolve_carry({ item: articled(describeItem(item)) })
+        : m.catch_evolve_use_item({ item: articled(describeItem(item)) }),
     );
   }
   if ((method & EvolutionMethod.HeldItem) !== 0 && item != null) {
-    steps.push(`have it hold ${withArticle(describeItem(item))}`);
+    steps.push(m.catch_evolve_hold({ item: articled(describeItem(item)) }));
   }
   if ((method & EvolutionMethod.Trade) !== 0) {
     if (evolution.partner == null) {
       steps.push(
         (method & EvolutionMethod.UsedItem) === 0
-          ? `trade it away or use ${withArticle(describeItem(Items.LinkingCord))}`
-          : 'trade it away',
+          ? m.catch_evolve_trade_or_use({ item: articled(describeItem(Items.LinkingCord)) })
+          : m.catch_evolve_trade_away(),
       );
     } else {
-      steps.push(`trade it for ${withArticle(getSpeciesData(evolution.partner).name)}`);
+      steps.push(
+        m.catch_evolve_trade_it_for({ name: articled(getSpeciesData(evolution.partner).name) }),
+      );
     }
   }
   if ((method & EvolutionMethod.TimeOfDay) !== 0 && evolution.time != null) {
-    steps.push(`do it at ${timesOf(evolution.time).toLowerCase()}`);
+    steps.push(m.catch_evolve_at_time({ time: timesOf(evolution.time).toLowerCase() }));
   }
   const feat = (method & EvolutionMethod.Special) === 0 ? undefined : featOfEvolution(evolution);
 
@@ -429,17 +463,19 @@ export function describeEvolutionMethod(
     steps.push(describeFeat(feat, progress));
   }
   if ((method & EvolutionMethod.Walked) !== 0 && evolution.walked != null) {
-    steps.push(`walk ${evolution.walked} steps as your buddy${tally(progress, evolution.walked)}`);
+    steps.push(
+      m.catch_evolve_walk({ count: evolution.walked }) + tally(progress, evolution.walked),
+    );
   }
   if ((method & EvolutionMethod.Candy) !== 0 && evolution.candies != null) {
     steps.push(
-      `spend ${evolution.candies} of its family's candies${tally(progress, evolution.candies)}`,
+      m.catch_evolve_candy({ count: evolution.candies }) + tally(progress, evolution.candies),
     );
   }
   if (steps.length === 0) {
-    return 'It evolves on its own.';
+    return m.catch_evolve_on_its_own();
   }
-  return `To evolve, ${steps.join(' and ')}.`;
+  return m.catch_evolve_to({ steps: steps.join(m.catch_and()) });
 }
 
 /** How far along a goal is, the way a feat says it: " (412/1000)" */

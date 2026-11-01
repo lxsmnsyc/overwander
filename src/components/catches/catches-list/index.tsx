@@ -2,7 +2,6 @@ import { type JSX, Show, createEffect, createMemo, createResource, createSignal 
 import {
   type BoxLayout,
   type BoxRecord,
-  DEFAULT_BOX_NAME,
   DEFAULT_BOX_TONE,
   arrangeBoxes,
   boxTone,
@@ -34,6 +33,7 @@ import BoxHeading from './heading';
 import BoxRail, { type RailBox } from './rail';
 import ReleasedList, { createReleased } from './released';
 import describeFailure from '../../../i18n/refusals';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface CatchesListProps {
   player: string;
@@ -51,15 +51,15 @@ export interface CatchesListProps {
 }
 
 /** What the sort control offers past the box's own order */
-const SORTS: { value: string; label: string }[] = [
-  { value: 'caught', label: 'Caught' },
-  { value: 'level', label: 'Level' },
-  { value: 'iv', label: 'Values' },
-  { value: 'friendship', label: 'Friendship' },
-  { value: 'species', label: 'Dex number' },
-  { value: 'name', label: 'Name' },
-  { value: 'hp', label: 'HP' },
-  { value: 'walked', label: 'Walked' },
+const SORTS: { value: string; label: () => string }[] = [
+  { value: 'caught', label: m.catch_sort_caught },
+  { value: 'level', label: m.catch_sort_level },
+  { value: 'iv', label: m.catch_sort_values },
+  { value: 'friendship', label: m.catch_friendship },
+  { value: 'species', label: m.catch_sort_dex },
+  { value: 'name', label: m.catch_box_name },
+  { value: 'hp', label: m.catch_sort_hp },
+  { value: 'walked', label: m.catch_sort_walked },
 ];
 
 /**
@@ -158,7 +158,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     const { counts, hits } = tally();
     const count = (key: string): number => (counting() ? hits : counts).get(key) ?? 0;
     const listed: RailBox[] = [
-      { id: null, name: DEFAULT_BOX_NAME, tone: DEFAULT_BOX_TONE, count: count('') },
+      { id: null, name: m.catch_box_default(), tone: DEFAULT_BOX_TONE, count: count('') },
     ];
 
     for (const [id, box] of made()) {
@@ -205,16 +205,26 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         return listed.name;
       }
     }
-    return DEFAULT_BOX_NAME;
+    return m.catch_box_default();
   };
 
   const controls = (): QueryControls => parseControls(query(), true);
 
   /** The sort control's choices, the first of them the box's own order */
-  const sortOptions = (): { value: string; label: string }[] => [
-    { value: '', label: current() == null || everywhere() ? 'Box order' : 'Slot order' },
-    ...SORTS,
-  ];
+  const sortOptions = (): { value: string; label: string }[] => {
+    const options: { value: string; label: string }[] = [
+      {
+        value: '',
+        label:
+          current() == null || everywhere() ? m.catch_sort_box_order() : m.catch_sort_slot_order(),
+      },
+    ];
+
+    for (const sort of SORTS) {
+      options.push({ value: sort.value, label: sort.label() });
+    }
+    return options;
+  };
 
   const sortValue = (): string => {
     for (const option of SORTS) {
@@ -255,7 +265,8 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
    * player looking for one wants to be told where it went. Nothing else
    * is refused at pick time
    */
-  const reason = (option: CatchOption): string | null => (option.fighting ? 'in a battle' : null);
+  const reason = (option: CatchOption): string | null =>
+    option.fighting ? m.catch_in_battle() : null;
 
   /** A round trip, said once when it lands, with the records read again either way */
   const run = <T,>(done: Promise<T>, said: (answer: T) => string | null): void => {
@@ -288,7 +299,10 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         const skipped = outcome.refused.length;
 
         toast.push({
-          message: `${said(outcome.done.length)}${skipped === 0 ? '' : `, ${skipped} skipped`}.`,
+          message:
+            skipped === 0
+              ? m.catch_bulk_done({ said: said(outcome.done.length) })
+              : m.catch_bulk_skipped({ said: said(outcome.done.length), skipped }),
           tone: outcome.done.length === 0 ? 'ember' : 'leaf',
         });
         setPicked([]);
@@ -315,13 +329,15 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         going.push(option.id);
       }
     }
-    settle(releaseCatches(going), (count) => `${count} let go`);
+    settle(releaseCatches(going), (count) => m.catch_bulk_let_go({ count }));
   };
 
   /** File some catches, into the first free squares or from one square on */
   const file = (ids: string[], box: string | null, slot: number | null = null): void => {
     if (ids.length > 0) {
-      settle(fileCatches(ids, box, slot), (count) => `${count} moved to ${nameOf(box)}`);
+      settle(fileCatches(ids, box, slot), (count) =>
+        m.catch_bulk_moved({ count, name: nameOf(box) }),
+      );
     }
   };
 
@@ -338,7 +354,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       setLastOpen(id);
       setEverywhere(false);
       setLookingBack(false);
-      return filing.length === 0 ? `Made ${name}` : `Made ${name} with ${filing.length} in it`;
+      return filing.length === 0
+        ? m.catch_made({ name })
+        : m.catch_made_with({ name, count: filing.length });
     });
   };
 
@@ -409,7 +427,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
           multiple: true,
           live: true,
           value: picked(),
-          verb: 'Add',
+          verb: m.catch_picker_add(),
           reason,
           onPick: (chose) => {
             setPicked(chose);
@@ -417,7 +435,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         }
       : {
           value: null,
-          verb: 'Open',
+          verb: m.catch_picker_open(),
           onPick: (catchId) => {
             if (catchId != null) {
               game.setSheet({ catchId, readOnly: props.viewOnly === true });
@@ -428,19 +446,18 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   /** What an empty box says, which for one the player made is how to fill it */
   const emptyNote = (): string => {
     if (!mine()) {
-      return 'Nothing caught yet.';
+      return m.catch_empty_theirs();
     }
-    return current() == null ? 'No catches yet.' : `Nothing in ${nameOf(current())} yet.`;
+    return current() == null
+      ? m.catch_empty_default()
+      : m.catch_empty_box({ name: nameOf(current()) });
   };
 
   /** The card over a box the player made while nothing is in it */
   const emptyCard = (): JSX.Element => (
     <>
-      <p class="m-0 text-lg font-black">Nothing in {nameOf(current())} yet</p>
-      <Meta>
-        Add pokemon from any box, drag some onto {nameOf(current())} in the list, or move them here
-        from their sheet.
-      </Meta>
+      <p class="m-0 text-lg font-black">{m.catch_empty_card_title({ name: nameOf(current()) })}</p>
+      <Meta>{m.catch_empty_card_note({ name: nameOf(current()) })}</Meta>
     </>
   );
 
@@ -449,16 +466,20 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     const total = offered().length;
     const count = rail().length;
 
-    return `${total} pokemon in ${count} box${count === 1 ? '' : 'es'}`;
+    return m.catch_boxes_summary({ total, count });
   };
 
   /** What the search says it looks through */
   const placeholder = (): string =>
-    everywhere() ? 'Search every box' : `Search ${nameOf(current())}`;
+    everywhere()
+      ? m.catch_picker_search_all()
+      : m.catch_picker_search_box({ name: nameOf(current()) });
 
   /** Where in the box the player has scrolled to: by slot in a box that keeps them */
   const viewSay = (view: BoxView): string =>
-    `${slotted() ? 'Slots' : 'Showing'} ${view.from} to ${view.to} of ${view.total}`;
+    slotted()
+      ? m.catch_view_slots({ from: view.from, to: view.to, total: view.total })
+      : m.catch_view_showing({ from: view.from, to: view.to, total: view.total });
 
   /** How many boxes the search found something in */
   const foundIn = (): number => {
@@ -494,7 +515,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                   }}
                 >
                   <PlusIcon class="size-4" aria-hidden="true" />
-                  New box
+                  {m.catch_box_new()}
                 </Button>
               </span>
               <Button
@@ -505,7 +526,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                 }}
               >
                 <SelectIcon class="size-4" aria-hidden="true" />
-                Select
+                {m.catch_select()}
               </Button>
             </>
           }
@@ -516,7 +537,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
               setMarking(false);
             }}
           >
-            Done
+            {m.catch_done()}
           </Button>
         </Show>
       </div>
@@ -528,7 +549,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     <Show when={mine() && made().length > 0}>
       <div
         role="radiogroup"
-        aria-label="Where to search"
+        aria-label={m.catch_where_to_search()}
         class="flex shrink-0 gap-0.5 rounded-xl bg-line-soft p-0.5"
       >
         <button
@@ -542,7 +563,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             setEverywhere(false);
           }}
         >
-          This box
+          {m.catch_this_box()}
         </button>
         <button
           type="button"
@@ -556,7 +577,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             setLookingBack(false);
           }}
         >
-          All boxes
+          {m.catch_picker_all_boxes()}
         </button>
       </div>
     </Show>
@@ -621,9 +642,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                 const id = current();
 
                 if (id != null) {
-                  run(editBox(id, name, colour), (done) =>
-                    done ? null : 'That name will not do.',
-                  );
+                  run(editBox(id, name, colour), (done) => (done ? null : m.catch_bad_name()));
                 }
               }}
               onLayOut={(layout: BoxLayout) => {
@@ -631,7 +650,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
                 if (id != null) {
                   run(layOutBox(id, layout), () =>
-                    layout === 'dex' ? 'Laid out by dex number' : 'Gaps closed up',
+                    layout === 'dex' ? m.catch_laid_out() : m.catch_gaps_closed(),
                   );
                 }
               }}
@@ -640,7 +659,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
                 if (id != null) {
                   run(emptyBox(id, to), (done) =>
-                    done ? `Moved them all to ${nameOf(to)}` : null,
+                    done ? m.catch_moved_all({ name: nameOf(to) }) : null,
                   );
                 }
               }}
@@ -654,7 +673,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                       return null;
                     }
                     setLastOpen(null);
-                    return `Deleted ${name}`;
+                    return m.catch_deleted({ name });
                   });
                 }
               }}
@@ -678,9 +697,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
               <Show when={counting()}>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <span class="text-sm font-extrabold">
-                    {shown().length} found in {foundIn()} box{foundIn() === 1 ? '' : 'es'}
+                    {m.catch_found_in({ count: shown().length, boxes: foundIn() })}
                   </span>
-                  <Meta>Each square says which box it lives in</Meta>
+                  <Meta>{m.catch_found_note()}</Meta>
                 </div>
               </Show>
             }
@@ -688,7 +707,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
               <>
                 {scope()}
                 <Select
-                  label="Sort"
+                  label={m.catch_sort()}
                   class="shrink-0 [&>label]:sr-only"
                   value={sortValue()}
                   options={sortOptions()}
@@ -698,7 +717,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                 />
                 <Button
                   class="shrink-0"
-                  label={controls().descending ? 'Highest first' : 'Lowest first'}
+                  label={controls().descending ? m.catch_highest_first() : m.catch_lowest_first()}
                   disabled={sortValue() === ''}
                   onClick={() => {
                     setQuery(withControl(query(), 'order', controls().descending ? 'asc' : null));
@@ -708,7 +727,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                 </Button>
                 <Show when={selecting() && pickable() > 0}>
                   <Button class="shrink-0" onClick={pickAll}>
-                    Pick all {pickable()}
+                    {m.catch_pick_all({ count: pickable() })}
                   </Button>
                 </Show>
               </>
@@ -741,7 +760,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                   }
                 : undefined
             }
-            placeLabel={(slot) => `Put the ${picked().length} picked in slot ${slot + 1}`}
+            placeLabel={(slot) => m.catch_put_picked({ count: picked().length, slot: slot + 1 })}
             // A finger held on a pokemon starts picking, with it picked
             onHold={
               mine()
@@ -754,10 +773,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             {...mode()}
           />
           <Show when={slotted() && (tally().counts.get(current() ?? '') ?? 0) > 0}>
-            <Meta>
-              Slot order keeps the gaps. Any other order lists the box packed, gaps hidden. The box
-              always ends in one empty row to place into, and grows as you fill it.
-            </Meta>
+            <Meta>{m.catch_slot_order_note()}</Meta>
           </Show>
         </Show>
       </div>
@@ -770,7 +786,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         isOpen={props.isOpen}
         onClose={props.onClose}
         width="broad"
-        title="Boxes"
+        title={m.panel_boxes()}
         lead={<BoxIcon class="size-5 text-on-accent" aria-hidden="true" />}
         description={summary()}
         aside={aside()}
@@ -789,12 +805,12 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
               }}
               onFavorite={(on) => {
                 settle(favoriteCatches(picked(), on), (count) =>
-                  on ? `${count} favorited` : `${count} unfavorited`,
+                  on ? m.catch_bulk_favorited({ count }) : m.catch_bulk_unfavorited({ count }),
                 );
               }}
               onGuard={(on) => {
                 settle(guardCatches(picked(), on), (count) =>
-                  on ? `${count} locked` : `${count} unlocked`,
+                  on ? m.catch_held_locked({ count }) : m.catch_bulk_unlocked({ count }),
                 );
               }}
               onRelease={release}
@@ -808,7 +824,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         <BattleData
           fallback={
             <DialogActions>
-              <Button onClick={props.onClose}>Close</Button>
+              <Button onClick={props.onClose}>{m.ui_close()}</Button>
             </DialogActions>
           }
         >
@@ -817,12 +833,12 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
           <DialogActions
             note={
               <Show when={!selecting()}>
-                <Meta class="hidden sm:block">Press a pokemon to open its sheet</Meta>
-                <Meta class="sm:hidden">Long-press a pokemon to start picking</Meta>
+                <Meta class="hidden sm:block">{m.catch_press_note()}</Meta>
+                <Meta class="sm:hidden">{m.catch_long_press_note()}</Meta>
               </Show>
             }
           >
-            <Button onClick={props.onClose}>Close</Button>
+            <Button onClick={props.onClose}>{m.ui_close()}</Button>
           </DialogActions>
         </BattleData>
       </Dialog>
@@ -833,9 +849,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         multiple
         player={props.player}
         value={[]}
-        title={`Add to ${nameOf(current())}`}
-        description="Pick from any of your boxes. They are filed in the order picked."
-        verb="Add"
+        title={m.catch_add_to({ name: nameOf(current()) })}
+        description={m.catch_add_to_note()}
+        verb={m.catch_picker_add()}
         filter={(option) => option.caught.box !== current()}
         reason={reason}
         onClose={() => {

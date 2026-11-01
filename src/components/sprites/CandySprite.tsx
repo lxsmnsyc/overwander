@@ -4,6 +4,7 @@ import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import type Families from '../../data/ids/families';
 import familyCandyIcon from '../../data/species/family-candy';
 import { getFamilyName } from '../../data/species';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A picture of one family's candy.
@@ -55,7 +56,7 @@ export default function CandySprite(props: CandySpriteProps): JSX.Element {
       size={props.fill === true ? undefined : (props.size ?? DEFAULT_SIZE)}
       fill={props.fill}
       class={props.class}
-      label={props.label ?? `${getFamilyName(props.family)} candy`}
+      label={props.label ?? m.item_candy_name({ family: getFamilyName(props.family) })}
     />
   );
 }

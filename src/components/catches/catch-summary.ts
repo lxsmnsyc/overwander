@@ -1,10 +1,12 @@
 import type { CaughtPokemon } from '../../auth/caught';
-import { catchAura, isFavorite, isGuarded, isShiny } from '../../model/caught-record';
+import { Acquisition, catchAura, isFavorite, isGuarded, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
 import { getMaxHealth, getStatusName, isFainted } from '../../model/health';
+import { describeFriendship } from '../../data/constants/friendship';
 import { Genders } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import { getSpeciesData } from '../../data/species';
+import { m } from '../../i18n/paraglide/messages.js';
 import type { BoxEntry } from './CatchBox';
 
 /**
@@ -29,7 +31,39 @@ export const GENDER_MARKS: Record<Genders, string> = {
   [Genders.Female]: '♀',
 };
 
-export { GENDER_NAMES as GENDER_LABELS } from '../../data/ids/species';
+/** A gender said in words, for the reader who cannot see the mark */
+export const GENDER_LABELS: Record<Genders, () => string> = {
+  [Genders.Genderless]: m.catch_gender_genderless,
+  [Genders.Male]: m.catch_gender_male,
+  [Genders.Female]: m.catch_gender_female,
+};
+
+/** How a pokemon came into an owner's hands, as its history says it */
+export const ACQUISITION_LABELS: Record<Acquisition, () => string> = {
+  [Acquisition.Caught]: m.catch_got_caught,
+  [Acquisition.Egg]: m.catch_got_egg,
+  [Acquisition.Auction]: m.catch_got_auction,
+  [Acquisition.Trade]: m.catch_got_trade,
+  [Acquisition.Gift]: m.catch_got_gift,
+  [Acquisition.Revived]: m.catch_got_revived,
+  [Acquisition.Shed]: m.catch_got_shed,
+};
+
+/** The friendship bands `describeFriendship` names, said in the player's language */
+const FRIENDSHIP_LABELS = new Map<string, () => string>([
+  ['inseparable', m.catch_friendship_inseparable],
+  ['devoted', m.catch_friendship_devoted],
+  ['warming to you', m.catch_friendship_warming],
+  ['used to you', m.catch_friendship_used],
+  ['wary', m.catch_friendship_wary],
+]);
+
+/** How a pokemon thinks of its owner, in words rather than a number out of 255 */
+export function sayFriendship(friendship: number): string {
+  const band = describeFriendship(friendship);
+
+  return FRIENDSHIP_LABELS.get(band)?.() ?? band;
+}
 
 /**
  * A one-line summary of a catch: the species name plus the details
@@ -40,7 +74,7 @@ export function describeCatch(caught: CaughtPokemon): string {
   // An egg is listed as an egg and nothing more: the species inside
   // is already decided, and showing it here would give it away
   if (isEgg(caught)) {
-    return `Egg · ${caught.steps} / ${caught.hatchSteps} steps`;
+    return m.catch_egg_steps({ steps: caught.steps, hatch: caught.hatchSteps });
   }
 
   const { name } = getSpeciesData(caught.species);
@@ -48,19 +82,22 @@ export function describeCatch(caught: CaughtPokemon): string {
   // The mark on the square said in words, since a line read aloud
   // carries no icons
   const aura = catchAura(caught);
-  const stands = aura == null ? '' : ` · ${aura === 'shadow' ? 'shadow' : 'purified'}`;
+  const stands =
+    aura == null ? '' : ` · ${aura === 'shadow' ? m.catch_aura_shadow() : m.catch_aura_purified()}`;
   // What it is carrying out of its last fight, since that is what
   // decides whether it can be brought into the next one
   const hurt =
-    caught.health < getMaxHealth(caught) ? ` · ${caught.health}/${getMaxHealth(caught)} HP` : '';
+    caught.health < getMaxHealth(caught)
+      ? ` · ${m.catch_hp({ health: caught.health, max: getMaxHealth(caught) })}`
+      : '';
   let carried = '';
 
   for (const status of unpackStatuses(caught.statuses)) {
     carried += ` · ${getStatusName(status)}`;
   }
-  const condition = isFainted(caught) ? ' · fainted' : `${hurt}${carried}`;
+  const condition = isFainted(caught) ? ` · ${m.pick_team_fainted()}` : `${hurt}${carried}`;
 
-  return `${shiny}${name} · Lv. ${caught.level}${stands}${condition}`;
+  return `${shiny}${m.catch_name_level({ name, level: caught.level })}${stands}${condition}`;
 }
 
 /**

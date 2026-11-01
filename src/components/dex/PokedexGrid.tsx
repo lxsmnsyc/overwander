@@ -3,6 +3,7 @@ import type { Species } from '../../data/ids/species';
 import { unownLetter } from '../../data/ids/forms';
 import { getSpeciesData } from '../../data/species';
 import AnimatedSprite from '../sprites/AnimatedSprite';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The dex, drawn as the box of squares it has always been.
@@ -122,12 +123,12 @@ export function describeDexEntry(entry: DexEntry): string {
   const marked = entry.label ?? dexLabel(entry.dexNumber);
 
   if (entry.caught) {
-    return `${marked} ${entry.name}, caught`;
+    return m.dex_entry_caught({ number: marked, name: entry.name });
   }
   if (entry.seen) {
-    return `${marked} ${entry.name}, seen`;
+    return m.dex_entry_seen({ number: marked, name: entry.name });
   }
-  return `${marked}, not yet met`;
+  return m.dex_entry_unmet({ number: marked });
 }
 
 export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
@@ -143,7 +144,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
     // the bar at the foot of a laptop screen
     <div
       role="group"
-      aria-label={props.label ?? `Pokedex, ${props.entries.length} species on this page.`}
+      aria-label={props.label ?? m.dex_grid_label({ count: props.entries.length })}
       class="mx-auto grid w-full max-w-md grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
         bg-parchment p-1.5 shadow-pop"
     >

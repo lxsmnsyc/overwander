@@ -48,6 +48,9 @@ import { MAX_WING_STATS, WING_STATS, isWing } from '../../data/items/wings';
 import { PP_UP_LIMIT } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { describeIVs, describeItem, withArticle } from '../details';
+import { m } from '../../i18n/paraglide/messages.js';
+import { joinSentences } from '../../i18n/format';
+import { currentLocale } from '../../i18n/locale';
 
 /**
  * Spending one item on one pokemon: whether it would mean anything,
@@ -244,8 +247,16 @@ function trainedBy(
   };
 }
 
+/**
+ * An item named inside a sentence. English puts an article before it;
+ * the other languages name it bare
+ */
+function articled(name: string): string {
+  return currentLocale() === 'en' ? withArticle(name) : name;
+}
+
 const refused = (item: Items): Spent => ({
-  said: `${describeItem(item)} could not be used.`,
+  said: m.item_spent_refused({ item: describeItem(item) }),
   tone: 'ember',
   level: null,
 });
@@ -263,20 +274,20 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     const level = await useRareCandy(catchId);
 
     if (level == null) {
-      return { said: 'That candy could not be used.', tone: 'ember', level: null };
+      return { said: m.catch_candy_failed(), tone: 'ember', level: null };
     }
-    return { said: `Grew to level ${level}.`, tone: 'neutral', level, cue: 'level-up' };
+    return { said: m.catch_candy_grew({ level }), tone: 'neutral', level, cue: 'level-up' };
   }
 
   if (item === Items.RareCandyMax) {
     const grown = await useRareCandyMax(catchId);
 
     if (grown == null) {
-      return { said: 'That candy could not be used.', tone: 'ember', level: null };
+      return { said: m.catch_candy_failed(), tone: 'ember', level: null };
     }
     return {
       cue: 'level-up',
-      said: `Grew to level ${grown.level}.`,
+      said: m.catch_candy_grew({ level: grown.level }),
       tone: 'neutral',
       level: grown.level,
       from: grown.from,
@@ -288,7 +299,11 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
 
     return ball == null
       ? refused(item)
-      : { said: `It is in ${withArticle(describeItem(item))} now.`, tone: 'neutral', level: null };
+      : {
+          said: m.item_spent_ball({ item: articled(describeItem(item)) }),
+          tone: 'neutral',
+          level: null,
+        };
   }
 
   if (isBottleCap(item)) {
@@ -297,7 +312,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return ivs == null
       ? refused(item)
       : {
-          said: `${describeItem(item)} polished it — ${describeIVs(ivs)}.`,
+          said: m.item_spent_cap({ item: describeItem(item), ivs: describeIVs(ivs) }),
           tone: 'neutral',
           level: null,
         };
@@ -308,7 +323,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
 
     return nature == null
       ? refused(item)
-      : { said: `It is ${NATURE_NAMES[nature]} now.`, tone: 'neutral', level: null };
+      : { said: m.item_spent_mint({ nature: NATURE_NAMES[nature] }), tone: 'neutral', level: null };
   }
 
   if (isPurifyingGem(item)) {
@@ -318,7 +333,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
       return refused(item);
     }
     return {
-      said: `The shadow is gone — ${describeIVs(ivs)}.`,
+      said: m.item_spent_purified({ ivs: describeIVs(ivs) }),
       tone: 'neutral',
       level: null,
       cue: 'purified',
@@ -327,7 +342,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
 
   if (isMaxMushrooms(item)) {
     return (await useMaxMushrooms(catchId))
-      ? { said: 'It carries the Gigantamax Factor now.', tone: 'neutral', level: null }
+      ? { said: m.item_spent_gigantamax(), tone: 'neutral', level: null }
       : refused(item);
   }
 
@@ -337,11 +352,11 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     // The likeliest refusal is a bag short of the cost, so it is named
     return type == null
       ? {
-          said: `It takes ${TERA_SHARD_COST} ${describeItem(item)}s to change a Tera type.`,
+          said: m.item_spent_tera_short({ count: TERA_SHARD_COST, item: describeItem(item) }),
           tone: 'ember',
           level: null,
         }
-      : { said: `Its Tera type is ${TYPE_NAMES[type]} now.`, tone: 'neutral', level: null };
+      : { said: m.item_spent_tera({ type: TYPE_NAMES[type] }), tone: 'neutral', level: null };
   }
 
   if (isUtilityBelt(item)) {
@@ -351,7 +366,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
       return refused(item);
     }
     return {
-      said: `Room for ${slots} held items now.`,
+      said: m.item_spent_belt({ count: slots }),
       tone: 'neutral',
       level: null,
       cue: 'item-slot',
@@ -364,7 +379,12 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     if (slots == null) {
       return refused(item);
     }
-    return { said: `Room for ${slots} moves now.`, tone: 'neutral', level: null, cue: 'item-slot' };
+    return {
+      said: m.item_spent_book({ count: slots }),
+      tone: 'neutral',
+      level: null,
+      cue: 'item-slot',
+    };
   }
 
   if (isAbilityCapsule(item)) {
@@ -375,7 +395,10 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     }
     return {
       cue: 'ability-learned',
-      said: `${getAbilityData(drawn.ability).name} came up — ${drawn.slots} abilities now.`,
+      said: m.item_spent_capsule({
+        ability: getAbilityData(drawn.ability).name,
+        count: drawn.slots,
+      }),
       tone: 'neutral',
       level: null,
     };
@@ -394,7 +417,7 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     return result == null
       ? refused(item)
       : {
-          said: `${describeItem(item)} — points it did not have to earn.`,
+          said: m.item_spent_effort({ item: describeItem(item) }),
           tone: 'neutral',
           level: null,
           ...trainedBy(stat, training, result),
@@ -405,9 +428,13 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
     const result = await feedEffortBerry(catchId, item);
 
     return result == null
-      ? { said: `${describeItem(item)} could not be fed.`, tone: 'ember', level: null }
+      ? {
+          said: m.item_spent_berry_refused({ item: describeItem(item) }),
+          tone: 'ember',
+          level: null,
+        }
       : {
-          said: `Bitter, and good for it — ${result.unused} points back to spend, and it thinks the better of you.`,
+          said: m.item_spent_berry({ count: result.unused }),
           tone: 'neutral',
           level: null,
           ...trainedBy(stat, training, result),
@@ -417,13 +444,16 @@ export default async function spendItemOn(catchId: string, item: Items): Promise
   const state = await useHealingItem(catchId, item);
 
   return state == null
-    ? { said: `${describeItem(item)} would do nothing for it.`, tone: 'ember', level: null }
+    ? { said: m.item_spent_heal_refused({ item: describeItem(item) }), tone: 'ember', level: null }
     : {
         // Herbal medicine is swallowed, and the pokemon holds it
         // against whoever handed it over
-        said: `${describeItem(item)} used — ${state.health} HP.${
-          isHerbal(item) ? ' It did not enjoy that.' : ''
-        }`,
+        said: isHerbal(item)
+          ? joinSentences([
+              m.item_spent_healed({ item: describeItem(item), health: state.health }),
+              m.item_spent_herbal(),
+            ])
+          : m.item_spent_healed({ item: describeItem(item), health: state.health }),
         tone: 'neutral',
         level: null,
       };

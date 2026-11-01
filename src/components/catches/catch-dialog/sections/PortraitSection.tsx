@@ -18,6 +18,7 @@ import AnimatedSprite from '../../../sprites/AnimatedSprite';
 import { Meta } from '../../../styled';
 
 import { type JSX, Show } from 'solid-js';
+import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
  * The pokemon itself: the sprite, how well it rolled and what it has
@@ -76,7 +77,7 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
               class="absolute top-2 right-2 z-10 rounded-lg border-2 border-line bg-paper px-2
                 text-sm font-extrabold tabular-nums shadow-pop-sm"
             >
-              Lv. {level()}
+              {m.catch_level({ level: level() })}
             </span>
           )}
         </Show>
@@ -112,7 +113,7 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
         <div class="flex items-center justify-center gap-2">
           <span
             role="img"
-            aria-label={`${getIVStars(props.caught.ivs)} of ${MAX_IV_STARS} stars`}
+            aria-label={m.catch_stars({ stars: getIVStars(props.caught.ivs), max: MAX_IV_STARS })}
             class="text-sm tracking-[0.2em] text-gold"
           >
             {stars()}
@@ -131,7 +132,7 @@ export default function PortraitSection(props: PortraitSectionProps): JSX.Elemen
           </div>
           <Meta class="shrink-0 tabular-nums">
             {Math.max(0, Math.round(props.caught.health))}/{getMaxHealth(props.caught)}
-            {isFainted(props.caught) ? ' · fainted' : ''}
+            {isFainted(props.caught) ? ` · ${m.pick_team_fainted()}` : ''}
           </Meta>
           {/* What it is still carrying from its last fight */}
           <StatusSquares statuses={props.caught.statuses} />

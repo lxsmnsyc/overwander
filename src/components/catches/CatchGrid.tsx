@@ -11,6 +11,7 @@ import CatchBox, {
 } from './CatchBox';
 import settings from '../app/settings';
 import { Meta, Note, Row, Search } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * A box of squares with its furniture — the search over it, where in
@@ -170,7 +171,9 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
     if (spot == null || !spot.scrolls) {
       return null;
     }
-    return props.say?.(spot) ?? `${spot.from} to ${spot.to} of ${spot.total}`;
+    return (
+      props.say?.(spot) ?? m.catch_grid_range({ from: spot.from, to: spot.to, total: spot.total })
+    );
   };
 
   // Resolved once: a prop holding markup is a getter, and reading it
@@ -191,7 +194,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
             <Search
               vocabulary={CATCH_VOCABULARY}
               example="type:fire"
-              placeholder={props.placeholder ?? 'Name, or type:fire is:shiny'}
+              placeholder={props.placeholder ?? m.catch_search_placeholder()}
               value={query()}
               onChange={(value) => {
                 if (props.onSearch == null) {
@@ -217,8 +220,8 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
         fallback={
           <Note>
             {query().length === 0
-              ? (props.empty ?? 'Nothing here yet.')
-              : (props.noMatch ?? 'None of them match that.')}
+              ? (props.empty ?? m.catch_grid_empty())
+              : (props.noMatch ?? m.catch_grid_no_match())}
           </Note>
         }
       >

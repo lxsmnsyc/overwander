@@ -5,6 +5,7 @@ import { getSpeciesData, getSpeciesForms } from '../../data/species';
 import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
 import { useGame } from '../app/game-context';
 import PokedexGrid, { type DexEntry, dexLabel, formLabel } from './PokedexGrid';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The forms one pokemon comes in, as the box of squares the dex itself
@@ -85,12 +86,10 @@ function FormsBox(props: {
       <PokedexGrid
         entries={entries()}
         squares={entries().length}
-        label={`Forms, ${entries().length} of them.`}
+        label={m.dex_forms_label({ count: entries().length })}
         onOpen={props.onSpecies}
       />
-      <Meta>
-        {found()} of {entries().length} found
-      </Meta>
+      <Meta>{m.dex_forms_found({ found: found(), count: entries().length })}</Meta>
     </>
   );
 }
@@ -115,7 +114,9 @@ export default function SpeciesFormsDialog(props: SpeciesFormsDialogProps): JSX.
   const named = (): string => {
     const species = props.species;
 
-    return species == null ? 'Forms' : `${dexLabel(getSpeciesData(species).dexNumber)} Forms`;
+    return species == null
+      ? m.dex_forms()
+      : m.dex_forms_of({ number: dexLabel(getSpeciesData(species).dexNumber) });
   };
 
   return (
@@ -124,16 +125,16 @@ export default function SpeciesFormsDialog(props: SpeciesFormsDialogProps): JSX.
       onClose={props.onClose}
       title={named()}
       terse
-      description="Every form this pokemon comes in. Open one for its own entry."
+      description={m.dex_forms_description()}
     >
-      <Suspense fallback={<Note>Reading the dex…</Note>}>
+      <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
         {props.species == null ? null : (
           <FormsBox species={props.species} dex={dex} onSpecies={props.onSpecies} />
         )}
       </Suspense>
 
       <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button onClick={props.onClose}>{m.ui_close()}</Button>
       </DialogActions>
     </Dialog>
   );

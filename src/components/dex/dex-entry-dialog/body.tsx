@@ -11,7 +11,7 @@ import { EGG_HATCH_STEPS } from '../../../model/egg';
 import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import { BIOME_NAMES } from '../../../data/biome';
 import { STAT_ORDER } from '../../../data/constants/stats';
-import type { Items } from '../../../data/ids/items';
+import { Items } from '../../../data/ids/items';
 import type { Moves } from '../../../data/ids/moves';
 import type { Species } from '../../../data/ids/species';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';
@@ -31,7 +31,7 @@ import {
 } from '../../catches/catch-dialog/describe';
 import MoveTooltip from '../../moves/MoveTooltip';
 import { getSpeciesSignature } from '../../../data/abilities';
-import { describeAbility, detailAbility } from '../../details';
+import { describeAbility, describeItem, detailAbility } from '../../details';
 import MoveCategorySprite from '../../sprites/MoveCategorySprite';
 import SpeciesCoat from '../../sprites/SpeciesCoat';
 import { Sigil } from '../../sprites/TypeBadge';
@@ -53,6 +53,7 @@ import {
 } from '../../styled';
 import { For, type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
 import { answered, failed, readable } from '../../app/resource-reads';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /** How many stages a line is walked to, so a data loop cannot run away */
 const LINE_LIMIT = 24;
@@ -81,7 +82,7 @@ function nameFossils(fossils: Items[]): string {
   for (const fossil of fossils) {
     names.push(getItemData(fossil).name);
   }
-  return names.join(' and a ');
+  return names.join(m.dex_fossil_and());
 }
 
 /** One half of a two-way switch, pressed or not */
@@ -281,8 +282,15 @@ export function DexEntryBody(
             <span class="font-medium">{getMoveData(move).name}</span>
           </span>
           <Meta>
-            {getMoveData(move).power == null ? '' : `${getMoveData(move).power} power · `}
-            {getMoveData(move).pp} PP
+            <Show
+              when={getMoveData(move).power != null}
+              fallback={m.catch_pp_amount({ pp: getMoveData(move).pp })}
+            >
+              {m.dex_move_power_pp({
+                power: getMoveData(move).power ?? 0,
+                pp: getMoveData(move).pp,
+              })}
+            </Show>
           </Meta>
         </span>
       </MoveTooltip>
@@ -290,7 +298,7 @@ export function DexEntryBody(
   );
 
   return (
-    <Show when={showing()} fallback={<Note>No such species.</Note>}>
+    <Show when={showing()} fallback={<Note>{m.dex_no_species()}</Note>}>
       {(entry) => (
         // The left column holds still and the right one scrolls, so the
         // pokemon stays in view while its lists are read
@@ -318,21 +326,23 @@ export function DexEntryBody(
                 sized
                 called={[
                   entry().data.name,
-                  ...(shiny() ? ['shiny'] : []),
-                  ...(props.female() === true ? [female() ? 'female' : 'male'] : []),
+                  ...(shiny() ? [m.dex_coat_shiny()] : []),
+                  ...(props.female() === true
+                    ? [female() ? m.dex_coat_female() : m.dex_coat_male()]
+                    : []),
                 ].join(', ')}
               />
             </div>
 
             <div class="flex flex-wrap items-center justify-center gap-1.5">
-              <div class="flex" role="group" aria-label="Coat">
+              <div class="flex" role="group" aria-label={m.dex_coat()}>
                 <Toggle
                   pressed={!shiny()}
                   onPress={() => {
                     setShiny(false);
                   }}
                 >
-                  Regular
+                  {m.dex_coat_regular()}
                 </Toggle>
                 <Toggle
                   pressed={shiny()}
@@ -340,12 +350,12 @@ export function DexEntryBody(
                     setShiny(true);
                   }}
                 >
-                  Shiny
+                  {m.catch_shiny()}
                 </Toggle>
               </div>
               {/* Only where the females were drawn differently */}
               <Show when={props.female() === true}>
-                <div class="flex" role="group" aria-label="Sex">
+                <div class="flex" role="group" aria-label={m.dex_sex()}>
                   <Toggle
                     pressed={!female()}
                     onPress={() => {
@@ -371,20 +381,22 @@ export function DexEntryBody(
                 <Badge>{entry().data.height} m</Badge>
                 <Badge>{entry().data.weight} kg</Badge>
                 <Badge tone="gold">
-                  {failed(props.candy) == null ? (readable(props.candy) ?? 0) : '?'}{' '}
-                  {getFamilyName(entry().data.family)} candy
+                  {m.battle_candy_earned({
+                    count: failed(props.candy) == null ? (readable(props.candy) ?? 0) : '?',
+                    family: getFamilyName(entry().data.family),
+                  })}
                 </Badge>
-                <Badge>{EGG_HATCH_STEPS} steps to hatch</Badge>
+                <Badge>{m.dex_hatch_steps({ count: EGG_HATCH_STEPS })}</Badge>
               </div>
 
               <section class="flex min-h-0 w-full flex-1 flex-col gap-1 border-t border-line-soft pt-2">
                 <span class="flex items-center gap-1.5">
-                  <h3 class="text-left">Evolution line</h3>
-                  <Hint title="About the evolution line">
+                  <h3 class="text-left">{m.dex_line()}</h3>
+                  <Hint title={m.dex_line_help()}>
                     <HintList>
-                      <li>Hover a stage to see what it takes to evolve into it.</li>
-                      <li>Press a stage to open its entry.</li>
-                      <li>A stage you have not met is a silhouette.</li>
+                      <li>{m.dex_line_help_hover()}</li>
+                      <li>{m.dex_line_help_press()}</li>
+                      <li>{m.dex_line_help_unmet()}</li>
                     </HintList>
                   </Hint>
                 </span>
@@ -407,7 +419,7 @@ export function DexEntryBody(
                           }
                           description={
                             stage.from == null
-                              ? 'The start of the line.'
+                              ? m.dex_line_start()
                               : describeEvolutionMethod(stage.from)
                           }
                           extra={() => (
@@ -471,25 +483,15 @@ export function DexEntryBody(
 
           {/* Everything that runs long, scrolling on its own */}
           <div class="flex min-h-0 flex-col gap-4 md:overflow-y-auto md:pl-4">
-            <Show
-              when={known().met}
-              fallback={<Note>Meet this pokemon to fill in its entry.</Note>}
-            >
+            <Show when={known().met} fallback={<Note>{m.dex_meet_first()}</Note>}>
               <DialogSection
-                title="Base stats"
+                title={m.dex_base_stats()}
                 hint={
-                  <Hint title="About base stats">
+                  <Hint title={m.dex_base_stats_help()}>
                     <HintList>
-                      <li>
-                        What every one of this species starts from, before level and training.
-                      </li>
-                      <li>
-                        A caught pokemon's own stats also depend on its IVs, its EVs and its nature.
-                      </li>
-                      <li>
-                        Bars are measured against {STAT_CEILING}, so species can be compared at a
-                        glance.
-                      </li>
+                      <li>{m.dex_base_stats_help_start()}</li>
+                      <li>{m.dex_base_stats_help_own()}</li>
+                      <li>{m.dex_base_stats_help_bars({ max: STAT_CEILING })}</li>
                     </HintList>
                   </Hint>
                 }
@@ -516,25 +518,27 @@ export function DexEntryBody(
                       </div>
                     )}
                   </For>
-                  <Meta class="text-right">{totalOf(entry().data)} total</Meta>
+                  <Meta class="text-right">{m.dex_total({ total: totalOf(entry().data) })}</Meta>
                 </div>
               </DialogSection>
 
               <div class="grid gap-4 sm:grid-cols-2">
                 <DialogSection
-                  title="Abilities"
+                  title={m.catch_abilities()}
                   hint={
-                    <Hint title="About abilities">
+                    <Hint title={m.catch_abilities_help()}>
                       <HintList>
-                        <li>A pokemon is born with one of the grey abilities.</li>
-                        <li>Blue ones are hidden: rarer, but a birth can still roll one.</li>
+                        <li>{m.dex_abilities_help_born()}</li>
+                        <li>{m.dex_abilities_help_hidden()}</li>
                         <li>
-                          Gold is the family's signature ability. Nothing rolls it; an Ability Patch
-                          writes it in.
+                          {m.dex_abilities_help_signature({
+                            patch: describeItem(Items.AbilityPatch),
+                          })}
                         </li>
                         <li>
-                          An Ability Capsule or the Channeler adds another ability the line can
-                          reach.
+                          {m.dex_abilities_help_more({
+                            capsule: describeItem(Items.AbilityCapsule),
+                          })}
                         </li>
                       </HintList>
                     </Hint>
@@ -578,13 +582,13 @@ export function DexEntryBody(
                 </DialogSection>
 
                 <DialogSection
-                  title="Where it lives"
+                  title={m.dex_habitat()}
                   hint={
-                    <Hint title="About where it lives">
+                    <Hint title={m.dex_habitat_help()}>
                       <HintList>
-                        <li>Each biome it appears in, with the times of day it is out.</li>
-                        <li>Towns list the hours it walks their streets.</li>
-                        <li>A legendary waits in its lair rather than roaming.</li>
+                        <li>{m.dex_habitat_help_biomes()}</li>
+                        <li>{m.dex_habitat_help_towns()}</li>
+                        <li>{m.dex_habitat_help_lairs()}</li>
                       </HintList>
                     </Hint>
                   }
@@ -602,12 +606,10 @@ export function DexEntryBody(
                       // other simply is not staged anywhere yet
                       <Show
                         when={getSpeciesFossil(entry().species)}
-                        fallback={<Note>It is not met in the wild.</Note>}
+                        fallback={<Note>{m.dex_habitat_none()}</Note>}
                       >
                         {(fossils) => (
-                          <Note>
-                            Extinct. It is only ever met by reviving a {nameFossils(fossils())}.
-                          </Note>
+                          <Note>{m.dex_extinct({ fossils: nameFossils(fossils()) })}</Note>
                         )}
                       </Show>
                     }
@@ -622,7 +624,7 @@ export function DexEntryBody(
                           <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
                             <span class="grow text-left font-medium">{lair.name}</span>
                             <span class="flex flex-wrap justify-end gap-1">
-                              <Badge tone="tide">Lair</Badge>
+                              <Badge tone="tide">{m.dex_lair()}</Badge>
                               <For each={lair.where}>{(biome) => <Badge>{biome}</Badge>}</For>
                             </span>
                           </ListRow>
@@ -632,7 +634,7 @@ export function DexEntryBody(
                         {(place) => (
                           <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
                             <span class="grow text-left font-medium">
-                              {place.biome == null ? 'All biomes' : BIOME_NAMES[place.biome]}
+                              {place.biome == null ? m.dex_all_biomes() : BIOME_NAMES[place.biome]}
                             </span>
                             <span class="flex flex-wrap justify-end gap-1">
                               <For each={place.hours}>{(hour) => <Badge>{hour}</Badge>}</For>
@@ -642,7 +644,7 @@ export function DexEntryBody(
                       </For>
                       <Show when={townHours(entry().species).length}>
                         <ListRow class="flex-col items-start gap-0.5 sm:flex-row sm:items-center">
-                          <span class="grow text-left font-medium">Towns</span>
+                          <span class="grow text-left font-medium">{m.dex_towns()}</span>
                           <span class="flex flex-wrap justify-end gap-1">
                             <For each={townHours(entry().species)}>
                               {(hour) => <Badge>{hour}</Badge>}
@@ -656,29 +658,29 @@ export function DexEntryBody(
               </div>
 
               <DialogSection
-                title="Moves"
+                title={m.catch_moves()}
                 hint={
-                  <Hint title="About moves">
+                  <Hint title={m.catch_moves_help()}>
                     <HintList>
-                      <li>Level moves are offered as it levels up.</li>
-                      <li>Machines are taught from the bag or by the Move Tutor.</li>
-                      <li>Egg moves are only inherited, from parents at the Breeder.</li>
-                      <li>Hover a move to see what it does.</li>
+                      <li>{m.dex_moves_help_level()}</li>
+                      <li>{m.dex_moves_help_machines()}</li>
+                      <li>{m.dex_moves_help_egg()}</li>
+                      <li>{m.dex_moves_help_hover()}</li>
                     </HintList>
                   </Hint>
                 }
               >
                 <TabGroup horizontal defaultValue={MoveTab.Level} class="flex flex-col gap-3">
                   <TabBar>
-                    <TabButton value={MoveTab.Level}>Level</TabButton>
-                    <TabButton value={MoveTab.Machines}>Machines</TabButton>
-                    <TabButton value={MoveTab.Egg}>Egg</TabButton>
+                    <TabButton value={MoveTab.Level}>{m.dex_tab_level()}</TabButton>
+                    <TabButton value={MoveTab.Machines}>{m.item_pocket_machines()}</TabButton>
+                    <TabButton value={MoveTab.Egg}>{m.ui_egg()}</TabButton>
                   </TabBar>
 
                   <TabPane value={MoveTab.Level}>
                     <Show
                       when={listLevelMoves(entry().species).length}
-                      fallback={<Note>It learns nothing by growing.</Note>}
+                      fallback={<Note>{m.dex_moves_none_level()}</Note>}
                     >
                       <List>
                         <For each={listLevelMoves(entry().species)}>
@@ -695,7 +697,7 @@ export function DexEntryBody(
                   <TabPane value={MoveTab.Machines}>
                     <Show
                       when={entry().data.learnSet.teachable.length}
-                      fallback={<Note>Nothing can be taught to it.</Note>}
+                      fallback={<Note>{m.dex_moves_none_machines()}</Note>}
                     >
                       <List>
                         <For each={entry().data.learnSet.teachable}>{(move) => moveRow(move)}</For>
@@ -706,7 +708,7 @@ export function DexEntryBody(
                   <TabPane value={MoveTab.Egg}>
                     <Show
                       when={(entry().data.learnSet.egg ?? []).length}
-                      fallback={<Note>It inherits nothing.</Note>}
+                      fallback={<Note>{m.dex_moves_none_egg()}</Note>}
                     >
                       <List>
                         <For each={entry().data.learnSet.egg ?? []}>{(move) => moveRow(move)}</For>

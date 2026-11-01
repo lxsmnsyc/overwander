@@ -26,6 +26,7 @@ import MoveTooltip from '../moves/MoveTooltip';
 import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
 import { Button, HoverCard, Meta, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * One of the player's pokemon, read at a glance: which individual it
@@ -121,7 +122,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
         <div class="flex items-center justify-between gap-1">
           <span
             role="img"
-            aria-label={`${getIVStars(caught().ivs)} of ${MAX_IV_STARS} stars`}
+            aria-label={m.catch_stars({ stars: getIVStars(caught().ivs), max: MAX_IV_STARS })}
             class="shrink-0 tracking-[0.2em] text-gold"
           >
             {stars()}
@@ -154,7 +155,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
         <Show when={isGuarded(caught())}>
           <LockIcon aria-hidden="true" class="size-3.5 shrink-0 text-tide" />
         </Show>
-        <strong class="min-w-0 truncate">{egg() ? 'Egg' : getCatchName(caught())}</strong>
+        <strong class="min-w-0 truncate">{egg() ? m.ui_egg() : getCatchName(caught())}</strong>
       </div>
 
       {/* An egg says nothing about what is inside it — that is the
@@ -168,7 +169,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
               <div class="h-full bg-gold" style={{ width: `${hatching() * 100}%` }} />
             </div>
             <Meta>
-              {caught().steps} / {caught().hatchSteps} steps walked
+              {m.catch_steps_walked({ steps: caught().steps, hatch: caught().hatchSteps })}
             </Meta>
           </>
         }
@@ -183,9 +184,9 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
               {(type) => <TypeBadge type={type} size={TYPE_SIGIL} />}
             </For>
           </span>
-          <span class="shrink-0 text-muted">Lv. {caught().level}</span>
+          <span class="shrink-0 text-muted">{m.catch_level({ level: caught().level })}</span>
           <Show when={GENDER_MARKS[caught().gender] !== ''}>
-            <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]}>
+            <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]()}>
               {GENDER_MARKS[caught().gender]}
             </span>
           </Show>
@@ -213,7 +214,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           {/* The name is all that fits in a third of a card; what a
               move or an ability does is on the card over it */}
           <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-            <For each={caught().moves} fallback={<Meta>No move</Meta>}>
+            <For each={caught().moves} fallback={<Meta>{m.catch_no_move()}</Meta>}>
               {(move) => (
                 <li>
                   <MoveTooltip
@@ -232,7 +233,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           </ul>
 
           <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-            <For each={caught().abilities} fallback={<Meta>No ability</Meta>}>
+            <For each={caught().abilities} fallback={<Meta>{m.catch_no_ability()}</Meta>}>
               {(ability) => (
                 <li>
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
@@ -266,7 +267,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                       <button
                         type="button"
                         disabled={props.owned !== true}
-                        aria-label="Give it an item"
+                        aria-label={m.catch_give_item()}
                         class={`flex aspect-square items-center justify-center rounded border
                           border-dashed border-line-soft bg-paper/40 text-muted ${
                             props.owned === true
@@ -284,11 +285,11 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                     <HoverCard
                       class="block"
                       title={detailItem(caught().items[at]).name}
-                      kind="Item"
+                      kind={m.tooltip_kind_item()}
                       footer={(close) => (
                         <Show
                           when={props.owned === true}
-                          fallback={<Button onClick={close}>Close</Button>}
+                          fallback={<Button onClick={close}>{m.ui_close()}</Button>}
                         >
                           <Button
                             tone="primary"
@@ -297,7 +298,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                               props.onTake?.(caught().items[at]);
                             }}
                           >
-                            Take
+                            {m.catch_take()}
                           </Button>
                         </Show>
                       )}

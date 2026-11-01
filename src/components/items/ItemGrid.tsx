@@ -6,6 +6,7 @@ import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
 import { Button, Detail, HoverCard, Meta, Note, Row, Search, TooltipHost } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The bag as a tray of pictures rather than a column of names.
@@ -264,11 +265,25 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const aside = (cell: ItemCell): JSX.Element => (
     <>
       <Show when={cell.carried ?? cell.amount}>
-        {(held) => <Detail label="Amount in bag">{held()}</Detail>}
+        {(held) => <Detail label={m.item_amount_in_bag()}>{held()}</Detail>}
       </Show>
       {cell.card?.()}
     </>
   );
+
+  /** What a square is called to a screen reader: the verb, the item, how many, and any refusal */
+  const sayCell = (cell: ItemCell): string => {
+    const named =
+      props.verb == null
+        ? describeItem(cell.item)
+        : m.item_cell_verb({ verb: props.verb, item: describeItem(cell.item) });
+    const counted =
+      cell.amount == null ? named : m.item_cell_carried({ label: named, count: cell.amount });
+
+    return cell.blocked == null
+      ? counted
+      : m.catch_refused_label({ label: counted, reason: cell.blocked });
+  };
 
   /**
    * One square of the tray, drawn the same whether a hover card or a
@@ -278,12 +293,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     <button
       type="button"
       disabled={props.disabled === true || cell.blocked != null}
-      aria-label={
-        cell.said ??
-        `${props.verb == null ? '' : `${props.verb} `}${describeItem(cell.item)}${
-          cell.amount == null ? '' : `, ${cell.amount} carried`
-        }${cell.blocked == null ? '' : ` — ${cell.blocked}`}`
-      }
+      aria-label={cell.said ?? sayCell(cell)}
       aria-pressed={cell.selected === true}
       onClick={() => {
         press(cell);
@@ -336,7 +346,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           <Search
             vocabulary={ITEM_VOCABULARY}
             example="type:berry"
-            placeholder="Name, or type:berry is:usable"
+            placeholder={m.item_search_placeholder()}
             value={query()}
             onChange={(typed) => {
               setQuery(typed);
@@ -349,7 +359,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       {/* Narrowed to nothing is the tray's own news to break: what the
           caller says when the bag is empty is a different sentence */}
       <Show when={narrowed().length === 0 && props.entries.length > 0}>
-        <Note class="text-center">Nothing here matches.</Note>
+        <Note class="text-center">{m.item_nothing_matches()}</Note>
       </Show>
 
       <div
@@ -381,7 +391,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               <HoverCard
                 class="block w-full"
                 title={detailItem(cell().item).name}
-                kind="Item"
+                kind={m.tooltip_kind_item()}
                 footer={
                   <For each={cell().actions}>
                     {(action) => (
@@ -419,7 +429,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       <Show when={pages() > 1}>
         <Row class="justify-center">
           <Button
-            label="Previous page"
+            label={m.pager_previous()}
             disabled={page() === 0}
             onClick={() => {
               setPage((at) => Math.max(0, at - 1));
@@ -427,11 +437,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           >
             <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
-          <Meta>
-            Page {page() + 1} of {pages()}
-          </Meta>
+          <Meta>{m.pager_page({ page: page() + 1, pages: pages() })}</Meta>
           <Button
-            label="Next page"
+            label={m.pager_next()}
             disabled={page() >= pages() - 1}
             onClick={() => {
               setPage((at) => Math.min(pages() - 1, at + 1));

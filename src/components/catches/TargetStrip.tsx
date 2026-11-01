@@ -6,6 +6,7 @@ import { getMaxHealth, getStatusName, isFainted } from '../../model/health';
 import { Genders, Species } from '../../data/ids/species';
 import { unpackStatuses } from '../../data/ids/status';
 import AnimatedSprite from '../sprites/AnimatedSprite';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The pokemon something is about to be spent on, with its health and
@@ -32,7 +33,7 @@ export default function TargetStrip(props: { caught: CaughtPokemon }): JSX.Eleme
       </span>
       <span class="flex min-w-0 grow flex-col gap-1">
         <span class="truncate text-sm font-extrabold">
-          {getCatchName(props.caught)} · Lv. {props.caught.level}
+          {m.catch_name_level({ name: getCatchName(props.caught), level: props.caught.level })}
         </span>
         <span class="flex items-center gap-1.5">
           <span class="h-1.5 grow overflow-hidden rounded-full bg-line-soft">

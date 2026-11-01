@@ -8,18 +8,20 @@ import {
   createSignal,
 } from 'solid-js';
 import { resolveBuddy, setBuddy } from '../../auth/buddy';
+import type { CaughtPokemon } from '../../auth/caught';
 import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
-import { MAX_FRIENDSHIP, describeFriendship } from '../../data/constants/friendship';
+import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
 import getSigil from '../../data/constants/sigil';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
-import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
+import { GENDER_LABELS, GENDER_MARKS, sayFriendship } from './catch-summary';
 import CatchPicker from './catch-picker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Badge, Button, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Who is walking with the player.
@@ -102,6 +104,20 @@ function Sprung(props: ParentProps<{ open?: (catchId: string) => void; at: strin
   );
 }
 
+/**
+ * What the buddy's picture is announced as. Everything about a buddy
+ * reads as something happening to the reader, which is not true of a
+ * trainer whose profile is being looked at
+ */
+function sayWalker(caught: CaughtPokemon, theirs: boolean): string {
+  if (isEgg(caught)) {
+    return theirs ? m.catch_buddy_egg_walking_them() : m.catch_buddy_egg_walking();
+  }
+  const name = getSpeciesData(caught.species).name;
+
+  return theirs ? m.catch_buddy_walking_them({ name }) : m.catch_buddy_walking({ name });
+}
+
 export interface BuddyCardProps {
   player: string;
   /**
@@ -154,7 +170,7 @@ function BuddyBody(
     setStatus(null);
     setBuddy(props.player, catchId)
       .then((changed) => {
-        setStatus(changed ? null : 'That one cannot walk with you right now.');
+        setStatus(changed ? null : m.catch_buddy_refused());
         props.onChange?.();
         props.onChosen();
       })
@@ -169,7 +185,6 @@ function BuddyBody(
    * walked together — and none of that is true of a trainer whose
    * profile is being looked at
    */
-  const walker = (): string => (props.viewOnly === true ? 'them' : 'you');
 
   return (
     // No frame of its own: it is the right half of the profile's trainer card
@@ -179,9 +194,8 @@ function BuddyBody(
           when={buddy()}
           fallback={
             <Note class="grow">
-              <Show when={props.viewOnly !== true} fallback="Nobody is walking with this trainer.">
-                Nobody is walking with you. A buddy draws pokemon in, earns the candy and is the
-                only thing that hatches an egg.
+              <Show when={props.viewOnly !== true} fallback={m.catch_buddy_none_theirs()}>
+                {m.catch_buddy_none()}
               </Show>
             </Note>
           }
@@ -208,11 +222,7 @@ function BuddyBody(
                   direction="DownLeft"
                   scale={2}
                   shadow
-                  label={
-                    isEgg(pair()[1])
-                      ? `An egg, walking with ${walker()}`
-                      : `${getSpeciesData(pair()[1].species).name}, walking with ${walker()}`
-                  }
+                  label={sayWalker(pair()[1], props.viewOnly === true)}
                 />
               </Sprung>
 
@@ -221,32 +231,38 @@ function BuddyBody(
                   when={!isEgg(pair()[1])}
                   fallback={
                     <>
-                      <span class="font-semibold">Egg</span>
+                      <span class="font-semibold">{m.ui_egg()}</span>
                       {/* How close it is to hatching, drawn as well as
                           counted. An egg is the one thing in the game
                           that is finished by walking, so how far along
                           it is *is* what the buddy card is for */}
                       <Gauge
-                        label="Hatching"
+                        label={m.catch_buddy_hatching()}
                         tone="bg-gold"
                         value={pair()[1].steps}
                         of={pair()[1].hatchSteps}
-                        said={`${pair()[1].steps} of ${pair()[1].hatchSteps} steps walked`}
+                        said={m.catch_buddy_steps({
+                          steps: pair()[1].steps,
+                          hatch: pair()[1].hatchSteps,
+                        })}
                       />
                     </>
                   }
                 >
                   <div class="flex flex-wrap items-center gap-2">
                     <span class="font-semibold">
-                      Lv. {pair()[1].level} {getSpeciesData(pair()[1].species).name}
+                      {m.ui_level_name({
+                        level: pair()[1].level,
+                        name: getSpeciesData(pair()[1].species).name,
+                      })}
                     </span>
                     <Show when={GENDER_MARKS[pair()[1].gender] !== ''}>
                       {/* The glyph's font sits it low, so its line box is
                           trimmed to keep it level with the name */}
                       <span
                         class="leading-none"
-                        title={GENDER_LABELS[pair()[1].gender]}
-                        aria-label={GENDER_LABELS[pair()[1].gender]}
+                        title={GENDER_LABELS[pair()[1].gender]()}
+                        aria-label={GENDER_LABELS[pair()[1].gender]()}
                         role="img"
                       >
                         {GENDER_MARKS[pair()[1].gender]}
@@ -256,7 +272,7 @@ function BuddyBody(
                         sparkles, and a player who cannot see that is
                         owed the word */}
                     <Show when={isShiny(pair()[1])}>
-                      <Badge tone="gold">✦ Shiny</Badge>
+                      <Badge tone="gold">{m.catch_shiny_badge()}</Badge>
                     </Show>
                   </div>
                   {/* The mark it is known by. Two of the same species
@@ -271,11 +287,11 @@ function BuddyBody(
                       hundreds of paces and the only way to see it was
                       to open its sheet */}
                   <Gauge
-                    label="Friendship"
+                    label={m.catch_friendship()}
                     tone="bg-leaf"
                     value={pair()[1].friendship}
                     of={MAX_FRIENDSHIP}
-                    said={describeFriendship(pair()[1].friendship)}
+                    said={sayFriendship(pair()[1].friendship)}
                   />
                   {/* `walked`, not `steps`. They are two counts on
                       purpose: `steps` is how far an egg has been
@@ -283,9 +299,7 @@ function BuddyBody(
                       hatches, while `walked` is how far this pokemon
                       has gone as somebody's buddy — which is the one
                       that buys the friendship above */}
-                  <Meta>
-                    {pair()[1].walked} {pair()[1].walked === 1 ? 'step' : 'steps'} walked together
-                  </Meta>
+                  <Meta>{m.catch_buddy_walked({ count: pair()[1].walked })}</Meta>
                 </Show>
               </div>
             </>
@@ -302,7 +316,7 @@ function BuddyBody(
               setPicking(true);
             }}
           >
-            {buddy() == null ? 'Choose a buddy' : 'Replace'}
+            {buddy() == null ? m.catch_buddy_choose() : m.catch_buddy_replace()}
           </Button>
         </Show>
       </Row>
@@ -319,9 +333,9 @@ function BuddyBody(
           player={props.player}
           open={picking()}
           value={buddy()?.[0] ?? null}
-          title="Walk with"
-          verb="Walk with"
-          empty="You have nothing to walk with yet."
+          title={m.catch_buddy_walk_with()}
+          verb={m.catch_buddy_walk_with()}
+          empty={m.catch_buddy_empty()}
           onClose={() => {
             setPicking(false);
           }}
@@ -345,7 +359,7 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the buddy…</Note>}>
+    <Suspense fallback={<Note>{m.catch_buddy_loading()}</Note>}>
       <BuddyBody
         {...props}
         record={record}

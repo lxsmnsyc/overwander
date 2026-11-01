@@ -3,6 +3,7 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import ProfileTab from './ProfileTab';
 import watchLive from '../app/watch';
 import { Button, Dialog, DialogActions } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Somebody else's profile, opened over whatever named them.
@@ -51,7 +52,7 @@ export default function ProfileDialog(props: ProfileDialogProps): JSX.Element {
    * still somebody's, so the heading says what it can rather than
    * waiting
    */
-  const named = (): string => profile()?.nickname ?? 'Trainer';
+  const named = (): string => profile()?.nickname ?? m.profile_trainer();
 
   return (
     <Dialog
@@ -60,11 +61,11 @@ export default function ProfileDialog(props: ProfileDialogProps): JSX.Element {
       width="wide"
       quiet
       title={named()}
-      description="Who this trainer is, who walks with them, and what they have done."
+      description={m.profile_dialog_description()}
     >
       <Show when={props.player}>{(player) => <ProfileTab player={player()} viewOnly />}</Show>
       <DialogActions>
-        <Button onClick={props.onClose}>Close</Button>
+        <Button onClick={props.onClose}>{m.ui_close()}</Button>
       </DialogActions>
     </Dialog>
   );

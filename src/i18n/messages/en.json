@@ -1509,5 +1509,742 @@
   "dex_tab_level": "Level",
   "dex_moves_none_level": "It learns nothing by growing.",
   "dex_moves_none_machines": "Nothing can be taught to it.",
-  "dex_moves_none_egg": "It inherits nothing."
+  "dex_moves_none_egg": "It inherits nothing.",
+  "auction_price_chip": "{amount} gold",
+  "auction_closed": "bidding closed",
+  "auction_left_hours": "{hours}h left",
+  "auction_left_minutes": "{minutes}m left",
+  "auction_a_pokemon": "A pokemon",
+  "auction_reading": "Reading the board…",
+  "auction_refusal_own": "Your own lot",
+  "auction_refusal_winning": "You are winning this one",
+  "auction_refusal_dear": "{amount} gold is more than you hold",
+  "auction_bid": "Bid",
+  "auction_bid_on": "Bid on {name}",
+  "auction_bid_description": "The floor is the seller's least raise. Anything from there to what you are holding is a legal bid, so a lot can be put out of reach in one press.",
+  "auction_bid_meta": "{floor} gold to take it · you hold {gold}",
+  "auction_bid_amount": "Bid {amount} gold",
+  "auction_you": "you",
+  "auction_a_trainer": "a trainer",
+  "auction_bid_failed": "That bid could not be placed.",
+  "auction_bid_placed": "Bid {amount} gold — it is yours unless somebody raises it.",
+  "auction_collected": "Collected.",
+  "auction_collect_failed": "That lot could not be collected.",
+  "auction_taken_back": "Taken back.",
+  "auction_take_back_failed": "That lot could not be taken back.",
+  "auction_won_for": "won for {amount} gold",
+  "auction_collect": "Collect",
+  "auction_nobody_bid": "nobody bid",
+  "auction_take_back": "Take it back",
+  "auction_owned_by": "Owned by",
+  "auction_bidding": "Bidding",
+  "auction_item_said": "{item} — {standing}, by {seller}",
+  "auction_catch_said": "{label} — by {seller}",
+  "auction_empty": "Nothing is up right now.",
+  "auction_no_match": "Nothing here matches.",
+  "auction_items": "Items",
+  "auction_pokemon": "Pokemon",
+  "auction_kind_lot": "Lot",
+  "auction_search_placeholder": "Name, or price:<500 is:pokemon",
+  "auction_loading": "Loading auctions…",
+  "auction_sell": "Sell",
+  "auction_about_selling": "About selling",
+  "auction_hint_duration": "An auction runs for {hours} hours, and you can run one at a time.",
+  "auction_hint_catches": "A pokemon can be sold if it is shiny, has perfect or all-zero IVs, or is a legendary or mythical. A favourite cannot be sold.",
+  "auction_hint_items": "Only special items can be sold.",
+  "auction_hint_unsold": "A lot nobody bids on does not come back on its own. Collect it from Profile, Market, Selling.",
+  "auction_running": "You have an auction running — {remaining}. One at a time, which is one a day.",
+  "auction_from_bag": "From the bag",
+  "auction_bag_empty": "Nothing in the bag is rare enough for the block.",
+  "auction_from_records": "From the records",
+  "auction_records_empty": "Nothing of yours is rare enough for the block.",
+  "auction_back_to_board": "Back to the board",
+  "auction_this_pokemon": "This pokemon",
+  "auction_put_up_failed_item": "It could not be put up — you may already have an auction running, or no longer carry one.",
+  "auction_put_up_failed_catch": "It could not be put up — you may already have an auction running, or it may be a favorite, an egg or your buddy.",
+  "auction_reading_record": "Reading the record…",
+  "auction_title": "Auction {name}",
+  "auction_description": "What it opens at, and the least a bid may raise it by. A lot stands for a day.",
+  "auction_opening_bid": "Opening bid",
+  "auction_least_raise": "Least raise",
+  "auction_put_up": "Put it up",
+  "auction_confirm_title": "Put {name} up for auction?",
+  "auction_confirm_description": "It leaves your records the moment the lot opens.",
+  "auction_confirm_item": "Opening at {asking} gold, raised {raise} at a time. It stands for a day and cannot be taken back off the block — it comes back only if the day ends with nobody having bid. One piece goes up, not the stack.",
+  "auction_confirm_catch": "Opening at {asking} gold, raised {raise} at a time. It stands for a day and cannot be taken back off the block — it comes back only if the day ends with nobody having bid. It goes up held items and all.",
+  "auction_confirm_payment": "Whoever wins it pays what they bid; the gold is yours when they collect it.",
+  "auction_putting_up": "Putting it up…",
+  "auction_put_up_day": "Put it up for a day",
+  "auction_state_leading": "leading",
+  "auction_state_outbid": "outbid",
+  "auction_state_won": "won — waiting to be collected",
+  "auction_state_lost": "lost",
+  "auction_state_collected": "won and collected",
+  "auction_you_bid": "you bid {mine} · standing at {standing}",
+  "auction_no_bids": "You have not bid on anything.",
+  "auction_loading_bids": "Loading bids…",
+  "auction_lot_running": "on the block",
+  "auction_lot_sold": "sold",
+  "auction_lot_settled": "settled",
+  "auction_lot_standing": "{standing} · {remaining}",
+  "auction_lot_returns": "It comes back to you.",
+  "auction_back_in_hands": "Back in your hands.",
+  "auction_stranded": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "One lot came back unsold and is waiting for you to take it.",
+        "countPlural=*": "{count} lots came back unsold and are waiting for you to take them."
+      }
+    }
+  ],
+  "auction_none_listed": "You have not put anything on the block.",
+  "auction_leading": "Leading",
+  "auction_won_by": "Won by",
+  "auction_take_back_short": "Take back",
+  "auction_selling_note": "One lot at a time, and it runs for a day. New listings are made at an auction board.",
+  "trade_a_pokemon": "a pokemon",
+  "trade_gold_none": "No gold",
+  "trade_gold_give": "Add gold to the offer",
+  "trade_gold_ask": "Ask gold with it",
+  "trade_this_trainer": "this trainer",
+  "trade_reason_only": "your only pokemon",
+  "trade_reason_battle": "in a battle",
+  "trade_reason_egg": "still an egg",
+  "trade_reason_favorite": "a favorite",
+  "trade_reason_buddy": "your buddy",
+  "trade_reason_their_favorite": "their favorite",
+  "trade_offer_failed": "The offer could not be made.",
+  "trade_offer_sent": "Offer sent to {name}.",
+  "trade_title": "Trade with {name}",
+  "trade_description": "Your pokemon goes to them the moment they accept, and theirs comes to you. An offer holds your pokemon until it is answered or taken back.",
+  "trade_nothing_picked": "Nothing picked yet.",
+  "trade_pick_yours": "Pick yours",
+  "trade_for_their_pick": "For whatever {name} picks.",
+  "trade_for": "For {name}",
+  "trade_their_pick": "Their pick",
+  "trade_ask_for_one": "Ask for one",
+  "trade_gold": "Gold",
+  "trade_amount": "Amount",
+  "trade_gold_taken_now": "Taken when the offer is sent · you hold {gold}",
+  "trade_gold_taken_later": "Taken from them when they accept",
+  "trade_ask_note": "A named ask is exactly what comes back; leave it to their pick and they choose.",
+  "trade_send": "Send offer",
+  "trade_your_side": "Your side",
+  "trade_your_side_description": "Choose the pokemon to offer. It is held the moment the offer is sent.",
+  "trade_offer": "Offer",
+  "trade_their_side": "{name}'s pokemon",
+  "trade_their_side_description": "Name the one you are asking for. It is what crosses back if they accept.",
+  "trade_ask_for": "Ask for",
+  "trade_made": "Made",
+  "trade_declined": "Declined",
+  "trade_taken_back": "Taken back",
+  "trade_unnamed_trainer": "Unnamed trainer",
+  "trade_deal": "{offered} for {asked}",
+  "trade_deal_gives": "{offered} for {asked} · {gold} gold rides with it",
+  "trade_deal_asks": "{offered} for {asked} · asks {gold} gold",
+  "trade_deal_asks_you": "{offered} for {asked} · asks {gold} gold of you",
+  "trade_their_pick_short": "their pick",
+  "trade_your_pick": "your pick",
+  "trade_closed": "That trade is no longer open.",
+  "trade_failed": "That could not be done.",
+  "trade_sure": "Sure?",
+  "trade_answer": "Answer",
+  "trade_accept": "Accept",
+  "trade_done": "Trade made.",
+  "trade_withdrawn": "Offer taken back.",
+  "trade_pending": "Pending",
+  "trade_settled": "Settled",
+  "trade_nobody_offering": "Nobody is offering you anything right now.",
+  "trade_offered_to_you": "Offered to you.",
+  "trade_offer_declined": "Offer declined.",
+  "trade_decline": "Decline",
+  "trade_waiting": "Waiting on an answer. The pokemon is held until they give one.",
+  "trade_take_back": "Take back",
+  "trade_none_settled": "Nothing has been settled yet.",
+  "trade_settled_on": "{word} · {date}",
+  "trade_answer_with": "Answer with",
+  "trade_answer_description": "Choose the pokemon to give back. Picking it agrees to the trade.",
+  "trade_give": "Give",
+  "raid_asleep": "{name}, asleep in the lair",
+  "raid_a_raid": "A raid",
+  "raid_a_friend": "A friend",
+  "raid_called_watch": "{name} called you in to watch",
+  "raid_called_fight": "{name} called you in to fight",
+  "raid_open": "Open",
+  "raid_next_window": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "New raids in {count} minute",
+        "countPlural=*": "New raids in {count} minutes"
+      }
+    }
+  ],
+  "raid_loading": "Loading raids…",
+  "raid_invited": "Invited",
+  "raid_gathering": "Gathering · {count}",
+  "raid_none_gathering": "No raids are gathering right now.",
+  "raid_gathering_line": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{where} · {count} team",
+        "countPlural=*": "{where} · {count} teams"
+      }
+    }
+  ],
+  "raid_host": "Host",
+  "raid_join": "Join",
+  "raid_spectate": "Spectate",
+  "raid_rejoin": "Rejoin",
+  "raid_kind_mythical": "Starting the raid spends the relic that called it, and it happens once, won or lost.",
+  "raid_kind_shadow": "A shadow raid: what it leaves behind is stronger and costs twice the candy to raise.",
+  "raid_kind_totem": "A Totem raid: it starts boosted and calls an ally at half HP. Beaten, it leaves a Z-Crystal and waits at Totem size.",
+  "raid_kind_gigantamax": "A Max Raid: it is Gigantamaxed for the whole fight. Beaten, it leaves Max Mushrooms and keeps its Gigantamax Factor when caught.",
+  "raid_kind_dynamax": "A Max Raid: it is Dynamaxed for the whole fight. Beaten, it leaves Max Mushrooms, and now and then a Dynamax Band.",
+  "raid_kind_noble": "A Noble raid: its HP is its Frenzy, and it staggers at 3/4, 1/2 and 1/4 and bursts on the whole party in between. Calmed, it leaves Balms and gold rather than waiting to be caught. Each player packs up to 3 Balms from their bag.",
+  "raid_kind_tera": "A Tera raid: it is Terastallized for the whole fight and is hit as its Tera type alone. Beaten, it leaves Tera Shards of that type and keeps its Tera type when caught.",
+  "raid_kind_alpha": "An Alpha raid: it brings six of its kind back to its side at 3/4, 1/2 and 1/4 HP. Beaten, it waits with three perfect stats.",
+  "raid_kind_plain": "A raid takes a party. Beaten, it waits in the overworld for whoever fought it.",
+  "raid_action_reopened": "The party that went in did not come out. The lair is open again.",
+  "raid_action_empty": "Nothing is standing here yet. Opening a lobby leaves it for anyone to join.",
+  "raid_action_gathering": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "A lobby is gathering — {count} team so far.",
+        "countPlural=*": "A lobby is gathering — {count} teams so far."
+      }
+    }
+  ],
+  "raid_action_rejoin": "Your party is still fighting in there.",
+  "raid_action_no_pokemon": "You have no pokemon of your own to bring, so there is nothing to do here but watch.",
+  "raid_action_started": "The raid has already started. Watching pays nothing.",
+  "raid_lair": "Lair",
+  "raid_lair_summary": "A lair, and whatever is standing in it.",
+  "raid_lair_quiet_toast": "The lair is quiet. Somebody may have cleared it since you looked.",
+  "raid_lair_empty": "A lair, and nothing in it just now.",
+  "raid_quiet": "Quiet for now",
+  "raid_waiting_label": "{name}, waiting in the lair",
+  "raid_waiting": "Waiting",
+  "raid_types": "Types",
+  "raid_tera_type": "Tera type",
+  "raid_immune": "Immune",
+  "raid_relic_spent": "The relic is spent. Whatever this raid comes to, it comes to it once.",
+  "raid_hosting": "You are hosting",
+  "raid_waiting_host": "Waiting for the host",
+  "raid_notice_watch_only": "You need a pokemon of your own to fight. You can only watch this one.",
+  "raid_notice_full": "The lobby is full: {max} trainers are already in.",
+  "raid_notice_start": "Start needs at least one team.",
+  "raid_loading_one": "Loading raid…",
+  "raid_trainers": "Trainers",
+  "raid_search_placeholder": "Name, or size:6 is:host",
+  "raid_no_teams": "No teams have joined yet.",
+  "raid_no_match": "Nobody here matches.",
+  "raid_join_failed": "That team could not join: one of them may already be in another raid.",
+  "raid_change_team": "Change team",
+  "raid_form_team": "Form a team",
+  "raid_start_failed": "The raid could not be started.",
+  "raid_invite_title": "Invite to the raid",
+  "raid_invite_description": "They see the call above their list of raids, and joining answers it.",
+  "quest_landmark_cache": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} item cache",
+        "countPlural=*": "Claim {count} item caches"
+      }
+    }
+  ],
+  "quest_landmark_berry": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} berry patch",
+        "countPlural=*": "Claim {count} berry patches"
+      }
+    }
+  ],
+  "quest_landmark_nest": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} nest",
+        "countPlural=*": "Claim {count} nests"
+      }
+    }
+  ],
+  "quest_landmark_phenomenon": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} phenomenon",
+        "countPlural=*": "Claim {count} phenomena"
+      }
+    }
+  ],
+  "quest_landmark_portal": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} portal crossing",
+        "countPlural=*": "Claim {count} portal crossings"
+      }
+    }
+  ],
+  "quest_landmark_apricorn": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} apricorn tree",
+        "countPlural=*": "Claim {count} apricorn trees"
+      }
+    }
+  ],
+  "quest_foe_rocket": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Team Rocket stop",
+        "countPlural=*": "Beat {count} Team Rocket stops"
+      }
+    }
+  ],
+  "quest_foe_gym_leader": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} gym leader",
+        "countPlural=*": "Beat {count} gym leaders"
+      }
+    }
+  ],
+  "quest_foe_elite_four": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Elite Four member",
+        "countPlural=*": "Beat {count} Elite Four members"
+      }
+    }
+  ],
+  "quest_foe_champion": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} Champion",
+        "countPlural=*": "Beat {count} Champions"
+      }
+    }
+  ],
+  "quest_foe_trainer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} duelling trainer",
+        "countPlural=*": "Beat {count} duelling trainers"
+      }
+    }
+  ],
+  "quest_foe_gym_seat": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} gym seat",
+        "countPlural=*": "Beat {count} gym seats"
+      }
+    }
+  ],
+  "quest_hand_over": "Hand over {count} × {item}",
+  "quest_dex": "Catch {count} different species",
+  "quest_dex_region": "Catch {count} different {region} species",
+  "quest_catch_species": "Catch {count} × {name}",
+  "quest_catch_family": "Catch {count} from the {family} line",
+  "quest_catch_type": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Catch {count} {type} type",
+        "countPlural=*": "Catch {count} {type} types"
+      }
+    }
+  ],
+  "quest_catch_any": "Catch {count} pokemon",
+  "quest_hatch": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Hatch {count} egg",
+        "countPlural=*": "Hatch {count} eggs"
+      }
+    }
+  ],
+  "quest_hatch_species": "Hatch {count} × {name}",
+  "quest_level_ups": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Raise {count} level",
+        "countPlural=*": "Raise {count} levels"
+      }
+    }
+  ],
+  "quest_use_items": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Use {count} item",
+        "countPlural=*": "Use {count} items"
+      }
+    }
+  ],
+  "quest_use_item": "Use {count} × {item}",
+  "quest_steps": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Walk {count} steps with a buddy",
+        "countPlural=*": "Walk {count} steps with a buddy"
+      }
+    }
+  ],
+  "quest_wanderers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Deal with {count} wanderer",
+        "countPlural=*": "Deal with {count} wanderers"
+      }
+    }
+  ],
+  "quest_wanderer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Deal with a {name} {count} time",
+        "countPlural=*": "Deal with a {name} {count} times"
+      }
+    }
+  ],
+  "quest_landmarks": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} landmark",
+        "countPlural=*": "Claim {count} landmarks"
+      }
+    }
+  ],
+  "quest_raid_runs": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Fight in {count} raid",
+        "countPlural=*": "Fight in {count} raids"
+      }
+    }
+  ],
+  "quest_raid_wins": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Win {count} raid",
+        "countPlural=*": "Win {count} raids"
+      }
+    }
+  ],
+  "quest_trades": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Settle {count} trade",
+        "countPlural=*": "Settle {count} trades"
+      }
+    }
+  ],
+  "quest_friends": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Make {count} friend",
+        "countPlural=*": "Make {count} friends"
+      }
+    }
+  ],
+  "quest_auctions": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Settle {count} auction",
+        "countPlural=*": "Settle {count} auctions"
+      }
+    }
+  ],
+  "quest_purifies": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Purify {count} shadow",
+        "countPlural=*": "Purify {count} shadows"
+      }
+    }
+  ],
+  "quest_evolve_species": "Evolve {count} × {name}",
+  "quest_evolve_family": "Evolve {count} from the {family} line",
+  "quest_evolve_type": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Evolve {count} {type} type",
+        "countPlural=*": "Evolve {count} {type} types"
+      }
+    }
+  ],
+  "quest_evolve_any": "Evolve {count} pokemon",
+  "quest_release_any": "Release {count} pokemon",
+  "quest_release_species": "Release {count} × {name}",
+  "quest_moves": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Teach {count} move",
+        "countPlural=*": "Teach {count} moves"
+      }
+    }
+  ],
+  "quest_move": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Teach {name} {count} time",
+        "countPlural=*": "Teach {name} {count} times"
+      }
+    }
+  ],
+  "quest_beat_trainers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} trainer",
+        "countPlural=*": "Beat {count} trainers"
+      }
+    }
+  ],
+  "quest_gold_earned": "Earn {amount} gold",
+  "quest_gold_spent": "Spend {amount} gold",
+  "quest_gifts": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Claim {count} mystery gift",
+        "countPlural=*": "Claim {count} mystery gifts"
+      }
+    }
+  ],
+  "quest_bids": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Bid in {count} auction",
+        "countPlural=*": "Bid in {count} auctions"
+      }
+    }
+  ],
+  "quest_shiny_any": "Catch {count} shiny pokemon",
+  "quest_shiny_species": "Catch {count} shiny {name}",
+  "quest_duel_trainers": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} duelling trainer",
+        "countPlural=*": "Beat {count} duelling trainers"
+      }
+    }
+  ],
+  "quest_duel_trainer": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Beat {count} {name}",
+        "countPlural=*": "Beat {count} {name}s"
+      }
+    }
+  ],
+  "quest_biomes": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Discover {count} biome",
+        "countPlural=*": "Discover {count} biomes"
+      }
+    }
+  ],
+  "quest_effort": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Assign {count} effort point",
+        "countPlural=*": "Assign {count} effort points"
+      }
+    }
+  ],
+  "quest_reward_item": "{amount} × {item}",
+  "quest_reward_meeting": "A meeting: Lv. {level} {name}",
+  "quest_reward_egg": "A pokemon egg",
+  "quest_turn_in_note": "Taken from the bag when you claim.",
+  "quest_claimed": "Claimed",
+  "quest_claim": "Claim",
+  "quest_pays": "Pays",
+  "quest_locked": "Locked",
+  "quest_not_ready": "That quest is not ready to claim.",
+  "quest_reward_label": "Quest reward",
+  "quest_claim_failed": "That could not be claimed.",
+  "quest_received": "Received {rewards}.",
+  "quest_today": "Today",
+  "quest_about": "About quests",
+  "quest_hint_rotation": "{count} dailies refresh every day at midnight UTC, and one weekly hunt refreshes every Monday.",
+  "quest_hint_after": "Only what you do after a daily or weekly starts counts toward it.",
+  "quest_hint_chains": "Each chain below opens one step at a time, as you finish the one before.",
+  "quest_hint_claim": "A finished quest waits for you to claim its reward.",
+  "quest_this_week": "This week",
+  "quest_ready": "{count} ready",
+  "quest_asked_of_anybody": "Asked of anybody",
+  "quest_done": "Done",
+  "profile_unknown": "unknown",
+  "profile_not_walked": "They have not walked anywhere yet.",
+  "profile_cell": "cell {x}, {y}",
+  "profile_last_moved": "last moved {when}",
+  "profile_looking": "Looking for them…",
+  "profile_trainer": "Trainer",
+  "profile_dialog_description": "Who this trainer is, who walks with them, and what they have done.",
+  "profile_sprite_none": "Nothing to choose from yet. Beat a gym or a trainer class.",
+  "profile_character": "Character",
+  "profile_sprite_reading": "Reading what you have earned…",
+  "profile_sprite_note": "Earned from badges, the Elite Four, and the trainer classes you have beaten. This is who you walk the world as.",
+  "profile_no_title": "No title",
+  "profile_edit_title": "Edit profile",
+  "profile_edit_description": "What everybody else sees you as: the name on your lots and in a lobby, and the character standing beside it.",
+  "profile_nickname": "Nickname",
+  "profile_nickname_hint": "Letters, digits, spaces and ' . - are kept. {max} at most.",
+  "profile_title": "Title",
+  "profile_title_search": "Search your titles…",
+  "profile_title_hint": "Earned from achievements and the badge ladder; worn under your name.",
+  "profile_saving": "Saving…",
+  "profile_save": "Save",
+  "profile_team_gone": "{count} no longer yours",
+  "profile_edit": "Edit",
+  "profile_delete": "Delete",
+  "profile_team_default": "Team {number}",
+  "profile_team_save_failed": "That team could not be saved.",
+  "profile_teams_about": "About teams",
+  "profile_teams_hint_size": "A team is up to {max} of your pokemon, saved under a name.",
+  "profile_teams_hint_load": "Loading one in a raid or a duel fills the party with whichever of them can fight.",
+  "profile_teams_hint_limit": "You may keep {max} teams.",
+  "profile_teams_full": "You already keep {max} teams.",
+  "profile_new_team": "New team",
+  "profile_no_teams": "You have saved no teams yet.",
+  "profile_edit_team": "Edit team",
+  "profile_team_description": "Name a party you can bring to a raid or a duel with one press.",
+  "profile_team_name": "Name",
+  "profile_team_nobody": "Nobody picked yet.",
+  "profile_team_picked": "{count} of {max} picked.",
+  "profile_team_bring": "Bring",
+  "profile_team_empty": "You have nothing to put in a team.",
+  "profile_group_record": "Record",
+  "profile_group_social": "Social",
+  "profile_group_market": "Market",
+  "profile_section_battles": "Battles",
+  "profile_section_awards": "Awards",
+  "profile_section_friends": "Friends",
+  "profile_section_requests": "Requests",
+  "profile_section_trades": "Trades",
+  "profile_section_bids": "Bids",
+  "profile_section_selling": "Selling",
+  "profile_challenge_failed": "They could not be called in — your lobby may already have two trainers in it.",
+  "profile_loading": "Loading profile…",
+  "profile_actions": "Actions",
+  "profile_battle": "Battle",
+  "profile_block": "Block",
+  "profile_saved": "Profile saved.",
+  "award_kind": "Award",
+  "award_beaten_label": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{name}, beaten {count} time",
+        "countPlural=*": "{name}, beaten {count} times"
+      }
+    }
+  ],
+  "award_unearned_label": "{name}, not yet earned",
+  "award_beaten": "Beaten",
+  "award_times": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} time",
+        "countPlural=*": "{count} times"
+      }
+    }
+  ],
+  "award_unearned": "Not yet earned.",
+  "award_summary_badges": "{region}: {badges} of {badgeTotal} badges.",
+  "award_summary_elite": "{region}: {badges} of {badgeTotal} badges, {honors} of {honorTotal} of the Elite Four.",
+  "award_summary_champion": "{region}: {badges} of {badgeTotal} badges, {honors} of {honorTotal} of the Elite Four, Champion.",
+  "award_progress_top": "{count} {deed}. {tier}.",
+  "award_progress_next": "{count} {deed}. {tier} at {next}.",
+  "award_achievement_kind": "Achievement",
+  "award_line_label": "{name}, {tier}. {progress}",
+  "award_tier": "Tier",
+  "award_type_deed": "{type} pokemon caught",
+  "award_trainer_deed": "{name}s beaten",
+  "award_tab_badges": "Badges",
+  "award_tab_achievements": "Achievements",
+  "award_tab_types": "Type specialists",
+  "award_tab_trainers": "Trainers beaten",
+  "award_reading": "Reading the shelf…",
+  "award_counting": "Counting the lifetime…"
 }

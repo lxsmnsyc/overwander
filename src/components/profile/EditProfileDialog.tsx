@@ -6,6 +6,7 @@ import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 import SpritePicker from './SpritePicker';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The things about a trainer that are theirs to set: what they are
@@ -44,7 +45,9 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
   );
 
   const choices = (): { value: Title; label: string }[] => {
-    const options: { value: Title; label: string }[] = [{ value: NO_TITLE, label: 'No title' }];
+    const options: { value: Title; label: string }[] = [
+      { value: NO_TITLE, label: m.profile_no_title() },
+    ];
 
     for (const option of earned.latest ?? []) {
       const label = getTitleName(option);
@@ -111,14 +114,14 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title="Edit profile"
-      description="What everybody else sees you as: the name on your lots and in a lobby, and the character standing beside it."
+      title={m.profile_edit_title()}
+      description={m.profile_edit_description()}
     >
       <TextField
-        label="Nickname"
+        label={m.profile_nickname()}
         value={name()}
         autocomplete="nickname"
-        hint={`Letters, digits, spaces and ' . - are kept. ${PLAYER_NAME_LIMIT} at most.`}
+        hint={m.profile_nickname_hint({ max: PLAYER_NAME_LIMIT })}
         disabled={saving()}
         onChange={(value) => {
           setName(asNickname(value, PLAYER_NAME_LIMIT));
@@ -137,12 +140,12 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
           rather than scrolled, since a player deep in the ladder has
           a long list of them */}
       <Combobox
-        label="Title"
+        label={m.profile_title()}
         value={title()}
         options={choices()}
         disabled={saving()}
-        placeholder="Search your titles…"
-        hint="Earned from achievements and the badge ladder; worn under your name."
+        placeholder={m.profile_title_search()}
+        hint={m.profile_title_hint()}
         onChange={(value) => {
           setTitle(value);
         }}
@@ -151,10 +154,10 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
       <Status message={error()} tone="alert" />
       <DialogActions>
         <Button tone="primary" disabled={saving() || name().trim() === ''} onClick={save}>
-          {saving() ? 'Saving…' : 'Save'}
+          {saving() ? m.profile_saving() : m.profile_save()}
         </Button>
         <Button disabled={saving()} onClick={props.onClose}>
-          Close
+          {m.ui_close()}
         </Button>
       </DialogActions>
     </Dialog>

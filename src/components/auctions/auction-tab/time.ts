@@ -1,4 +1,6 @@
 import { type AuctionRecord, isBidOn } from '../../../auth/auctions';
+import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 const HOUR = 60 * 60 * 1000;
 
@@ -23,15 +25,15 @@ export function describeRemaining(endsAt: number, at: number): string {
   const left = endsAt - at;
 
   if (left <= 0) {
-    return 'bidding closed';
+    return m.auction_closed();
   }
 
   const hours = Math.floor(left / HOUR);
 
   if (hours > 0) {
-    return `${hours}h left`;
+    return m.auction_left_hours({ hours });
   }
-  return `${Math.max(1, Math.floor(left / MINUTE))}m left`;
+  return m.auction_left_minutes({ minutes: Math.max(1, Math.floor(left / MINUTE)) });
 }
 
 /**
@@ -45,5 +47,17 @@ export function describeRemaining(endsAt: number, at: number): string {
  * the board the one nobody reads
  */
 export function describeStanding(auction: AuctionRecord): string {
-  return `${isBidOn(auction) ? auction.bid : auction.startingBid} gold`;
+  return m.ui_gold({ amount: formatNumber(readStanding(auction)) });
+}
+
+/**
+ * The same figure for the chip on a lot's square, which has room for
+ * a number and a short unit only
+ */
+export function describeStandingShort(auction: AuctionRecord): string {
+  return m.auction_price_chip({ amount: formatNumber(readStanding(auction)) });
+}
+
+function readStanding(auction: AuctionRecord): number {
+  return isBidOn(auction) ? auction.bid : auction.startingBid;
 }

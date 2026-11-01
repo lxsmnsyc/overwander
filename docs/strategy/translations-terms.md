@@ -130,6 +130,17 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Dojo Master | どうじょうの しはん | Maestro del Dojo | The NPC who opens a move slot |
 | relic | いせきの どうぐ | reliquia | An item that calls a mythical raid |
 | sheet (a pokemon's) | シート | ficha | The catch dialog |
+| auction, listing a lot | オークション, だす | subasta, poner a la venta | The board and putting a lot up |
+| least raise, opening bid | さいしょうの ねあげはば, はじまりの ねだん | subida mínima, puja inicial | A lot's two numbers |
+| collect, take back (a lot) | うけとる, ひきとる | Recoger, Retirar | Claiming a won lot, withdrawing an unsold one |
+| trade offer | もうしこみ | oferta | A proposal waiting for an answer |
+| quest, claim (a reward) | クエスト, うけとる | misión, reclamar | |
+| daily, weekly | デイリー, ウィークリー | diaria, semanal | The rotating quests |
+| wanderer | たびびと | viajero | A roaming NPC |
+| award, achievement, tier | アワード, じっせき, ランク | galardón, logro, rango | What the profile's shelf lists |
+| title (worn under a name) | しょうごう | título | |
+| profile, nickname (a player's) | プロフィール, ニックネーム | perfil, mote | |
+| Balm (Noble raid item) | バーム | Bálsamo | Stopgap until batch 8 names it |
 
 ## Status conditions
 
@@ -151,6 +162,7 @@ The names a status shows on a card or a catch, in `src/data/text/<locale>/status
 ## Money and counts
 
 - `ui_gold` writes money as おかね {amount} in Japanese and {amount} de dinero in Spanish, after the verdict's `verdict_gold`.
+- Where only a number and a short unit fit (the price chip on an auction square, `auction_price_chip`), Spanish writes {amount} ₽, the games' money sign. Money amounts pass through `formatNumber` so they group by locale (25.000 in Spanish).
 - A Japanese count of pokemon takes ひき (`{count}ひき`), a count of moves つ, of times かい, of waiting things けん, of items, boxes and candies こ, of steps ほ, of species しゅるい.
 - Japanese quotes a line in 「」, Spanish in «».
 

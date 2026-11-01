@@ -11,6 +11,7 @@ import TypeBadge from '../sprites/TypeBadge';
 import { GameDialog, useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What the one button says. A lair offers exactly one thing at a time
@@ -18,11 +19,11 @@ import describeFailure from '../../i18n/refusals';
  * to host while a raid is being fought — so the dialog shows that and
  * a way out, rather than three buttons of which two are refused
  */
-const ACTION_LABELS: Record<RaidAction, string> = {
-  [RaidAction.Host]: 'Host',
-  [RaidAction.Join]: 'Join',
-  [RaidAction.Spectate]: 'Spectate',
-  [RaidAction.Rejoin]: 'Rejoin',
+const ACTION_LABELS: Record<RaidAction, () => string> = {
+  [RaidAction.Host]: m.raid_host,
+  [RaidAction.Join]: m.raid_join,
+  [RaidAction.Spectate]: m.raid_spectate,
+  [RaidAction.Rejoin]: m.raid_rejoin,
 };
 
 /**
@@ -37,29 +38,27 @@ const ACTION_LABELS: Record<RaidAction, string> = {
  */
 function describeRaid(view: RaidView): string {
   if (view.kind === RaidKind.Mythical) {
-    return 'Starting the raid spends the relic that called it, and it happens once, won or lost.';
+    return m.raid_kind_mythical();
   }
   if (view.kind === RaidKind.Shadow) {
-    return 'A shadow raid: what it leaves behind is stronger and costs twice the candy to raise.';
+    return m.raid_kind_shadow();
   }
   if (view.kind === RaidKind.Totem) {
-    return 'A Totem raid: it starts boosted and calls an ally at half HP. Beaten, it leaves a Z-Crystal and waits at Totem size.';
+    return m.raid_kind_totem();
   }
   if (view.kind === RaidKind.Max) {
-    return isGigantamaxBoss(view.species)
-      ? 'A Max Raid: it is Gigantamaxed for the whole fight. Beaten, it leaves Max Mushrooms and keeps its Gigantamax Factor when caught.'
-      : 'A Max Raid: it is Dynamaxed for the whole fight. Beaten, it leaves Max Mushrooms, and now and then a Dynamax Band.';
+    return isGigantamaxBoss(view.species) ? m.raid_kind_gigantamax() : m.raid_kind_dynamax();
   }
   if (view.kind === RaidKind.Noble) {
-    return 'A Noble raid: its HP is its Frenzy, and it staggers at 3/4, 1/2 and 1/4 and bursts on the whole party in between. Calmed, it leaves Balms and gold rather than waiting to be caught. Each player packs up to 3 Balms from their bag.';
+    return m.raid_kind_noble();
   }
   if (view.kind === RaidKind.Tera) {
-    return 'A Tera raid: it is Terastallized for the whole fight and is hit as its Tera type alone. Beaten, it leaves Tera Shards of that type and keeps its Tera type when caught.';
+    return m.raid_kind_tera();
   }
   if (view.kind === RaidKind.Alpha) {
-    return 'An Alpha raid: it brings six of its kind back to its side at 3/4, 1/2 and 1/4 HP. Beaten, it waits with three perfect stats.';
+    return m.raid_kind_alpha();
   }
-  return 'A raid takes a party. Beaten, it waits in the overworld for whoever fought it.';
+  return m.raid_kind_plain();
 }
 
 /**
@@ -68,19 +67,15 @@ function describeRaid(view: RaidView): string {
  */
 function describeAction(view: RaidView): string {
   if (view.action === RaidAction.Host) {
-    return view.teams > 0
-      ? 'The party that went in did not come out. The lair is open again.'
-      : 'Nothing is standing here yet. Opening a lobby leaves it for anyone to join.';
+    return view.teams > 0 ? m.raid_action_reopened() : m.raid_action_empty();
   }
   if (view.action === RaidAction.Join) {
-    return `A lobby is gathering — ${view.teams} team${view.teams === 1 ? '' : 's'} so far.`;
+    return m.raid_action_gathering({ count: view.teams });
   }
   if (view.action === RaidAction.Rejoin) {
-    return 'Your party is still fighting in there.';
+    return m.raid_action_rejoin();
   }
-  return view.battle == null
-    ? 'You have no pokemon of your own to bring, so there is nothing to do here but watch.'
-    : 'The raid has already started. Watching pays nothing.';
+  return view.battle == null ? m.raid_action_no_pokemon() : m.raid_action_started();
 }
 
 export interface RaidDialogProps {
@@ -125,7 +120,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     const standing = view();
 
     if (standing == null) {
-      return 'Lair';
+      return m.raid_lair();
     }
     return getRaidTitle(standing);
   };
@@ -142,7 +137,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     if (standing != null) {
       return describeAction(standing);
     }
-    return props.reason ?? 'A lair, and whatever is standing in it.';
+    return props.reason ?? m.raid_lair_summary();
   };
 
   const close = (): void => {
@@ -193,7 +188,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
 
         if (lobby == null) {
           toast.push({
-            message: 'The lair is quiet. Somebody may have cleared it since you looked.',
+            message: m.raid_lair_quiet_toast(),
             tone: 'ember',
           });
           return;
@@ -225,7 +220,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       isOpen={props.lair != null}
       onClose={close}
       title={title()}
-      description={view() == null ? 'A lair, and nothing in it just now.' : summary()}
+      description={view() == null ? m.raid_lair_empty() : summary()}
     >
       <Show
         when={view()}
@@ -234,9 +229,9 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
             {/* A lair with nothing in it is still a lair, and a player
                 who pressed it is owed an answer where they are looking
                 rather than in a line under the map */}
-            <CounterSpent title="Quiet for now" says={summary()} quoted={false} />
+            <CounterSpent title={m.raid_quiet()} says={summary()} quoted={false} />
             <DialogActions>
-              <Button onClick={close}>Walk on</Button>
+              <Button onClick={close}>{m.ow_walk_on()}</Button>
             </DialogActions>
           </>
         }
@@ -258,15 +253,15 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                   direction="DownLeft"
                   scale={4}
                   shadow
-                  label={`${getSpeciesData(standing().species).name}, waiting in the lair`}
+                  label={m.raid_waiting_label({ name: getSpeciesData(standing().species).name })}
                 />
               </div>
             </div>
             <CounterTerms
               rows={[
-                { label: 'Waiting', value: getSpeciesData(standing().species).name },
+                { label: m.raid_waiting(), value: getSpeciesData(standing().species).name },
                 {
-                  label: 'Types',
+                  label: m.raid_types(),
                   value: (
                     <span class="flex flex-wrap justify-end gap-1">
                       <For each={getSpeciesData(standing().species).types}>
@@ -278,7 +273,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                 ...(standing().kind === RaidKind.Tera
                   ? [
                       {
-                        label: 'Tera type',
+                        label: m.raid_tera_type(),
                         value: (
                           <TypeBadge type={getTeraRaidType(standing().species, standing().lobby)} />
                         ),
@@ -291,9 +286,9 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
             <Meta class="pt-3">{describeRaid(standing())}</Meta>
             <DialogActions>
               <Button tone="primary" disabled={busy()} onClick={act}>
-                {ACTION_LABELS[standing().action]}
+                {ACTION_LABELS[standing().action]()}
               </Button>
-              <Button onClick={close}>Walk on</Button>
+              <Button onClick={close}>{m.ow_walk_on()}</Button>
             </DialogActions>
           </>
         )}

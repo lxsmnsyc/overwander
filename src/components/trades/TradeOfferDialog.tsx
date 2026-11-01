@@ -9,6 +9,8 @@ import watchLive from '../app/watch';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import NamedCatch from './NamedCatch';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Select, useToast } from '../styled';
+import { formatNumber } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Offering a friend a trade: one of the player's pokemon, what is
@@ -29,11 +31,13 @@ export interface TradeOfferDialogProps {
 /** Which way the gold on the offer points */
 type GoldMode = 'none' | 'give' | 'ask';
 
-const GOLD_MODES: { value: GoldMode; label: string }[] = [
-  { value: 'none', label: 'No gold' },
-  { value: 'give', label: 'Add gold to the offer' },
-  { value: 'ask', label: 'Ask gold with it' },
-];
+function readGoldModes(): { value: GoldMode; label: string }[] {
+  return [
+    { value: 'none', label: m.trade_gold_none() },
+    { value: 'give', label: m.trade_gold_give() },
+    { value: 'ask', label: m.trade_gold_ask() },
+  ];
+}
 
 export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Element {
   const game = useGame();
@@ -79,7 +83,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
     }),
   );
 
-  const named = (): string => theirs()?.nickname ?? 'this trainer';
+  const named = (): string => theirs()?.nickname ?? m.trade_this_trainer();
 
   const gold = (): number => mine()?.gold ?? 0;
 
@@ -98,18 +102,18 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
    */
   const offeringReason = (option: CatchOption): string | null => {
     if (onlyOne.latest === true) {
-      return 'your only pokemon';
+      return m.trade_reason_only();
     }
     if (option.fighting) {
-      return 'in a battle';
+      return m.trade_reason_battle();
     }
     if (isEgg(option.caught)) {
-      return 'still an egg';
+      return m.trade_reason_egg();
     }
     if (isFavorite(option.caught)) {
-      return 'a favorite';
+      return m.trade_reason_favorite();
     }
-    return buddy.latest === option.id ? 'your buddy' : null;
+    return buddy.latest === option.id ? m.trade_reason_buddy() : null;
   };
 
   /** How much may ride, held to the purse when it is the player's */
@@ -139,17 +143,17 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
     offerTrade(friend, caught, asked() ?? '', riding())
       .then((id) => {
         if (id == null) {
-          toast.push({ message: 'The offer could not be made.', tone: 'ember' });
+          toast.push({ message: m.trade_offer_failed(), tone: 'ember' });
           return;
         }
-        toast.push({ message: `Offer sent to ${named()}.`, tone: 'leaf' });
+        toast.push({ message: m.trade_offer_sent({ name: named() }), tone: 'leaf' });
         // The offered pokemon just left the records for escrow, and
         // whatever box is open behind this is showing the old list
         game.touchRecords();
         props.onClose();
       })
       .catch(() => {
-        toast.push({ message: 'The offer could not be made.', tone: 'ember' });
+        toast.push({ message: m.trade_offer_failed(), tone: 'ember' });
       })
       .finally(() => {
         setSending(false);
@@ -161,14 +165,13 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
       <Dialog
         isOpen={props.friend != null && picking() == null}
         onClose={props.onClose}
-        title={`Trade with ${named()}`}
-        description="Your pokemon goes to them the moment they accept, and theirs comes to you.
-              An offer holds your pokemon until it is answered or taken back."
+        title={m.trade_title({ name: named() })}
+        description={m.trade_description()}
       >
         <div class="flex flex-col gap-3">
           <Row class="items-center justify-between">
             <span class="font-semibold">
-              <Show when={offered()} fallback="Nothing picked yet.">
+              <Show when={offered()} fallback={m.trade_nothing_picked()}>
                 {(id) => <NamedCatch id={id()} />}
               </Show>
             </span>
@@ -177,18 +180,14 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
                 setPicking('mine');
               }}
             >
-              {offered() == null ? 'Pick yours' : 'Change'}
+              {offered() == null ? m.trade_pick_yours() : m.ui_change()}
             </Button>
           </Row>
 
           <Row class="items-center justify-between">
             <span class="font-semibold">
-              <Show when={asked()} fallback={`For whatever ${named()} picks.`}>
-                {(id) => (
-                  <>
-                    For <NamedCatch id={id()} />
-                  </>
-                )}
+              <Show when={asked()} fallback={m.trade_for_their_pick({ name: named() })}>
+                {(id) => <NamedCatch id={id()} say={(name) => m.trade_for({ name })} />}
               </Show>
             </span>
             <Row>
@@ -198,7 +197,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
                     setAsked(null);
                   }}
                 >
-                  Their pick
+                  {m.trade_their_pick()}
                 </Button>
               </Show>
               <Button
@@ -206,22 +205,22 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
                   setPicking('theirs');
                 }}
               >
-                {asked() == null ? 'Ask for one' : 'Change'}
+                {asked() == null ? m.trade_ask_for_one() : m.ui_change()}
               </Button>
             </Row>
           </Row>
 
           <Select<GoldMode>
-            label="Gold"
+            label={m.trade_gold()}
             value={goldMode()}
-            options={GOLD_MODES}
+            options={readGoldModes()}
             onChange={(mode) => {
               setGoldMode(mode);
             }}
           />
           <Show when={goldMode() !== 'none'}>
             <Row class="items-center">
-              <Field label="Amount">
+              <Field label={m.trade_amount()}>
                 <input
                   type="number"
                   min={0}
@@ -234,22 +233,20 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
               </Field>
               <Meta>
                 {goldMode() === 'give'
-                  ? `Taken when the offer is sent · you hold ${gold()}`
-                  : 'Taken from them when they accept'}
+                  ? m.trade_gold_taken_now({ gold: formatNumber(gold()) })
+                  : m.trade_gold_taken_later()}
               </Meta>
             </Row>
           </Show>
 
-          <Note>
-            A named ask is exactly what comes back; leave it to their pick and they choose.
-          </Note>
+          <Note>{m.trade_ask_note()}</Note>
         </div>
 
         <DialogActions>
           <Button tone="primary" disabled={!ready()} onClick={send}>
-            Send offer
+            {m.trade_send()}
           </Button>
-          <Button onClick={props.onClose}>Never mind</Button>
+          <Button onClick={props.onClose}>{m.ui_never_mind()}</Button>
         </DialogActions>
       </Dialog>
 
@@ -261,9 +258,9 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
         onClose={() => {
           setPicking(null);
         }}
-        title="Your side"
-        description="Choose the pokemon to offer. It is held the moment the offer is sent."
-        verb="Offer"
+        title={m.trade_your_side()}
+        description={m.trade_your_side_description()}
+        verb={m.trade_offer()}
         value={offered()}
         reason={offeringReason}
         onPick={(id) => {
@@ -276,12 +273,12 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
           setPicking(null);
         }}
         player={props.friend ?? undefined}
-        title={`${named()}'s pokemon`}
-        description="Name the one you are asking for. It is what crosses back if they accept."
-        verb="Ask for"
+        title={m.trade_their_side({ name: named() })}
+        description={m.trade_their_side_description()}
+        verb={m.trade_ask_for()}
         value={asked()}
         filter={(option) => !isEgg(option.caught)}
-        reason={(option) => (isFavorite(option.caught) ? 'their favorite' : null)}
+        reason={(option) => (isFavorite(option.caught) ? m.trade_reason_their_favorite() : null)}
         onPick={(id) => {
           setAsked(id);
         }}

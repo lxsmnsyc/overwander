@@ -3,6 +3,7 @@ import { listMySprites } from '../../auth/achievements';
 import { getCharsetName } from '../../data/overworld/charsets';
 import TrainerSprite from '../sprites/TrainerSprite';
 import { Note, createPager } from '../styled';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Which character a trainer goes about as, chosen from the ones they
@@ -36,10 +37,7 @@ function Shelf(props: SpritePickerProps & { earned: () => string[] }): JSX.Eleme
   const pager = createPager(() => props.earned(), PAGE);
 
   return (
-    <Show
-      when={props.earned().length > 0}
-      fallback={<Note>Nothing to choose from yet. Beat a gym or a trainer class.</Note>}
-    >
+    <Show when={props.earned().length > 0} fallback={<Note>{m.profile_sprite_none()}</Note>}>
       <div class="flex flex-col gap-2">
         <div class="grid grid-cols-6 gap-1.5">
           <For each={pager.shown()}>
@@ -71,8 +69,8 @@ export default function SpritePicker(props: SpritePickerProps): JSX.Element {
 
   return (
     <div class="flex flex-col gap-1">
-      <span class="text-sm font-bold">Character</span>
-      <Suspense fallback={<Note>Reading what you have earned…</Note>}>
+      <span class="text-sm font-bold">{m.profile_character()}</span>
+      <Suspense fallback={<Note>{m.profile_sprite_reading()}</Note>}>
         <Shelf
           value={props.value}
           disabled={props.disabled}
@@ -80,10 +78,7 @@ export default function SpritePicker(props: SpritePickerProps): JSX.Element {
           onChange={props.onChange}
         />
       </Suspense>
-      <span class="text-xs text-muted">
-        Earned from badges, the Elite Four, and the trainer classes you have beaten. This is who you
-        walk the world as.
-      </span>
+      <span class="text-xs text-muted">{m.profile_sprite_note()}</span>
     </div>
   );
 }

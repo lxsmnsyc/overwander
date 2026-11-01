@@ -1,6 +1,8 @@
 import { type AuctionRecord, nextBid } from '../../../auth/auctions';
 import { Button, Dialog, DialogActions, Field, Meta, Row } from '../../styled';
 import { type JSX, createEffect, createSignal, on } from 'solid-js';
+import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * Why this player may not bid on a lot, or null where they may.
@@ -15,14 +17,16 @@ export function bidRefusal(auction: AuctionRecord, player: string, gold: number)
   // A seller may not bid on their own lot, and no purse or outbidding
   // will ever change that
   if (auction.seller === player) {
-    return 'Your own lot';
+    return m.auction_refusal_own();
   }
   // The standing bidder is already winning it: bidding against
   // themselves could only cost them gold
   if (auction.bidder === player) {
-    return 'You are winning this one';
+    return m.auction_refusal_winning();
   }
-  return gold >= nextBid(auction) ? null : `${nextBid(auction)} gold is more than you hold`;
+  return gold >= nextBid(auction)
+    ? null
+    : m.auction_refusal_dear({ amount: formatNumber(nextBid(auction)) });
 }
 
 /**
@@ -83,12 +87,11 @@ export function BidDialog(props: {
     <Dialog
       isOpen={props.lot != null}
       onClose={props.onClose}
-      title={props.name == null ? 'Bid' : `Bid on ${props.name}`}
-      description="The floor is the seller's least raise. Anything from there to what you are
-            holding is a legal bid, so a lot can be put out of reach in one press."
+      title={props.name == null ? m.auction_bid() : m.auction_bid_on({ name: props.name })}
+      description={m.auction_bid_description()}
     >
       <Row class="justify-center">
-        <Field label="Bid">
+        <Field label={m.auction_bid()}>
           <input
             type="number"
             min={floor()}
@@ -102,7 +105,7 @@ export function BidDialog(props: {
       </Row>
       <Row class="justify-center">
         <Meta>
-          {floor()} gold to take it · you hold {props.gold}
+          {m.auction_bid_meta({ floor: formatNumber(floor()), gold: formatNumber(props.gold) })}
         </Meta>
       </Row>
 
@@ -115,9 +118,9 @@ export function BidDialog(props: {
             props.onClose();
           }}
         >
-          Bid {amount()} gold
+          {m.auction_bid_amount({ amount: formatNumber(amount()) })}
         </Button>
-        <Button onClick={props.onClose}>Never mind</Button>
+        <Button onClick={props.onClose}>{m.ui_never_mind()}</Button>
       </DialogActions>
     </Dialog>
   );
@@ -159,7 +162,7 @@ export function BidControls(props: {
           setBidding(true);
         }}
       >
-        Bid
+        {m.auction_bid()}
       </Button>
       <BidDialog
         lot={bidding() ? props.auction : null}

@@ -1,7 +1,7 @@
 ---
 id: i18n-ui-social
 title: Translate auctions, trades, raids, quests and profile
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

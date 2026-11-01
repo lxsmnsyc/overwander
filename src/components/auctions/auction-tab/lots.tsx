@@ -3,6 +3,7 @@ import { type CaughtPokemon, getCaughtBatched } from '../../../auth/caught';
 import { describeCatch } from '../../catches/catch-summary';
 import { describeItem } from '../../details';
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * The pokemon on the block. A catch on offer is held in escrow rather
@@ -12,7 +13,7 @@ import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-j
  */
 function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
   return (
-    <Show when={props.caught()} fallback={<span>A pokemon</span>}>
+    <Show when={props.caught()} fallback={<span>{m.auction_a_pokemon()}</span>}>
       {(loaded) => <span>{describeCatch(loaded())}</span>}
     </Show>
   );
@@ -27,7 +28,7 @@ function CatchLot(props: { catchId: string }): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<span>A pokemon</span>}>
+    <Suspense fallback={<span>{m.auction_a_pokemon()}</span>}>
       <CatchLotName caught={caught} />
     </Suspense>
   );

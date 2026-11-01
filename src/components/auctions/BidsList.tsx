@@ -31,16 +31,18 @@ import {
 } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
+import { formatNumber } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Where the player stands, said the way they would say it
  */
-const BID_STATE_LABELS: Record<BidState, string> = {
-  [BidState.Leading]: 'leading',
-  [BidState.Outbid]: 'outbid',
-  [BidState.Won]: 'won — waiting to be collected',
-  [BidState.Lost]: 'lost',
-  [BidState.Collected]: 'won and collected',
+const BID_STATE_LABELS: Record<BidState, () => string> = {
+  [BidState.Leading]: m.auction_state_leading,
+  [BidState.Outbid]: m.auction_state_outbid,
+  [BidState.Won]: m.auction_state_won,
+  [BidState.Lost]: m.auction_state_lost,
+  [BidState.Collected]: m.auction_state_collected,
 };
 
 /**
@@ -62,8 +64,8 @@ const BID_STATE_TONES: Record<BidState, BadgeTone> = {
  */
 function describeStanding(auction: AuctionRecord, mine: number, state: BidState): string {
   return state === BidState.Leading || state === BidState.Won || state === BidState.Collected
-    ? `${mine} gold`
-    : `you bid ${mine} · standing at ${auction.bid}`;
+    ? m.ui_gold({ amount: formatNumber(mine) })
+    : m.auction_you_bid({ mine, standing: auction.bid });
 }
 
 export interface BidsListProps {
@@ -103,7 +105,7 @@ function BidRows(
         if (claimed) {
           playEffect(Effect.TradeComplete);
         }
-        setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
+        setStatus(claimed ? m.auction_collected() : m.auction_collect_failed());
         props.onChanged();
       })
       .catch((thrown: unknown) => {
@@ -113,7 +115,7 @@ function BidRows(
 
   return (
     <>
-      <Show when={props.history()?.length} fallback={<Note>You have not bid on anything.</Note>}>
+      <Show when={props.history()?.length} fallback={<Note>{m.auction_no_bids()}</Note>}>
         <List>
           <For each={paged.shown()}>
             {(entry) => {
@@ -127,7 +129,7 @@ function BidRows(
                     </span>
                     <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
                   </div>
-                  <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]}</Badge>
+                  <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]()}</Badge>
                   {/* Nothing is handed over when bidding closes, so a
                         won lot is collected here. Answering a raise is
                         not offered: that is the board's */}
@@ -138,7 +140,7 @@ function BidRows(
                         collect(entry.auction);
                       }}
                     >
-                      Collect
+                      {m.auction_collect()}
                     </Button>
                   </Show>
                 </ListRow>
@@ -165,7 +167,7 @@ export default function BidsList(props: BidsListProps): JSX.Element {
   const [history, { refetch }] = createResource(() => props.player, listBidHistory);
 
   return (
-    <Suspense fallback={<Note>Loading bids…</Note>}>
+    <Suspense fallback={<Note>{m.auction_loading_bids()}</Note>}>
       <BidRows
         player={props.player}
         history={history}

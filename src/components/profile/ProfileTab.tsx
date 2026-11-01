@@ -52,6 +52,7 @@ import {
 } from '../styled';
 import { formatNumber } from '../../i18n/format';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The tier the wearer stands at on the worn title's line, read off
@@ -143,31 +144,33 @@ export interface ProfileTabProps {
 }
 
 /** The player's own sections, grouped for the side list */
-const SECTION_GROUPS: { label: string; sections: [ProfileSection, string][] }[] = [
-  {
-    label: 'Record',
-    sections: [
-      [ProfileSection.Battles, 'Battles'],
-      [ProfileSection.Awards, 'Awards'],
-      [ProfileSection.Teams, 'Teams'],
-    ],
-  },
-  {
-    label: 'Social',
-    sections: [
-      [ProfileSection.Friends, 'Friends'],
-      [ProfileSection.Requests, 'Requests'],
-      [ProfileSection.Trades, 'Trades'],
-    ],
-  },
-  {
-    label: 'Market',
-    sections: [
-      [ProfileSection.Bids, 'Bids'],
-      [ProfileSection.Selling, 'Selling'],
-    ],
-  },
-];
+function readSectionGroups(): { label: string; sections: [ProfileSection, string][] }[] {
+  return [
+    {
+      label: m.profile_group_record(),
+      sections: [
+        [ProfileSection.Battles, m.profile_section_battles()],
+        [ProfileSection.Awards, m.profile_section_awards()],
+        [ProfileSection.Teams, m.pick_team_saved_tab()],
+      ],
+    },
+    {
+      label: m.profile_group_social(),
+      sections: [
+        [ProfileSection.Friends, m.profile_section_friends()],
+        [ProfileSection.Requests, m.profile_section_requests()],
+        [ProfileSection.Trades, m.profile_section_trades()],
+      ],
+    },
+    {
+      label: m.profile_group_market(),
+      sections: [
+        [ProfileSection.Bids, m.profile_section_bids()],
+        [ProfileSection.Selling, m.profile_section_selling()],
+      ],
+    },
+  ];
+}
 
 /**
  * Who the player is: their details and balance, who is walking with
@@ -297,7 +300,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         const called = await inviteToDuel(id, props.player, LobbyRole.Fighter);
 
         if (!called) {
-          setError('They could not be called in — your lobby may already have two trainers in it.');
+          setError(m.profile_challenge_failed());
         }
         game.setVisiting(null);
         game.setDuel(id);
@@ -316,7 +319,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
       {/* One trainer card: who they are on the left, who walks with
           them on the right */}
       <Card class="md:flex-row md:items-stretch md:gap-0">
-        <Show when={profile()} fallback={<Note>Loading profile…</Note>}>
+        <Show when={profile()} fallback={<Note>{m.profile_loading()}</Note>}>
           {(loaded) => (
             // The face beside the name and badges, and where they stand
             // under all of it on a phone rather than squeezed beside it
@@ -333,11 +336,11 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 when={props.viewOnly !== true}
                 fallback={
                   <Menu
-                    label="Actions"
+                    label={m.profile_actions()}
                     icon={ActionsIcon}
                     actions={[
                       {
-                        label: 'Battle',
+                        label: m.profile_battle(),
                         disabled: staging(),
                         onSelect: challenge,
                       },
@@ -350,7 +353,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                         ? []
                         : [
                             {
-                              label: 'Block',
+                              label: m.profile_block(),
                               disabled: friend.busy(),
                               onSelect: friend.block,
                             },
@@ -360,22 +363,22 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                 }
               >
                 <Menu
-                  label="Actions"
+                  label={m.profile_actions()}
                   icon={ActionsIcon}
                   actions={[
                     {
-                      label: 'Edit profile',
+                      label: m.profile_edit_title(),
                       onSelect: () => {
                         setEditing(true);
                       },
                     },
                     {
-                      label: 'Add friend',
+                      label: m.friends_tie_add(),
                       onSelect: () => {
                         setAdding(true);
                       },
                     },
-                    { label: 'Sign out', onSelect: leave },
+                    { label: m.ui_sign_out(), onSelect: leave },
                   ]}
                 />
               </Show>
@@ -385,7 +388,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                     <TitleBadge player={props.player} title={loaded().title ?? -1} name={worn} />
                   )}
                 </Show>
-                <Badge tone="gold">{formatNumber(loaded().gold)} gold</Badge>
+                <Badge tone="gold">{m.ui_gold({ amount: formatNumber(loaded().gold) })}</Badge>
               </Row>
               <div class="col-span-3 md:col-span-2 md:col-start-2">
                 <PlayerPlace player={props.player} />
@@ -411,11 +414,11 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
         fallback={
           <TabGroup horizontal defaultValue={ProfileSection.Battles} class="flex flex-col gap-3">
             <TabBar>
-              <TabButton value={ProfileSection.Battles}>Battles</TabButton>
-              <TabButton value={ProfileSection.Awards}>Awards</TabButton>
+              <TabButton value={ProfileSection.Battles}>{m.profile_section_battles()}</TabButton>
+              <TabButton value={ProfileSection.Awards}>{m.profile_section_awards()}</TabButton>
             </TabBar>
             <TabPane value={ProfileSection.Battles}>
-              <Card title="Battles">
+              <Card title={m.profile_section_battles()}>
                 <BattleHistory player={props.player} viewOnly />
               </Card>
             </TabPane>
@@ -436,7 +439,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
           class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
         >
           <TabBar class="md:sticky md:top-0 md:w-40 md:shrink-0 md:flex-col md:overflow-visible">
-            <For each={SECTION_GROUPS}>
+            <For each={readSectionGroups()}>
               {(group) => (
                 <>
                   <span
@@ -484,7 +487,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
                       setAdding(true);
                     }}
                   >
-                    Add friend
+                    {m.friends_tie_add()}
                   </Button>
                 </Row>
                 <FriendsTab player={props.player} />
@@ -542,7 +545,7 @@ export default function ProfileTab(props: ProfileTabProps): JSX.Element {
               setEditing(false);
             }}
             onSaved={() => {
-              setSaid('Profile saved.');
+              setSaid(m.profile_saved());
             }}
           />
         )}

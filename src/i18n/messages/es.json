@@ -1028,7 +1028,7 @@
   "catch_pp_amount": "{pp} PP",
   "catch_pp_title": "Aumentar PP",
   "catch_pp_description": "{item} se gasta en un movimiento y nada devuelve los puntos. Elige el movimiento.",
-  "catch_picker_strongest_first": "Los más fuertes primero",
+  "catch_picker_strongest_first": "Más fuertes primero",
   "catch_picker_all_boxes": "Todas las cajas",
   "catch_picker_box": "Caja",
   "catch_picker_search_all": "Buscar en todas las cajas",
@@ -1052,7 +1052,7 @@
   "catch_picker_empty": "No tienes nada para esto.",
   "catch_picker_no_match_theirs": "Ninguno de los suyos coincide.",
   "catch_picker_no_match": "Ninguno de los tuyos coincide.",
-  "catch_picker_confirm": "¿{verb}: {name}?",
+  "catch_picker_confirm": "¿{verb} {name}?",
   "catch_give_title": "Dar un objeto",
   "catch_give_description": "Elige qué debe llevar.",
   "catch_give_verb": "Dar",
@@ -1082,14 +1082,14 @@
   "catch_heading_lay_out_hint": "Pone cada Pokémon en la casilla de su número",
   "catch_heading_close_up": "Cerrar los huecos",
   "catch_heading_close_up_hint": "Desplaza todo hacia delante sin cambiar el orden",
-  "catch_heading_move_all": "Mover los {count} a otra caja",
+  "catch_heading_move_all": "Mover {count} a otra caja",
   "catch_heading_delete": "Borrar caja",
   "catch_heading_rename_box": "Renombrar {name}",
   "catch_heading_colour_of": "Color de {name}",
   "catch_heading_save": "Guardar",
-  "catch_heading_move_all_to": "Mover los {count} a",
+  "catch_heading_move_all_to": "Mover {count} a",
   "catch_heading_move_them": "Moverlos",
-  "catch_heading_delete_ask": "¿Borrar {name}? Sus {count} Pokémon vuelven a Principal.",
+  "catch_heading_delete_ask": "¿Borrar {name}? Los {count} Pokémon que contiene vuelven a Principal.",
   "catch_heading_delete_it": "Borrarla",
   "catch_heading_keep_it": "Conservarla",
   "catch_held_battle": [
@@ -1123,7 +1123,7 @@
     }
   ],
   "catch_move_here_now": "aquí ahora",
-  "catch_move_new_box": "＋ Nueva caja con estos {count}",
+  "catch_move_new_box": "＋ Nueva caja con {count}",
   "catch_selected": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -1139,8 +1139,8 @@
   "catch_unfavorite_count": "Quitar {count} de favoritos",
   "catch_lock_count": "Bloquear {count}",
   "catch_unlock_count": "Desbloquear {count}",
-  "catch_release_ask": "¿Liberar a {count}?",
-  "catch_release_count": "Liberar a {count}",
+  "catch_release_ask": "¿Liberar {count} Pokémon?",
+  "catch_release_count": "Liberar {count}",
   "catch_clear": "Vaciar",
   "catch_keep_them": "Conservarlos",
   "catch_candy_pile": "{count} de {family}",
@@ -1154,12 +1154,21 @@
       }
     }
   ],
-  "catch_release_held": "{count} de estos no se pueden liberar: {reasons}",
+  "catch_release_held": [
+    {
+      "declarations": ["input count", "input reasons", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} de estos no se puede liberar: {reasons}",
+        "countPlural=*": "{count} de estos no se pueden liberar: {reasons}"
+      }
+    }
+  ],
   "catch_rail_counting": "Al buscar en todas las cajas, cada número dice cuántos coinciden allí.",
-  "catch_rail_drag_picked": "O arrastra los {count} a una caja.",
+  "catch_rail_drag_picked": "O arrastra {count} a una caja.",
   "catch_rail_drag": "Arrastra un Pokémon a una caja para guardarlo.",
   "catch_rail_find": "Buscar una caja",
-  "catch_rail_new_with": "Nueva caja con estos {count}",
+  "catch_rail_new_with": "Nueva caja con {count}",
   "catch_rail_used": "{count} de {max} cajas usadas",
   "catch_sort_caught": "Captura",
   "catch_sort_level": "Nivel",
@@ -1171,7 +1180,16 @@
   "catch_sort_slot_order": "Orden de casillas",
   "catch_in_battle": "en combate",
   "catch_bulk_done": "{said}.",
-  "catch_bulk_skipped": "{said}, {skipped} omitidos.",
+  "catch_bulk_skipped": [
+    {
+      "declarations": ["input said", "input skipped", "local skippedPlural = skipped: plural"],
+      "selectors": ["skippedPlural"],
+      "match": {
+        "skippedPlural=one": "{said}, {skipped} omitido.",
+        "skippedPlural=*": "{said}, {skipped} omitidos."
+      }
+    }
+  ],
   "catch_bulk_let_go": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -1234,8 +1252,17 @@
   "catch_sort": "Ordenar",
   "catch_highest_first": "Mayor primero",
   "catch_lowest_first": "Menor primero",
-  "catch_pick_all": "Elegir los {count}",
-  "catch_put_picked": "Poner los {count} elegidos en la casilla {slot}",
+  "catch_pick_all": "Elegir {count}",
+  "catch_put_picked": [
+    {
+      "declarations": ["input count", "input slot", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "Poner el elegido en la casilla {slot}",
+        "countPlural=*": "Poner {count} elegidos en la casilla {slot}"
+      }
+    }
+  ],
   "catch_slot_order_note": "El orden de casillas mantiene los huecos. Cualquier otro orden muestra la caja compacta, sin huecos. La caja siempre acaba en una fila vacía donde colocar, y crece a medida que la llenas.",
   "catch_bulk_favorited": [
     {
@@ -1389,7 +1416,7 @@
   "catch_released_items": "Lo que llevaba ha vuelto a la Mochila.",
   "catch_release_blocked_raid": "Está en una incursión, así que no se puede liberar.",
   "catch_release_blocked_only": "No puedes liberar tu único Pokémon.",
-  "catch_release_blocked_favorite": "Un favorito no se puede liberar. Quítalo antes de favoritos.",
+  "catch_release_blocked_favorite": "Un favorito no se puede liberar. Quítalo primero de favoritos.",
   "catch_release_blocked_locked": "Un Pokémon bloqueado no se puede liberar. Desbloquéalo antes.",
   "catch_name_locked": "Nombrado por su primer Entrenador",
   "catch_name_set": "Poner mote",
@@ -1419,7 +1446,7 @@
   "catch_sheet_missing": "No existe esa captura.",
   "catch_egg_progress": "{steps} / {hatch} pasos.",
   "catch_egg_progress_idle": "{steps} / {hatch} pasos. Solo avanza mientras es el que llevas contigo.",
-  "catch_hatch_it": "Hacerlo eclosionar",
+  "catch_hatch_it": "Eclosionar",
   "catch_friendship_of": "{count} de {max}",
   "catch_steps": [
     {
@@ -1437,7 +1464,7 @@
   "catch_history": "Historial",
   "catch_history_description": "Todos los que han tenido este Pokémon, del más antiguo al más reciente.",
   "catch_release_title": "¿Liberarlo?",
-  "catch_release_graced": "Se puede recuperar antes de un día, a cambio de los caramelos que dio.",
+  "catch_release_graced": "Se puede recuperar durante un día, a cambio de los caramelos que dio.",
   "catch_release_final": "Liberar a un Pokémon no se puede deshacer.",
   "catch_release_pays": [
     {
@@ -1466,7 +1493,7 @@
   "item_spent_ball": "Ahora está en {item}.",
   "item_spent_cap": "{item} lo ha pulido: {ivs}.",
   "item_spent_mint": "Ahora es {nature}.",
-  "item_spent_purified": "La sombra se ha ido: {ivs}.",
+  "item_spent_purified": "Ya no es un Pokémon oscuro: {ivs}.",
   "item_spent_gigantamax": "Ahora tiene el factor Gigamax.",
   "item_spent_tera_short": "Hacen falta {count} de {item} para cambiar el teratipo.",
   "item_spent_tera": "Su teratipo es ahora {type}.",

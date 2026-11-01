@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-items
 title: Translate item descriptions
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

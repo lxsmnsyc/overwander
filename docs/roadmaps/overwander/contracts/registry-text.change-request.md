@@ -1,7 +1,7 @@
 # Change request: registry-text v2 to v3
 
 - From node: i18n-descriptions
-- Status: open
+- Status: accepted (v3)
 
 ## Problem
 

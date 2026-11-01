@@ -11,9 +11,9 @@ import {
 } from '../ids/forms';
 import { ABILITY_IDS, ITEM_IDS, REGION_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
-import { extendRecord, idOf, idsOf } from '../yaml';
-import zenithHolders from '../text/en/zeniths.yaml';
-import { getSpeciesData, registerSpecies } from './__create';
+import { baseLocale, currentLocale, type Locale } from '../../i18n/locale';
+import { deriveLocalized, extendRecord, idOf, idsOf, splitLocales } from '../yaml';
+import { getSpeciesData, registerSpecies, type SpeciesData } from './__create';
 import { readStats } from './yaml';
 
 /**
@@ -64,6 +64,65 @@ export interface ZenithForm {
   ability: Abilities;
 }
 
+const TEXT_FILES = splitLocales(
+  import.meta.glob<unknown>('../text/*/zeniths.yaml', { eager: true, import: 'default' }),
+);
+
+const TEXT_FILE = v.record(v.string(), v.string());
+
+/** The key of a Zenith's name in `text/<locale>/zeniths.yaml`, beside the holders */
+const NAME_KEY = 'name';
+
+/** Where a name says whose Zenith it is */
+const HOLDER_MARK = '{holder}';
+
+/** Each locale's name template, English included */
+const NAME_TEMPLATES = readNameTemplates();
+
+function readNameTemplates(): Map<Locale, string> {
+  const templates = new Map<Locale, string>();
+
+  for (const file of Object.values(TEXT_FILES.english)) {
+    templates.set(baseLocale, readNameTemplate(file, 'text/en/zeniths.yaml'));
+  }
+  for (const [locale, placed] of TEXT_FILES.overlays) {
+    for (const [path, file] of Object.entries(placed)) {
+      // A locale may leave its template out and read in English
+      if (Object.hasOwn(v.parse(TEXT_FILE, file), NAME_KEY)) {
+        templates.set(locale, readNameTemplate(file, path));
+      }
+    }
+  }
+  return templates;
+}
+
+function readNameTemplate(file: unknown, where: string): string {
+  const template = v.parse(TEXT_FILE, file)[NAME_KEY];
+
+  if (template == null || !template.includes(HOLDER_MARK)) {
+    throw new Error(`${where}: ${NAME_KEY} must hold ${HOLDER_MARK}`);
+  }
+  return template;
+}
+
+function englishName(holder: string): string {
+  return (NAME_TEMPLATES.get(baseLocale) ?? '').replace(HOLDER_MARK, holder);
+}
+
+/**
+ * Names a Zenith in each locale from its template. English says whose
+ * it is in the holder the YAML writes; another locale puts the name its
+ * own pokemon has in that locale in the template's place
+ */
+function nameZenith(zenith: SpeciesData, holder: string, own: SpeciesData): void {
+  deriveLocalized(zenith, 'name', () => {
+    const locale = currentLocale();
+    const template = NAME_TEMPLATES.get(locale) ?? NAME_TEMPLATES.get(baseLocale) ?? '';
+
+    return template.replace(HOLDER_MARK, locale === baseLocale ? holder : own.name);
+  });
+}
+
 const STATS = v.record(v.string(), v.pipe(v.number(), v.minValue(0)));
 
 /** A shape's types and ability fall back to its own types and the Zenith's ability */
@@ -96,7 +155,12 @@ function readZeniths(): ZenithShape[] {
   }
   files.sort(([one], [two]) => one - two);
 
-  const holders = v.parse(v.record(v.string(), v.string()), zenithHolders);
+  const holders: Record<string, string> = {};
+
+  for (const file of Object.values(TEXT_FILES.english)) {
+    Object.assign(holders, v.parse(TEXT_FILE, file));
+  }
+  delete holders[NAME_KEY];
   const shapes: ZenithShape[] = [];
 
   for (const [, path, file] of files) {
@@ -285,43 +349,44 @@ export default function registerZenithSpecies(): void {
   for (const shape of ZENITH_SHAPES) {
     const base = getSpeciesData(shape.base);
 
-    registerSpecies(
-      shape.zenith,
-      extendRecord(base, {
-        name: `Zenith ${shape.holder}`,
+    // The Zenith is its pokemon with the changes below, named in each locale
+    const zenith = extendRecord(base, {
+      name: englishName(shape.holder),
+      baseForm: false,
+      worn: true,
+      stats: { ...shape.stats },
+      types: shape.types,
+      abilities: [shape.ability],
+      hiddenAbilities: [],
+      // Put on in a fight rather than grown into, so it stands in no
+      // line and nothing stages it
+      evolvesFrom: undefined,
+      evolvesInto: undefined,
+      eggSpecies: undefined,
+      biomes: [],
+    });
+
+    nameZenith(zenith, shape.holder, base);
+    registerSpecies(shape.zenith, zenith);
+    for (const form of shape.forms) {
+      const own = getSpeciesData(form.base);
+      const shaped = extendRecord(own, {
+        name: englishName(form.holder),
         baseForm: false,
         worn: true,
-        stats: { ...shape.stats },
-        types: shape.types,
-        abilities: [shape.ability],
+        stats: { ...form.stats },
+        types: form.types.length > 0 ? form.types : own.types,
+        abilities: [form.ability],
         hiddenAbilities: [],
-        // Put on in a fight rather than grown into, so it stands in no
-        // line and nothing stages it
         evolvesFrom: undefined,
         evolvesInto: undefined,
         eggSpecies: undefined,
         biomes: [],
-      }),
-    );
-    for (const form of shape.forms) {
-      const own = getSpeciesData(form.base);
+      });
 
-      registerSpecies(
-        form.zenith,
-        extendRecord(own, {
-          name: `Zenith ${form.holder}`,
-          baseForm: false,
-          worn: true,
-          stats: { ...form.stats },
-          types: form.types.length > 0 ? form.types : own.types,
-          abilities: [form.ability],
-          hiddenAbilities: [],
-          evolvesFrom: undefined,
-          evolvesInto: undefined,
-          eggSpecies: undefined,
-          biomes: [],
-        }),
-      );
+      // A shape is named for the pokemon, as its Zenith is
+      nameZenith(shaped, form.holder, base);
+      registerSpecies(form.zenith, shaped);
     }
   }
 }

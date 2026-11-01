@@ -1,18 +1,9 @@
-# What the six stats and the seven stages are called, for anything that
-# prints one. One vocabulary, so two screens cannot name a stat differently
+# What the six stats are called, for anything that prints one. One
+# vocabulary, so two screens cannot name a stat differently
 
-stats:
-  HP: HP
-  Attack: Attack
-  Defense: Defense
-  SpecialAttack: Sp. Attack
-  SpecialDefense: Sp. Defense
-  Speed: Speed
-stages:
-  Attack: Attack
-  Defense: Defense
-  SpecialAttack: Sp. Attack
-  SpecialDefense: Sp. Defense
-  Speed: Speed
-  Evasion: Evasion
-  Accuracy: Accuracy
+HP: HP
+Attack: Attack
+Defense: Defense
+SpecialAttack: Sp. Attack
+SpecialDefense: Sp. Defense
+Speed: Speed

@@ -1,7 +1,13 @@
 import { isGuarded } from '../../../model/caught-record';
 import { isEgg } from '../../../model/egg';
 import { hyperTrain } from '../../../auth/npcs';
-import { MAX_IV, STAT_NAMES, STAT_ORDER, type Stats, getIV } from '../../../data/constants/stats';
+import {
+  ENGLISH_STAT_NAMES,
+  MAX_IV,
+  STAT_ORDER,
+  type Stats,
+  getIV,
+} from '../../../data/constants/stats';
 import { hyperTrainingCost } from '../../../data/overworld/npc';
 import playEffect, { Effect } from '../../../components/app/sound';
 import type { Choice } from '../../../components/forms/choice';
@@ -41,7 +47,7 @@ const hyper: NpcScript = async (visit) => {
           refused = `${formatNumber(cost)} gold`;
         }
         values.push({
-          label: `${STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
+          label: `${ENGLISH_STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
           value: stat,
           detail: `${formatNumber(cost)} gold`,
           refused,
@@ -65,7 +71,7 @@ const hyper: NpcScript = async (visit) => {
   }
   playEffect(Effect.LevelUp);
   visit.notify({
-    title: STAT_NAMES[stat],
+    title: ENGLISH_STAT_NAMES[stat],
     message: `Trained to ${MAX_IV}. −${formatNumber(cost)} gold`,
     tone: 'leaf',
   });

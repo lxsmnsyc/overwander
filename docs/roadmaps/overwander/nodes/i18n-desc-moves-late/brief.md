@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-moves-late
 title: Translate move descriptions, Gens 5 to 9
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

@@ -1,6 +1,6 @@
 TeraBlast:
   name: Tera Blast
-  description: Plain special damage.
+  description: Special Normal damage. Once the user has Terastallized it takes the user's Tera type, and it is physical when the user's Attack beats its Special Attack, stages included.
 SilkTrap:
   name: Silk Trap
   description: Blocks every damaging move aimed at the user for 2 seconds, and drops the Speed of anything that touches it a stage. Status moves pass. It fails if used twice over.

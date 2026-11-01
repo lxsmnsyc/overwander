@@ -9,7 +9,7 @@ PsychicFangs:
   description: Breaks Reflect and Light Screen on the target's side, then bites.
 StompingTantrum:
   name: Stomping Tantrum
-  description: 2x after the user's last move failed.
+  description: 2x power if the user's last move failed.
 ShadowBone:
   name: Shadow Bone
   description: 20% to drop the target's Defense a stage.

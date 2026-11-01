@@ -5,6 +5,7 @@ import { getRotations } from '../../../auth/rotations';
 
 import { Note } from '../../styled';
 import QuestBoard from './board';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * The quest board: what the game asks, where the player stands on
@@ -40,7 +41,7 @@ export default function QuestsTab(props: QuestsTabProps): JSX.Element {
   });
 
   return (
-    <Suspense fallback={<Note class="text-center">Looking…</Note>}>
+    <Suspense fallback={<Note class="text-center">{m.ui_looking()}</Note>}>
       <QuestBoard
         standings={standings}
         rotations={rotations}

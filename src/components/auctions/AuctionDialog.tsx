@@ -20,6 +20,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Putting one thing on the block — a pokemon, or a single item out of
@@ -106,9 +107,9 @@ function ListingBody(
     const record = props.caught();
 
     if (record == null) {
-      return 'This pokemon';
+      return m.auction_this_pokemon();
     }
-    return isEgg(record) ? 'Egg' : getSpeciesData(record.species).name;
+    return isEgg(record) ? m.ui_egg() : getSpeciesData(record.species).name;
   };
 
   const sensible = (): boolean =>
@@ -150,8 +151,8 @@ function ListingBody(
           setConfirming(false);
           setStatus(
             subject.lot === AuctionLot.Item
-              ? 'It could not be put up — you may already have an auction running, or no longer carry one.'
-              : 'It could not be put up — you may already have an auction running, or it may be a favorite, an egg or your buddy.',
+              ? m.auction_put_up_failed_item()
+              : m.auction_put_up_failed_catch(),
           );
           return;
         }
@@ -186,7 +187,7 @@ function ListingBody(
         </div>
       }
     >
-      <Show when={props.caught()} fallback={<Note>Reading the record…</Note>}>
+      <Show when={props.caught()} fallback={<Note>{m.auction_reading_record()}</Note>}>
         {(record) => (
           <div class="flex justify-center">
             <AnimatedSprite
@@ -213,14 +214,14 @@ function ListingBody(
       <Dialog
         isOpen={props.subject != null && !confirming()}
         onClose={close}
-        title={`Auction ${named()}`}
-        description="What it opens at, and the least a bid may raise it by. A lot stands for a day."
+        title={m.auction_title({ name: named() })}
+        description={m.auction_description()}
         class={CENTRED}
       >
         {portrait()}
 
         <Row class="justify-center">
-          <Field label="Opening bid">
+          <Field label={m.auction_opening_bid()}>
             <input
               type="number"
               min={MIN_STARTING_BID}
@@ -231,7 +232,7 @@ function ListingBody(
               }}
             />
           </Field>
-          <Field label="Least raise">
+          <Field label={m.auction_least_raise()}>
             <input
               type="number"
               min={MIN_INCREMENT}
@@ -257,9 +258,9 @@ function ListingBody(
               setConfirming(true);
             }}
           >
-            Put it up
+            {m.auction_put_up()}
           </Button>
-          <Button onClick={close}>Never mind</Button>
+          <Button onClick={close}>{m.ui_never_mind()}</Button>
         </DialogActions>
       </Dialog>
 
@@ -271,26 +272,24 @@ function ListingBody(
         onClose={() => {
           setConfirming(false);
         }}
-        title={`Put ${named()} up for auction?`}
-        description="It leaves your records the moment the lot opens."
+        title={m.auction_confirm_title({ name: named() })}
+        description={m.auction_confirm_description()}
         class={CENTRED}
       >
         {portrait()}
 
         <Note>
-          Opening at {asking()} gold, raised {raise()} at a time. It stands for a day and cannot be
-          taken back off the block — it comes back only if the day ends with nobody having bid.
           {props.subject?.lot === AuctionLot.Item
-            ? ' One piece goes up, not the stack.'
-            : ' It goes up held items and all.'}
+            ? m.auction_confirm_item({ asking: asking(), raise: raise() })
+            : m.auction_confirm_catch({ asking: asking(), raise: raise() })}
         </Note>
-        <Meta>Whoever wins it pays what they bid; the gold is yours when they collect it.</Meta>
+        <Meta>{m.auction_confirm_payment()}</Meta>
 
         <Status message={status()} />
 
         <DialogActions>
           <Button tone="danger" disabled={busy()} onClick={list}>
-            {busy() ? 'Putting it up…' : 'Put it up for a day'}
+            {busy() ? m.auction_putting_up() : m.auction_put_up_day()}
           </Button>
           <Button
             disabled={busy()}
@@ -298,7 +297,7 @@ function ListingBody(
               setConfirming(false);
             }}
           >
-            Back
+            {m.ui_back()}
           </Button>
         </DialogActions>
       </Dialog>

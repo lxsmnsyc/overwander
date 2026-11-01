@@ -24,6 +24,7 @@ import {
   createPager,
 } from '../styled';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * What the player has put on the block, and what became of it.
@@ -56,11 +57,11 @@ const enum LotState {
   Done = 3,
 }
 
-const LOT_STATE_LABELS: Record<LotState, string> = {
-  [LotState.Running]: 'on the block',
-  [LotState.Sold]: 'sold',
-  [LotState.Unsold]: 'nobody bid',
-  [LotState.Done]: 'settled',
+const LOT_STATE_LABELS: Record<LotState, () => string> = {
+  [LotState.Running]: m.auction_lot_running,
+  [LotState.Sold]: m.auction_lot_sold,
+  [LotState.Unsold]: m.auction_nobody_bid,
+  [LotState.Done]: m.auction_lot_settled,
 };
 
 /**
@@ -91,12 +92,15 @@ function getLotState(auction: AuctionRecord, at: number): LotState {
  */
 function describeLot(auction: AuctionRecord, state: LotState, at: number): string {
   if (state === LotState.Running) {
-    return `${describeStanding(auction)} · ${describeRemaining(auction.endsAt, at)}`;
+    return m.auction_lot_standing({
+      standing: describeStanding(auction),
+      remaining: describeRemaining(auction.endsAt, at),
+    });
   }
   if (state === LotState.Unsold) {
-    return 'It comes back to you.';
+    return m.auction_lot_returns();
   }
-  return `${auction.bid} gold`;
+  return m.ui_gold({ amount: auction.bid });
 }
 
 /**
@@ -114,7 +118,7 @@ function BidderPlate(props: { uid: string }): JSX.Element {
 
   return (
     <PlayerPlate
-      name={profile()?.nickname ?? 'a trainer'}
+      name={profile()?.nickname ?? m.auction_a_trainer()}
       sprite={profile()?.sprite ?? null}
       onOpen={() => {
         game.setVisiting(props.uid);
@@ -166,7 +170,7 @@ export default function SellingList(props: SellingListProps): JSX.Element {
     setStatus(null);
     reclaimAuction(id)
       .then((reclaimed) => {
-        setStatus(reclaimed ? 'Back in your hands.' : 'That lot could not be taken back.');
+        setStatus(reclaimed ? m.auction_back_in_hands() : m.auction_take_back_failed());
         props.onChanged();
       })
       .catch((thrown: unknown) => {
@@ -177,14 +181,10 @@ export default function SellingList(props: SellingListProps): JSX.Element {
   return (
     <>
       <Show when={stranded() > 0}>
-        <Note>
-          {stranded() === 1
-            ? 'One lot came back unsold and is waiting for you to take it.'
-            : `${stranded()} lots came back unsold and are waiting for you to take them.`}
-        </Note>
+        <Note>{m.auction_stranded({ count: stranded() })}</Note>
       </Show>
 
-      <Show when={listed().length} fallback={<Note>You have not put anything on the block.</Note>}>
+      <Show when={listed().length} fallback={<Note>{m.auction_none_listed()}</Note>}>
         <List>
           <For each={paged.shown()}>
             {([id, lot]) => {
@@ -200,11 +200,13 @@ export default function SellingList(props: SellingListProps): JSX.Element {
                   </div>
                   <Show when={lot.bidder !== ''}>
                     <span class="flex min-w-0 items-center gap-2">
-                      <Meta>{state() === LotState.Running ? 'Leading' : 'Won by'}</Meta>
+                      <Meta>
+                        {state() === LotState.Running ? m.auction_leading() : m.auction_won_by()}
+                      </Meta>
                       <BidderPlate uid={lot.bidder} />
                     </span>
                   </Show>
-                  <Badge tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]}</Badge>
+                  <Badge tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]()}</Badge>
                   {/* Nothing hands an unsold lot back on its own, so
                       this is the only way it ever returns */}
                   <Show when={canReclaim(lot, props.player, Date.now())}>
@@ -214,7 +216,7 @@ export default function SellingList(props: SellingListProps): JSX.Element {
                         takeBack(id);
                       }}
                     >
-                      Take back
+                      {m.auction_take_back_short()}
                     </Button>
                   </Show>
                 </ListRow>
@@ -225,9 +227,7 @@ export default function SellingList(props: SellingListProps): JSX.Element {
         {paged.controls()}
       </Show>
 
-      <Meta class="block">
-        One lot at a time, and it runs for a day. New listings are made at an auction board.
-      </Meta>
+      <Meta class="block">{m.auction_selling_note()}</Meta>
 
       <Status message={status()} />
     </>

@@ -73,7 +73,8 @@ import {
   TabGroup,
   TabPane,
 } from '../styled';
-import { formatNumber } from '../../i18n/format';
+import { formatNumber, joinSentences } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The trainer's shelf, laid out the way the bag's tray is: a grid of
@@ -162,6 +163,28 @@ const SHELF = ((): Awards[] => {
 const GRID_COLUMNS = 6;
 
 /**
+ * One region's line under the shelf: how many badges are won and, where
+ * the region has an Elite Four, how many of its members and whether the
+ * Champion is beaten
+ */
+function summarise(
+  region: string,
+  badges: number,
+  badgeTotal: number,
+  elite: [won: number, total: number, champion: boolean] | null,
+): string {
+  if (elite == null) {
+    return m.award_summary_badges({ region, badges, badgeTotal });
+  }
+
+  const [honors, honorTotal, champion] = elite;
+
+  return champion
+    ? m.award_summary_champion({ region, badges, badgeTotal, honors, honorTotal })
+    : m.award_summary_elite({ region, badges, badgeTotal, honors, honorTotal });
+}
+
+/**
  * An award's own picture where it has one, for anywhere outside the
  * shelf that names an award as won
  */
@@ -215,14 +238,14 @@ function Slot(props: { award: Awards; wins: number | null; art: number }): JSX.E
     <HoverCard
       class="block w-full"
       title={name()}
-      kind="Award"
+      kind={m.award_kind()}
       trigger={
         <button
           type="button"
           aria-label={
             held()
-              ? `${name()}, beaten ${props.wins} ${props.wins === 1 ? 'time' : 'times'}`
-              : `${name()}, not yet earned`
+              ? m.award_beaten_label({ name: name(), count: props.wins ?? 0 })
+              : m.award_unearned_label({ name: name() })
           }
           class="relative flex aspect-square w-full min-w-0 cursor-default items-center
             justify-center overflow-hidden rounded-lg border-2 border-line bg-paper p-1"
@@ -287,11 +310,9 @@ function Slot(props: { award: Awards; wins: number | null; art: number }): JSX.E
     >
       <div class="flex flex-col gap-1">
         <span class="font-semibold">{name()}</span>
-        <Detail label="Beaten">
-          {props.wins ?? 0} {props.wins === 1 ? 'time' : 'times'}
-        </Detail>
+        <Detail label={m.award_beaten()}>{m.award_times({ count: props.wins ?? 0 })}</Detail>
         <Show when={!held()}>
-          <Meta>Not yet earned.</Meta>
+          <Meta>{m.award_unearned()}</Meta>
         </Show>
       </div>
     </HoverCard>
@@ -372,17 +393,34 @@ function Shelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
         </For>
       </div>
       <Meta>
-        Kanto: {badges()} of {KANTO_BADGES.length} badges, {honors()} of {KANTO_HONORS.length} of
-        the Elite Four{wins().has(Awards.KantoChampion) ? ', Champion' : ''}. Johto: {johto()} of{' '}
-        {JOHTO_BADGES.length} badges, {marks()} of {JOHTO_HONORS.length} of the Elite Four
-        {wins().has(Awards.JohtoChampion) ? ', Champion' : ''}. Hoenn: {hoenn()} of{' '}
-        {HOENN_BADGES.length} badges. Sinnoh: {sinnoh()} of {SINNOH_BADGES.length} badges, {seats()}{' '}
-        of {SINNOH_HONORS.length} of the Elite Four
-        {wins().has(Awards.SinnohChampion) ? ', Champion' : ''}. Unova: {unova()} of{' '}
-        {UNOVA_BADGES.length} badges, {seated()} of {UNOVA_HONORS.length} of the Elite Four
-        {wins().has(Awards.UnovaChampion) ? ', Champion' : ''}. Kalos: {kalos()} of{' '}
-        {KALOS_BADGES.length} badges, {chairs()} of {KALOS_HONORS.length} of the Elite Four
-        {wins().has(Awards.KalosChampion) ? ', Champion' : ''}.
+        {joinSentences([
+          summarise(m.dex_region_kanto(), badges(), KANTO_BADGES.length, [
+            honors(),
+            KANTO_HONORS.length,
+            wins().has(Awards.KantoChampion),
+          ]),
+          summarise(m.dex_region_johto(), johto(), JOHTO_BADGES.length, [
+            marks(),
+            JOHTO_HONORS.length,
+            wins().has(Awards.JohtoChampion),
+          ]),
+          summarise(m.dex_region_hoenn(), hoenn(), HOENN_BADGES.length, null),
+          summarise(m.dex_region_sinnoh(), sinnoh(), SINNOH_BADGES.length, [
+            seats(),
+            SINNOH_HONORS.length,
+            wins().has(Awards.SinnohChampion),
+          ]),
+          summarise(m.dex_region_unova(), unova(), UNOVA_BADGES.length, [
+            seated(),
+            UNOVA_HONORS.length,
+            wins().has(Awards.UnovaChampion),
+          ]),
+          summarise(m.dex_region_kalos(), kalos(), KALOS_BADGES.length, [
+            chairs(),
+            KALOS_HONORS.length,
+            wins().has(Awards.KalosChampion),
+          ]),
+        ])}
       </Meta>
     </div>
   );
@@ -406,19 +444,32 @@ function LineSlot(props: {
     const next = props.standing?.next;
 
     return next == null
-      ? `${formatNumber(count())} ${props.deed}. ${TIER_NAMES[tier()]}.`
-      : `${formatNumber(count())} ${props.deed}. ${tierName(tier() + 1)} at ${formatNumber(next)}.`;
+      ? m.award_progress_top({
+          count: formatNumber(count()),
+          deed: props.deed,
+          tier: TIER_NAMES[tier()],
+        })
+      : m.award_progress_next({
+          count: formatNumber(count()),
+          deed: props.deed,
+          tier: tierName(tier() + 1),
+          next: formatNumber(next),
+        });
   };
 
   return (
     <HoverCard
       class="block w-full"
       title={props.name}
-      kind="Achievement"
+      kind={m.award_achievement_kind()}
       trigger={
         <button
           type="button"
-          aria-label={`${props.name}, ${TIER_NAMES[tier()]}. ${progress()}`}
+          aria-label={m.award_line_label({
+            name: props.name,
+            tier: TIER_NAMES[tier()],
+            progress: progress(),
+          })}
           class={`relative flex aspect-square w-full cursor-default items-center justify-center
             rounded-lg border-2 bg-paper p-1 ${ranked() ? '' : 'border-dashed border-line'}`}
           style={ranked() ? { 'border-color': TIER_COLORS[tier()] } : undefined}
@@ -443,7 +494,7 @@ function LineSlot(props: {
     >
       <div class="flex flex-col gap-1">
         <span class="font-semibold">{props.name}</span>
-        <Detail label="Tier">{TIER_NAMES[tier()]}</Detail>
+        <Detail label={m.award_tier()}>{TIER_NAMES[tier()]}</Detail>
         <Meta>{progress()}</Meta>
       </div>
     </HoverCard>
@@ -521,7 +572,7 @@ function TypeShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
         {([type, standing]) => (
           <LineSlot
             name={TYPE_NAMES[type]}
-            deed={`${TYPE_NAMES[type]} pokemon caught`}
+            deed={m.award_type_deed({ type: TYPE_NAMES[type] })}
             standing={standing}
             tint={TYPE_COLORS[type]}
           />
@@ -538,7 +589,7 @@ function TrainerShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element
         {([trainer, standing]) => (
           <LineSlot
             name={TRAINER_BASE_NAMES[trainer]}
-            deed={`${TRAINER_BASE_NAMES[trainer]}s beaten`}
+            deed={m.award_trainer_deed({ name: TRAINER_BASE_NAMES[trainer] })}
             standing={standing}
             tint={tintOf(trainer)}
           />
@@ -565,32 +616,32 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
   const [sheet] = createResource(() => props.player, listAchievements);
 
   return (
-    <Card title="Awards">
+    <Card title={m.profile_section_awards()}>
       {/* A shelf per tab, so none of them is a scroll away */}
       <TabGroup horizontal defaultValue={AwardShelf.Badges} class="flex flex-col gap-3">
         <TabBar>
-          <TabButton value={AwardShelf.Badges}>Badges</TabButton>
-          <TabButton value={AwardShelf.Achievements}>Achievements</TabButton>
-          <TabButton value={AwardShelf.Types}>Type specialists</TabButton>
-          <TabButton value={AwardShelf.Trainers}>Trainers beaten</TabButton>
+          <TabButton value={AwardShelf.Badges}>{m.award_tab_badges()}</TabButton>
+          <TabButton value={AwardShelf.Achievements}>{m.award_tab_achievements()}</TabButton>
+          <TabButton value={AwardShelf.Types}>{m.award_tab_types()}</TabButton>
+          <TabButton value={AwardShelf.Trainers}>{m.award_tab_trainers()}</TabButton>
         </TabBar>
         <TabPane value={AwardShelf.Badges}>
-          <Suspense fallback={<Note>Reading the shelf…</Note>}>
+          <Suspense fallback={<Note>{m.award_reading()}</Note>}>
             <Shelf held={held} />
           </Suspense>
         </TabPane>
         <TabPane value={AwardShelf.Achievements}>
-          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+          <Suspense fallback={<Note>{m.award_counting()}</Note>}>
             <LineShelf sheet={sheet} />
           </Suspense>
         </TabPane>
         <TabPane value={AwardShelf.Types}>
-          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+          <Suspense fallback={<Note>{m.award_counting()}</Note>}>
             <TypeShelf sheet={sheet} />
           </Suspense>
         </TabPane>
         <TabPane value={AwardShelf.Trainers}>
-          <Suspense fallback={<Note>Counting the lifetime…</Note>}>
+          <Suspense fallback={<Note>{m.award_counting()}</Note>}>
             <TrainerShelf sheet={sheet} />
           </Suspense>
         </TabPane>

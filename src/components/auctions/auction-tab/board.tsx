@@ -49,6 +49,7 @@ import { AUCTION_DURATION } from '../../../model/auction-record';
 import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface AuctionTabProps {
   /**
@@ -154,7 +155,9 @@ export function AuctionBoard(
    * and a seller whose profile has gone is still a seller
    */
   const describeSeller = (auction: AuctionRecord): string =>
-    auction.seller === props.player ? 'you' : (sellers()?.get(auction.seller) ?? 'a trainer');
+    auction.seller === props.player
+      ? m.auction_you()
+      : (sellers()?.get(auction.seller) ?? m.auction_a_trainer());
 
   /**
    * What a lot is called, for searching and for the row itself
@@ -204,9 +207,7 @@ export function AuctionBoard(
     placeBid(id, amount)
       .then((placed) => {
         setStatus(
-          placed == null
-            ? 'That bid could not be placed.'
-            : `Bid ${placed} gold — it is yours unless somebody raises it.`,
+          placed == null ? m.auction_bid_failed() : m.auction_bid_placed({ amount: placed }),
         );
       })
       .catch((thrown: unknown) => {
@@ -221,7 +222,7 @@ export function AuctionBoard(
         if (claimed) {
           playEffect(Effect.TradeComplete);
         }
-        setStatus(claimed ? 'Collected.' : 'That lot could not be collected.');
+        setStatus(claimed ? m.auction_collected() : m.auction_collect_failed());
         refresh();
       })
       .catch((thrown: unknown) => {
@@ -233,7 +234,7 @@ export function AuctionBoard(
     setStatus(null);
     reclaimAuction(id)
       .then((taken) => {
-        setStatus(taken ? 'Taken back.' : 'That lot could not be taken back.');
+        setStatus(taken ? m.auction_taken_back() : m.auction_take_back_failed());
         refresh();
       })
       .catch((thrown: unknown) => {
@@ -255,8 +256,8 @@ export function AuctionBoard(
   const claimOf = (id: string, auction: AuctionRecord): LotClaim | undefined => {
     if (canClaim(auction, props.player, now())) {
       return {
-        said: `won for ${auction.bid} gold`,
-        label: 'Collect',
+        said: m.auction_won_for({ amount: auction.bid }),
+        label: m.auction_collect(),
         onClaim: () => {
           collect(id);
         },
@@ -264,8 +265,8 @@ export function AuctionBoard(
     }
     if (canReclaim(auction, props.player, now())) {
       return {
-        said: 'nobody bid',
-        label: 'Take it back',
+        said: m.auction_nobody_bid(),
+        label: m.auction_take_back(),
         onClaim: () => {
           reclaim(id);
         },
@@ -335,10 +336,10 @@ export function AuctionBoard(
    */
   const lotDetails = (auction: AuctionRecord): JSX.Element => (
     <>
-      <Detail label="Owned by">
-        {auction.seller === props.player ? 'you' : describeSeller(auction)}
+      <Detail label={m.auction_owned_by()}>
+        {auction.seller === props.player ? m.auction_you() : describeSeller(auction)}
       </Detail>
-      <Detail label="Bidding">
+      <Detail label={m.auction_bidding()}>
         {describeStanding(auction)} · {describeRemaining(auction.endsAt, now())}
       </Detail>
     </>
@@ -389,7 +390,7 @@ export function AuctionBoard(
                 setBidding(id);
               }}
             >
-              Bid
+              {m.auction_bid()}
             </Button>
           </Show>
         }
@@ -440,7 +441,7 @@ export function AuctionBoard(
     // rather than inside the tray, which is put away the moment the
     // pointer leaves it
     choices.push({
-      label: 'Bid',
+      label: m.auction_bid(),
       tone: 'primary',
       disabled: refusal != null,
       title: refusal ?? undefined,
@@ -466,9 +467,11 @@ export function AuctionBoard(
       cells.push({
         item: auction.item,
         note: claimOf(id, auction)?.said ?? describeStanding(auction),
-        said: `${describeItem(auction.item)} — ${describeStanding(
-          auction,
-        )}, by ${describeSeller(auction)}`,
+        said: m.auction_item_said({
+          item: describeItem(auction.item),
+          standing: describeStanding(auction),
+          seller: describeSeller(auction),
+        }),
         card: () => lotDetails(auction),
         actions: lotChoices(id, auction),
       });
@@ -506,7 +509,10 @@ export function AuctionBoard(
       // Whose it is, in what the square is announced as. Two sellers
       // with the same pokemon up are otherwise two identical squares
       squares.push({
-        square: { ...square, label: `${square.label} — by ${describeSeller(auction)}` },
+        square: {
+          ...square,
+          label: m.auction_catch_said({ label: square.label, seller: describeSeller(auction) }),
+        },
         caught,
       });
     }
@@ -538,19 +544,17 @@ export function AuctionBoard(
   const onTheBlock = (): JSX.Element => (
     <Show
       when={board().length}
-      fallback={
-        <Note>{query().length === 0 ? 'Nothing is up right now.' : 'Nothing here matches.'}</Note>
-      }
+      fallback={<Note>{query().length === 0 ? m.auction_empty() : m.auction_no_match()}</Note>}
     >
       <Show when={itemLots().length}>
-        <h4>Items</h4>
+        <h4>{m.auction_items()}</h4>
         {/* Narrowed by the board's own search, so the tray draws none
             of its own */}
         <ItemGrid bare entries={itemLots()} />
       </Show>
 
       <Show when={boxed().length}>
-        <h4>Pokemon</h4>
+        <h4>{m.auction_pokemon()}</h4>
         {/* Narrowed by the board's own search too, so the grid draws
             none of its own */}
         <CatchGrid
@@ -564,7 +568,7 @@ export function AuctionBoard(
                   class="block size-full"
                   trigger={<span class="block size-full" />}
                   title={titleCatch(lots()?.get(entry().id))}
-                  kind="Lot"
+                  kind={m.auction_kind_lot()}
                   footer={(close) => (
                     <>
                       {/* The whole record, read-only: a pokemon on the
@@ -575,7 +579,7 @@ export function AuctionBoard(
                           game.setSheet({ catchId: lot()[1].caught, readOnly: true });
                         }}
                       >
-                        View
+                        {m.friends_view()}
                       </Button>
                       {lotActions(lot()[0], lot()[1])}
                     </>
@@ -602,13 +606,13 @@ export function AuctionBoard(
     <>
       <Row class="justify-center">
         <Show when={props.viewOnly !== true}>
-          <Badge tone="gold">{gold()} gold</Badge>
+          <Badge tone="gold">{m.ui_gold({ amount: gold() })}</Badge>
         </Show>
         <Show when={board().length > SEARCH_FROM}>
           <Search
             vocabulary={AUCTION_VOCABULARY}
             example="price:<500"
-            placeholder="Name, or price:<500 is:pokemon"
+            placeholder={m.auction_search_placeholder()}
             value={query()}
             onChange={(typed) => {
               setQuery(typed);
@@ -621,7 +625,7 @@ export function AuctionBoard(
           It is the panel rather than a card in it: the board *is* this
           dialog, and a titled box around the only thing on the screen
           is a label on a room somebody is already standing in */}
-      <Show when={auctions()} fallback={<Note>Loading auctions…</Note>}>
+      <Show when={auctions()} fallback={<Note>{m.auction_loading()}</Note>}>
         {onTheBlock()}
       </Show>
     </>
@@ -636,23 +640,14 @@ export function AuctionBoard(
           for */}
       <Show when={props.adding === true} fallback={shopping()}>
         <Card
-          title="Sell"
+          title={m.auction_sell()}
           aside={
-            <Hint title="About selling">
+            <Hint title={m.auction_about_selling()}>
               <HintList>
-                <li>
-                  An auction runs for {AUCTION_DURATION / 3_600_000} hours, and you can run one at a
-                  time.
-                </li>
-                <li>
-                  A pokemon can be sold if it is shiny, has perfect or all-zero IVs, or is a
-                  legendary or mythical. A favourite cannot be sold.
-                </li>
-                <li>Only special items can be sold.</li>
-                <li>
-                  A lot nobody bids on does not come back on its own. Collect it from Profile,
-                  Auction, Selling.
-                </li>
+                <li>{m.auction_hint_duration({ hours: AUCTION_DURATION / 3_600_000 })}</li>
+                <li>{m.auction_hint_catches()}</li>
+                <li>{m.auction_hint_items()}</li>
+                <li>{m.auction_hint_unsold()}</li>
               </HintList>
             </Hint>
           }
@@ -661,18 +656,17 @@ export function AuctionBoard(
             when={running() == null}
             fallback={
               <Note>
-                You have an auction running — {describeRemaining(running() ?? 0, now())}. One at a
-                time, which is one a day.
+                {m.auction_running({ remaining: describeRemaining(running() ?? 0, now()) })}
               </Note>
             }
           >
-            <h4>From the bag</h4>
+            <h4>{m.auction_from_bag()}</h4>
             <InventoryPicker
               inline
               revision={revision()}
               value={null}
-              verb="Sell"
-              empty="Nothing in the bag is rare enough for the block."
+              verb={m.auction_sell()}
+              empty={m.auction_bag_empty()}
               filter={(entry) => isAuctionableItem(entry.item)}
               onPick={(picked) => {
                 if (picked != null) {
@@ -681,7 +675,7 @@ export function AuctionBoard(
               }}
             />
 
-            <h4>From the records</h4>
+            <h4>{m.auction_from_records()}</h4>
             {/* Two different lists in one. What does not qualify for
                 the block at all is **left out** — it would be most of a
                 box, and a hundred greyed rows say nothing. The three
@@ -695,8 +689,8 @@ export function AuctionBoard(
               inline
               options={sellable()}
               value={null}
-              verb="Sell"
-              empty="Nothing of yours is rare enough for the block."
+              verb={m.auction_sell()}
+              empty={m.auction_records_empty()}
               filter={mayGoUp}
               onPick={(picked) => {
                 if (picked != null) {
@@ -714,7 +708,7 @@ export function AuctionBoard(
                 props.onAdding?.(false);
               }}
             >
-              Back to the board
+              {m.auction_back_to_board()}
             </Button>
           </Row>
         </Card>

@@ -35,6 +35,7 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
 import TypeBadge from '../sprites/TypeBadge';
 import { useGame } from '../app/game-context';
 import describeWhere from '../../overworld/bearing';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export interface RaidsTabProps {
   user: PlayerIdentity;
@@ -88,7 +89,7 @@ function LairRow(props: {
               animation={SpriteAnim.Sleep}
               direction="DownLeft"
               scale={1}
-              label={`${getSpeciesData(raid().species).name}, asleep in the lair`}
+              label={m.raid_asleep({ name: getSpeciesData(raid().species).name })}
             />
           )}
         </Show>
@@ -96,7 +97,7 @@ function LairRow(props: {
       <div class="flex min-w-0 grow flex-col gap-0.5">
         <div class="flex min-w-0 flex-wrap items-center gap-1.5">
           <span class="truncate font-medium">
-            {props.raid == null ? 'A raid' : getRaidTitle(props.raid)}
+            {props.raid == null ? m.raid_a_raid() : getRaidTitle(props.raid)}
           </span>
           <Show when={props.raid}>
             {(raid) => (
@@ -132,25 +133,27 @@ function InvitedRow(props: {
   const named = (): string => {
     const nickname = caller()?.nickname ?? '';
 
-    return nickname === '' ? 'A friend' : nickname;
+    return nickname === '' ? m.raid_a_friend() : nickname;
   };
 
   return (
     <LairRow
       raid={raid()}
-      line={`${named()} called you in to ${
-        props.invite.role === LobbyRole.Spectator ? 'watch' : 'fight'
-      }`}
+      line={
+        props.invite.role === LobbyRole.Spectator
+          ? m.raid_called_watch({ name: named() })
+          : m.raid_called_fight({ name: named() })
+      }
     >
       <Button tone="primary" onClick={props.onOpen}>
-        Open
+        {m.raid_open()}
       </Button>
       <Button
         onClick={() => {
           declineRaidInvite(props.invite.raid).catch(() => undefined);
         }}
       >
-        Dismiss
+        {m.ui_dismiss()}
       </Button>
     </LairRow>
   );
@@ -217,7 +220,7 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
   const nextWindow = (): string => {
     const minutes = Math.max(1, Math.ceil((RAID_INTERVAL - (now() % RAID_INTERVAL)) / 60_000));
 
-    return `New raids in ${minutes} minute${minutes === 1 ? '' : 's'}`;
+    return m.raid_next_window({ count: minutes });
   };
 
   const inviteTo = (id: string): RaidInvite | undefined => {
@@ -234,9 +237,9 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
       <Show
         when={game.raid()}
         fallback={
-          <Show when={raids()} fallback={<Note>Loading raids…</Note>}>
+          <Show when={raids()} fallback={<Note>{m.raid_loading()}</Note>}>
             <Show when={(invites() ?? []).length > 0}>
-              <ListHeading>Invited</ListHeading>
+              <ListHeading>{m.raid_invited()}</ListHeading>
               <List>
                 <For each={invitedIds()}>
                   {(id) => (
@@ -256,17 +259,18 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
               </List>
             </Show>
             <ListHeading aside={<Meta>{nextWindow()}</Meta>}>
-              Gathering · {raids()?.length ?? 0}
+              {m.raid_gathering({ count: raids()?.length ?? 0 })}
             </ListHeading>
-            <Show when={raids()?.length} fallback={<Note>No raids are gathering right now.</Note>}>
+            <Show when={raids()?.length} fallback={<Note>{m.raid_none_gathering()}</Note>}>
               <List>
                 <For each={gathering.shown()}>
                   {([id, raid]) => (
                     <LairRow
                       raid={raid}
-                      line={`${describeWhere(raid.chunk, game.position())} · ${raid.teams.length} team${
-                        raid.teams.length === 1 ? '' : 's'
-                      }`}
+                      line={m.raid_gathering_line({
+                        where: describeWhere(raid.chunk, game.position()),
+                        count: raid.teams.length,
+                      })}
                     >
                       <Button
                         tone="primary"
@@ -274,7 +278,7 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
                           game.setRaid(id);
                         }}
                       >
-                        Open
+                        {m.raid_open()}
                       </Button>
                     </LairRow>
                   )}
@@ -318,7 +322,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
     <Suspense
       fallback={
         <Panel>
-          <Note>Loading raids…</Note>
+          <Note>{m.raid_loading()}</Note>
         </Panel>
       }
     >

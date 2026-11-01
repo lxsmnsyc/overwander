@@ -65,6 +65,7 @@ import watchLive from '../app/watch';
 import { useGame } from '../app/game-context';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 export interface RaidLobbyProps {
   user: PlayerIdentity;
@@ -198,14 +199,14 @@ function BossCard(props: {
             direction="DownLeft"
             scale={wide() ? 4 : 2}
             shadow
-            label={`${data().name}, waiting in the lair`}
+            label={m.raid_waiting_label({ name: data().name })}
           />
         </div>
         <div class="flex min-w-0 flex-col gap-1 md:items-center">
           {/* The level first: a raid boss is fought at the cap whoever
               it is, and that is what a party is sized against */}
           <span class="font-medium">
-            Lv. {RAID_BOSS_LEVEL} {data().name}
+            {m.ui_level_name({ level: RAID_BOSS_LEVEL, name: data().name })}
           </span>
           <div class="flex flex-wrap gap-1 md:justify-center">
             <For each={data().types}>{(type) => <TypeBadge type={type} />}</For>
@@ -214,7 +215,7 @@ function BossCard(props: {
             {(tera) => (
               <div class="flex items-center gap-1.5 md:justify-center">
                 <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
-                  Tera type
+                  {m.raid_tera_type()}
                 </span>
                 <TypeBadge type={tera()} />
               </div>
@@ -224,18 +225,18 @@ function BossCard(props: {
       </div>
 
       <div class="flex flex-col gap-2 border-t-2 border-line-soft pt-3">
-        <ChartRows label="Weak to" chart={chart()} factors={[4, 2]} />
-        <ChartRows label="Resists" chart={chart()} factors={[0.5, 0.25]} />
-        <ChartRows label="Immune" chart={chart()} factors={[0]} />
+        <ChartRows label={m.type_weak_to()} chart={chart()} factors={[4, 2]} />
+        <ChartRows label={m.type_resists()} chart={chart()} factors={[0.5, 0.25]} />
+        <ChartRows label={m.raid_immune()} chart={chart()} factors={[0]} />
       </div>
 
       <div class="flex flex-col items-center gap-2 border-t-2 border-line-soft pt-3 text-center md:mt-auto">
         {/* The relic that opened it is spent, so there is no second attempt */}
         <Show when={props.mythical}>
-          <Note>The relic is spent. Whatever this raid comes to, it comes to it once.</Note>
+          <Note>{m.raid_relic_spent()}</Note>
         </Show>
         <Badge tone={props.hosting ? 'leaf' : 'neutral'}>
-          {props.hosting ? 'You are hosting' : 'Waiting for the host'}
+          {props.hosting ? m.raid_hosting() : m.raid_waiting_host()}
         </Badge>
       </div>
     </div>
@@ -390,7 +391,7 @@ function LobbyRows(
    * crowd, their own and the host's
    */
   const contextOf = (team: TeamRecord): TeamContext => ({
-    name: team.player === props.user.uid ? 'You' : named(team.player),
+    name: team.player === props.user.uid ? m.battle_you() : named(team.player),
     mine: team.player === props.user.uid,
     host: raid()?.host === team.player,
   });
@@ -457,20 +458,20 @@ function LobbyRows(
   /** The one line of advice under the lobby, most pressing first */
   const notice = (): string | null => {
     if (canJoin() === false) {
-      return 'You need a pokemon of your own to fight. You can only watch this one.';
+      return m.raid_notice_watch_only();
     }
     if (full()) {
-      return `The lobby is full: ${RAID_PLAYER_LIMIT} trainers are already in.`;
+      return m.raid_notice_full({ max: RAID_PLAYER_LIMIT });
     }
     if (isHost() && (raid()?.teams.length ?? 0) === 0) {
-      return 'Start needs at least one team.';
+      return m.raid_notice_start();
     }
     return null;
   };
 
   return (
     <>
-      <Show when={raid()} fallback={<Note>Loading raid…</Note>}>
+      <Show when={raid()} fallback={<Note>{m.raid_loading_one()}</Note>}>
         {(record) => (
           <div class="flex flex-col gap-3">
             {/* Boss on the left, trainers on the right. The columns
@@ -491,7 +492,7 @@ function LobbyRows(
               <div class="flex min-h-0 flex-col gap-2 md:pl-4">
                 <Row>
                   <h4 class="grow">
-                    Trainers{' '}
+                    {m.raid_trainers()}{' '}
                     <span class="text-sm font-normal text-muted tabular-nums">
                       {joinedPlayers()} / {RAID_PLAYER_LIMIT}
                     </span>
@@ -501,7 +502,7 @@ function LobbyRows(
                     <Search
                       vocabulary={TEAM_VOCABULARY}
                       example="is:host"
-                      placeholder="Name, or size:6 is:host"
+                      placeholder={m.raid_search_placeholder()}
                       value={query()}
                       onChange={(typed) => {
                         setQuery(typed);
@@ -512,8 +513,8 @@ function LobbyRows(
 
                 {/* The player's own row is stuck to the top: it is the one
                     they came to look at, and the first to scroll away */}
-                <Show when={teams()?.length} fallback={<Note>No teams have joined yet.</Note>}>
-                  <Show when={joined().length} fallback={<Note>Nobody here matches.</Note>}>
+                <Show when={teams()?.length} fallback={<Note>{m.raid_no_teams()}</Note>}>
+                  <Show when={joined().length} fallback={<Note>{m.raid_no_match()}</Note>}>
                     <div class="max-h-72 min-h-0 overflow-y-auto md:max-h-none md:flex-1">
                       <List>
                         <For each={joined()}>
@@ -538,7 +539,9 @@ function LobbyRows(
                                 <span class="min-w-0 grow">
                                   <PlayerPlate
                                     name={
-                                      team.player === props.user.uid ? 'You' : named(team.player)
+                                      team.player === props.user.uid
+                                        ? m.battle_you()
+                                        : named(team.player)
                                     }
                                     sprite={faceOf(team.player)}
                                     onOpen={
@@ -551,7 +554,7 @@ function LobbyRows(
                                   />
                                 </span>
                                 <Show when={team.player === record().host}>
-                                  <Badge tone="tide">Host</Badge>
+                                  <Badge tone="tide">{m.duels_host_tag()}</Badge>
                                 </Show>
                               </span>
                               <LobbyParty catches={team.catches} class="min-w-0 grow" />
@@ -577,7 +580,7 @@ function LobbyRows(
                       aria-hidden="true"
                       class="size-4 shrink-0 text-muted transition-transform group-aria-expanded:rotate-90"
                     />
-                    Watching · {onlookers().length}
+                    {m.duels_watching({ count: onlookers().length })}
                   </DisclosureButton>
                   <DisclosurePanel class="max-h-48 overflow-y-auto pt-2">
                     <SpectatorList player={props.user.uid} watching={onlookers()} />
@@ -602,7 +605,7 @@ function LobbyRows(
                     setCalling(true);
                   }}
                 >
-                  Invite
+                  {m.lobby_invite()}
                 </Button>
               </Show>
               <Show when={canJoin() !== false && !full()}>
@@ -614,14 +617,14 @@ function LobbyRows(
                           act(
                             async () => joinRaid(props.raidId, catches),
                             // The usual cause is a pokemon already fighting or waiting elsewhere
-                            'That team could not join: one of them may already be in another raid.',
+                            m.raid_join_failed(),
                           );
                         }
                       })
                       .catch(() => undefined);
                   }}
                 >
-                  {mine() ? 'Change team' : 'Form a team'}
+                  {mine() ? m.raid_change_team() : m.raid_form_team()}
                 </Button>
               </Show>
               <Show when={isHost()}>
@@ -629,13 +632,13 @@ function LobbyRows(
                   tone="primary"
                   disabled={record().teams.length === 0}
                   onClick={() => {
-                    act(async () => startRaid(props.raidId), 'The raid could not be started.');
+                    act(async () => startRaid(props.raidId), m.raid_start_failed());
                   }}
                 >
-                  Start
+                  {m.duels_start()}
                 </Button>
               </Show>
-              <Button onClick={back}>Leave</Button>
+              <Button onClick={back}>{m.duels_leave()}</Button>
             </DialogActions>
           </div>
         )}
@@ -647,8 +650,8 @@ function LobbyRows(
         onClose={() => {
           setCalling(false);
         }}
-        title="Invite to the raid"
-        description="They see the call above their list of raids, and joining answers it."
+        title={m.raid_invite_title()}
+        description={m.raid_invite_description()}
         present={teamPlayers()}
         onInvite={async (uid, role) => inviteToRaid(props.raidId, uid, role)}
       />
@@ -701,7 +704,7 @@ function LobbyTeams(
   );
 
   return (
-    <Suspense fallback={<Note>Loading raid…</Note>}>
+    <Suspense fallback={<Note>{m.raid_loading_one()}</Note>}>
       <LobbyRows {...props} names={names} />
     </Suspense>
   );
@@ -790,7 +793,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Loading raid…</Note>}>
+    <Suspense fallback={<Note>{m.raid_loading_one()}</Note>}>
       <LobbyTeams
         {...props}
         raid={() => raid() ?? null}

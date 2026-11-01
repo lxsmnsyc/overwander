@@ -28,6 +28,7 @@ import {
   Status,
 } from '../styled';
 import describeFailure from '../../i18n/refusals';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The parties a player saved for themselves.
@@ -44,9 +45,9 @@ import describeFailure from '../../i18n/refusals';
  */
 function unfitForATeam(option: CatchOption): string | null {
   if (isEgg(option.caught)) {
-    return 'not hatched';
+    return m.pick_team_not_hatched();
   }
-  return isGuarded(option.caught) ? 'locked' : null;
+  return isGuarded(option.caught) ? m.pick_team_locked() : null;
 }
 
 /** One saved team, with the pokemon in it drawn as a row of squares */
@@ -91,12 +92,12 @@ function PresetRow(props: {
     <TeamRow name={props.preset.name} catches={party.latest ?? []}>
       <span class="truncate font-bold">{props.preset.name}</span>
       <Show when={gone() > 0}>
-        <Meta>{gone()} no longer yours</Meta>
+        <Meta>{m.profile_team_gone({ count: gone() })}</Meta>
       </Show>
       <span class="grow" />
-      <Button onClick={props.onEdit}>Edit</Button>
+      <Button onClick={props.onEdit}>{m.profile_edit()}</Button>
       <Button tone="caution" onClick={props.onDelete}>
-        Delete
+        {m.profile_delete()}
       </Button>
     </TeamRow>
   );
@@ -122,7 +123,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
 
   const start = (id: string | null, preset?: TeamPresetRecord): void => {
     setStatus(null);
-    setWriting({ id, name: preset?.name ?? `Team ${held().length + 1}` });
+    setWriting({ id, name: preset?.name ?? m.profile_team_default({ number: held().length + 1 }) });
     setParty(preset?.catches ?? []);
   };
 
@@ -140,7 +141,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
     saveTeamPreset(written.id, asNickname(written.name), party())
       .then((id) => {
         if (id == null) {
-          setStatus('That team could not be saved.');
+          setStatus(m.profile_team_save_failed());
           return;
         }
         close();
@@ -163,32 +164,30 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
 
   return (
     <Card
-      title="Teams"
+      title={m.pick_team_saved_tab()}
       aside={
         <Row>
-          <Hint title="About teams">
+          <Hint title={m.profile_teams_about()}>
             <HintList>
-              <li>A team is up to {TEAM_SIZE} of your pokemon, saved under a name.</li>
-              <li>
-                Loading one in a raid or a duel fills the party with whichever of them can fight.
-              </li>
-              <li>You may keep {TEAM_PRESET_LIMIT} teams.</li>
+              <li>{m.profile_teams_hint_size({ max: TEAM_SIZE })}</li>
+              <li>{m.profile_teams_hint_load()}</li>
+              <li>{m.profile_teams_hint_limit({ max: TEAM_PRESET_LIMIT })}</li>
             </HintList>
           </Hint>
           <Button
             tone="primary"
             disabled={full()}
-            title={full() ? `You already keep ${TEAM_PRESET_LIMIT} teams.` : undefined}
+            title={full() ? m.profile_teams_full({ max: TEAM_PRESET_LIMIT }) : undefined}
             onClick={() => {
               start(null);
             }}
           >
-            New team
+            {m.profile_new_team()}
           </Button>
         </Row>
       }
     >
-      <Show when={held().length > 0} fallback={<Note>You have saved no teams yet.</Note>}>
+      <Show when={held().length > 0} fallback={<Note>{m.profile_no_teams()}</Note>}>
         <BattleData>
           <TeamRows>
             <For each={held()}>
@@ -215,14 +214,14 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
       <Dialog
         isOpen={writing() != null}
         onClose={close}
-        title={writing()?.id == null ? 'New team' : 'Edit team'}
-        description="Name a party you can bring to a raid or a duel with one press."
+        title={writing()?.id == null ? m.profile_new_team() : m.profile_edit_team()}
+        description={m.profile_team_description()}
         width="wide"
       >
         <Show when={writing()}>
           {(written) => (
             <div class="flex flex-col gap-3">
-              <Field label="Name" stacked>
+              <Field label={m.profile_team_name()} stacked>
                 <input
                   type="text"
                   value={written().name}
@@ -232,10 +231,8 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                   }}
                 />
               </Field>
-              <Show when={party().length > 0} fallback={<Note>Nobody picked yet.</Note>}>
-                <Note>
-                  {party().length} of {TEAM_SIZE} picked.
-                </Note>
+              <Show when={party().length > 0} fallback={<Note>{m.profile_team_nobody()}</Note>}>
+                <Note>{m.profile_team_picked({ count: party().length, max: TEAM_SIZE })}</Note>
               </Show>
               {/* The box itself, rather than a button that opens one:
                   the team being written is the lit squares, so there is
@@ -248,8 +245,8 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                 value={party()}
                 max={TEAM_SIZE}
                 sort="level"
-                verb="Bring"
-                empty="You have nothing to put in a team."
+                verb={m.profile_team_bring()}
+                empty={m.profile_team_empty()}
                 reason={unfitForATeam}
                 onPick={(catches) => {
                   setParty(catches);
@@ -264,9 +261,9 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
             disabled={party().length === 0 || asNickname(writing()?.name ?? '') === ''}
             onClick={save}
           >
-            Save
+            {m.profile_save()}
           </Button>
-          <Button onClick={close}>Cancel</Button>
+          <Button onClick={close}>{m.battle_cancel()}</Button>
         </DialogActions>
       </Dialog>
     </Card>

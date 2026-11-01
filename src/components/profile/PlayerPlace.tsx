@@ -5,6 +5,7 @@ import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';
 import { worldCell } from '../../overworld/grid';
 import { formatMoment } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * Where a trainer is standing.
@@ -20,7 +21,7 @@ import { formatMoment } from '../../i18n/format';
 
 /** When they were last heard from, said the way a date is said locally */
 function walked(at: number): string {
-  return Number.isNaN(at) || at === 0 ? 'unknown' : formatMoment(at);
+  return Number.isNaN(at) || at === 0 ? m.profile_unknown() : formatMoment(at);
 }
 
 /**
@@ -29,7 +30,7 @@ function walked(at: number): string {
  */
 function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Element {
   return (
-    <Show when={props.place()} fallback={<Note>They have not walked anywhere yet.</Note>}>
+    <Show when={props.place()} fallback={<Note>{m.profile_not_walked()}</Note>}>
       {(at) => (
         <Row>
           <Badge tone="leaf">
@@ -44,10 +45,8 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
               rather than pushed to the far edge, where it crowded
               whatever stood to the card's right */}
           <span class="flex flex-wrap items-center gap-2 max-sm:basis-full">
-            <Meta>
-              cell {at().cellX}, {at().cellY}
-            </Meta>
-            <Meta>last moved {walked(at().movedAt)}</Meta>
+            <Meta>{m.profile_cell({ x: at().cellX, y: at().cellY })}</Meta>
+            <Meta>{m.profile_last_moved({ when: walked(at().movedAt) })}</Meta>
           </span>
         </Row>
       )}
@@ -64,7 +63,7 @@ export default function PlayerPlace(props: { player: string }): JSX.Element {
   const [place] = createResource(() => props.player, getPlayerPosition);
 
   return (
-    <Suspense fallback={<Note>Looking for them…</Note>}>
+    <Suspense fallback={<Note>{m.profile_looking()}</Note>}>
       <PlaceLine place={place} />
     </Suspense>
   );

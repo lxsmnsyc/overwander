@@ -15,7 +15,7 @@ import { useGame } from '../app/game-context';
 import playEffect, { Effect } from '../app/sound';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import PlayerPlate from '../profile/PlayerPlate';
-import NamedCatch from './NamedCatch';
+import NamedCatch, { fillSentence } from './NamedCatch';
 import {
   Badge,
   Button,
@@ -33,6 +33,7 @@ import {
   useToast,
 } from '../styled';
 import { formatDate } from '../../i18n/format';
+import { m } from '../../i18n/paraglide/messages.js';
 
 /**
  * The player's trades: offers to answer, offers waiting on somebody
@@ -54,10 +55,10 @@ const enum TradesView {
 }
 
 /** What a settled trade came to */
-const SETTLED_WORDS: Partial<Record<TradeStatus, string>> = {
-  [TradeStatus.Accepted]: 'Made',
-  [TradeStatus.Declined]: 'Declined',
-  [TradeStatus.Cancelled]: 'Taken back',
+const SETTLED_WORDS: Partial<Record<TradeStatus, () => string>> = {
+  [TradeStatus.Accepted]: m.trade_made,
+  [TradeStatus.Declined]: m.trade_declined,
+  [TradeStatus.Cancelled]: m.trade_taken_back,
 };
 
 /** The other end of the trade, named by their profile */
@@ -71,7 +72,7 @@ function OtherParty(props: { uid: string }): JSX.Element {
   const called = (): string => {
     const nickname = profile()?.nickname ?? '';
 
-    return nickname === '' ? 'Unnamed trainer' : nickname;
+    return nickname === '' ? m.trade_unnamed_trainer() : nickname;
   };
 
   return (
@@ -90,25 +91,32 @@ function OtherParty(props: { uid: string }): JSX.Element {
  * what goes out, what comes back, and the gold riding on it
  */
 function DealLine(props: { trade: TradeRecord; mine: boolean }): JSX.Element {
-  const gold = (): string => {
+  // The sentence, with the two catches left as marks for fillSentence
+  const say = ([offered, asked]: string[]): string => {
     const riding = props.trade.gold;
 
     if (riding > 0) {
-      return ` · ${riding} gold rides with it`;
+      return m.trade_deal_gives({ offered, asked, gold: riding });
     }
-    return riding < 0 ? ` · asks ${-riding} gold${props.mine ? '' : ' of you'}` : '';
+    if (riding < 0) {
+      return props.mine
+        ? m.trade_deal_asks({ offered, asked, gold: -riding })
+        : m.trade_deal_asks_you({ offered, asked, gold: -riding });
+    }
+    return m.trade_deal({ offered, asked });
   };
 
   return (
     <Meta>
-      <NamedCatch id={props.trade.offered} /> for{' '}
-      <Show
-        when={props.trade.asked !== '' && props.trade.asked}
-        fallback={props.mine ? 'their pick' : 'your pick'}
-      >
-        {(asked) => <NamedCatch id={asked()} />}
-      </Show>
-      {gold()}
+      {fillSentence(say, [
+        <NamedCatch id={props.trade.offered} />,
+        <Show
+          when={props.trade.asked !== '' && props.trade.asked}
+          fallback={props.mine ? m.trade_their_pick_short() : m.trade_your_pick()}
+        >
+          {(asked) => <NamedCatch id={asked()} />}
+        </Show>,
+      ])}
     </Meta>
   );
 }
@@ -170,15 +178,15 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
   /** Why one of the player's own cannot go back with the answer */
   const answerReason = (option: CatchOption): string | null => {
     if (option.fighting) {
-      return 'in a battle';
+      return m.trade_reason_battle();
     }
     if (isEgg(option.caught)) {
-      return 'still an egg';
+      return m.trade_reason_egg();
     }
     if (isFavorite(option.caught)) {
-      return 'a favorite';
+      return m.trade_reason_favorite();
     }
-    return buddy.latest === option.id ? 'your buddy' : null;
+    return buddy.latest === option.id ? m.trade_reason_buddy() : null;
   };
 
   const settle = (id: string, done: Promise<boolean>, said: string, gained = false): void => {
@@ -187,7 +195,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
     done
       .then((worked) => {
         if (!worked) {
-          toast.push({ message: 'That trade is no longer open.', tone: 'ember' });
+          toast.push({ message: m.trade_closed(), tone: 'ember' });
           return;
         }
         if (gained) {
@@ -199,7 +207,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
         game.touchRecords();
       })
       .catch(() => {
-        toast.push({ message: 'That could not be done.', tone: 'ember' });
+        toast.push({ message: m.trade_failed(), tone: 'ember' });
       })
       .finally(() => {
         setBusy(null);
@@ -209,9 +217,9 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
   /** What the agree button says: an open ask is answered, not taken */
   const acceptLabel = (id: string): string => {
     if (sure() === id) {
-      return 'Sure?';
+      return m.trade_sure();
     }
-    return held().get(id)?.asked === '' ? 'Answer' : 'Accept';
+    return held().get(id)?.asked === '' ? m.trade_answer() : m.trade_accept();
   };
 
   const accept = (id: string): void => {
@@ -229,7 +237,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
       setSure(id);
       return;
     }
-    settle(id, acceptTrade(id, ''), 'Trade made.', true);
+    settle(id, acceptTrade(id, ''), m.trade_done(), true);
   };
 
   const withdraw = (id: string): void => {
@@ -240,7 +248,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
       setSure(id);
       return;
     }
-    settle(id, cancelTrade(id), 'Offer taken back.');
+    settle(id, cancelTrade(id), m.trade_withdrawn());
   };
 
   const row = (id: string, mine: boolean, children: JSX.Element): JSX.Element => (
@@ -262,7 +270,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
       <TabGroup horizontal defaultValue={TradesView.Pending} class="flex flex-col gap-3">
         <TabBar>
           <TabButton value={TradesView.Pending}>
-            Pending
+            {m.trade_pending()}
             {/* What is waiting on the player's answer, counted on the tab */}
             <Show when={toAnswer().length > 0}>
               <Badge tone="ember" class="ml-1.5">
@@ -270,15 +278,12 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
               </Badge>
             </Show>
           </TabButton>
-          <TabButton value={TradesView.Settled}>Settled</TabButton>
+          <TabButton value={TradesView.Settled}>{m.trade_settled()}</TabButton>
         </TabBar>
         <TabPane value={TradesView.Pending}>
           <div class="flex flex-col gap-3">
-            <Show
-              when={toAnswer().length > 0}
-              fallback={<Note>Nobody is offering you anything right now.</Note>}
-            >
-              <Note>Offered to you.</Note>
+            <Show when={toAnswer().length > 0} fallback={<Note>{m.trade_nobody_offering()}</Note>}>
+              <Note>{m.trade_offered_to_you()}</Note>
               <List>
                 <For each={toAnswer()}>
                   {(id) =>
@@ -299,10 +304,10 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
                           tone="danger"
                           disabled={busy() != null}
                           onClick={() => {
-                            settle(id, declineTrade(id), 'Offer declined.');
+                            settle(id, declineTrade(id), m.trade_offer_declined());
                           }}
                         >
-                          Decline
+                          {m.trade_decline()}
                         </Button>
                       </>,
                     )
@@ -313,7 +318,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
 
             <Show when={waiting().length > 0}>
               <Divider />
-              <Note>Waiting on an answer. The pokemon is held until they give one.</Note>
+              <Note>{m.trade_waiting()}</Note>
               <List>
                 <For each={waiting()}>
                   {(id) =>
@@ -326,7 +331,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
                           withdraw(id);
                         }}
                       >
-                        {sure() === id ? 'Sure?' : 'Take back'}
+                        {sure() === id ? m.trade_sure() : m.trade_take_back()}
                       </Button>,
                     )
                   }
@@ -336,10 +341,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
           </div>
         </TabPane>
         <TabPane value={TradesView.Settled}>
-          <Show
-            when={settled.shown().length > 0}
-            fallback={<Note>Nothing has been settled yet.</Note>}
-          >
+          <Show when={settled.shown().length > 0} fallback={<Note>{m.trade_none_settled()}</Note>}>
             <List>
               <For each={settled.shown()}>
                 {(id) =>
@@ -347,9 +349,10 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
                     id,
                     held().get(id)?.proposer === props.player,
                     <Meta>
-                      {SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open] ?? ''}
-                      {' · '}
-                      {formatDate(held().get(id)?.resolvedAt ?? 0)}
+                      {m.trade_settled_on({
+                        word: SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open]?.() ?? '',
+                        date: formatDate(held().get(id)?.resolvedAt ?? 0),
+                      })}
                     </Meta>,
                   )
                 }
@@ -367,9 +370,9 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
         onClose={() => {
           setAnswering(null);
         }}
-        title="Answer with"
-        description="Choose the pokemon to give back. Picking it agrees to the trade."
-        verb="Give"
+        title={m.trade_answer_with()}
+        description={m.trade_answer_description()}
+        verb={m.trade_give()}
         confirm
         value={null}
         reason={answerReason}
@@ -378,7 +381,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
 
           setAnswering(null);
           if (id != null && picked != null) {
-            settle(id, acceptTrade(id, picked), 'Trade made.', true);
+            settle(id, acceptTrade(id, picked), m.trade_done(), true);
           }
         }}
       />

@@ -39,25 +39,26 @@ import TypeBadge from '../../sprites/TypeBadge';
 import type { ComponentProps, JSX } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
 import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /** What a landmark kind is called on a requirement line */
-const LANDMARK_NAMES: Record<Landmark, string> = {
-  [Landmark.Cache]: 'item caches',
-  [Landmark.Berry]: 'berry patches',
-  [Landmark.Nest]: 'nests',
-  [Landmark.Phenomenon]: 'phenomena',
-  [Landmark.Portal]: 'portal crossings',
-  [Landmark.Apricorn]: 'apricorn trees',
+const LANDMARK_NAMES: Record<Landmark, () => string> = {
+  [Landmark.Cache]: m.quest_landmark_cache,
+  [Landmark.Berry]: m.quest_landmark_berry,
+  [Landmark.Nest]: m.quest_landmark_nest,
+  [Landmark.Phenomenon]: m.quest_landmark_phenomenon,
+  [Landmark.Portal]: m.quest_landmark_portal,
+  [Landmark.Apricorn]: m.quest_landmark_apricorn,
 };
 
 /** What a battle foe is called on a requirement line */
-const FOE_NAMES: Record<Foe, string> = {
-  [Foe.Rocket]: 'Team Rocket stops',
-  [Foe.GymLeader]: 'gym leaders',
-  [Foe.EliteFour]: 'Elite Four members',
-  [Foe.Champion]: 'Champions',
-  [Foe.Trainer]: 'duelling trainers',
-  [Foe.GymSeat]: 'gym seats',
+const FOE_NAMES: Record<Foe, () => string> = {
+  [Foe.Rocket]: m.quest_foe_rocket,
+  [Foe.GymLeader]: m.quest_foe_gym_leader,
+  [Foe.EliteFour]: m.quest_foe_elite_four,
+  [Foe.Champion]: m.quest_foe_champion,
+  [Foe.Trainer]: m.quest_foe_trainer,
+  [Foe.GymSeat]: m.quest_foe_gym_seat,
 };
 
 /** A region's name with its capital back on, off the sheet-directory names */
@@ -70,12 +71,12 @@ function regionTitle(region: Regions): string {
 /** One requirement, as a line of words */
 export function describeRequirement(requirement: QuestRequirement): string {
   if (requirement.kind === RequirementKind.TurnIn) {
-    return `Hand over ${requirement.count} × ${describeItem(requirement.item)}`;
+    return m.quest_hand_over({ count: requirement.count, item: describeItem(requirement.item) });
   }
   if (requirement.kind === RequirementKind.Dex) {
     return requirement.region == null
-      ? `Catch ${requirement.count} different species`
-      : `Catch ${requirement.count} different ${regionTitle(requirement.region)} species`;
+      ? m.quest_dex({ count: requirement.count })
+      : m.quest_dex_region({ count: requirement.count, region: regionTitle(requirement.region) });
   }
 
   const count = requirement.count;
@@ -83,92 +84,92 @@ export function describeRequirement(requirement: QuestRequirement): string {
   switch (requirement.metric) {
     case Metric.Catches: {
       if (requirement.species != null) {
-        return `Catch ${count} × ${getSpeciesData(requirement.species).name}`;
+        return m.quest_catch_species({ count, name: getSpeciesData(requirement.species).name });
       }
       if (requirement.family != null) {
-        return `Catch ${count} from the ${getFamilyName(requirement.family)} line`;
+        return m.quest_catch_family({ count, family: getFamilyName(requirement.family) });
       }
       if (requirement.type != null) {
-        return `Catch ${count} ${TYPE_NAMES[requirement.type]} type${count === 1 ? '' : 's'}`;
+        return m.quest_catch_type({ count, type: TYPE_NAMES[requirement.type] });
       }
-      return `Catch ${count} pokemon`;
+      return m.quest_catch_any({ count });
     }
     case Metric.Hatches:
       return requirement.species == null
-        ? `Hatch ${count} egg${count === 1 ? '' : 's'}`
-        : `Hatch ${count} × ${getSpeciesData(requirement.species).name}`;
+        ? m.quest_hatch({ count })
+        : m.quest_hatch_species({ count, name: getSpeciesData(requirement.species).name });
     case Metric.LevelUps:
-      return `Raise ${count} level${count === 1 ? '' : 's'}`;
+      return m.quest_level_ups({ count });
     case Metric.ItemUses:
       return requirement.item == null
-        ? `Use ${count} item${count === 1 ? '' : 's'}`
-        : `Use ${count} × ${describeItem(requirement.item)}`;
+        ? m.quest_use_items({ count })
+        : m.quest_use_item({ count, item: describeItem(requirement.item) });
     case Metric.Steps:
-      return `Walk ${count} steps with a buddy`;
+      return m.quest_steps({ count });
     case Metric.NpcVisits:
       return requirement.npc == null
-        ? `Deal with ${count} wanderer${count === 1 ? '' : 's'}`
-        : `Deal with a ${npcName(requirement.npc)} ${count} time${count === 1 ? '' : 's'}`;
+        ? m.quest_wanderers({ count })
+        : m.quest_wanderer({ count, name: npcName(requirement.npc) });
     case Metric.Landmarks:
       return requirement.landmark == null
-        ? `Claim ${count} landmark${count === 1 ? '' : 's'}`
-        : `Claim ${count} ${LANDMARK_NAMES[requirement.landmark]}`;
+        ? m.quest_landmarks({ count })
+        : m.quest_landmark({ count, landmark: LANDMARK_NAMES[requirement.landmark]() });
     case Metric.RaidRuns:
-      return `Fight in ${count} raid${count === 1 ? '' : 's'}`;
+      return m.quest_raid_runs({ count });
     case Metric.RaidWins:
-      return `Win ${count} raid${count === 1 ? '' : 's'}`;
+      return m.quest_raid_wins({ count });
     case Metric.Trades:
-      return `Settle ${count} trade${count === 1 ? '' : 's'}`;
+      return m.quest_trades({ count });
     case Metric.Friends:
-      return `Make ${count} friend${count === 1 ? '' : 's'}`;
+      return m.quest_friends({ count });
     case Metric.Auctions:
-      return `Settle ${count} auction${count === 1 ? '' : 's'}`;
+      return m.quest_auctions({ count });
     case Metric.Purifies:
-      return `Purify ${count} shadow${count === 1 ? '' : 's'}`;
+      return m.quest_purifies({ count });
     case Metric.Evolutions: {
       if (requirement.species != null) {
-        return `Evolve ${count} × ${getSpeciesData(requirement.species).name}`;
+        return m.quest_evolve_species({ count, name: getSpeciesData(requirement.species).name });
       }
       if (requirement.family != null) {
-        return `Evolve ${count} from the ${getFamilyName(requirement.family)} line`;
+        return m.quest_evolve_family({ count, family: getFamilyName(requirement.family) });
       }
       if (requirement.type != null) {
-        return `Evolve ${count} ${TYPE_NAMES[requirement.type]} type${count === 1 ? '' : 's'}`;
+        return m.quest_evolve_type({ count, type: TYPE_NAMES[requirement.type] });
       }
-      return `Evolve ${count} pokemon`;
+      return m.quest_evolve_any({ count });
     }
     case Metric.Releases:
       return requirement.species == null
-        ? `Release ${count} pokemon`
-        : `Release ${count} × ${getSpeciesData(requirement.species).name}`;
+        ? m.quest_release_any({ count })
+        : m.quest_release_species({ count, name: getSpeciesData(requirement.species).name });
     case Metric.MovesLearned:
       return requirement.move == null
-        ? `Teach ${count} move${count === 1 ? '' : 's'}`
-        : `Teach ${getMoveData(requirement.move).name} ${count} time${count === 1 ? '' : 's'}`;
+        ? m.quest_moves({ count })
+        : m.quest_move({ count, name: getMoveData(requirement.move).name });
     case Metric.BattleWins:
       return requirement.foe == null
-        ? `Beat ${count} trainer${count === 1 ? '' : 's'}`
-        : `Beat ${count} ${FOE_NAMES[requirement.foe]}`;
+        ? m.quest_beat_trainers({ count })
+        : m.quest_beat_foe({ count, foe: FOE_NAMES[requirement.foe]() });
     case Metric.GoldEarned:
-      return `Earn ${formatNumber(count)} gold`;
+      return m.quest_gold_earned({ amount: formatNumber(count) });
     case Metric.GoldSpent:
-      return `Spend ${formatNumber(count)} gold`;
+      return m.quest_gold_spent({ amount: formatNumber(count) });
     case Metric.Gifts:
-      return `Claim ${count} mystery gift${count === 1 ? '' : 's'}`;
+      return m.quest_gifts({ count });
     case Metric.Bids:
-      return `Bid in ${count} auction${count === 1 ? '' : 's'}`;
+      return m.quest_bids({ count });
     case Metric.ShinyCatches:
       return requirement.species == null
-        ? `Catch ${count} shiny pokemon`
-        : `Catch ${count} shiny ${getSpeciesData(requirement.species).name}`;
+        ? m.quest_shiny_any({ count })
+        : m.quest_shiny_species({ count, name: getSpeciesData(requirement.species).name });
     case Metric.TrainerWins:
       return requirement.trainer == null
-        ? `Beat ${count} duelling trainer${count === 1 ? '' : 's'}`
-        : `Beat ${count} ${TRAINER_NAMES[requirement.trainer]}${count === 1 ? '' : 's'}`;
+        ? m.quest_duel_trainers({ count })
+        : m.quest_duel_trainer({ count, name: TRAINER_NAMES[requirement.trainer] });
     case Metric.Biomes:
-      return `Discover ${count} biome${count === 1 ? '' : 's'}`;
+      return m.quest_biomes({ count });
     case Metric.EffortAssigned:
-      return `Assign ${count} effort point${count === 1 ? '' : 's'}`;
+      return m.quest_effort({ count });
   }
   // Every metric returns above; this only settles the return rule
   return '';
@@ -178,14 +179,17 @@ export function describeRequirement(requirement: QuestRequirement): string {
 export function describeReward(reward: QuestReward): string {
   switch (reward.kind) {
     case QuestRewardKind.Item:
-      return `${reward.amount} × ${describeItem(reward.item)}`;
+      return m.quest_reward_item({ amount: reward.amount, item: describeItem(reward.item) });
     case QuestRewardKind.Catch:
-      return `Lv. ${reward.level} ${getSpeciesData(reward.species).name}`;
+      return m.ui_level_name({ level: reward.level, name: getSpeciesData(reward.species).name });
     case QuestRewardKind.Encounter:
-      return `A meeting: Lv. ${reward.level} ${getSpeciesData(reward.species).name}`;
+      return m.quest_reward_meeting({
+        level: reward.level,
+        name: getSpeciesData(reward.species).name,
+      });
     case QuestRewardKind.Egg:
       // What is in an egg is never said before it hatches
-      return 'A pokemon egg';
+      return m.quest_reward_egg();
     case QuestRewardKind.Award:
       return AWARD_NAMES[reward.award];
   }

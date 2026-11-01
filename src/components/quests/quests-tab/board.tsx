@@ -18,6 +18,7 @@ import {
 } from 'terracotta';
 import { ChevronRightIcon } from '../../icons';
 import sayItems from '../../items/say-items';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export default function QuestBoard(props: {
   standings: Resource<QuestStanding[]>;
@@ -147,15 +148,15 @@ export default function QuestBoard(props: {
     claimRotation(scope, slot)
       .then((paid) => {
         if (paid == null) {
-          say('That quest is not ready to claim.', 'ember');
+          say(m.quest_not_ready(), 'ember');
           return;
         }
         // One line per kind with the item drawn beside it, the way a
         // stash out of the ground is said
-        sayItems(toast, paid, 'Quest reward');
+        sayItems(toast, paid, m.quest_reward_label());
       })
       .catch(() => {
-        say('That could not be claimed.', 'ember');
+        say(m.quest_claim_failed(), 'ember');
       })
       .finally(() => {
         setClaiming(false);
@@ -171,7 +172,7 @@ export default function QuestBoard(props: {
     claimQuest(quest)
       .then((payout) => {
         if (payout == null) {
-          say('That quest is not ready to claim.', 'ember');
+          say(m.quest_not_ready(), 'ember');
           return;
         }
         // The items are drawn rather than listed; whatever else a quest
@@ -187,9 +188,9 @@ export default function QuestBoard(props: {
             rest.push(describeReward(one));
           }
         }
-        sayItems(toast, paid, 'Quest reward');
+        sayItems(toast, paid, m.quest_reward_label());
         if (rest.length > 0) {
-          say(`Received ${rest.join(', ')}.`, 'leaf');
+          say(m.quest_received({ rewards: rest.join(', ') }), 'leaf');
         }
 
         if (payout.egg != null) {
@@ -204,7 +205,7 @@ export default function QuestBoard(props: {
         }
       })
       .catch(() => {
-        say('That could not be claimed.', 'ember');
+        say(m.quest_claim_failed(), 'ember');
       })
       .finally(() => {
         setClaiming(false);
@@ -222,19 +223,14 @@ export default function QuestBoard(props: {
         {(board) => (
           <>
             <DialogSection
-              title="Today"
+              title={m.quest_today()}
               hint={
-                <Hint title="About quests">
+                <Hint title={m.quest_about()}>
                   <HintList>
-                    <li>
-                      {DAILY_SLOTS} dailies refresh every day at midnight UTC, and one weekly hunt
-                      refreshes every Monday.
-                    </li>
-                    <li>Only what you do after a daily or weekly starts counts toward it.</li>
-                    <li>
-                      Each chain below opens one step at a time, as you finish the one before.
-                    </li>
-                    <li>A finished quest waits for you to claim its reward.</li>
+                    <li>{m.quest_hint_rotation({ count: DAILY_SLOTS })}</li>
+                    <li>{m.quest_hint_after()}</li>
+                    <li>{m.quest_hint_chains()}</li>
+                    <li>{m.quest_hint_claim()}</li>
                   </HintList>
                 </Hint>
               }
@@ -254,7 +250,7 @@ export default function QuestBoard(props: {
                 )}
               </Index>
             </DialogSection>
-            <DialogSection title="This week">
+            <DialogSection title={m.quest_this_week()}>
               <RotationCard
                 standing={board().weekly}
                 busy={claiming()}
@@ -303,7 +299,7 @@ export default function QuestBoard(props: {
                     {CHAINS[chain].name}
                   </span>
                   <Show when={claimableIn(chain) > 0}>
-                    <Badge tone="leaf">{claimableIn(chain)} ready</Badge>
+                    <Badge tone="leaf">{m.quest_ready({ count: claimableIn(chain) })}</Badge>
                   </Show>
                   <Badge
                     tone={claimedIn(chain) === CHAINS[chain].quests.length ? 'leaf' : 'neutral'}
@@ -329,7 +325,7 @@ export default function QuestBoard(props: {
       </Accordion>
 
       <Show when={open().length > 0}>
-        <DialogSection title="Asked of anybody">
+        <DialogSection title={m.quest_asked_of_anybody()}>
           <For each={open()}>
             {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
           </For>
@@ -337,7 +333,7 @@ export default function QuestBoard(props: {
       </Show>
 
       <Show when={done().length > 0}>
-        <DialogSection title="Done">
+        <DialogSection title={m.quest_done()}>
           <For each={done()}>
             {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
           </For>

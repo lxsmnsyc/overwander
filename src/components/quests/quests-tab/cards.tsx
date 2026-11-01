@@ -14,6 +14,7 @@ import ItemSprite from '../../items/ItemSprite';
 import { Badge, Button, Meta } from '../../styled';
 import { For, type JSX, Show } from 'solid-js';
 import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
  * One ask as a tile: the picture, the words, the bar filling toward
@@ -35,7 +36,7 @@ function RequirementTile(props: { line: RequirementStanding }): JSX.Element {
           {describeRequirement(props.line.requirement)}
         </span>
         <Show when={props.line.requirement.kind === RequirementKind.TurnIn}>
-          <Meta>Taken from the bag when you claim.</Meta>
+          <Meta>{m.quest_turn_in_note()}</Meta>
         </Show>
         <span class="h-1 overflow-hidden rounded-full bg-line-soft">
           <span
@@ -84,7 +85,10 @@ export function QuestCard(props: {
           />
           <span class="min-w-0 truncate">{data().name}</span>
         </DisclosureButton>
-        <Show when={!props.standing.claimed} fallback={<Badge tone="leaf">Claimed</Badge>}>
+        <Show
+          when={!props.standing.claimed}
+          fallback={<Badge tone="leaf">{m.quest_claimed()}</Badge>}
+        >
           <Button
             tone="primary"
             disabled={!props.standing.claimable || props.busy}
@@ -92,7 +96,7 @@ export function QuestCard(props: {
               props.onClaim(props.standing.quest);
             }}
           >
-            Claim
+            {m.quest_claim()}
           </Button>
         </Show>
       </div>
@@ -103,7 +107,7 @@ export function QuestCard(props: {
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
-          <Meta>Pays</Meta>
+          <Meta>{m.quest_pays()}</Meta>
           <For each={data().rewards}>
             {(reward) => (
               <Badge tone="gold">
@@ -142,7 +146,10 @@ export function RotationCard(props: {
         <span class="min-w-0 grow truncate text-sm font-bold text-ink">
           {props.standing.quest.name}
         </span>
-        <Show when={!props.standing.claimed} fallback={<Badge tone="leaf">Claimed</Badge>}>
+        <Show
+          when={!props.standing.claimed}
+          fallback={<Badge tone="leaf">{m.quest_claimed()}</Badge>}
+        >
           <Button
             tone="primary"
             disabled={!props.standing.claimable || props.busy}
@@ -150,18 +157,18 @@ export function RotationCard(props: {
               props.onClaim();
             }}
           >
-            Claim
+            {m.quest_claim()}
           </Button>
         </Show>
       </div>
       <RequirementTile line={line()} />
       <div class="flex flex-wrap items-center gap-2">
-        <Meta>Pays</Meta>
+        <Meta>{m.quest_pays()}</Meta>
         <For each={props.standing.quest.rewards}>
           {(reward) => (
             <Badge tone="gold">
               <ItemSprite item={reward.item} size={16} label="" />
-              {reward.amount} × {describeItem(reward.item)}
+              {m.quest_reward_item({ amount: reward.amount, item: describeItem(reward.item) })}
             </Badge>
           )}
         </For>
@@ -180,7 +187,7 @@ export function LockedCard(props: { quest: Quests }): JSX.Element {
       <span class="min-w-0 grow truncate text-sm font-bold text-muted">
         {QUESTS[props.quest].name}
       </span>
-      <Meta>Locked</Meta>
+      <Meta>{m.quest_locked()}</Meta>
     </div>
   );
 }

@@ -21,6 +21,7 @@ import type { CatchOption } from '../../catches/catch-picker';
 
 import { Note } from '../../styled';
 import { AuctionBoard, type AuctionTabProps } from './board';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export type { AuctionTabProps };
 
@@ -184,7 +185,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the board…</Note>}>
+    <Suspense fallback={<Note>{m.auction_reading()}</Note>}>
       <AuctionBoard
         {...props}
         auctions={() => auctions() ?? undefined}

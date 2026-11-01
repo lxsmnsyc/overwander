@@ -1,4 +1,8 @@
-# Who each Zenith is for, as its shard names them
+# Who each Zenith is for, as its shard names them, and the name a Zenith
+# takes from its holder. `name` is the template: a locale writes its own,
+# and fills in its own name for the pokemon
+
+name: Zenith {holder}
 
 ButterfreeZenith: Butterfree
 RaticateZenith: Raticate

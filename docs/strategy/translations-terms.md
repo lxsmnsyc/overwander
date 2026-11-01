@@ -174,3 +174,8 @@ The names a status shows on a card or a catch, in `src/data/text/<locale>/status
 ## Language names
 
 The picker names each language in itself: English, 日本語, Español. 日本語 is written in kanji, as every language list writes it, though the rest of the Japanese text is kana.
+
+## Stats, stages and Zeniths
+
+- The stats and stages use the games' words, in `text/<locale>/stats.yaml` and `stages.yaml`: Attack, Defense, Sp. Attack, Sp. Defense, Speed read こうげき, ぼうぎょ, とくこう, とくぼう, すばやさ and Ataque, Defensa, Ataque Esp., Defensa Esp., Velocidad. HP is PS in Spanish. Evasion and Accuracy (stages only) read かいひ, めいちゅう and Evasión, Precisión.
+- A Zenith is named from a template in `text/<locale>/zeniths.yaml`, the way the games name a Mega: ゼニス{holder} in Japanese (no gap, as メガ is written) and Cenit-{holder} in Spanish (as Mega-). The holder is the pokemon's name in that locale.

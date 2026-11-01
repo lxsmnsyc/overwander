@@ -3,7 +3,7 @@ import { BALL_ITEMS, type Balls, type Items } from '../../../data/ids/items';
 import { Genders, type Species } from '../../../data/ids/species';
 import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../../data/items';
 import { NATURE_NAMES } from '../../../data/ids/text';
-import { STAT_NAMES, Stats } from '../../../data/constants/stats';
+import { ENGLISH_STAT_NAMES, Stats } from '../../../data/constants/stats';
 import { Slots } from '../../../data/constants/slots';
 import { WEATHER_NAMES } from '../../../data/overworld/weather';
 import type Abilities from '../../../data/ids/abilities';
@@ -153,7 +153,7 @@ export const STAT_KEYS: Named<Stats>[] = [
 ];
 
 /** What each stat is called where the bar reads one back */
-export const STAT_LABELS: Record<Stats, string> = STAT_NAMES;
+export const STAT_LABELS: Record<Stats, string> = ENGLISH_STAT_NAMES;
 
 /** The three things a pokemon has room for */
 export const SLOT_KEYS: Named<Slots>[] = [

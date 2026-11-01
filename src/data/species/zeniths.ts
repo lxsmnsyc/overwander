@@ -11,9 +11,9 @@ import {
 } from '../ids/forms';
 import { ABILITY_IDS, ITEM_IDS, REGION_IDS, SPECIES_IDS, TYPE_IDS } from '../ids/names';
 import { Species } from '../ids/species';
-import { extendRecord, idOf, idsOf } from '../yaml';
-import zenithHolders from '../text/en/zeniths.yaml';
-import { getSpeciesData, registerSpecies } from './__create';
+import { type Locale, baseLocale, currentLocale } from '../../i18n/locale';
+import { deriveLocalized, extendRecord, idOf, idsOf, splitLocales } from '../yaml';
+import { type SpeciesData, getSpeciesData, registerSpecies } from './__create';
 import { readStats } from './yaml';
 
 /**
@@ -64,6 +64,68 @@ export interface ZenithForm {
   ability: Abilities;
 }
 
+const TEXT_FILES = splitLocales(
+  import.meta.glob<unknown>('../text/*/zeniths.yaml', { eager: true, import: 'default' }),
+);
+
+const TEXT_FILE = v.record(v.string(), v.string());
+
+/** The key of a Zenith's name in `text/<locale>/zeniths.yaml`, beside the holders */
+const NAME_KEY = 'name';
+
+/** Where a name says whose Zenith it is */
+const HOLDER_MARK = '{holder}';
+
+function readNameTemplate(file: unknown, where: string): string {
+  const words = v.parse(TEXT_FILE, file);
+
+  if (!Object.hasOwn(words, NAME_KEY) || !words[NAME_KEY].includes(HOLDER_MARK)) {
+    throw new Error(`${where}: ${NAME_KEY} must hold ${HOLDER_MARK}`);
+  }
+  return words[NAME_KEY];
+}
+
+function readNameTemplates(): Map<Locale, string> {
+  const templates = new Map<Locale, string>();
+
+  for (const [path, file] of Object.entries(TEXT_FILES.english)) {
+    templates.set(baseLocale, readNameTemplate(file, path));
+  }
+  for (const [locale, placed] of TEXT_FILES.overlays) {
+    for (const [path, file] of Object.entries(placed)) {
+      // A locale may leave its template out and read in English
+      if (Object.hasOwn(v.parse(TEXT_FILE, file), NAME_KEY)) {
+        templates.set(locale, readNameTemplate(file, path));
+      }
+    }
+  }
+  return templates;
+}
+
+/** Each locale's name template, English included */
+const NAME_TEMPLATES = readNameTemplates();
+
+function englishName(holder: string): string {
+  return (NAME_TEMPLATES.get(baseLocale) ?? '').replace(HOLDER_MARK, holder);
+}
+
+/**
+ * Names a Zenith in each locale from its template. English says whose
+ * it is in the holder the YAML writes; another locale puts the name its
+ * own pokemon has in that locale in the template's place. `own` is the
+ * base species of the Zenith the shape belongs to, so a form Zenith is
+ * named for that pokemon (Castform), not for the form it stands in for
+ * (Sunny Castform), as in English
+ */
+function nameZenith(zenith: SpeciesData, holder: string, own: SpeciesData): void {
+  deriveLocalized(zenith, 'name', () => {
+    const locale = currentLocale();
+    const template = NAME_TEMPLATES.get(locale) ?? NAME_TEMPLATES.get(baseLocale) ?? '';
+
+    return template.replace(HOLDER_MARK, locale === baseLocale ? holder : own.name);
+  });
+}
+
 const STATS = v.record(v.string(), v.pipe(v.number(), v.minValue(0)));
 
 /** A shape's types and ability fall back to its own types and the Zenith's ability */
@@ -96,7 +158,16 @@ function readZeniths(): ZenithShape[] {
   }
   files.sort(([one], [two]) => one - two);
 
-  const holders = v.parse(v.record(v.string(), v.string()), zenithHolders);
+  const holders: Record<string, string> = {};
+
+  for (const file of Object.values(TEXT_FILES.english)) {
+    for (const [key, holder] of Object.entries(v.parse(TEXT_FILE, file))) {
+      // The name template sits beside the holders
+      if (key !== NAME_KEY) {
+        holders[key] = holder;
+      }
+    }
+  }
   const shapes: ZenithShape[] = [];
 
   for (const [, path, file] of files) {
@@ -285,43 +356,44 @@ export default function registerZenithSpecies(): void {
   for (const shape of ZENITH_SHAPES) {
     const base = getSpeciesData(shape.base);
 
-    registerSpecies(
-      shape.zenith,
-      extendRecord(base, {
-        name: `Zenith ${shape.holder}`,
+    // The Zenith is its pokemon with the changes below, named in each locale
+    const zenith = extendRecord(base, {
+      name: englishName(shape.holder),
+      baseForm: false,
+      worn: true,
+      stats: { ...shape.stats },
+      types: shape.types,
+      abilities: [shape.ability],
+      hiddenAbilities: [],
+      // Put on in a fight rather than grown into, so it stands in no
+      // line and nothing stages it
+      evolvesFrom: undefined,
+      evolvesInto: undefined,
+      eggSpecies: undefined,
+      biomes: [],
+    });
+
+    nameZenith(zenith, shape.holder, base);
+    registerSpecies(shape.zenith, zenith);
+    for (const form of shape.forms) {
+      const own = getSpeciesData(form.base);
+      const shaped = extendRecord(own, {
+        name: englishName(form.holder),
         baseForm: false,
         worn: true,
-        stats: { ...shape.stats },
-        types: shape.types,
-        abilities: [shape.ability],
+        stats: { ...form.stats },
+        types: form.types.length > 0 ? form.types : own.types,
+        abilities: [form.ability],
         hiddenAbilities: [],
-        // Put on in a fight rather than grown into, so it stands in no
-        // line and nothing stages it
         evolvesFrom: undefined,
         evolvesInto: undefined,
         eggSpecies: undefined,
         biomes: [],
-      }),
-    );
-    for (const form of shape.forms) {
-      const own = getSpeciesData(form.base);
+      });
 
-      registerSpecies(
-        form.zenith,
-        extendRecord(own, {
-          name: `Zenith ${form.holder}`,
-          baseForm: false,
-          worn: true,
-          stats: { ...form.stats },
-          types: form.types.length > 0 ? form.types : own.types,
-          abilities: [form.ability],
-          hiddenAbilities: [],
-          evolvesFrom: undefined,
-          evolvesInto: undefined,
-          eggSpecies: undefined,
-          biomes: [],
-        }),
-      );
+      // A shape is named for its Zenith's pokemon, as its Zenith is
+      nameZenith(shaped, form.holder, base);
+      registerSpecies(form.zenith, shaped);
     }
   }
 }

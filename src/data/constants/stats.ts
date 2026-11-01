@@ -1,8 +1,8 @@
-import * as v from 'valibot';
 import { STAGE_IDS, STAT_IDS } from '../ids/names';
 import { Stages, Stats } from '../ids/stats';
-import statNamesFile from '../text/en/stats.yaml';
-import { stringTable } from '../yaml';
+import englishStageNamesFile from '../text/en/stages.yaml';
+import englishStatNamesFile from '../text/en/stats.yaml';
+import { localeStringTable, stringTable } from '../yaml';
 
 export { Stages, Stats };
 
@@ -212,25 +212,38 @@ export function getOtherStat(
   return Math.floor((getSharedStat(level, base, iv, ev) + 5) * nature);
 }
 
-const STAT_TEXT = v.parse(
-  v.strictObject({ stats: v.unknown(), stages: v.unknown() }),
-  statNamesFile,
+/**
+ * What the six stats and the seven stages are called, for anything
+ * that prints one: an item description, a dex entry, a catch sheet.
+ * Each reads in the active locale
+ */
+export const STAT_NAMES = localeStringTable<Stats>(
+  STAT_IDS,
+  import.meta.glob('../text/*/stats.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/stats.yaml',
+);
+
+export const STAGE_NAMES = localeStringTable<Stages>(
+  STAGE_IDS,
+  import.meta.glob('../text/*/stages.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/stages.yaml',
 );
 
 /**
- * What the six stats and the seven stages are called, for anything
- * that prints one: an item description, a dex entry, a catch sheet
+ * The same names in English whatever the locale. Code that matches or
+ * parses a name (the staff command bar, an error message for the data
+ * author) reads these, as does text that is English only for now
  */
-export const STAT_NAMES = stringTable<Stats>(
+export const ENGLISH_STAT_NAMES = stringTable<Stats>(
   STAT_IDS,
-  STAT_TEXT.stats,
-  'text/en/stats.yaml: stats',
+  englishStatNamesFile,
+  'text/en/stats.yaml',
 );
 
-export const STAGE_NAMES = stringTable<Stages>(
+export const ENGLISH_STAGE_NAMES = stringTable<Stages>(
   STAGE_IDS,
-  STAT_TEXT.stages,
-  'text/en/stats.yaml: stages',
+  englishStageNamesFile,
+  'text/en/stages.yaml',
 );
 
 /**

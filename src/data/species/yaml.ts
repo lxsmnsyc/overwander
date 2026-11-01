@@ -1,5 +1,5 @@
 import * as v from 'valibot';
-import { STAT_NAMES, Stats } from '../constants/stats';
+import { ENGLISH_STAT_NAMES, Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
 import type Biome from '../ids/biome';
@@ -271,7 +271,7 @@ export function readStats(stats: Record<string, number>, where: string): Record<
     const value = values.get(stat);
 
     if (value == null) {
-      throw new Error(`${where}: no base ${STAT_NAMES[stat]}`);
+      throw new Error(`${where}: no base ${ENGLISH_STAT_NAMES[stat]}`);
     }
     return value;
   };

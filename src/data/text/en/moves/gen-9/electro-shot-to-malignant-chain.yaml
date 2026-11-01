@@ -30,7 +30,7 @@ AlluringVoice:
   description: Confuses a target whose stats rose in the last 2 seconds.
 TemperFlare:
   name: Temper Flare
-  description: 2x after the user's last move failed.
+  description: 2x power if the user's last move failed.
 SupercellSlam:
   name: Supercell Slam
   description: A miss costs the user 1/2 its HP.

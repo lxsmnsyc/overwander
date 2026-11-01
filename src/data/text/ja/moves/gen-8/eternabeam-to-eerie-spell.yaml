@@ -2,65 +2,97 @@
 # Every other field is written by hand, and a rerun keeps it.
 Eternabeam:
   name: ムゲンダイビーム
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。
 SteelBeam:
   name: てっていこうせん
+  description: あたっても はずれても、 じぶんは HPの 1/2を うしなう。
 ExpandingForce:
   name: ワイドフォース
+  description: サイコフィールドの うえに いる あいだは 1.5ばいに なり、 あいて ぜんいんに あたる。
 SteelRoller:
   name: アイアンローラー
+  description: フィールドを ならして、 こうかを おわらせる。 フィールドの こうかが ないと しっぱいする。
 ScaleShot:
   name: スケイルショット
+  description: 2から 5かい こうげきし、 そのあと じぶんの すばやさを 1だん あげ、 ぼうぎょを 1だん さげる。
 MeteorBeam:
   name: メテオビーム
+  description: じゅんびちゅうに じぶんの とくこうが 1だん あがり、 そのあと こうげきする。
 ShellSideArm:
   name: シェルアームズ
+  description: ぶつりか とくしゅの、 あいてへの ダメージが おおきい ほうで あたる。 20%の かくりつで どくに する。
 MistyExplosion:
   name: ミストバースト
+  description: あいて ぜんいんと みかたに あたるが、 じぶんは HPを 100 うしなう。 ミストフィールドでは 1.5ばい。
 GrassyGlide:
   name: グラススライダー
+  description: グラスフィールドの うえに いる あいだは、 ふつうの わざより じゅんびが はやく おわる。
 RisingVoltage:
   name: ライジングボルト
+  description: エレキフィールドの とき、 じめんに いる あいてには いりょくが 2ばいに なる。
 TerrainPulse:
   name: だいちのはどう
+  description: フィールドが ある ときは、 その フィールドの タイプに なり、 いりょくが 2ばいに なる。
 SkitterSmack:
   name: はいよるいちげき
+  description: あいての とくこうを 1だん さげる。
 BurningJealousy:
   name: しっとのほのお
+  description: あいて ぜんいんに あたり、 2びょう いないに ステータスが あがった あいてを やけどに する。
 LashOut:
   name: うっぷんばらし
+  description: 2びょう いないに じぶんの のうりょくランクが さげられていると、 いりょくが 2ばいに なる。
 Poltergeist:
   name: ポルターガイスト
+  description: あいての もちものを つかって こうげきする。 もっていないと しっぱいする。
 CorrosiveGas:
   name: ふしょくガス
+  description: じぶんの まわりの ぜんいんの もちものを とかす。
 Coaching:
   name: コーチング
+  description: みかたの こうげきと ぼうぎょを 1だん ずつ あげる。
 FlipTurn:
   name: クイックターン
+  description: あたると、 じぶんは みかたと こうたいする。
 TripleAxel:
   name: トリプルアクセル
+  description: 3かい けり、 1かい ごとに いりょくが あがる。
 DualWingbeat:
   name: ダブルウイング
+  description: 2かい こうげきする。
 ScorchingSands:
   name: ねっさのだいち
+  description: 30%の かくりつで やけどに する。 じぶんと あいての こおりが とける。
 JungleHealing:
   name: ジャングルヒール
+  description: じぶんと みかたの HPを 1/4 かいふくし、 じょうたいいじょうを なおす。
 WickedBlow:
   name: あんこくきょうだ
+  description: かならず きゅうしょに あたる。
 SurgingStrikes:
   name: すいりゅうれんだ
+  description: 3かい こうげきし、 すべて きゅうしょに あたる。
 ThunderCage:
   name: サンダープリズン
+  description: あいてを おりに とじこめる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 DragonEnergy:
   name: ドラゴンエナジー
+  description: あいて ぜんいんに あたる。 のこりHPが すくない ほど よわく なる。
 FreezingGlare:
   name: いてつくしせん
+  description: 10%の かくりつで こおりに する。
 FieryWrath:
   name: もえあがるいかり
+  description: あいて ぜんいんに あたり、 20%の かくりつで ひるませる。
 ThunderousKick:
   name: らいめいげり
+  description: あいての ぼうぎょを 1だん さげる。
 GlacialLance:
   name: ブリザードランス
+  description: あいて ぜんいんに あたる。
 AstralBarrage:
   name: アストラルビット
+  description: あいて ぜんいんに あたる。
 EerieSpell:
   name: ぶきみなじゅもん
+  description: あいてが さいごに つかった わざの まちじかんを 4ばいに する。

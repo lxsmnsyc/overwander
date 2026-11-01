@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShoreUp:
   name: すなあつめ
+  description: じぶんの HPを 1/2 かいふくする。 すなあらしの ときは 2/3。
 FirstImpression:
   name: であいがしら
+  description: ふつうの わざより ずっと はやく じゅんびが おわる。 フィールドに でる たびに 1かい だけ。
 BanefulBunker:
   name: トーチカ
+  description: 2びょうの あいだ、 じぶんへの こうげきを すべて ふせぎ、 ふれた あいてを どくに する。 れんぞくで つかうと しっぱいする。
 SpiritShackle:
   name: かげぬい
+  description: 10びょうの あいだ、 あいてを こうたい できなく する。 ゴーストタイプは のぞく。
 DarkestLariat:
   name: ＤＤラリアット
+  description: あいての のうりょくランクを むしする。
 SparklingAria:
   name: うたかたのアリア
+  description: あいて ぜんいんと みかたに あたり、 あたった ポケモンの やけどを なおす。 おとの わざ。
 IceHammer:
   name: アイスハンマー
+  description: あたった あと、 じぶんの すばやさが 1だん さがる。
 FloralHealing:
   name: フラワーヒール
+  description: あいての HPを 1/2 かいふくする。 グラスフィールドでは 2/3。
 HighHorsepower:
   name: １０まんばりき
+  description: ふれて ダメージを あたえる だけ。
 StrengthSap:
   name: ちからをすいとる
+  description: あいての こうげきと おなじ ぶん じぶんの HPを かいふくし、 そのあと あいての こうげきを 1だん さげる。
 SolarBlade:
   name: ソーラーブレード
+  description: はれ いがいでは じゅんびが いる。 きり、 あめ、 あられ、 すなあらしでは はんぶんに なる。
 Leafage:
   name: このは
+  description: はなれて ダメージを あたえる だけ。

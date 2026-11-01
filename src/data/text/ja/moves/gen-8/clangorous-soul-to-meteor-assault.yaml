@@ -2,41 +2,61 @@
 # Every other field is written by hand, and a rerun keeps it.
 ClangorousSoul:
   name: ソウルビート
+  description: じぶんの HPの 1/3を つかって、 ステータスを ぜんぶ 1だん あげる。
 BodyPress:
   name: ボディプレス
+  description: こうげきでは なく、 じぶんの ぼうぎょと その のうりょくランクで ダメージを あたえる。
 Decorate:
   name: デコレーション
+  description: みかたの こうげきと とくこうを 2だん ずつ あげる。
 DrumBeating:
   name: ドラムアタック
+  description: あいての すばやさを 1だん さげる。
 SnapTrap:
   name: トラバサミ
+  description: あいてを トラバサミで はさむ。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 PyroBall:
   name: かえんボール
+  description: 10%の かくりつで やけどに する。 じぶんの こおりが とける。
 BehemothBlade:
   name: きょじゅうざん
+  description: ザシアンで ゆうめいな つるぎの わざ。 ダイマックスした あいてには いりょくが 2ばいに なる。
 BehemothBash:
   name: きょじゅうだん
+  description: ザマゼンタで ゆうめいな たての わざ。 ダイマックスした あいてには いりょくが 2ばいに なる。
 AuraWheel:
   name: オーラぐるま
+  description: モルペコ せんようで、 ほかの ポケモンは つかえない。 じぶんの すばやさを 1だん あげ、 はらぺこもようの ときは あくタイプに なる。
 BreakingSwipe:
   name: ワイドブレイカー
+  description: あいて ぜんいんに あたり、 それぞれの こうげきを 1だん さげる。
 BranchPoke:
   name: えだづき
+  description: とがった えだで つく だけの こうげき。
 Overdrive:
   name: オーバードライブ
+  description: あいて ぜんいんに あたる。
 AppleAcid:
   name: りんごさん
+  description: あいての とくぼうを 1だん さげる。
 GravApple:
   name: Ｇのちから
+  description: あいての ぼうぎょを 1だん さげる。 じゅうりょくの あいだは 1.5ばいに なる。
 SpiritBreak:
   name: ソウルクラッシュ
+  description: あいての とくこうを 1だん さげる。
 StrangeSteam:
   name: ワンダースチーム
+  description: 20%の かくりつで こんらんさせる。
 LifeDew:
   name: いのちのしずく
+  description: じぶんと みかたの HPを 1/4 かいふくする。
 Obstruct:
   name: ブロッキング
+  description: 2びょうの あいだ、 じぶんへの ダメージを あたえる わざを すべて ふせぎ、 ふれた あいての ぼうぎょを 2だん さげる。 へんかわざは とおる。 れんぞくで つかうと しっぱいする。
 FalseSurrender:
   name: どげざつき
+  description: かならず あたる。
 MeteorAssault:
   name: スターアサルト
+  description: あたった あと、 じぶんは 2びょうの あいだ はんどうで うごけない。

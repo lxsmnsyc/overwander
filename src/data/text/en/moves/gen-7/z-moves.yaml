@@ -36,13 +36,13 @@ BloomDoom:
   description: A Grass crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
 GigavoltHavoc:
   name: Gigavolt Havoc
-  description: A Electric crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+  description: An Electric crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
 ShatteredPsyche:
   name: Shattered Psyche
   description: A Psychic crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
 SubzeroSlammer:
   name: Subzero Slammer
-  description: A Ice crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
+  description: An Ice crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.
 DevastatingDrake:
   name: Devastating Drake
   description: A Dragon crystal's Z-Move. Its power and whether it is physical or special come from the move it replaces.

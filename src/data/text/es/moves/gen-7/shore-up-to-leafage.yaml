@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShoreUp:
   name: Recogearena
+  description: Restaura 1/2 de los PS del usuario, o 2/3 con tormenta de arena.
 FirstImpression:
   name: Escaramuza
+  description: Se prepara mucho más rápido que un movimiento normal. Solo se puede usar una vez por entrada al campo.
 BanefulBunker:
   name: Búnker
+  description: Bloquea todo lo dirigido al usuario durante 2 segundos, y envenena lo que lo toque. Falla si se usa dos veces seguidas.
 SpiritShackle:
   name: Puntada Sombría
+  description: El objetivo no puede ser cambiado durante 10 segundos, salvo si es de tipo Fantasma.
 DarkestLariat:
   name: Lariat Oscuro
+  description: Ignora los niveles de estadísticas del objetivo.
 SparklingAria:
   name: Aria Burbuja
+  description: Golpea a todos los rivales y a los aliados del usuario, y cura la quemadura de todo lo que golpea. Es un sonido.
 IceHammer:
   name: Martillo Hielo
+  description: Tras acertar, baja 1 nivel la Velocidad del usuario.
 FloralHealing:
   name: Cura Floral
+  description: Restaura 1/2 de los PS del objetivo, o 2/3 en Campo de Hierba.
 HighHorsepower:
   name: Fuerza Equina
+  description: Solo daño por contacto.
 StrengthSap:
   name: Absorbefuerza
+  description: Restaura al usuario tantos PS como el Ataque del objetivo y luego baja 1 nivel ese Ataque.
 SolarBlade:
   name: Cuchilla Solar
+  description: Se prepara salvo que haga sol. Con niebla, lluvia, granizo o tormenta de arena se reduce a la mitad.
 Leafage:
   name: Follaje
+  description: Solo daño a distancia.

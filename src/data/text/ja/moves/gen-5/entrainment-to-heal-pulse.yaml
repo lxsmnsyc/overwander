@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 Entrainment:
   name: なかまづくり
+  description: あいての とくせいを じぶんの とくせいに いれかえる。
 AfterYou:
   name: おさきにどうぞ
+  description: じゅんびちゅうの みかたは、 すぐに わざを だす。
 Round:
   name: りんしょう
+  description: 2びょう いないに みかたの りんしょうが あたっていると、 いりょくが 2ばいに なる。 おとの わざ。
 EchoedVoice:
   name: エコーボイス
+  description: 2びょう いないに つづけて だすと、 1かい ごとに いりょくが 40 あがり、 さいだい 200。 おとの わざ。
 ChipAway:
   name: なしくずし
+  description: あいての のうりょくランクを むしする。
 ClearSmog:
   name: クリアスモッグ
+  description: かならず あたり、 あいての のうりょくランクを もとに もどす。
 StoredPower:
   name: アシストパワー
+  description: じぶんの のうりょくランクが 1だん あがっている ごとに、 いりょくが 20 あがる。
 QuickGuard:
   name: ファストガード
+  description: 2びょうの あいだ、 じゅんびが はやく おわる わざを じぶんの がわから ふせぐ。
 AllySwitch:
   name: サイドチェンジ
+  description: じぶんと みかたの いちを いれかえ、 どちらかを ねらった わざも いれかわる。
 Scald:
   name: ねっとう
+  description: 30%の かくりつで やけどに する。 じぶんと あいての こおりが とける。
 ShellSmash:
   name: からをやぶる
+  description: じぶんの こうげき、 とくこう、 すばやさを 2だん あげ、 ぼうぎょと とくぼうを 1だん さげる。
 HealPulse:
   name: いやしのはどう
+  description: みかたの HPを 1/2 かいふくする。

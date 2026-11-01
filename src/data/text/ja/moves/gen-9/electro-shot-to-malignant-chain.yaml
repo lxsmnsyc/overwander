@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 ElectroShot:
   name: エレクトロビーム
+  description: じゅんびちゅうに じぶんの とくこうが 1だん あがり、 そのあと こうげきする。 あめの ときは すぐに こうげきする。
 TeraStarstorm:
   name: テラクラスター
+  description: とくしゅダメージを あたえる だけ。
 FickleBeam:
   name: きまぐレーザー
+  description: 30%の かくりつで ダメージが 2ばいに なる。
 BurningBulwark:
   name: かえんのまもり
+  description: 2びょうの あいだ、 じぶんへの ダメージを あたえる わざを すべて ふせぎ、 ふれた あいてを やけどに する。 へんかわざは とおる。 れんぞくで つかうと しっぱいする。
 Thunderclap:
   name: じんらい
+  description: ふつうの わざより じゅんびが はやく おわる。 ダメージを あたえる わざを だしている あいてにしか あたらない。
 MightyCleave:
   name: パワフルエッジ
+  description: まもるや ほかの まもりを つらぬき、 つらぬいた まもりを やぶる。
 TachyonCutter:
   name: タキオンカッター
+  description: 2かい こうげきし、 かならず あたる。
 HardPress:
   name: ハードプレス
+  description: HPが まんたんの あいてに いちばん つよく、 さいだい 100。 よわった あいてには ほとんど きかない。
 DragonCheer:
   name: ドラゴンエール
+  description: フィールドを はなれるまで、 みかたは きゅうしょに あたりやすく なる。 ドラゴンタイプは さらに あたりやすい。
 AlluringVoice:
   name: みわくのボイス
+  description: 2びょう いないに ステータスが あがった あいてを こんらんさせる。
 TemperFlare:
   name: やけっぱち
+  description: じぶんの さいごの わざが しっぱいしていると、 いりょくが 2ばいに なる。
 SupercellSlam:
   name: サンダーダイブ
+  description: はずすと、 じぶんの HPの 1/2を うしなう。
 PsychicNoise:
   name: サイコノイズ
+  description: 4びょうの あいだ、 あいては かいふく できない。
 UpperHand:
   name: はやてがえし
+  description: ふつうの わざより ずっと はやく じゅんびが おわり、 あいてを ひるませる。 ふつうの わざより じゅんびが はやく おわる わざを だしている あいてにしか あたらない。
 MalignantChain:
   name: じゃどくのくさり
+  description: 50%の かくりつで もうどくに する。

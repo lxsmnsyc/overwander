@@ -2,27 +2,40 @@
 # Every other field is written by hand, and a rerun keeps it.
 Inferno:
   name: れんごく
+  description: あたると あいてを やけどに する。
 WaterPledge:
   name: みずのちかい
+  description: 2びょう いないに みかたの ほのおのちかいか くさのちかいが あたっていると、 いりょく 150で あたる。 ほのおなら じぶんの がわに にじを、 くさなら あいての がわに しつげんを つくる。
 FirePledge:
   name: ほのおのちかい
+  description: 2びょう いないに みかたの くさのちかいか みずのちかいが あたっていると、 いりょく 150で あたる。 くさなら あいての がわに ひのうみを、 みずなら じぶんの がわに にじを つくる。
 GrassPledge:
   name: くさのちかい
+  description: 2びょう いないに みかたの みずのちかいか ほのおのちかいが あたっていると、 いりょく 150で あたる。 みずなら あいての がわに しつげんを、 ほのおなら ひのうみを つくる。
 VoltSwitch:
   name: ボルトチェンジ
+  description: あたると、 じぶんは みかたと こうたいする。
 StruggleBug:
   name: むしのていこう
+  description: あいて ぜんいんに あたり、 それぞれの とくこうを 1だん さげる。
 Bulldoze:
   name: じならし
+  description: あいて ぜんいんと みかたに あたり、 それぞれの すばやさを 1だん さげる。
 FrostBreath:
   name: こおりのいぶき
+  description: かならず きゅうしょに あたる。
 DragonTail:
   name: ドラゴンテール
+  description: あいてを フィールドから ふきとばし、 あいての みかたで いちばん よわい ポケモンを ひきずりだす。 だすのに じかんが かかる。
 WorkUp:
   name: ふるいたてる
+  description: じぶんの こうげきと とくこうを 1だん ずつ あげる。
 Electroweb:
   name: エレキネット
+  description: あいて ぜんいんに あたり、 それぞれの すばやさを 1だん さげる。
 WildCharge:
   name: ワイルドボルト
+  description: あたえた ダメージの 1/4を じぶんも うける。
 DrillRun:
   name: ドリルライナー
+  description: きゅうしょに あたりやすい。

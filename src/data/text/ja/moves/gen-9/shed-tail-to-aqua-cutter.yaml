@@ -2,33 +2,49 @@
 # Every other field is written by hand, and a rerun keeps it.
 ShedTail:
   name: しっぽきり
+  description: じぶんの HPの 1/2を つかって みがわりを つくり、 いちばん つよい みかたと こうたいする。 みかたは みがわりの うしろに たつ。
 ChillyReception:
   name: さむいギャグ
+  description: ゆきを ふらせてから、 じぶんは いちばん つよい みかたと こうたいする。
 TidyUp:
   name: おかたづけ
+  description: フィールドの わなと みがわりを すべて とりのぞき、 じぶんの こうげきと すばやさを 1だん ずつ あげる。
 Snowscape:
   name: ゆきげしき
+  description: 10びょうの あいだ ゆきを ふらせ、 こおりタイプの ぼうぎょが 1.5ばいに なる。
 Pounce:
   name: とびつく
+  description: あいての すばやさを 1だん さげる。
 Trailblaze:
   name: くさわけ
+  description: じぶんの すばやさを 1だん あげる。
 ChillingWater:
   name: ひやみず
+  description: あいての こうげきを 1だん さげる。
 HyperDrill:
   name: ハイパードリル
+  description: まもるや ほかの まもりを つらぬき、 つらぬいた まもりを やぶる。
 TwinBeam:
   name: ツインビーム
+  description: 2かい こうげきする。
 RageFist:
   name: ふんどのこぶし
+  description: このバトルで うけた こうげきの かずだけ、 いりょくが 50 ずつ あがり、 さいだい 350。
 ArmorCannon:
   name: アーマーキャノン
+  description: じぶんの ぼうぎょと とくぼうを 1だん ずつ さげる。
 BitterBlade:
   name: むねんのつるぎ
+  description: あたえた ダメージの 1/2を HPとして かいふくする。
 DoubleShock:
   name: でんこうそうげき
+  description: でんきタイプしか つかえず、 つかった あと じぶんは でんきタイプでは なくなる。
 GigatonHammer:
   name: デカハンマー
+  description: つづけて つかえない。
 Comeuppance:
   name: ほうふく
+  description: さいごに うけた こうげきの ダメージを 1.5ばいにして、 こうげきした あいてに かえす。 だれにも うたれていないと しっぱいする。
 AquaCutter:
   name: アクアカッター
+  description: きゅうしょに あたりやすい。

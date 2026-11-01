@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 EerieImpulse:
   name: かいでんぱ
+  description: あいての とくこうを 2だん さげる。
 VenomDrench:
   name: ベノムトラップ
+  description: あいての どくに なっている ポケモン ぜんいんの こうげき、 とくこう、 すばやさを 1だん ずつ さげる。
 Powder:
   name: ふんじん
+  description: 2びょうの あいだに あいてが ほのおタイプの わざを だすと、 その わざは しっぱいし、 あいては HPの 1/4を うしなう。 ふつうの わざより じゅんびが はやく おわる。
 Geomancy:
   name: ジオコントロール
+  description: じゅんびを してから、 じぶんの とくこう、 とくぼう、 すばやさを 2だん ずつ あげる。
 MagneticFlux:
   name: じばそうさ
+  description: プラスか マイナスの とくせいを もつ じぶんの がわの ぜんいんの ぼうぎょと とくぼうを 1だん ずつ あげる。
 HappyHour:
   name: ハッピータイム
+  description: このバトルの あいだ、 じぶんの がわが ネコにこばんで もらう おかねが 2ばいに なる。
 ElectricTerrain:
   name: エレキフィールド
+  description: 10びょうの あいだ、 じめんに いる ポケモンは ねむらず、 ねむけにも ならない。 でんきタイプの わざは 1.3ばいに なる。
 DazzlingGleam:
   name: マジカルシャイン
+  description: あいて ぜんいんに あたる。
 Celebrate:
   name: おいわい
+  description: なにも おきない。
 HoldHands:
   name: てをつなぐ
+  description: みかたと てを つなぐ。 それだけ。

@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 TeraBlast:
   name: Teraexplosión
+  description: Daño especial de tipo Normal. Tras teracristalizarse, adopta el teratipo del usuario, y es físico si el Ataque del usuario supera a su Ataque Esp., con los niveles de estadísticas incluidos.
 SilkTrap:
   name: Telatrampa
+  description: Bloquea todos los movimientos de daño dirigidos al usuario durante 2 segundos, y baja 1 nivel la Velocidad de lo que lo toque. Los movimientos de estado pasan. Falla si se usa dos veces seguidas.
 AxeKick:
   name: Patada Hacha
+  description: 30 % de probabilidad de confundir al objetivo. Si falla, el usuario pierde 1/2 de sus PS.
 LastRespects:
   name: Homenaje Póstumo
+  description: Suma 50 de potencia por cada aliado del usuario que se haya debilitado en este combate.
 LuminaCrash:
   name: Fotocolisión
+  description: Baja 2 niveles la Defensa Esp. del objetivo.
 OrderUp:
   name: Oído Cocina
+  description: Si hay un Tatsugiri en su equipo, sube 1 nivel el Ataque, la Defensa o la Velocidad del usuario según la forma de ese Tatsugiri.
 JetPunch:
   name: Puño Jet
+  description: Se prepara más rápido que un movimiento normal.
 SpicyExtract:
   name: Extracto Picante
+  description: Sube 2 niveles el Ataque del objetivo y baja 2 niveles su Defensa.
 SpinOut:
   name: Quemarrueda
+  description: Baja 2 niveles la Velocidad del usuario.
 PopulationBomb:
   name: Proliferación
+  description: Golpea 10 veces.
 IceSpinner:
   name: Pirueta Helada
+  description: Allana el campo y acaba con su efecto.
 GlaiveRush:
   name: Asalto Espadón
+  description: Durante 2 segundos después, todo movimiento dirigido al usuario acierta y le hace el doble de daño.
 RevivalBlessing:
   name: Plegaria Vital
+  description: Revive a un aliado debilitado con 1/2 de sus PS.
 SaltCure:
   name: Salazón
+  description: 'Sala al objetivo: pierde 1/8 de sus PS cada vez que actúa, 1/4 si es de tipo Agua o Acero, hasta que abandone el campo.'

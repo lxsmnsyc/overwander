@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 HoneClaws:
   name: Afilagarras
+  description: Sube 1 nivel el Ataque y la Precisión del usuario.
 WideGuard:
   name: Vasta Guardia
+  description: Durante 2 segundos, los movimientos que golpean a varios Pokémon a la vez se desvían del bando del usuario.
 GuardSplit:
   name: Isoguardia
+  description: El usuario y el objetivo adoptan la media de su Defensa y la media de su Defensa Esp.
 PowerSplit:
   name: Isofuerza
+  description: El usuario y el objetivo adoptan la media de su Ataque y la media de su Ataque Esp.
 WonderRoom:
   name: Zona Extraña
+  description: Durante 10 segundos, la Defensa y la Defensa Esp. de todos los Pokémon se intercambian. Si se usa otra, termina.
 Psyshock:
   name: Psicocarga
+  description: Calcula el daño con la Defensa del objetivo, no con su Defensa Esp.
 Venoshock:
   name: Carga Tóxica
+  description: El doble de potencia contra un objetivo envenenado.
 Autotomize:
   name: Aligerar
+  description: Sube 2 niveles la Velocidad del usuario y lo hace 100 kg más ligero.
 RagePowder:
   name: Polvo Ira
+  description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del usuario se desvía hacia él. Los movimientos de los Pokémon de tipo Planta y de los inmunes a los polvos no se desvían.
 Telekinesis:
   name: Telequinesis
+  description: Mantiene al objetivo en el aire durante 6 segundos, y nada de lo dirigido a él falla.
 MagicRoom:
   name: Zona Mágica
+  description: Durante 10 segundos, ningún objeto equipado hace efecto. Si se usa otra, termina.
 SmackDown:
   name: Antiaéreo
+  description: Derriba al objetivo del aire y lo mantiene en el suelo durante el resto del combate.

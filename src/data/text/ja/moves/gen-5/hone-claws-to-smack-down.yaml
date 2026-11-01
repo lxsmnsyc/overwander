@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 HoneClaws:
   name: つめとぎ
+  description: じぶんの こうげきと めいちゅうを 1だん ずつ あげる。
 WideGuard:
   name: ワイドガード
+  description: 2びょうの あいだ、 ふくすうの ポケモンに あたる わざを じぶんの がわから ふせぐ。
 GuardSplit:
   name: ガードシェア
+  description: じぶんと あいては、 ぼうぎょと とくぼうを それぞれ ふたりの へいきんに する。
 PowerSplit:
   name: パワーシェア
+  description: じぶんと あいては、 こうげきと とくこうを それぞれ ふたりの へいきんに する。
 WonderRoom:
   name: ワンダールーム
+  description: 10びょうの あいだ、 ぜんいんの ぼうぎょと とくぼうが いれかわる。 もう いちど つかうと おわる。
 Psyshock:
   name: サイコショック
+  description: あいての とくぼうでは なく ぼうぎょで ダメージを けいさんする。
 Venoshock:
   name: ベノムショック
+  description: どくに なっている あいてには いりょくが 2ばいに なる。
 Autotomize:
   name: ボディパージ
+  description: じぶんの すばやさを 2だん あげ、 おもさが 100kg かるくなる。
 RagePowder:
   name: いかりのこな
+  description: 4びょうの あいだ、 じぶんの がわへ むけた ひとりを ねらう わざは すべて じぶんに あつまる。 くさタイプと こなを うけつけない ポケモンの わざは あつまらない。
 Telekinesis:
   name: テレキネシス
+  description: 6びょうの あいだ、 あいてを じめんから うかせ、 あいてへの わざは かならず あたる。
 MagicRoom:
   name: マジックルーム
+  description: 10びょうの あいだ、 だれの もちものも こうかが なくなる。 もう いちど つかうと おわる。
 SmackDown:
   name: うちおとす
+  description: あいてを そらから うちおとし、 バトルが おわるまで じめんに とどめる。

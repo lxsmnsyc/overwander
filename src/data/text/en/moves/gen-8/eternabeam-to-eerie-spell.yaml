@@ -21,7 +21,7 @@ ShellSideArm:
   description: Physical or special, whichever hits the target harder. 20% to poison.
 MistyExplosion:
   name: Misty Explosion
-  description: Hits everything around the user and knocks it out. 1.5x on Misty Terrain.
+  description: Hits everything opposite and the user's teammates, and costs the user 100 HP. 1.5x on Misty Terrain.
 GrassyGlide:
   name: Grassy Glide
   description: Winds up faster than an ordinary move while the user stands on Grassy Terrain.

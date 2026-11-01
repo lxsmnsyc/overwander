@@ -2,27 +2,40 @@
 # Every other field is written by hand, and a rerun keeps it.
 DynamaxCannon:
   name: Cañón Dinamax
+  description: Un rayo del propio poder de Eternatus, con el doble de potencia contra un objetivo Dinamax.
 SnipeShot:
   name: Disparo Certero
+  description: Más probabilidad de golpe crítico, y va adonde se apunta aunque algo atraiga los ataques.
 JawLock:
   name: Presa Maxilar
+  description: Une al usuario y al objetivo, y ninguno puede cambiar mientras ambos sigan en pie.
 StuffCheeks:
   name: Atiborramiento
+  description: Se come la baya que lleva el usuario y sube 2 niveles su Defensa. Falla si no tiene baya.
 NoRetreat:
   name: Bastión Final
+  description: Sube 1 nivel todas las estadísticas del usuario, pero este ya no puede cambiar. Solo funciona una vez.
 TarShot:
   name: Alquitranazo
+  description: Baja 1 nivel la Velocidad del objetivo, y los movimientos de tipo Fuego le hacen el doble de daño durante el resto del combate.
 MagicPowder:
   name: Polvo Mágico
+  description: Convierte al objetivo en un tipo Psíquico puro.
 DragonDarts:
   name: Dracoflechas
+  description: Golpea 2 veces.
 Teatime:
   name: Hora del Té
+  description: Todos los Pokémon del campo se comen a la vez la baya que llevan.
 Octolock:
   name: Octopresa
+  description: Sujeta al objetivo para que no pueda cambiar, y cada vez que actúa le baja 1 nivel la Defensa y la Defensa Esp.
 BoltBeak:
   name: Electropico
+  description: El doble de potencia si el objetivo no ha empezado a lanzar un movimiento en los últimos 2 segundos.
 FishiousRend:
   name: Branquibocado
+  description: El doble de potencia si el objetivo no ha empezado a lanzar un movimiento en los últimos 2 segundos.
 CourtChange:
   name: Cambio de Cancha
+  description: 'Intercambia todo lo colocado en cada bando del campo: trampas, pantallas, Neblina, Velo Sagrado y Viento Afín.'

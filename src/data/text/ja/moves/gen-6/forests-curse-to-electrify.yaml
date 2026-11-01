@@ -2,25 +2,37 @@
 # Every other field is written by hand, and a rerun keeps it.
 ForestsCurse:
   name: もりののろい
+  description: あいての タイプに くさを くわえる。 ハロウィンで くわえた タイプは なくなる。
 PetalBlizzard:
   name: はなふぶき
+  description: あいて ぜんいんと みかたに あたる。
 FreezeDry:
   name: フリーズドライ
+  description: みずタイプには、 タイプあいしょうに かかわらず 2ばい。 10%の かくりつで こおりに する。
 DisarmingVoice:
   name: チャームボイス
+  description: あいて ぜんいんに あたり、 かならず あたる。 おとの わざ。
 PartingShot:
   name: すてゼリフ
+  description: あいての こうげきと とくこうを 1だん ずつ さげてから、 じぶんは こうたいする。 おとの わざ。
 TopsyTurvy:
   name: ひっくりかえす
+  description: あいての のうりょくランクを ぜんぶ ぎゃくに する。
 DrainingKiss:
   name: ドレインキッス
+  description: あたえた ダメージの 3/4を HPとして かいふくする。
 CraftyShield:
   name: トリックガード
+  description: 2びょうの あいだ、 へんかわざを じぶんの がわから ふせぐ。
 FlowerShield:
   name: フラワーガード
+  description: フィールドの くさタイプ ぜんいんの ぼうぎょを 1だん あげる。
 GrassyTerrain:
   name: グラスフィールド
+  description: 10びょうの あいだ、 じめんに いる ポケモンは こうどうする たびに HPが 1/16 かいふくし、 くさタイプの わざは 1.3ばいに なる。 じしん、 じならし、 マグニチュードの ダメージは 1/2に なる。
 MistyTerrain:
   name: ミストフィールド
+  description: 10びょうの あいだ、 じめんに いる ポケモンは じょうたいいじょうに ならず、 こんらんも ねむけにも ならない。 ドラゴンタイプの わざの ダメージは 1/2に なる。
 Electrify:
   name: そうでん
+  description: 2びょうの あいだ、 あいての つぎの わざは でんきタイプに なる。

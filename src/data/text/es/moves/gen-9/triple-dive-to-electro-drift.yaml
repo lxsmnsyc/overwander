@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 TripleDive:
   name: Triple Inmersión
+  description: Golpea 3 veces.
 MortalSpin:
   name: Giro Mortífero
+  description: Golpea a todos los rivales y los envenena, elimina todas las trampas del bando del usuario y libera al usuario de lo que lo atrape y de Drenadoras.
 Doodle:
   name: Decalcomanía
+  description: El usuario y sus aliados adoptan las habilidades del objetivo en lugar de las suyas.
 FilletAway:
   name: Deslome
+  description: Gasta 1/2 de los PS del usuario para subir 2 niveles su Ataque, su Ataque Esp. y su Velocidad.
 KowtowCleave:
   name: Genufendiente
+  description: Nunca falla.
 FlowerTrick:
   name: Truco Floral
+  description: Nunca falla y siempre es golpe crítico.
 TorchSong:
   name: Canto Ardiente
+  description: Sube 1 nivel el Ataque Esp. del usuario.
 AquaStep:
   name: Danza Acuática
+  description: Sube 1 nivel la Velocidad del usuario.
 RagingBull:
   name: Furia Taurina
+  description: Rompe Reflejo, Pantalla de Luz y Velo Aurora del bando del objetivo, y luego golpea. Un Tauros de Paldea lo usa con el tipo de su raza.
 MakeItRain:
   name: Fiebre Dorada
+  description: Golpea a todos los rivales, esparce monedas como hace Día de Pago y baja 1 nivel el Ataque Esp. del usuario.
 Psyblade:
   name: Psicohojas
+  description: Hace 1,5 veces el daño mientras haya Campo Eléctrico.
 HydroSteam:
   name: Hidrovapor
+  description: Con sol hace 1,5 veces el daño en lugar de debilitarse.
 Ruination:
   name: Calamidad
+  description: Reduce a la mitad los PS que le queden al objetivo.
 CollisionCourse:
   name: Nitrochoque
+  description: Hace 1,33 veces el daño a un objetivo al que es supereficaz.
 ElectroDrift:
   name: Electroderrape
+  description: Hace 1,33 veces el daño a un objetivo al que es supereficaz.

@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 EerieImpulse:
   name: Onda Anómala
+  description: Baja 2 niveles el Ataque Esp. del objetivo.
 VenomDrench:
   name: Trampa Venenosa
+  description: Baja 1 nivel el Ataque, el Ataque Esp. y la Velocidad de todos los Pokémon envenenados del bando rival.
 Powder:
   name: Polvo Explosivo
+  description: Si el objetivo lanza un movimiento de tipo Fuego en 2 segundos, falla y el objetivo pierde 1/4 de sus PS. Se prepara más rápido que un movimiento normal.
 Geomancy:
   name: Geocontrol
+  description: Se prepara y luego sube 2 niveles el Ataque Esp., la Defensa Esp. y la Velocidad del usuario.
 MagneticFlux:
   name: Aura Magnética
+  description: Sube 1 nivel la Defensa y la Defensa Esp. de todos los del bando del usuario con Más o Menos.
 HappyHour:
   name: Paga Extra
+  description: Duplica las monedas que el bando del usuario recoge con Día de Pago en este combate.
 ElectricTerrain:
   name: Campo Eléctrico
+  description: Durante 10 segundos, los Pokémon que están en el suelo no pueden dormirse ni quedar somnolientos, y sus movimientos de tipo Eléctrico hacen 1,3 veces el daño.
 DazzlingGleam:
   name: Brillo Mágico
+  description: Golpea a todos los rivales.
 Celebrate:
   name: Celebración
+  description: No hace absolutamente nada.
 HoldHands:
   name: Manos Juntas
+  description: Toma de la mano a un aliado y nada más.

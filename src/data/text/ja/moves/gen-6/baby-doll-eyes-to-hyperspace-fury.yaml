@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 BabyDollEyes:
   name: つぶらなひとみ
+  description: あいての こうげきを 1だん さげる。 ふつうの わざより じゅんびが はやく おわる。
 Nuzzle:
   name: ほっぺすりすり
+  description: かならず まひに する。
 HoldBack:
   name: てかげん
+  description: あいての HPを かならず 1 のこす。
 Infestation:
   name: まとわりつく
+  description: あいてを バインドで とらえる。 8びょうの あいだ、 2びょうごとに あいての HPの 1/8を うばい、 にげられなく する。 ゴーストタイプは のぞく。
 PowerUpPunch:
   name: グロウパンチ
+  description: かならず じぶんの こうげきを 1だん あげる。
 OblivionWing:
   name: デスウイング
+  description: あたえた ダメージの 3/4を HPとして かいふくする。
 ThousandArrows:
   name: サウザンアロー
+  description: あいて ぜんいんに あたり、 そらに いる あいてにも とどいて じめんに おとす。
 ThousandWaves:
   name: サウザンウェーブ
+  description: あいて ぜんいんに あたり、 10びょうの あいだ だれも こうたい できなく する。 ゴーストタイプは のぞく。
 LandsWrath:
   name: グランドフォース
+  description: あいて ぜんいんに あたる。
 LightOfRuin:
   name: はめつのひかり
+  description: あたえた ダメージの 1/2を じぶんも うける。
 OriginPulse:
   name: こんげんのはどう
+  description: あいて ぜんいんに あたる。
 PrecipiceBlades:
   name: だんがいのつるぎ
+  description: あいて ぜんいんに あたる。
 DragonAscent:
   name: ガリョウテンセイ
+  description: じぶんの ぼうぎょと とくぼうを 1だん ずつ さげる。
 HyperspaceFury:
   name: いじげんラッシュ
+  description: まもると みきりを つらぬき、 その まもりを やぶり、 かならず あたる。 じぶんの ぼうぎょを 1だん さげる。

@@ -2,39 +2,58 @@
 # Every other field is written by hand, and a rerun keeps it.
 MaxGuard:
   name: Maxibarrera
+  description: En lo que se convierten los movimientos de estado de un Pokémon Dinamax. Lo protege como Protección, también contra los movimientos Dinamax.
 MaxFlare:
   name: Maxignición
+  description: Los movimientos de tipo Fuego de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Hace que haga sol.
 MaxFlutterby:
   name: Maxinsecto
+  description: Los movimientos de tipo Bicho de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Baja 1 nivel el Ataque Esp. de todos los rivales.
 MaxLightning:
   name: Maxitormenta
+  description: Los movimientos de tipo Eléctrico de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Crea Campo Eléctrico.
 MaxStrike:
   name: Maxiataque
+  description: Los movimientos de tipo Normal de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Baja 1 nivel la Velocidad de todos los rivales.
 MaxKnuckle:
   name: Maxipuño
+  description: Los movimientos de tipo Lucha de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Sube 1 nivel el Ataque de su bando.
 MaxPhantasm:
   name: Maxiespectro
+  description: Los movimientos de tipo Fantasma de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Baja 1 nivel la Defensa de todos los rivales.
 MaxHailstorm:
   name: Maxihelada
+  description: Los movimientos de tipo Hielo de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Provoca granizo.
 MaxOoze:
   name: Maxiácido
+  description: Los movimientos de tipo Veneno de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Sube 1 nivel el Ataque Esp. de su bando.
 MaxGeyser:
   name: Maxichorro
+  description: Los movimientos de tipo Agua de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Provoca lluvia.
 MaxAirstream:
   name: Maxiciclón
+  description: Los movimientos de tipo Volador de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Sube 1 nivel la Velocidad de su bando.
 MaxStarfall:
   name: Maxiestela
+  description: Los movimientos de tipo Hada de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Crea Campo de Niebla.
 MaxWyrmwind:
   name: Maxidraco
+  description: Los movimientos de tipo Dragón de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Baja 1 nivel el Ataque de todos los rivales.
 MaxMindstorm:
   name: Maxionda
+  description: Los movimientos de tipo Psíquico de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Crea Campo Psíquico.
 MaxRockfall:
   name: Maxilito
+  description: Los movimientos de tipo Roca de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Provoca una tormenta de arena.
 MaxQuake:
   name: Maxitemblor
+  description: Los movimientos de tipo Tierra de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Sube 1 nivel la Defensa Esp. de su bando.
 MaxDarkness:
   name: Maxisombra
+  description: Los movimientos de tipo Siniestro de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Baja 1 nivel la Defensa Esp. de todos los rivales.
 MaxOvergrowth:
   name: Maxiflora
+  description: Los movimientos de tipo Planta de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Crea Campo de Hierba.
 MaxSteelspike:
   name: Maximetal
+  description: Los movimientos de tipo Acero de un Pokémon Dinamax se convierten en este, tan fuerte como el movimiento sustituido, y nunca falla. Sube 1 nivel la Defensa de su bando.

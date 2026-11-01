@@ -2,71 +2,106 @@
 # Every other field is written by hand, and a rerun keeps it.
 BreakneckBlitz:
   name: Carrera Arrolladora
+  description: Movimiento Z del Normastal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 AllOutPummeling:
   name: Ráfaga Demoledora
+  description: Movimiento Z del Lizastal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 SupersonicSkystrike:
   name: Picado Supersónico
+  description: Movimiento Z del Aerostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 AcidDownpour:
   name: Diluvio Corrosivo
+  description: Movimiento Z del Toxistal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 TectonicRage:
   name: Barrena Telúrica
+  description: Movimiento Z del Geostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 ContinentalCrush:
   name: Aplastamiento Gigalítico
+  description: Movimiento Z del Litostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 SavageSpinOut:
   name: Guadaña Sedosa
+  description: Movimiento Z del Insectostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 NeverEndingNightmare:
   name: Presa Espectral
+  description: Movimiento Z del Espectrostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 CorkscrewCrash:
   name: Hélice Trepanadora
+  description: Movimiento Z del Metalostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 InfernoOverdrive:
   name: Hecatombe Pírica
+  description: Movimiento Z del Pirostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 HydroVortex:
   name: Hidrovórtice Abisal
+  description: Movimiento Z del Hidrostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 BloomDoom:
   name: Megatón Floral
+  description: Movimiento Z del Fitostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 GigavoltHavoc:
   name: Gigavoltio Destructor
+  description: Movimiento Z del Electrostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 ShatteredPsyche:
   name: Disruptor Psíquico
+  description: Movimiento Z del Psicostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 SubzeroSlammer:
   name: Crioaliento Despiadado
+  description: Movimiento Z del Criostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 DevastatingDrake:
   name: Dracoaliento Devastador
+  description: Movimiento Z del Dracostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 BlackHoleEclipse:
   name: Agujero Negro Aniquilador
+  description: Movimiento Z del Nictostal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 TwinkleTackle:
   name: Arrumaco Sideral
+  description: Movimiento Z del Feeristal Z. Su potencia y si es físico o especial dependen del movimiento al que sustituye.
 Catastropika:
   name: Pikavoltio Letal
+  description: Movimiento Z exclusivo de Pikachu.
 SinisterArrowRaid:
   name: Aluvión de Flechas Sombrías
+  description: Movimiento Z exclusivo de Decidueye.
 MaliciousMoonsault:
   name: Hiperplancha Oscura
+  description: Movimiento Z exclusivo de Incineroar.
 OceanicOperetta:
   name: Sinfonía de la Diva Marina
+  description: Movimiento Z exclusivo de Primarina.
 GuardianOfAlola:
   name: Cólera del Guardián
+  description: Quita 3/4 de los PS que le queden al objetivo. Movimiento Z exclusivo de un Tapu.
 SoulStealing7StarStrike:
   name: Constelación Robaalmas
+  description: Movimiento Z exclusivo de Marshadow.
 StokedSparksurfer:
   name: Surfeo Galvánico
+  description: Siempre paraliza. Movimiento Z exclusivo de Raichu de Alola.
 PulverizingPancake:
   name: Arrojo Intempestivo
+  description: Movimiento Z exclusivo de Snorlax.
 ExtremeEvoboost:
   name: Novena Potencia
+  description: Sube 2 niveles todas las estadísticas del usuario. Movimiento Z exclusivo de Eevee.
 GenesisSupernova:
   name: Supernova Original
+  description: Deja Campo Psíquico tras de sí. Movimiento Z exclusivo de Mew.
 TenMillionVoltThunderbolt:
   name: Gigarrayo Fulminante
+  description: Más probabilidad de golpe crítico. Movimiento Z de un Pikachu con la gorra de Ash.
 LightThatBurnsTheSky:
   name: Fotodestrucción Apocalíptica
+  description: Es físico si el Ataque del usuario es mayor. Ignora las habilidades del objetivo. Movimiento Z exclusivo de un Necrozma fusionado.
 SearingSunrazeSmash:
   name: Embestida Solar
+  description: Ignora las habilidades del objetivo. Movimiento Z exclusivo de Solgaleo.
 MenacingMoonrazeMaelstrom:
   name: Deflagración Lunar
+  description: Ignora las habilidades del objetivo. Movimiento Z exclusivo de Lunala.
 LetsSnuggleForever:
   name: Somanta Amistosa
+  description: Movimiento Z exclusivo de Mimikyu.
 SplinteredStormshards:
   name: Tempestad Rocosa
+  description: Elimina el campo. Movimiento Z exclusivo de Lycanroc.
 ClangorousSoulblaze:
   name: Estruendo Implacable
+  description: Golpea a todos los rivales y luego sube 1 nivel todas las estadísticas del usuario. Movimiento Z exclusivo de Kommo-o. Es un sonido.

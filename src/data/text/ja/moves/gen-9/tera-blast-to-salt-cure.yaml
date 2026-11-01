@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 TeraBlast:
   name: テラバースト
+  description: ノーマルタイプの とくしゅわざ。 テラスタルした あとは じぶんの テラスタイプに なり、 のうりょくランクを ふくめて こうげきが とくこうより たかい ときは ぶつりわざに なる。
 SilkTrap:
   name: スレッドトラップ
+  description: 2びょうの あいだ、 じぶんへの ダメージを あたえる わざを すべて ふせぎ、 ふれた あいての すばやさを 1だん さげる。 へんかわざは とおる。 れんぞくで つかうと しっぱいする。
 AxeKick:
   name: かかとおとし
+  description: 30%の かくりつで あいてを こんらんさせる。 はずすと、 じぶんの HPの 1/2を うしなう。
 LastRespects:
   name: おはかまいり
+  description: このバトルで ひんしに なった みかたの かずだけ、 いりょくが 50 ずつ あがる。
 LuminaCrash:
   name: ルミナコリジョン
+  description: あいての とくぼうを 2だん さげる。
 OrderUp:
   name: いっちょうあがり
+  description: みかたに シャリタツが いると、 その すがたに おうじて じぶんの こうげき、 ぼうぎょ、 すばやさの どれかを 1だん あげる。
 JetPunch:
   name: ジェットパンチ
+  description: ふつうの わざより じゅんびが はやく おわる。
 SpicyExtract:
   name: ハバネロエキス
+  description: あいての こうげきを 2だん あげ、 ぼうぎょを 2だん さげる。
 SpinOut:
   name: ホイールスピン
+  description: じぶんの すばやさを 2だん さげる。
 PopulationBomb:
   name: ネズミざん
+  description: 10かい こうげきする。
 IceSpinner:
   name: アイススピナー
+  description: フィールドを ならして、 こうかを おわらせる。
 GlaiveRush:
   name: きょけんとつげき
+  description: つかった あと 2びょうの あいだ、 じぶんへの わざは すべて あたり、 ダメージが 2ばいに なる。
 RevivalBlessing:
   name: さいきのいのり
+  description: ひんしの みかたを HP 1/2で ふっかつさせる。
 SaltCure:
   name: しおづけ
+  description: あいてを しおづけに する。 こうどうする たびに HPの 1/8を うしない、 みずか はがねタイプは 1/4。 フィールドを はなれるまで つづく。

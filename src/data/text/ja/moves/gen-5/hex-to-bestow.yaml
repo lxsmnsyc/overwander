@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 Hex:
   name: たたりめ
+  description: じょうたいいじょうの あいてには いりょくが 2ばいに なる。
 SkyDrop:
   name: フリーフォール
+  description: あいてを そらに はこんで うごけなく してから おとす。 200kg いじょうの あいてには しっぱいし、 ひこうタイプは ダメージを うけない。
 ShiftGear:
   name: ギアチェンジ
+  description: じぶんの すばやさを 2だん、 こうげきを 1だん あげる。
 CircleThrow:
   name: ともえなげ
+  description: あいてを フィールドから ふきとばし、 あいての みかたで いちばん よわい ポケモンを ひきずりだす。 だすのに じかんが かかる。
 Incinerate:
   name: やきつくす
+  description: あいて ぜんいんに あたり、 それぞれが もっている きのみや ジュエルを もやす。
 Quash:
   name: さきおくり
+  description: じゅんびちゅうの あいては、 じゅんびを はじめから やりなおす。
 Acrobatics:
   name: アクロバット
+  description: じぶんが もちものを もっていない あいだは いりょくが 2ばいに なる。
 ReflectType:
   name: ミラータイプ
+  description: じぶんが あいてと おなじ タイプに なる。
 Retaliate:
   name: かたきうち
+  description: 2びょう いないに みかたが ひんしに なっていると、 いりょくが 2ばいに なる。
 FinalGambit:
   name: いのちがけ
+  description: じぶんの HPと おなじ ダメージを あたえ、 あたると じぶんは ひんしに なる。
 Bestow:
   name: ギフトパス
+  description: じぶんの もちものを、 もてる みかたに わたす。

@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 Spotlight:
   name: Foco
+  description: Durante 4 segundos, todo movimiento de un solo objetivo dirigido al bando del objetivo se desvía hacia él.
 ToxicThread:
   name: Hilo Venenoso
+  description: Envenena al objetivo y le baja 1 nivel la Velocidad.
 LaserFocus:
   name: Aguzar
+  description: El siguiente movimiento del usuario en los próximos 4 segundos es un golpe crítico.
 GearUp:
   name: Piñón Auxiliar
+  description: Sube 1 nivel el Ataque y el Ataque Esp. de todos los del bando del usuario con Más o Menos.
 ThroatChop:
   name: Golpe Mordaza
+  description: El objetivo no puede usar un movimiento de sonido durante 4 segundos.
 PollenPuff:
   name: Bola de Polen
+  description: Estalla contra un rival. Dirigido a un aliado, le restaura 1/2 de sus PS en su lugar.
 AnchorShot:
   name: Anclaje
+  description: El objetivo no puede ser cambiado durante 10 segundos, salvo si es de tipo Fantasma.
 PsychicTerrain:
   name: Campo Psíquico
+  description: Durante 10 segundos, los Pokémon que están en el suelo están a salvo de los movimientos que se preparan más rápido que uno normal, y sus movimientos de tipo Psíquico hacen 1,3 veces el daño.
 Lunge:
   name: Plancha
+  description: Siempre baja 1 nivel el Ataque del objetivo.
 FireLash:
   name: Látigo Ígneo
+  description: Siempre baja 1 nivel la Defensa del objetivo.
 PowerTrip:
   name: Chulería
+  description: 20 de potencia más por cada nivel de estadísticas que haya subido el usuario.
 BurnUp:
   name: Llama Final
+  description: Solo puede usarlo un tipo Fuego, y después el usuario deja de serlo.
 SpeedSwap:
   name: Cambiavelocidad
+  description: El usuario y el objetivo intercambian su Velocidad hasta que abandonen el campo.
 SmartStrike:
   name: Cuerno Certero
+  description: Nunca falla.

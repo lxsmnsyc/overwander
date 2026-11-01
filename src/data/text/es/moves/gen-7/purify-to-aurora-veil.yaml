@@ -2,21 +2,31 @@
 # Every other field is written by hand, and a rerun keeps it.
 Purify:
   name: Purificación
+  description: Cura el problema de estado del objetivo y restaura 1/2 de los PS del usuario. Falla si no hay nada que curar.
 RevelationDance:
   name: Danza Despertar
+  description: Se usa con el primer tipo del usuario.
 CoreEnforcer:
   name: Núcleo Castigo
+  description: Golpea a todos los rivales y anula la habilidad de cada uno al que golpea si no se está preparando.
 TropKick:
   name: Patada Tropical
+  description: Siempre baja 1 nivel el Ataque del objetivo.
 Instruct:
   name: Mandato
+  description: El objetivo vuelve a lanzar de inmediato el último movimiento que lanzó.
 BeakBlast:
   name: Pico Cañón
+  description: Tiene una preparación larga, y lo que toque al usuario durante ella se quema.
 ClangingScales:
   name: Fragor Escamas
+  description: Golpea a todos los rivales y luego baja 1 nivel la Defensa del usuario. Es un sonido.
 DragonHammer:
   name: Martillo Dragón
+  description: Solo daño por contacto.
 BrutalSwing:
   name: Giro Vil
+  description: Golpea a todos los rivales y a los aliados del usuario.
 AuroraVeil:
   name: Velo Aurora
+  description: Durante 10 segundos, reduce en 1/3 el daño físico y especial contra el bando del usuario. Falla salvo con granizo o nieve.

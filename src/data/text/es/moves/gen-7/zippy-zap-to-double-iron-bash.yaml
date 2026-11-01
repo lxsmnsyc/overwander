@@ -2,29 +2,43 @@
 # Every other field is written by hand, and a rerun keeps it.
 ZippyZap:
   name: Pikaturbo
+  description: Se prepara mucho más rápido que un movimiento normal y sube 1 nivel la Evasión del usuario.
 SplishySplash:
   name: Salpikasurf
+  description: Golpea a todos los rivales. 30 % de probabilidad de paralizar.
 FloatyFall:
   name: Pikapicado
+  description: 30 % de probabilidad de amedrentar.
 PikaPapow:
   name: Pikatormenta
+  description: Cuanto más cariño te tiene el usuario, más fuerte golpea, hasta 102 de potencia. Nunca falla.
 BouncyBubble:
   name: Vapodrenaje
+  description: Restaura al usuario todo el daño causado.
 BuzzyBuzz:
   name: Joltioparálisis
+  description: Siempre paraliza.
 SizzlySlide:
   name: Flarembestida
+  description: Siempre quema.
 GlitzyGlow:
   name: Espeaura
+  description: Al acertar, levanta Pantalla de Luz sobre el bando del usuario.
 BaddyBad:
   name: Umbreozona
+  description: Al acertar, levanta Reflejo sobre el bando del usuario.
 SappySeed:
   name: Leafitobombas
+  description: Al acertar, planta Drenadoras en el objetivo.
 FreezyFrost:
   name: Glaceoprisma
+  description: Al acertar, restablece los niveles de estadísticas de todos los del campo, incluido el usuario.
 SparklySwirl:
   name: Sylveotornado
+  description: Al acertar, cura los problemas de estado de todo el equipo del usuario.
 VeeveeVolley:
   name: Eevimpacto
+  description: Cuanto más cariño te tiene el usuario, más fuerte golpea, hasta 102 de potencia. Nunca falla.
 DoubleIronBash:
   name: Ferropuño Doble
+  description: Golpea 2 veces, cada una con un 30 % de probabilidad de amedrentar.

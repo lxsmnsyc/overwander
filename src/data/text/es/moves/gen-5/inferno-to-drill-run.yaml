@@ -2,27 +2,40 @@
 # Every other field is written by hand, and a rerun keeps it.
 Inferno:
   name: Infierno
+  description: Si acierta, quema al objetivo.
 WaterPledge:
   name: Voto Agua
+  description: Acierta con 150 de potencia tras un Voto Fuego o un Voto Planta de un aliado en los últimos 2 segundos. Con Fuego deja un arcoíris sobre el bando del usuario; con Planta, un pantano bajo el del objetivo.
 FirePledge:
   name: Voto Fuego
+  description: Acierta con 150 de potencia tras un Voto Planta o un Voto Agua de un aliado en los últimos 2 segundos. Con Planta deja un mar de llamas bajo el bando del objetivo; con Agua, un arcoíris sobre el del usuario.
 GrassPledge:
   name: Voto Planta
+  description: Acierta con 150 de potencia tras un Voto Agua o un Voto Fuego de un aliado en los últimos 2 segundos. Con Agua deja un pantano bajo el bando del objetivo; con Fuego, un mar de llamas.
 VoltSwitch:
   name: Voltiocambio
+  description: Si acierta, el usuario se cambia por un aliado.
 StruggleBug:
   name: Estoicismo
+  description: Golpea a todos los rivales y baja 1 nivel el Ataque Esp. de cada uno.
 Bulldoze:
   name: Terratemblor
+  description: Golpea a todos los rivales y a los aliados del usuario, y baja 1 nivel la Velocidad de cada uno.
 FrostBreath:
   name: Vaho Gélido
+  description: Siempre es golpe crítico.
 DragonTail:
   name: Cola Dragón
+  description: Expulsa al objetivo del campo y hace entrar a su aliado más débil. Tarda en lanzarse.
 WorkUp:
   name: Avivar
+  description: Sube 1 nivel el Ataque y el Ataque Esp. del usuario.
 Electroweb:
   name: Electrotela
+  description: Golpea a todos los rivales y baja 1 nivel la Velocidad de cada uno.
 WildCharge:
   name: Voltio Cruel
+  description: El usuario recibe 1/4 del daño que causa.
 DrillRun:
   name: Taladradora
+  description: Más probabilidad de golpe crítico.

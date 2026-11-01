@@ -1,0 +1,12 @@
+# Log: i18n-desc-moves-late
+
+- Started on branch `i18n-desc-moves-late` in its own worktree.
+- Dumped the 477 English lines (gen-5 to gen-9 and `weather.yaml`) with each move's official ja and es name, read the Gen 1 to 4 files side by side for voice, and wrote one table per part (key to ja and es) with every settled phrasing from the term list.
+- A merge script checked every key against English (missing, extra, duplicate), every number in the English line against the translation, full stops, doubled `Esp..`, kanji and bare ランク in ja, em-dashes, double spaces, and that every move named in an English line appears under its official ja and es name. It then added 477 `description` lines per locale beside the generated `name` and removed none.
+- `gen-8/frenzy-moves.yaml` and `gen-8/g-max-moves.yaml` have no generated names (the moves have no entry in PokeAPI), so their ja and es files are new and hold descriptions only; the names fall back to English, as `Attack` does.
+- Checked the English against the engine. Misty Explosion costs the user the move's power in health, like Explosion (`src/battle/moves/self-destruct.ts`), so the line "knocks it out" was reworded; two Z-Move lines read "A Electric" and "A Ice". Both went in one `fix:` commit before the translations.
+- Test: the moves entry of `REGISTRIES` now reads every move in the English move text (all generations and weather), with its `minimum` raised to 900.
+- Recorded the new patterns in the term list (Move descriptions): grounded, screens, guard, Z-Moves, Dynamax and Gigantamax, frenzy bursts, Hangry, Urshifu's styles, Pledge field effects, hits at N power, coins, critical ratio.
+- Checks: `pnpm typecheck` 0, `rtk proxy pnpm exec oxlint src test` 0, `pnpm exec vitest run test/data test/i18n` 571 pass, `pnpm official-names` leaves no diff. The first typecheck failed on the recursive `readdirSync` return type; fixed with `encoding: 'utf8'`.
+- Review and screenshots were left to the caller.
+- Review applied in two commits. English: Tera Blast now says it takes the user's Tera type once Terastallized and turns physical when Attack beats Special Attack; Stomping Tantrum and Temper Flare say "2x power" (the engine doubles power). Translations: Copperajah is ダイオウドウ, Hangry is はらぺこもよう, regional forms use ～のすがたの, a Tauros breed is its しゅ; Spanish wording for Mat Block, First Impression, G-Max Chi Strike, Rage Powder, Shed Tail, Mortal Spin, Aurora Veil, the Urshifu G-Max lines and Cannonade. Noble stays キング (ヌシ is Totem).

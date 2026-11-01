@@ -2,31 +2,46 @@
 # Every other field is written by hand, and a rerun keeps it.
 ElectroShot:
   name: Electrorrayo
+  description: Sube 1 nivel el Ataque Esp. del usuario mientras se prepara, y luego golpea. Con lluvia golpea de inmediato.
 TeraStarstorm:
   name: Teraclúster
+  description: Solo daño especial.
 FickleBeam:
   name: Láser Veleidoso
+  description: 30 % de probabilidad de hacer el doble de daño.
 BurningBulwark:
   name: Llama Protectora
+  description: Bloquea todos los movimientos de daño dirigidos al usuario durante 2 segundos, y quema lo que lo toque. Los movimientos de estado pasan. Falla si se usa dos veces seguidas.
 Thunderclap:
   name: Relámpago Súbito
+  description: Se prepara más rápido que un movimiento normal. Solo acierta a un objetivo que esté lanzando un movimiento de daño.
 MightyCleave:
   name: Filo Potente
+  description: Atraviesa Protección y las demás guardias, y rompe la guardia que atravesó.
 TachyonCutter:
   name: Tajo Taquión
+  description: Golpea 2 veces y nunca falla.
 HardPress:
   name: Prensa Metálica
+  description: Golpea más fuerte contra un objetivo con todos sus PS, hasta 100 de potencia, y casi nada contra uno débil.
 DragonCheer:
   name: Bramido Dragón
+  description: Hasta que abandonen el campo, los aliados del usuario tienen más probabilidad de golpe crítico, y los de tipo Dragón todavía más.
 AlluringVoice:
   name: Canto Encantador
+  description: Confunde a un objetivo cuyas estadísticas subieron en los últimos 2 segundos.
 TemperFlare:
   name: Cólera Ardiente
+  description: El doble de potencia si el último movimiento del usuario falló.
 SupercellSlam:
   name: Plancha Voltaica
+  description: Si falla, el usuario pierde 1/2 de sus PS.
 PsychicNoise:
   name: Psicorruido
+  description: El objetivo no puede curarse durante 4 segundos.
 UpperHand:
   name: Palma Rauda
+  description: Se prepara mucho más rápido que un movimiento normal y amedrenta al objetivo. Solo acierta a un objetivo que esté lanzando un movimiento con una preparación más rápida que la normal.
 MalignantChain:
   name: Cadena Virulenta
+  description: 50 % de probabilidad de envenenar gravemente.

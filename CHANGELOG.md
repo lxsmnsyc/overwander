@@ -1,5 +1,23 @@
 # overwander
 
+## 4.52.0
+
+### Minor Changes
+
+- 751b34b: The overworld reads in Japanese and Spanish as well as English: the board, the world map and the overworld dialogs. Pick the language under Settings, Display. Screens not translated yet stay in English.
+
+### Patch Changes
+
+- 01629e0: Item descriptions, and the sentences item families are built from, now read in Japanese and Spanish.
+- 45cf352: The descriptions of the Gen 1 to 4 moves now read in Japanese and Spanish.
+- dff3e01: The descriptions of the Gen 5 to 9 moves, the Z-Moves, Max Moves, G-Max Moves, frenzy bursts and the weather moves now read in Japanese and Spanish.
+- a6d8ba9: Stat and stage names and Zenith names read in Japanese and Spanish, and rerunning the official-names script keeps fields written by hand.
+- bc3b61a: Dates and numbers are written the same way on every machine: a date reads "12 Aug 2026" everywhere, where the friends list, trades, passkeys and the admin pages used to follow the device's own format.
+- 8db68a9: Battles read in Japanese and Spanish as well as English: the battle view, the duel lobby and its rules, the verdict and the battle history. Status conditions use the games' own Japanese and Spanish names.
+- 6acfa67: The catch box and catch sheet, the bag and candy, the item cards, the move lists and the Pokédex read in Japanese and Spanish as well as English.
+- 0f21e41: The game's shell reads in Japanese and Spanish as well as English: the menu bar and game menu, sign-in and password reset, settings, notifications, news, gifts and friends, the pickers and the shop. Every refusal and gift reason is translated too.
+- 46742c7: Auctions, trades, the raids tab, quests and the profile read in Japanese and Spanish as well as English. Gold amounts on the auction board and in trades are grouped by locale, and a quest goal for one landmark or foe now reads in the singular ("Beat 1 duelling trainer").
+
 ## 4.51.1
 
 ### Patch Changes

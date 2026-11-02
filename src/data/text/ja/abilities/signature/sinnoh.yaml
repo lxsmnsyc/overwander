@@ -1,0 +1,134 @@
+# The signature abilities of the families filed under Sinnoh, written by hand: this engine's own abilities, so the games name none of them
+
+BarkBrace:
+  name: きかわのみがまえ
+  description: バトルで はじめて うける ぶつりわざは ダメージが 1/2に なり、 ねを はる。 こうどうする たびに HPが 1/16 かいふくするが、 フィールドを はなれられない。
+CinderBrace:
+  name: ひのこのみがまえ
+  description: バトルで はじめて うける とくしゅわざは ダメージが 1/2に なり、 つぎに あてる わざの いりょくが 1.5ばいに なる。
+CrestBrace:
+  name: かんむりのみがまえ
+  description: バトルで はじめて ねらわれる へんかわざは しっぱいし、 くやしさで とくこうが 1だん さがる。
+Murmuration:
+  name: むれどり
+  description: たっている みかた 1ぴきごとに こうげきの いりょくが 1.05ばいずつ ふえ、 さいだい 1.25ばいに なる。
+Lodgework:
+  name: すづくり
+  description: いる あいだ、 てもちが うける こうげき いがいの ダメージが 25% へる。
+Chorus:
+  name: がっしょう
+  description: いる あいだ、 てもちの おとの わざの いりょくが 1.2ばいに なる。 じぶんも ふくむ。
+GleamEyes:
+  name: ひかるひとみ
+  description: こうげきは あいての かいひの あがりを むしし、 そらをとぶ、 あなをほる、 ダイビング、 とびはねる、 シャドーダイブで かくれた あいてにも とどく。
+Ramrod:
+  name: つらぬき
+  description: こうげきは まもる、 みきり、 みがわりを つらぬいて あたる。
+Bulwark:
+  name: ぼうへき
+  description: じぶんが まもる わざを だすと、 じぶんの まもりが つづく あいだ てもち ぜんいんも まもられる。
+Patchwork:
+  name: つぎはぎ
+  description: はじめて うける タイプごとに ぼうぎょと とくぼうが 1だん あがる。 バトルに つき 3かいまで。
+TwoSeas:
+  name: ふたつのうみ
+  description: にしの からは みずタイプの わざ、 ひがしの からは じめんタイプの わざの いりょくが 1.25ばいに なる。
+PollenDole:
+  name: かふんのほどこし
+  description: わざを あてる たびに、 いちばん きずついた みかたの HPを 1/16 かいふくする。
+FloatSac:
+  name: うきぶくろ
+  description: HPが 1/2 みまんに なる ダメージを うけるまで、 じめんタイプの わざと わなを うけずに うく。
+SecondBloom:
+  name: にどざき
+  description: バトルで はじめて HPが 1/2 みまんに なると、 HPが 1/4 かいふくし、 とくこうが 1だん あがる。
+CarryOff:
+  name: つれさり
+  description: こうげきで 20%の かくりつで あいてを ふきとばす。 ふきとばしと おなじ はたらき。
+Springheel:
+  name: ばねあし
+  description: あてた はじめの 3かいの こうげきごとに すばやさが 1だん あがる。
+VelvetClaws:
+  name: ビロードのつめ
+  description: このバトルで のうりょくが あがった あいてへの ちょくせつこうげきの わざの いりょくが 1.25ばいに なる。
+RankAir:
+  name: くさみ
+  description: どくに なっている あいてへの わざの いりょくが 1.25ばいに なる。
+DeepToll:
+  name: おもいかねのね
+  description: わざを だそうと する たびに、 あいて ぜんいんの HPが 1/16 へる。
+Skyhunt:
+  name: そらがり
+  description: じめんタイプの わざが、 じめんから はなれている あいてにも とどき、 1.2ばいの ダメージを あたえる。
+AuraMatch:
+  name: オーラくらべ
+  description: のこりHPの わりあいが じぶんより おおい あいてへの わざの いりょくが 1.25ばいに なる。
+DustBath:
+  name: すなあび
+  description: すなあらしの とき、 わざを だそうと する たびに HPが 1/16 かいふくする。
+Ambush:
+  name: まちぶせ
+  description: それぞれの あいてに はじめて あてた わざの いりょくが 1.3ばいに なる。
+Finisher:
+  name: とどめ
+  description: HPが 1/4 いかの あいてへの わざは じゅんびが 25% はやく おわる。
+FalseEyes:
+  name: にせのひとみ
+  description: HPが 1/2 みまんの みかたを ねらう たんたいの わざは、 かわりに じぶんに むかってくる。
+Evergreen:
+  name: ときわぎ
+  description: あられか ゆきが ふっている あいだ、 ほのおタイプの わざから うける ダメージが 0.5ばいに なる。
+Sparkfur:
+  name: ひばなのけ
+  description: じぶんか みかたに ふれた あいては、 30%の かくりつで まひする。
+Birdsong:
+  name: さえずり
+  description: ダメージを あたえる おとの わざで、 20%の かくりつで あいてを こんらんさせる。
+Soulwell:
+  name: たましいのいずみ
+  description: フィールドの だれかが ひんしに なる たびに、 HPが 1/4 かいふくする。
+Snapvine:
+  name: つるしばり
+  description: それぞれの あいてに はじめて あてた わざで、 その あいても バインドで とらえる。
+Appliance:
+  name: かでん
+  description: フォルムに よって きまる タイプの わざは、 でんきを のぞいて いりょくが 1.3ばいに なる。
+Mindgift:
+  name: ちえのおくりもの
+  description: フィールドに でると、 てもち ぜんいんの めいちゅうが 1だん あがる。
+Heartgift:
+  name: こころのおくりもの
+  description: フィールドに でると、 てもち ぜんいんの とくこうが 1だん あがる。
+Willgift:
+  name: いしのおくりもの
+  description: フィールドに でると、 てもち ぜんいんの こうげきが 1だん あがる。
+Lavadome:
+  name: ようがんドーム
+  description: いる あいだ、 やけどを した あいては どの こうげきからも 1.25ばいの ダメージを うける。
+TitanSeal:
+  name: タイタンのふういん
+  description: 8びょうの あいだ、 うける ダメージが 0.5ばいに なる。 そのあと ダメージが 1.25ばいに なり、 こうげきが 2だん あがる。
+TimeDrag:
+  name: ときのひきずり
+  description: いる あいだ、 あいての すばやさランクが 1つ ひくいものとして あつかわれる。
+SpaceDrift:
+  name: くうかんのながれ
+  description: いる あいだ、 あいての めいちゅうランクが 1つ ひくいものとして あつかわれる。
+VoidWeight:
+  name: きょむのおもみ
+  description: いる あいだ、 あいての こうげきランクが 1つ ひくいものとして あつかわれる。
+WaningLight:
+  name: かけゆくひかり
+  description: いる あいだ、 てもちの じかんせいの じょうたいは ながさが 0.5ばいに なる。 じぶんの ものも、 いい ものも ふくむ。
+WaxingDark:
+  name: みちゆくやみ
+  description: あいてに あたえる じかんせいの じょうたいは ながさが 1.5ばいに なる。
+Heartcurrent:
+  name: こころのかいりゅう
+  description: あいてが のうりょくランクを あげる たびに、 おなじ ランクが じぶんにも かきこまれる。
+Firstlight:
+  name: はじまりのひかり
+  description: じぶんと おなじタイプの わざは ぜったいに いまひとつに ならない。 むこうは そのまま。
+Purebloom:
+  name: けがれなきはな
+  description: いる あいだ、 どくで てもちの HPは へらない。

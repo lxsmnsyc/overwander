@@ -1,0 +1,224 @@
+# The signature abilities of the families filed under Hoenn, written by hand: this engine's own abilities, so the games name none of them
+
+SapSurge:
+  name: じゅえきのうねり
+  description: こうどうする たびに すばやさが 1だん あがる。 3だんまで。
+EmberSurge:
+  name: ほのおのうねり
+  description: わざを あてる たびに こうげきが 1だん あがる。 3だんまで。
+SiltSurge:
+  name: どろのうねり
+  description: こうげきを うける たびに とくぼうが 1だん あがる。 3だんまで。
+PackHunt:
+  name: むれがり
+  description: みかたが すでに ダメージを あたえた あいてへの わざの いりょくが 1.2ばいに なる。
+CrookedRun:
+  name: まがりばしり
+  description: こうどうする たびに、 じぶんを ねらう わざの めいちゅうが 0.9ばいに なり、 3かいまで かさなる。 こうげきを うけると もとに もどる。
+Cocoon:
+  name: まゆごもり
+  description: はじめて HPが 1/2 みまんに なると、 4びょうの あいだ からに こもり、 あたえる ダメージも うける ダメージも 0.5ばいに なる。
+WaterBloom:
+  name: みずのはな
+  description: フィールドに でると、 あめを ふらせる。 あめの とき、 こうどうする たびに HPが 1/16 かいふくする。
+SunRoot:
+  name: たいようのね
+  description: フィールドに でると、 はれを ふらせる。 はれの とき、 わざの ダメージが 1.3ばいに なる。
+MigrantsWind:
+  name: わたりどりのかぜ
+  description: フィールドに でると、 てもちの ポケモンに おいかぜを つかう。
+GullsGreed:
+  name: かもめのよくぼう
+  description: あいてが うける かいふくは 0.75ばいに なり、 のこりの 1/4は じぶんが うばう。
+Empath:
+  name: きょうかん
+  description: HPが 1/2 みまんの みかたが いる あいだ、 とくこうが 1.3ばいとして あつかわれる。
+SurfaceWalk:
+  name: すいめんあるき
+  description: わなと てんきから ダメージを うけない。
+Mycelium:
+  name: きんしのあみ
+  description: いる あいだ、 どく、 ねむり、 まひ、 やけど、 こおりの いずれかの あいては、 どの こうげきからも 1.2ばいの ダメージを うける。
+WideSwing:
+  name: おおぶり
+  description: ぶつりわざが、 ねらった あいてだけでなく フィールドの あいて ぜんいんに とどく。
+VanishingAct:
+  name: すがたけし
+  description: わざを あてた あとの 1びょうの あいだ、 じぶんを ねらう たんたいの わざは はずれる。
+EchoChamber:
+  name: こだまのへや
+  description: あてた おとの わざは 2びょうご にこだまして、 あたえた ダメージの 1/4を あたえる。
+Shove:
+  name: つきとばし
+  description: じゅんびちゅうの あいてに ちょくせつこうげきの わざを あてると ひるませ、 その わざを だせなく する。
+Magnetize:
+  name: ひきよせ
+  description: みかたを ねらう あいての わざを、 かわりに じぶんに ひきよせる。
+KittenPace:
+  name: こねこのあしどり
+  description: HPが まんたんの あいだ、 すばやさが 1.3ばいとして あつかわれる。
+ShadowTax:
+  name: かげのちょうしゅう
+  description: あてた わざで、 あいての あがっている のうりょくランクを 1つ けす。
+JawClaim:
+  name: あごのせいきゅう
+  description: あてた わざで、 あいての あがっている のうりょくランクを 1つ じぶんに うつす。
+OreHunger:
+  name: こうせきぐい
+  description: はがねと いわタイプの わざから ダメージを うけず、 うけるはずだった ダメージの 1/4を HPとして かいふくする。
+MindOverBody:
+  name: こころがまさる
+  description: わざを だしている あいだと ためている あいだは、 うける ダメージが 0.5ばいに なる。
+JoltStart:
+  name: ビリビリスタート
+  description: バトルで はじめに だす わざは、 ほかの なによりも 1だん はやく でて、 いりょくが 1.5ばいに なる。
+CheerOn:
+  name: おうえん
+  description: こうどうする たびに、 HPが いちばん すくない みかたの いちばん たかい のうりょくが 1だん あがる。 バトルに つき 3かいまで。
+JeerAt:
+  name: やじ
+  description: こうどうする たびに、 HPが いちばん おおい あいての いちばん たかい のうりょくが 1だん さがる。 バトルに つき 3かいまで。
+TailLight:
+  name: おしりのあかり
+  description: いる あいだ、 あいてがわの かいひは ないものと される。
+LureScent:
+  name: さそいのかおり
+  description: いる あいだ、 あいての すばやさが 0.85ばいとして あつかわれる。
+Perennial:
+  name: しゅくこんのはな
+  description: はじめて HPが 1/4 みまんに なると、 HPが 1/3 かいふくし、 じょうたいいじょうも なおる。 バトルに つき 1かいだけ。
+Bottomless:
+  name: そこなし
+  description: フィールドで どうぐが つかわれる たびに、 HPが 1/8 かいふくする。
+FeedingFrenzy:
+  name: むさぼりのうず
+  description: あいてが ひんしに なる たびに こうげきが 1だん あがる。 3びきまで。
+Spout:
+  name: ふんすい
+  description: みずタイプの わざが、 ねらった あいてだけでなく フィールドの あいて ぜんいんに とどく。
+MagmaVent:
+  name: ふんかこう
+  description: はじめて HPが 1/2 みまんに なると、 あいて ぜんいんの HPが 1/8 へる。 バトルに つき 1かいだけ。
+BodyHeat:
+  name: たいおん
+  description: ひざしが つよい あいだ、 ぼうぎょと とくぼうが 1.3ばいとして あつかわれる。
+StoredBounce:
+  name: ためこむはずみ
+  description: うけた ダメージの はんぶんを HPの 1/2まで ためておき、 つぎに あてる わざで ぜんぶ まとめて うえに のせる。
+UniqueSpots:
+  name: ひとつだけのぶち
+  description: フィールドに でるたびに、 ランダムな のうりょく 1つが 2だん あがり、 ほかの 1つが 1だん さがる。
+AntlionPit:
+  name: すりばちのわな
+  description: じぶんに わざを はずした あいては、 HPの 1/8を うしなう。
+PatientStalk:
+  name: ためまち
+  description: じっと たっていた 1びょうごとに わざの いりょくが 10% あがり、 さいだい 50%。 つぎに あてる わざで つかいきる。
+CloudStep:
+  name: くもがくれ
+  description: バトルで はじめて じぶんを ねらった わざは、 ダメージを あたえない。
+FeudClaws:
+  name: いがみあうつめ
+  description: どくに なっている あいてへの わざの いりょくが 1.4ばいに なる。
+DeepeningVenom:
+  name: ふかまるどく
+  description: どくに なっている あいてに わざを あてると、 その どくが もうどくに かわる。
+MoonPull:
+  name: つきのいんりょく
+  description: いる あいだ、 てもちが うける ダメージが 0.85ばいに なる。 たいようのまぶしさを もつ ポケモンが いれば はたらかない。
+SunGlare:
+  name: たいようのまぶしさ
+  description: いる あいだ、 あいてが うける ダメージが 1.15ばいに なる。 つきのいんりょくを もつ ポケモンが いれば はたらかない。
+SiltBed:
+  name: どろのとこ
+  description: じめんに いる ポケモンは、 みかたも ふくめて すばやさが 0.9ばいとして あつかわれる。
+DirtyFighter:
+  name: きたないたたかい
+  description: HPが まんたんの あいてへの わざの いりょくが 1.3ばいに なる。
+SpinBalance:
+  name: こまのつりあい
+  description: ひるまず、 フィールドから おいだされず、 のうりょくも さげられない。
+RootHold:
+  name: ねのつかみ
+  description: あてた わざで、 その あいてを 6びょうの あいだ にげられなくし、 そのあいだ すばやさを 0.7ばいとして あつかう。 ゴーストタイプは のぞく。
+ClawRush:
+  name: つめとっしん
+  description: じぶんより おそい あいてへの わざの いりょくが 1.3ばいに なる。
+ScarredBeauty:
+  name: きずあとのびじん
+  description: どく、 ねむり、 まひ、 やけど、 こおりの いずれかの とき、 とくこうが 1.4ばいとして あつかわれる。
+WeatherWorn:
+  name: ふうせつぎたえ
+  description: どんな てんきでも、 わざの ダメージが 1.3ばいに なり、 うける ダメージが 0.85ばいに なる。
+BlendIn:
+  name: とけこみ
+  description: 2びょうの あいだ うごかずに いると、 じぶんを ねらう わざの めいちゅうが はんぶんに なる。
+MalicePool:
+  name: あくいのたまり
+  description: あいての さがっている のうりょくランク 1つごとに わざの いりょくが 10% あがり、 さいだい 50%。
+SoulHarvest:
+  name: たましいがり
+  description: フィールドで どちらかの ポケモンが ひんしに なる たびに、 HPが 1/4 かいふくする。
+FruitCrop:
+  name: きのみのみのり
+  description: てが あいていると、 8びょうごとに オボンのみが みのる。
+RingingHead:
+  name: あたまのひびき
+  description: いる あいだ、 あいての ためる じかんと じゅんびが 25% ながくなる。
+DoomMark:
+  name: ほろびのしるし
+  description: あてた わざで あいてに しるしを つける。 4びょう いない に だれかが あてる つぎの こうげきの いりょくが 1.3ばいに なる。
+ColdSnap:
+  name: かんぱ
+  description: ちょくせつこうげきの わざを あてた あいては、 20%の かくりつで こおりに なる。
+Applause:
+  name: はくしゅ
+  description: みかたが わざを あてる たびに、 HPが 1/16 かいふくする。
+PearlGuard:
+  name: しんじゅのまもり
+  description: どうぐを もっている あいだ、 とくこうと とくぼうが 1.5ばいとして あつかわれる。
+Unchanged:
+  name: かわらぬすがた
+  description: どの わざからも ふつうの ダメージを うける。 じゃくてんも ていこうも むこうも ない。
+SharedHeart:
+  name: わけあうハート
+  description: みかたが かいふくする たびに、 その りょうの はんぶんだけ じぶんも かいふくする。
+SkullCharge:
+  name: ずがいとっしん
+  description: ちょくせつこうげきの ダメージが 1.4ばいに なり、 あたえた ダメージの 1/8を じぶんも うける。
+HiveMind:
+  name: しゅうごうちせい
+  description: いっしょに たっている みかた 1ぴきごとに わざの いりょくが 10% あがり、 3びきぶんまで。
+StoneSeal:
+  name: いわのふういん
+  description: 8びょうの あいだ、 あたえる ダメージも うける ダメージも 0.5ばいに なる。 そのあと ダメージが 1.25ばいに なり、 ぼうぎょが 2だん あがる。
+FrostSeal:
+  name: こおりのふういん
+  description: 8びょうの あいだ、 あたえる ダメージも うける ダメージも 0.5ばいに なる。 そのあと ダメージが 1.25ばいに なり、 とくぼうが 2だん あがる。
+IronSeal:
+  name: てつのふういん
+  description: 8びょうの あいだ、 あたえる ダメージも うける ダメージも 0.5ばいに なる。 そのあと ダメージが 1.25ばいに なり、 こうげきが 2だん あがる。
+EonShield:
+  name: えいえんのたて
+  description: いる あいだ、 みかたが うける ダメージが 0.8ばいに なる。 じぶん いがいの ぜんいんを まもる。
+EonLance:
+  name: えいえんのやり
+  description: わざの ダメージが 1.25ばいに なり、 リフレクターと ひかりのかべを むしする。
+PrimalSea:
+  name: ゲンシのうみ
+  description: HPが 1/2 みまんに なると、 とくこうが 2だん あがり、 みずタイプの わざの ダメージが 1.3ばいに なる。 ずっと つづく。
+PrimalLand:
+  name: ゲンシのだいち
+  description: HPが 1/2 みまんに なると、 こうげきが 2だん あがり、 じめんタイプの わざの ダメージが 1.3ばいに なる。 ずっと つづく。
+PrimalSky:
+  name: ゲンシのそら
+  description: HPが 1/2 みまんに なると、 とくこうが 2だん あがり、 ドラゴンタイプの わざの ダメージが 1.3ばいに なる。 ずっと つづく。
+SevenWishes:
+  name: ななつのねがい
+  description: 7かい こうどうする ごとに、 てもち ぜんいんの HPが 1/4 かいふくし、 じぶんだけ じょうたいいじょうも なおる。
+FormDrift:
+  name: すがたのうつろい
+  description: 6びょうごとに、 いちばん たかい のうりょくが 1だん あがり、 いちばん ひくい のうりょくが 1だん さがる。
+Blockade:
+  name: バリケード
+  description: ためている さいちゅうでは ないときに ちょくせつこうげきの わざを うけると、 あてた あいての ぼうぎょが 2だん さがる。

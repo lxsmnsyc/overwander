@@ -1,0 +1,284 @@
+# The signature abilities of the families filed under Kanto, written by hand: this engine's own abilities, so the games name none of them
+
+VerdantField:
+  name: Campo Verde
+  description: Mientras está en el campo, los movimientos de tipo Planta de todos tienen x1,2 de potencia y los de tipo Agua, x0,8.
+EmberField:
+  name: Campo Ardiente
+  description: Mientras está en el campo, los movimientos de tipo Fuego de todos tienen x1,2 de potencia y los de tipo Planta, x0,8.
+DelugeField:
+  name: Campo Diluvio
+  description: Mientras está en el campo, los movimientos de tipo Agua de todos tienen x1,2 de potencia y los de tipo Fuego, x0,8.
+PowderBurst:
+  name: Polvo Expansivo
+  description: Sus movimientos de estado alcanzan a todos los rivales del campo, no solo al que apunta.
+TwinStinger:
+  name: Doble Aguijón
+  description: Sus movimientos físicos de un solo golpe golpean dos veces con 60 % de potencia, así que todo lo que reacciona a un golpe reacciona a los dos.
+Slipstream:
+  name: Estela
+  description: Mientras está en el campo, el tiempo de preparación y de carga de su equipo es un 20 % más corto.
+Nibble:
+  name: Mordisquito
+  description: Todo movimiento con daño que acierta le quita otro 1/32 de los PS al objetivo, sea cual sea su defensa.
+Relentless:
+  name: Implacable
+  description: Cada movimiento que acierta al mismo objetivo que el anterior tiene un 10 % más de potencia, hasta x1,4. Apuntar a otro rival lo reinicia.
+Squeeze:
+  name: Apretón
+  description: Mientras lanza o carga un movimiento, el último rival al que tocó pierde 1/16 de sus PS cada segundo.
+ChainLightning:
+  name: Cadena Voltaica
+  description: Un movimiento de tipo Eléctrico que acierta salta a otro rival en pie y le hace 1/3 del daño causado.
+CurlUp:
+  name: Enrollarse
+  description: Cada golpe que recibe hace que use Rizo Defensa sobre sí mismo.
+QueensCourt:
+  name: Corte de la Reina
+  description: Su Defensa y su Defensa Esp. suben un 15 % por cada rival envenenado en el campo, hasta 3.
+KingsCourt:
+  name: Corte del Rey
+  description: Su Ataque y su Ataque Esp. suben un 15 % por cada rival envenenado en el campo, hasta 3.
+WishingWell:
+  name: Pozo de los Deseos
+  description: Cada vez que actúa, usa Deseo sobre el aliado con menos PS.
+NineTails:
+  name: Nueve Colas
+  description: Su Ataque Esp. sube un 8 % por cada golpe recibido, hasta 9 golpes.
+Lullaby:
+  name: Nana
+  description: El sueño que causa dura x1,5 más, y sus movimientos tienen x1,5 de potencia contra un objetivo dormido.
+Bloodthirst:
+  name: Sed de Sangre
+  description: Los movimientos de drenaje y Drenadoras le restauran x1,5. Cualquier otra curación que recibe se reduce a la mitad.
+DeepRoots:
+  name: Raíz Profunda
+  description: Al entrar al campo, usa Arraigo sobre sí mismo.
+FungalBloom:
+  name: Floración Fúngica
+  description: Restaura 1/8 de sus PS cada vez que causa envenenamiento, sueño, parálisis, una quemadura o congelación a un rival.
+DustStorm:
+  name: Tormenta de Polvo
+  description: Su Ataque Esp. sube un 12 % por cada rival con un problema de estado, hasta 4.
+Undermine:
+  name: Socavar
+  description: Cada movimiento que acierta hace que ese rival reciba un 5 % más de daño de todos, hasta un 25 %, durante el resto del combate.
+Cutpurse:
+  name: Ratero
+  description: El primer movimiento que acierta a cada rival le tira el objeto.
+HeadacheBurst:
+  name: Estallido de Jaqueca
+  description: Con 1/2 de PS o menos, tiene x1,5 de Ataque Esp. y sus movimientos de tipo Psíquico no fallan.
+BlindRage:
+  name: Ira Ciega
+  description: x1,4 de Ataque, pero sus movimientos tienen un 15 % menos de precisión. Nada puede curarlo mientras dure la ira.
+ChaseDown:
+  name: Acorralar
+  description: Sus movimientos tienen x1,5 de potencia contra un objetivo con 1/3 de PS o menos, y este no puede huir de él, salvo si es de tipo Fantasma.
+HypnoticSpiral:
+  name: Espiral Hipnótica
+  description: Quien lo golpea con un movimiento de contacto tarda un 30 % más en su siguiente preparación.
+TeleportGuard:
+  name: Teletransporte Guardián
+  description: Esquiva con un parpadeo el primer ataque que le va a golpear y necesita 10 segundos para volver a hacerlo.
+OverheadThrow:
+  name: Proyección
+  description: Sus movimientos de contacto tienen x1,4 de potencia contra un objetivo más pesado que él y x1,1 contra uno más ligero.
+Digest:
+  name: Digestión
+  description: Si un movimiento acierta a un objetivo con 1/4 de PS o menos, restaura 1/4 de sus propios PS. Un objetivo debilitado también cuenta.
+TentacleGrasp:
+  name: Agarre Tentacular
+  description: Ningún rival al que haya acertado un movimiento puede huir mientras él esté en pie, salvo si es de tipo Fantasma.
+SolidCore:
+  name: Núcleo Sólido
+  description: Los movimientos físicos le hacen x0,7 de daño y los especiales, x1,3.
+Gallop:
+  name: Galope
+  description: Su Velocidad sube un 10 % cada vez que actúa, hasta x1,5. Cualquier daño que reciba, incluidos el veneno y el tiempo, lo deja otra vez parado.
+DelayedReaction:
+  name: Reacción Tardía
+  description: Solo siente la mitad de cada golpe al instante. La otra mitad llega 4 segundos después.
+RepulsionField:
+  name: Campo Repulsor
+  description: Los movimientos especiales hacen x0,9 de daño a todos los del campo, él incluido.
+LeekDuelist:
+  name: Duelista del Puerro
+  description: Su probabilidad de golpe crítico sube 2 niveles y sus golpes críticos hacen x1,25 de daño. A cambio, todo le hace x1,25 de daño.
+SecondHead:
+  name: Segunda Cabeza
+  description: Cada tercer movimiento que acierta golpea otra vez al instante con 50 % de potencia.
+SleekHide:
+  name: Piel Lisa
+  description: Los movimientos de contacto le hacen x0,75 de daño y todo lo demás, x1,1.
+CorrosiveOoze:
+  name: Cieno Corrosivo
+  description: Quien lo golpea con un movimiento de contacto ve destruido su objeto, no solo tirado.
+SpikeShell:
+  name: Concha Espinosa
+  description: Los movimientos de contacto le hacen x0,5 de daño, y quien lo golpea con uno pierde 1/8 de sus propios PS.
+NightTerror:
+  name: Terror Nocturno
+  description: Un rival al que daña no puede curarse durante los 4 segundos siguientes.
+LivingTunnel:
+  name: Túnel Viviente
+  description: Mientras está en el campo, sus aliados reciben x0,8 de daño de los movimientos de tipo Roca y Tierra, y él recibe x1,2.
+DreamFeast:
+  name: Festín Onírico
+  description: Si un movimiento acierta a un objetivo dormido, restaura 1/8 de sus PS.
+HeavyPincer:
+  name: Pinza Pesada
+  description: Con 1/2 de PS o más, sus movimientos de contacto tienen x1,45 de potencia.
+Overload:
+  name: Sobrecarga
+  description: Con menos de 1/2 de PS, duplica su Velocidad.
+Psyseed:
+  name: Psisemilla
+  description: Un rival al que dañan sus movimientos de tipo Psíquico recibe Drenadoras.
+MourningBone:
+  name: Hueso del Duelo
+  description: Sus movimientos tienen x1,4 de potencia mientras sea el único que queda en pie de su equipo.
+SecondWind:
+  name: Segundo Aliento
+  description: La primera vez que sus PS bajan de 1/4, restaura 1/3 de sus PS. Una vez por combate.
+TasteEverything:
+  name: Probarlo Todo
+  description: Un movimiento de contacto que acierta a quien lleva una baya se la come, y se cura como lo haría la baya.
+SmogScreen:
+  name: Cortina de Smog
+  description: Mientras está en el campo, los movimientos rivales tienen un 15 % menos de precisión. Su propio bando ve bien.
+Corkscrew:
+  name: Tirabuzón
+  description: Sus movimientos de contacto tienen x1,15 de potencia e ignoran cualquier subida de Defensa del objetivo.
+Cushioned:
+  name: Acolchado
+  description: Ningún golpe le quita más de 1/4 de sus PS.
+VineWeb:
+  name: Red de Lianas
+  description: Cada vez que entra al campo, coloca una capa de Púas en el bando rival.
+MothersShield:
+  name: Escudo Maternal
+  description: Los movimientos rivales dirigidos a un aliado con menos de 1/2 de PS se dirigen a ella.
+WhirlCurrent:
+  name: Corriente Remolino
+  description: Con lluvia, el tiempo de preparación y de carga de los rivales es un 20 % más largo.
+Upstream:
+  name: Contracorriente
+  description: Sus movimientos tienen x1,35 de potencia contra un objetivo cuyos PS máximos son mayores que los suyos.
+CoreReset:
+  name: Reinicio del Núcleo
+  description: Cada vez que actúa, se deshace una bajada de estadística que sufre.
+MimedBarrier:
+  name: Barrera Mímica
+  description: Al entrar al campo, usa Pantalla de Luz sobre su equipo, y los movimientos físicos le hacen x1,15 de daño.
+CleanCut:
+  name: Corte Limpio
+  description: Sus golpes críticos ignoran todos los niveles de la estadística defensiva del objetivo.
+IcyCharm:
+  name: Encanto Helado
+  description: Sus movimientos tienen x1,5 de potencia contra un objetivo enamorado o confuso.
+StaticField:
+  name: Campo Estático
+  description: Su Velocidad sube un 15 % por cada golpe de contacto recibido, hasta 4.
+BlastFurnace:
+  name: Alto Horno
+  description: Sus movimientos de tipo Fuego queman al objetivo con un 30 % de probabilidad.
+Snapjaw:
+  name: Mandíbula Trampa
+  description: Sus movimientos tienen x1,5 de potencia contra un objetivo que está lanzando o cargando un movimiento.
+Bullheaded:
+  name: Testarudo
+  description: Sus movimientos de contacto tienen x1,3 de potencia. A cambio, todo le hace x1,15 de daño.
+LateBloomer:
+  name: Floración Tardía
+  description: Sus movimientos tienen un 5 % más de potencia por cada 10 segundos que lleva en el combate, hasta x1,5.
+SafePassage:
+  name: Paso Seguro
+  description: Al entrar al campo, usa Velo Sagrado sobre su equipo, y nada impide huir a sus aliados.
+Formless:
+  name: Sin Forma
+  description: Los golpes críticos le hacen un daño normal y no se le pueden bajar los niveles de estadísticas.
+LatentPotential:
+  name: Potencial Latente
+  description: La más baja de sus cinco estadísticas de combate cuenta x1,3.
+Rollback:
+  name: Retroceso
+  description: La primera vez que sus PS bajan de 1/2, su salud vuelve a lo que era 4 segundos antes.
+HelixShell:
+  name: Concha Espiral
+  description: Su Defensa y su Defensa Esp. cuentan x1,25 contra todos los golpes que recibe.
+DomeBlade:
+  name: Cuchilla Cúpula
+  description: Sus golpes cuentan la Defensa o la Defensa Esp. del objetivo como x0,75.
+PredatorsDive:
+  name: Picado del Depredador
+  description: Su primer movimiento contra cada rival tiene x1,5 de potencia.
+FullBelly:
+  name: Panza Llena
+  description: Restaura 1/16 de sus PS cada vez que actúa, pero su tiempo de preparación y de carga es un 25 % más largo.
+Frostwing:
+  name: Aleteo Helado
+  description: Al entrar al campo, baja 1 nivel la Velocidad de todos los rivales. Contra un portador de Aleteo Fulminante no surte efecto ningún aleteo.
+Stormwing:
+  name: Aleteo Tormenta
+  description: Al entrar al campo, baja 1 nivel la Defensa Esp. de todos los rivales. Contra un portador de Aleteo Percutor no surte efecto ningún aleteo.
+Emberwing:
+  name: Aleteo Ascua
+  description: Al entrar al campo, baja 1 nivel la Defensa de todos los rivales. Contra un portador de Aleteo Furioso no surte efecto ningún aleteo.
+SereneStorm:
+  name: Tormenta Serena
+  description: El tiempo que provoca nunca se despeja solo, y su equipo no recibe daño de ningún tipo de tiempo.
+GeneticApex:
+  name: Cumbre Genética
+  description: Su estadística de combate más alta cuenta x1,25 y la más baja, x0,8.
+AncestralMemory:
+  name: Memoria Ancestral
+  description: Cualquier tipo que ya le haya golpeado una vez le hace x0,85 de daño a partir de entonces.
+RichDiet:
+  name: Dieta Rica
+  description: Cada baya que come le sube 1 nivel el Ataque.
+Frostforged:
+  name: Forjado en Hielo
+  description: Los movimientos de tipo Fuego y Lucha le hacen x0,75 de daño.
+AuroraCrown:
+  name: Corona de Aurora
+  description: Al entrar al campo con granizo o nieve, usa Velo Aurora sobre su equipo.
+WireSnare:
+  name: Lazo de Alambre
+  description: El primer movimiento de contacto que le acierta tras cada entrada atrapa al atacante.
+TauntingGaze:
+  name: Mirada Burlona
+  description: Al entrar al campo, usa Mofa sobre un rival.
+MagnetFloat:
+  name: Flotación Magnética
+  description: Al entrar al campo, usa Levitón sobre sí mismo.
+CrystalToxin:
+  name: Toxina Cristalina
+  description: El veneno que causa a un rival no se puede curar.
+WarSpoils:
+  name: Botín de Guerra
+  description: Si debilita a un rival, se queda con su objeto, o se lo da a un aliado sin objeto si lleva las manos llenas.
+MendingHorn:
+  name: Cuerno Sanador
+  description: Sus movimientos de tipo Hada curan al aliado más herido por 1/2 del daño que causan.
+SlowVenom:
+  name: Veneno Lento
+  description: Cada tercer movimiento que acierta al mismo rival lo envenena gravemente.
+LeekShield:
+  name: Escudo de Puerro
+  description: Cada ataque que acierta levanta su puerro como escudo, y el siguiente golpe que recibe le hace x0,6 de daño.
+Glarewing:
+  name: Aleteo Fulminante
+  description: Al entrar al campo, baja 1 nivel la Velocidad de todos los rivales. Contra un portador de Aleteo Helado no surte efecto ningún aleteo.
+Strikewing:
+  name: Aleteo Percutor
+  description: Al entrar al campo, baja 1 nivel la Defensa Esp. de todos los rivales. Contra un portador de Aleteo Tormenta no surte efecto ningún aleteo.
+Wrathwing:
+  name: Aleteo Furioso
+  description: Al entrar al campo, baja 1 nivel la Defensa de todos los rivales. Contra un portador de Aleteo Ascua no surte efecto ningún aleteo.
+Watchfire:
+  name: Fuego de Vigía
+  description: Cuando un rival empieza a preparar un movimiento contra uno de sus aliados, su siguiente movimiento contra ese rival se prepara un 40 % más rápido.
+HuskBurst:
+  name: Estallido de Cáscara
+  description: La primera vez que sus PS bajan de 1/2, usa Drenadoras sobre todos los rivales.

@@ -13,7 +13,7 @@ PowderBurst:
   name: こなまき
   description: へんかわざが、 ねらった あいてだけでなく フィールドの あいて ぜんいんに とどく。
 TwinStinger:
-  name: ふたばり
+  name: ふたつのはり
   description: ヒットが 1かいの ぶつりわざは、 いりょく 60%で 2かい あたる。 あたった ときに はんのうする ものは どちらにも はんのうする。
 Slipstream:
   name: スリップストリーム
@@ -64,7 +64,7 @@ Undermine:
   name: ほりくずし
   description: わざを あてた あいては、 バトルが おわるまで ぜんいんから うける ダメージが 5%ずつ ふえ、 さいだい 25%に なる。
 Cutpurse:
-  name: すりとり
+  name: きんちゃくきり
   description: それぞれの あいてに さいしょに あてた わざで、 あいての もちものを はたきおとす。
 HeadacheBurst:
   name: ずつうばくはつ
@@ -85,13 +85,13 @@ OverheadThrow:
   name: なげおとし
   description: じぶんより おもい あいてへの ちょくせつこうげきの わざの いりょくが 1.4ばい、 かるい あいてへは 1.1ばいに なる。
 Digest:
-  name: しょうか
+  name: しょうかりょく
   description: HPが 1/4 いかの あいてに わざを あてると、 じぶんの HPが 1/4 かいふくする。 ひんしに させた ときも かぞえる。
 TentacleGrasp:
   name: しょくしゅのにぎり
   description: わざを あてた あいては、 じぶんが いる あいだ にげられない。 ゴーストタイプは のぞく。
 SolidCore:
-  name: かたいしん
+  name: かたいコア
   description: ぶつりわざから うける ダメージが 0.7ばい、 とくしゅわざから うける ダメージが 1.3ばいに なる。
 Gallop:
   name: かけあし

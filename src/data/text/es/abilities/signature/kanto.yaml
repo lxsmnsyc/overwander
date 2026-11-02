@@ -64,7 +64,7 @@ Undermine:
   name: Socavar
   description: Cada movimiento que acierta hace que ese rival reciba un 5 % más de daño de todos, hasta un 25 %, durante el resto del combate.
 Cutpurse:
-  name: Ratero
+  name: Cortabolsas
   description: El primer movimiento que acierta a cada rival le tira el objeto.
 HeadacheBurst:
   name: Estallido de Jaqueca

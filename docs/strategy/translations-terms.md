@@ -317,7 +317,7 @@ Shared themes:
 | Ember Field      | ほのおのば                 | Campo Ardiente          |
 | Deluge Field     | おおみずのば               | Campo Diluvio           |
 | Powder Burst     | こなまき                   | Polvo Expansivo         |
-| Twin Stinger     | ふたばり                   | Doble Aguijón           |
+| Twin Stinger     | ふたつのはり               | Doble Aguijón           |
 | Slipstream       | スリップストリーム         | Estela                  |
 | Nibble           | かじり                     | Mordisquito             |
 | Relentless       | しつこさ                   | Implacable              |
@@ -334,16 +334,16 @@ Shared themes:
 | Fungal Bloom     | ほうしのはな               | Floración Fúngica       |
 | Dust Storm       | ほこりあらし               | Tormenta de Polvo       |
 | Undermine        | ほりくずし                 | Socavar                 |
-| Cutpurse         | すりとり                   | Ratero                  |
+| Cutpurse         | きんちゃくきり             | Cortabolsas             |
 | Headache Burst   | ずつうばくはつ             | Estallido de Jaqueca    |
 | Blind Rage       | われをわすれる             | Ira Ciega               |
 | Chase Down       | おいつめ                   | Acorralar               |
 | Hypnotic Spiral  | さいみんのうず             | Espiral Hipnótica       |
 | Teleport Guard   | テレポガード               | Teletransporte Guardián |
 | Overhead Throw   | なげおとし                 | Proyección              |
-| Digest           | しょうか                   | Digestión               |
+| Digest           | しょうかりょく             | Digestión               |
 | Tentacle Grasp   | しょくしゅのにぎり         | Agarre Tentacular       |
-| Solid Core       | かたいしん                 | Núcleo Sólido           |
+| Solid Core       | かたいコア                 | Núcleo Sólido           |
 | Gallop           | かけあし                   | Galope                  |
 | Delayed Reaction | はんのうおくれ             | Reacción Tardía         |
 | Repulsion Field  | はんぱつば                 | Campo Repulsor          |
@@ -434,25 +434,25 @@ Shared themes:
 | Shared Misery      | わかちあうくるしみ | Miseria Compartida   |
 | Ruinous Script     | わざわいのもじ     | Escritura Ruinosa    |
 | Backlash           | ためておかえし     | Contragolpe          |
-| Ambidextrous       | りょうききき       | Ambidiestro          |
-| Shrapnel           | はへん             | Metralla             |
+| Ambidextrous       | りょうきき         | Ambidiestro          |
+| Shrapnel           | はへんまき         | Metralla             |
 | Hidden Den         | かくれが           | Guarida Oculta       |
 | Sand Rider         | すなのり           | Jinete de Arena      |
 | Bully              | いじめっこ         | Abusón               |
 | Last Barb          | さいごのはり       | Última Púa           |
 | Fermenter          | はっこうおけ       | Fermentador          |
-| Heave              | ほうりなげ         | Levantón             |
+| Heave              | ほうりなげ         | Volteo               |
 | Sharp Claw         | きりさきづめ       | Garra Cortante       |
 | Sweet Paw          | あまいにくきゅう   | Zarpa Dulce          |
 | Magma Trail        | マグマのあと       | Rastro de Magma      |
 | Icebreaker         | こおりわり         | Rompehielos          |
 | Coral Bloom        | サンゴのはな       | Flor de Coral        |
-| Ricochet           | ちょうだん         | Rebote               |
+| Ricochet           | それだま           | Rebote               |
 | Delivery           | おとどけ           | Entrega              |
 | Escort             | ごえい             | Escolta              |
 | Steelmolt          | はがねのだっぴ     | Muda de Acero        |
 | Pack Howl          | むれのとおぼえ     | Aullido de Manada    |
-| Momentum           | いきおい           | Inercia              |
+| Momentum           | いきおい           | Ímpetu               |
 | Mind Fog           | こころのきり       | Niebla Mental        |
 | Palette            | パレット           | Paleta               |
 | Cowbell            | カウベル           | Cencerro             |
@@ -487,7 +487,7 @@ Shared themes:
 | Wide Swing      | おおぶり           | Barrido Amplio       |
 | Vanishing Act   | すがたけし         | Desaparición         |
 | Echo Chamber    | こだまのへや       | Cámara de Eco        |
-| Shove           | つきとばし         | Envite               |
+| Shove           | つきとばし         | Empellón             |
 | Magnetize       | ひきよせ           | Magnetizar           |
 | Kitten Pace     | こねこのあしどり   | Paso de Gatito       |
 | Shadow Tax      | かげのちょうしゅう | Tributo de Sombra    |
@@ -508,7 +508,7 @@ Shared themes:
 | Stored Bounce   | ためこむはずみ     | Rebote Acumulado     |
 | Unique Spots    | ひとつだけのぶち   | Manchas Únicas       |
 | Antlion Pit     | すりばちのわな     | Foso Hormigaleón     |
-| Patient Stalk   | ためまち           | Acecho Paciente      |
+| Patient Stalk   | まちかまえ         | Acecho Paciente      |
 | Cloud Step      | くもがくれ         | Paso Nuboso          |
 | Feud Claws      | いがみあうつめ     | Garras Rivales       |
 | Deepening Venom | ふかまるどく       | Veneno Creciente     |
@@ -567,7 +567,7 @@ Shared themes:
 | Carry Off    | つれさり           | Rapto                 |
 | Springheel   | ばねあし           | Pie de Resorte        |
 | Velvet Claws | ビロードのつめ     | Garras de Terciopelo  |
-| Rank Air     | くさみ             | Tufo                  |
+| Rank Air     | くさいくうき       | Tufo                  |
 | Deep Toll    | おもいかねのね     | Tañido Profundo       |
 | Skyhunt      | そらがり           | Caza Aérea            |
 | Aura Match   | オーラくらべ       | Duelo de Auras        |

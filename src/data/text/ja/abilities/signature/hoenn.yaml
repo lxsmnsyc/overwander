@@ -112,7 +112,7 @@ AntlionPit:
   name: すりばちのわな
   description: じぶんに わざを はずした あいては、 HPの 1/8を うしなう。
 PatientStalk:
-  name: ためまち
+  name: まちかまえ
   description: じっと たっていた 1びょうごとに わざの いりょくが 10% あがり、 さいだい 50%。 つぎに あてる わざで つかいきる。
 CloudStep:
   name: くもがくれ

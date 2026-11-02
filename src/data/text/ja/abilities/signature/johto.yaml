@@ -67,10 +67,10 @@ Backlash:
   name: ためておかえし
   description: うけた ダメージの 1/4を ためておき、 つぎに こうどうする とき、 さいごに こうげきした あいてに ためた ぶんを かえす。
 Ambidextrous:
-  name: りょうききき
+  name: りょうきき
   description: わざの ダメージは、 こうげきと とくこうの たかい ほうで けいさんされる。
 Shrapnel:
-  name: はへん
+  name: はへんまき
   description: ひんしに なると、 あいての がわに まきびしと どくびしを つかう。
 HiddenDen:
   name: かくれが
@@ -106,7 +106,7 @@ CoralBloom:
   name: サンゴのはな
   description: かいふくするたびに、 HPが いちばん すくない みかたも おなじだけ かいふくする。
 Ricochet:
-  name: ちょうだん
+  name: それだま
   description: たんたいの わざが はずれると、 かわりに ほかの たっている あいてを そのままの いりょくで こうげきする。
 Delivery:
   name: おとどけ

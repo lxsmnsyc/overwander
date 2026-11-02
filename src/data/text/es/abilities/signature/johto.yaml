@@ -88,7 +88,7 @@ Fermenter:
   name: Fermentador
   description: Cada vez que actúa con la mano libre, aparece un Zumo de Baya en ella.
 Heave:
-  name: Levantón
+  name: Volteo
   description: El primer movimiento de contacto que acierta a cada rival usa Remolino sobre él.
 SharpClaw:
   name: Garra Cortante
@@ -121,7 +121,7 @@ PackHowl:
   name: Aullido de Manada
   description: Al entrar al campo, todos sus aliados ganan 1 nivel de Ataque.
 Momentum:
-  name: Inercia
+  name: Ímpetu
   description: Sus movimientos tienen x1,1 de potencia por cada movimiento que acierta desde que entró al campo, hasta x1,5.
 MindFog:
   name: Niebla Mental

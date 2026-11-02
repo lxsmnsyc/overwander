@@ -49,7 +49,7 @@ EchoChamber:
   name: Cámara de Eco
   description: Un movimiento de sonido que acierta resuena 2 segundos después con 1/4 del daño causado.
 Shove:
-  name: Envite
+  name: Empellón
   description: Un movimiento de contacto que acierta a un rival que prepara un movimiento lo amedrenta y le hace perder esa preparación.
 Magnetize:
   name: Magnetizar

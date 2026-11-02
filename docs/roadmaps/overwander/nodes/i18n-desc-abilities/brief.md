@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-abilities
 title: Translate ability descriptions
-status: active
+status: done
 priority: should
 type: feature
 outline: false

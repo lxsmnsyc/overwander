@@ -2,7 +2,7 @@
 
 Sapmark:
   name: Sapmark
-  description: Anything it lands a move on loses 1/16 of its HP each time it acts, and Chikorita drinks the same.
+  description: Anything it lands a move on loses 1/16 of its HP each time it acts, and it heals the same amount.
 Embermark:
   name: Embermark
   description: Anything it lands a move on loses 1/16 of its HP each time it acts, or 1/8 while it is burned.

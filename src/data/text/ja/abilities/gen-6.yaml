@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Bulletproof:
   name: ぼうだん
+  description: たまや ばくだんなど、 はなれて なげられた ものは きかない。
 Magician:
   name: マジシャン
+  description: わざを あてた あいての もちものを、 じぶんの もちものが なければ うばう。
 FlowerVeil:
   name: フラワーベール
+  description: くさタイプの みかた (じぶんも ふくむ) は、 ほかの ポケモンに どく、 やけど、 まひ、 こおり、 ねむり、 ねむけに されず、 のうりょくも さげられない。
 Symbiosis:
   name: きょうせい
+  description: みかたが もちものを つかいきった しゅんかん、 じぶんの もちものを みかたに わたす。
 GrassPelt:
   name: くさのけがわ
+  description: グラスフィールドの うえに いる あいだ、 ぼうぎょが 1.5ばいに なる。
 MistySurge:
   name: ミストメイカー
+  description: フィールドに でると、 ミストフィールドに する。
 ElectricSurge:
   name: エレキメイカー
+  description: フィールドに でると、 エレキフィールドに する。
 MegaLauncher:
   name: メガランチャー
+  description: はどうと オーラの わざの いりょくが 1.5ばいに なり、 いやしのはどうで かいふくする りょうも 1.5ばいに なる。
 Refrigerate:
   name: フリーズスキン
+  description: ノーマルタイプの わざが こおりタイプに なり、 いりょくが 1.2ばいに なる。
 FairyAura:
   name: フェアリーオーラ
+  description: フィールドの すべての フェアリータイプの わざの いりょくが、 だれが だしても 1.33ばいに なる。
 Triage:
   name: ヒーリングシフト
+  description: かいふくわざは ほかの どの わざより さきに だせる。
 DarkAura:
   name: ダークオーラ
+  description: フィールドの すべての あくタイプの わざの いりょくが、 だれが だしても 1.33ばいに なる。
 AuraBreak:
   name: オーラブレイク
+  description: フィールドに オーラが あると、 そのタイプの わざの いりょくが つよくならず 0.75ばいに よわまる。
 PowerConstruct:
   name: スワームチェンジ
+  description: HPが 1/2に なると、 ほかの セルが あつまって パーフェクトフォルムに なる。
 EarthEater:
   name: どしょく
+  description: じめんタイプの わざで ダメージを うけず、 かわりに HPが 1/4 かいふくする。
 SteamEngine:
   name: じょうききかん
+  description: ほのおか みずタイプの わざを うけると、 すばやさが 6だん あがる。
 SweetVeil:
   name: スイートベール
+  description: いる あいだ、 みかたぜんいんが ねむらない。
 Pixilate:
   name: フェアリースキン
+  description: ノーマルタイプの わざが フェアリータイプに なり、 いりょくが 1.2ばいに なる。
 Gooey:
   name: ぬめぬめ
+  description: ふれてきた あいては、 すばやさが 1だん さがる。
 StanceChange:
   name: バトルスイッチ
+  description: こうげきする ときは けんを ぬき、 キングシールドの ときは また おさめる。
 Aerilate:
   name: スカイスキン
+  description: ノーマルタイプの わざが ひこうタイプに なり、 いりょくが 1.2ばいに なる。
 ParentalBond:
   name: おやこあい
+  description: あいて 1ぴきを ねらう わざが 2かい あたり、 2かいめの ダメージは 0.25ばいに なる。
 PrimordialSea:
   name: はじまりのうみ
+  description: いる あいだ、 おおあめを ふらせる。 みずタイプの わざの いりょくが 1.5ばいに なり、 ほのおタイプの わざは しっぱいし、 ほかの てんきには ならない。
 DesolateLand:
   name: おわりのだいち
+  description: いる あいだ、 おおひでりに する。 ほのおタイプの わざの いりょくが 1.5ばいに なり、 みずタイプの わざは しっぱいし、 ほかの てんきには ならない。
 DeltaStream:
   name: デルタストリーム
+  description: いる あいだ、 らんきりゅうを ふかせる。 ひこうタイプに こうかばつぐんの わざは 1ばいで あたり、 ほかの てんきには ならない。

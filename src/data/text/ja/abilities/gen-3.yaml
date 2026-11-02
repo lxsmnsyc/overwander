@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 WindRider:
   name: かぜのり
+  description: かぜの わざを うけず、 こうげきが 1だん あがる。
 Truant:
   name: なまけ
+  description: わざを おえる たびに 2びょうの あいだ なまける。
 WonderGuard:
   name: ふしぎなまもり
+  description: よわてんを つく わざしか あたらない。 へんかわざ、 どく、 てんきは うける。
 Normalize:
   name: ノーマルスキン
+  description: つかう わざは、 わざに かかわらず すべて ノーマルタイプに なる。
 PurePower:
   name: ヨガパワー
+  description: こうげきが 2ばいに なる。
 Minus:
   name: マイナス
+  description: いきている みかたが プラスか マイナスの とき、 とくこうが 1.5ばいに なる。
 Stall:
   name: あとだし
+  description: だす わざの じゅんびが いつもより おそく おわる。
 ToxicBoost:
   name: どくぼうそう
+  description: どくの とき、 こうげきが 1.5ばいに なる。
 Battery:
   name: バッテリー
+  description: みかたの とくしゅわざの いりょくを 1.3ばいに する。
 WhiteSmoke:
   name: しろいけむり
+  description: ほかの ポケモンに のうりょくを さげられない。
 ColorChange:
   name: へんしょく
+  description: いま うけた わざの タイプに かわる。
 HeavyMetal:
   name: ヘヴィメタル
+  description: みかけの 2ばいの おもさに なる。
 PoisonHeal:
   name: ポイズンヒール
+  description: どくの ダメージを うける たびに、 かわりに HPが 1/8 かいふくする。
 Forecast:
   name: てんきや
+  description: ポワルンは したに いる そらの すがたと タイプに なる。
 Steelworker:
   name: はがねつかい
+  description: じぶんの タイプに かかわらず、 はがねタイプの わざの いりょくが 1.5ばいに なる。
 Simple:
   name: たんじゅん
+  description: うける のうりょくの へんかが 2ばいに なる。 じぶんで おこした へんかも、 ほかの ポケモンの へんかも おなじ。
 AirLock:
   name: エアロック
+  description: いる あいだ、 てんきの こうかを だれも うけない。

@@ -6,7 +6,8 @@ import type * as LocaleModule from '../../src/i18n/locale';
 import registerGameData from '../../src/data/index';
 import { getItemData } from '../../src/data/items';
 import { getMoveData } from '../../src/data/moves';
-import { ITEM_IDS, MOVE_IDS } from '../../src/data/ids/names';
+import { getAbilityData } from '../../src/data/abilities/__create';
+import { ABILITY_IDS, ITEM_IDS, MOVE_IDS } from '../../src/data/ids/names';
 
 /**
  * Every registry entry has a description in Japanese and Spanish, whether
@@ -32,17 +33,22 @@ afterEach(() => {
 });
 
 const MOVE_TEXT = join(import.meta.dirname, '../../src/data/text/en/moves');
+const ABILITY_TEXT = join(import.meta.dirname, '../../src/data/text/en/abilities');
 
-/** The name of every move written in the English move text, in every generation folder and the weather file */
-function listFiledMoves(): string[] {
+/**
+ * The key of every entry written in the English text under a folder,
+ * in every file at the top of it or below it. `skip` leaves out a
+ * subfolder whose descriptions another batch translates
+ */
+function listFiled(folder: string, skip?: string): string[] {
   const names: string[] = [];
 
-  for (const entry of readdirSync(MOVE_TEXT, { recursive: true, encoding: 'utf8' })) {
-    if (!entry.endsWith('.yaml')) {
+  for (const entry of readdirSync(folder, { recursive: true, encoding: 'utf8' })) {
+    if (!entry.endsWith('.yaml') || (skip !== undefined && entry.startsWith(skip))) {
       continue;
     }
 
-    const text: unknown = parse(readFileSync(join(MOVE_TEXT, entry), 'utf8'));
+    const text: unknown = parse(readFileSync(join(folder, entry), 'utf8'));
 
     if (typeof text === 'object' && text !== null) {
       names.push(...Object.keys(text));
@@ -84,7 +90,7 @@ const REGISTRIES: Registry[] = [
 
       const ids = new Map<string, number>(Object.entries(MOVE_IDS));
 
-      for (const name of listFiledMoves()) {
+      for (const name of listFiled(MOVE_TEXT)) {
         const id = ids.get(name);
 
         if (id === undefined) {
@@ -95,6 +101,26 @@ const REGISTRIES: Registry[] = [
       return found;
     },
     minimum: 900,
+  },
+  {
+    // The signature folder is translated with its own batches
+    name: 'abilities (all but the signatures)',
+    describe() {
+      const found = new Map<string, string>();
+
+      const ids = new Map<string, number>(Object.entries(ABILITY_IDS));
+
+      for (const name of listFiled(ABILITY_TEXT, 'signature')) {
+        const id = ids.get(name);
+
+        if (id === undefined) {
+          throw new Error(`${name} is filed under an ability folder but has no ability id`);
+        }
+        found.set(name, getAbilityData(id).description);
+      }
+      return found;
+    },
+    minimum: 300,
   },
 ];
 

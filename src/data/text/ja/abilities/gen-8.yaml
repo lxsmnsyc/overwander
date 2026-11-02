@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Libero:
   name: リベロ
+  description: わざを だす まえに、 その わざの タイプに かわる。
 CottonDown:
   name: わたげ
+  description: ダメージを あたえる わざを うける たびに、 フィールドの ほかの ポケモン ぜんいんの すばやさが 1だん さがる。
 BallFetch:
   name: たまひろい
+  description: バトルで だれかが なげつけるで なげた どうぐを はじめて ひろい、 もちものが なければ もつ。
 GulpMissile:
   name: うのミサイル
+  description: なみのりか ダイビングで えものを くわえて もどってくる。 つぎに わざを あてた あいてに それを はきだし、 あいての HPの 1/4の ダメージを あたえる。 HPが 1/2 より おおい ときに くわえた なら ぼうぎょも 1だん さげ、 1/2 いかの ときなら まひに する。
 PropellerTail:
   name: スクリューおびれ
+  description: ひきよせる こうかが あっても、 わざは ねらった あいてに あたる。
 PunkRock:
   name: パンクロック
+  description: おとの わざの いりょくが 1.3ばいに なり、 おとの わざを うけた ときの ダメージが 1/2に なる。
 IceScales:
   name: こおりのりんぷん
+  description: とくしゅわざの ダメージが 1/2に なる。
 PowerSpot:
   name: パワースポット
+  description: みかたの わざの いりょくが 1.3ばいに なる。
 IceFace:
   name: アイスフェイス
+  description: はじめて うけた ぶつりわざは ダメージを うけず、 こおりが くだけて、 すばやいが もろい かおに なる。 あられか ゆきで また こおりが はる。
 HungerSwitch:
   name: はらぺこスイッチ
+  description: こうどうする たびに、 まんぷくもようと はらぺこもようを いったりきたりして、 オーラぐるまが でんきと あくの タイプに かわる。
 Stalwart:
   name: すじがねいり
+  description: ひきよせる こうかが あっても、 わざは ねらった あいてに あたる。
 SteelySpirit:
   name: はがねのせいしん
+  description: じぶんを ふくむ チームの はがねタイプの わざの いりょくが 1.5ばいに なる。
 PastelVeil:
   name: パステルベール
+  description: じぶんと みかたは どくに ならず、 どくの みかたは フィールドに でると なおる。
 QuickDraw:
   name: クイックドロウ
+  description: ダメージを あたえる わざは 30%の かくりつで じゅんびなしで でる。
 CuriousMedicine:
   name: きみょうなくすり
+  description: フィールドに でると、 みかたの のうりょくランクが 0に もどる。
 ScreenCleaner:
   name: バリアフリー
+  description: フィールドに でると、 リフレクター、 ひかりのかべ、 オーロラベールが りょうほうの がわで なくなる。
 GorillaTactics:
   name: ごりむちゅう
+  description: こうげきが 1.5ばいに なるが、 フィールドから ひっこむまで、 さいしょに だした わざしか だせなく なる。
 WanderingSpirit:
   name: さまようたましい
+  description: ちょくせつこうげきの わざを うけると、 この とくせいを こうげきした あいての とくせいと いれかえる。
 IntrepidSword:
   name: ふとうのけん
+  description: はじめて バトルに でた とき、 こうげきが 1だん あがる。
 DauntlessShield:
   name: ふくつのたて
+  description: はじめて バトルに でた とき、 ぼうぎょが 1だん あがる。
 UnseenFist:
   name: ふかしのこぶし
+  description: ちょくせつこうげきの わざは、 まもる、 みきりなどの まもりを つらぬいて こわす。
 Transistor:
   name: トランジスタ
+  description: でんきタイプの わざの いりょくが 1.3ばいに なる。
 DragonsMaw:
   name: りゅうのあぎと
+  description: ドラゴンタイプの わざの いりょくが 1.5ばいに なる。
 ChillingNeigh:
   name: しろのいななき
+  description: あいてを たおすと、 こうげきが 1だん あがる。
 GrimNeigh:
   name: くろのいななき
+  description: あいてを たおすと、 とくこうが 1だん あがる。

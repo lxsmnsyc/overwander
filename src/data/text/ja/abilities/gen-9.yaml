@@ -2,75 +2,112 @@
 # Every other field is written by hand, and a rerun keeps it.
 LingeringAroma:
   name: とれないにおい
+  description: ちょくせつこうげきの わざを あてた あいては、 とくせいの 1つが この とくせいに かわる。
 WellBakedBody:
   name: こんがりボディ
+  description: ほのおタイプの わざを うけず、 かわりに ぼうぎょが 2だん あがる。
 SeedSower:
   name: こぼれダネ
+  description: ダメージを あたえる わざを うけると、 グラスフィールドに する。
 PurifyingSalt:
   name: きよめのしお
+  description: どく、 やけど、 まひ、 こおり、 ねむり、 ねむけに ならず、 ゴーストタイプの わざの ダメージが 1/2に なる。
 Electromorphosis:
   name: でんきにかえる
+  description: ダメージを あたえる わざを うけると、 つぎの でんきタイプの わざの いりょくが 2ばいに なる。
 WindPower:
   name: ふうりょくでんき
+  description: かぜの わざを うけると、 つぎの でんきタイプの わざの いりょくが 2ばいに なる。
 GuardDog:
   name: ばんけん
+  description: いかくを うけると、 こうげきが さがらず かえって あがる。 ほえると ふきとばしでも おいだされない。
 MyceliumMight:
   name: きんしのちから
+  description: へんかわざは じゅんびが おそく おわるが、 あいての とくせいを むしして あたる。
 AngerShell:
   name: いかりのこうら
+  description: こうげきで HPが 1/2 いかに なると、 こうげき、 とくこう、 すばやさが 1だん あがるが、 ぼうぎょと とくぼうが 1だん さがる。
 Opportunist:
   name: びんじょう
+  description: あいてが のうりょくを あげると、 おなじ のうりょくを おなじ だけ あげる。
 RockyPayload:
   name: いわはこび
+  description: いわタイプの わざの いりょくが 1.5ばいに なる。
 ZeroToHero:
   name: マイティチェンジ
+  description: イルカマンは フィールドから ひっこむと マイティフォルムで もどってきて、 そのまま つづく。
 ToxicDebris:
   name: どくげしょう
+  description: ぶつりわざを うけると、 こうげきした あいての がわに どくびしが 1まい まかれる。
 Costar:
   name: きょうえん
+  description: フィールドに でると、 みかたの のうりょくランクを コピーする。
 Commander:
   name: しれいとう
+  description: ヘイラッシャの そばでは その くちの なかに はいり、 こうどうできなくなる かわりに なにも とどかなくなり、 ヘイラッシャは のうりょくが ぜんぶ 2だん あがる。
 Protosynthesis:
   name: こだいかっせい
+  description: はれの とき、 または もたせた ブーストエナジーを つかいきると、 いちばん たかい のうりょくが 1.3ばいに なる。 すばやさなら 1.5ばい。
 QuarkDrive:
   name: クォークチャージ
+  description: エレキフィールドの とき、 または もたせた ブーストエナジーを つかいきると、 いちばん たかい のうりょくが 1.3ばいに なる。 すばやさなら 1.5ばい。
 ThermalExchange:
   name: ねつこうかん
+  description: ほのおタイプの わざを うけると、 こうげきが 1だん あがる。 やけどにも ならない。
 GoodAsGold:
   name: おうごんのからだ
+  description: ほかの ポケモンの へんかわざは きかない。
 TabletsOfRuin:
   name: わざわいのおふだ
+  description: フィールドの ほかの ポケモンぜんいんの こうげきが 0.75ばいに なる。
 SwordOfRuin:
   name: わざわいのつるぎ
+  description: フィールドの ほかの ポケモンぜんいんの ぼうぎょが 0.75ばいに なる。
 VesselOfRuin:
   name: わざわいのうつわ
+  description: フィールドの ほかの ポケモンぜんいんの とくこうが 0.75ばいに なる。
 BeadsOfRuin:
   name: わざわいのたま
+  description: フィールドの ほかの ポケモンぜんいんの とくぼうが 0.75ばいに なる。
 OrichalcumPulse:
   name: ひひいろのこどう
+  description: フィールドに でると、 ひざしを つよくして、 はれの とき こうげきが 1.33ばいに なる。
 HadronEngine:
   name: ハドロンエンジン
+  description: フィールドに でると、 エレキフィールドに して、 エレキフィールドの とき とくこうが 1.33ばいに なる。
 CudChew:
   name: はんすう
+  description: たべた きのみを、 つぎに こうどうした ときに もういちど たべる。
 ArmorTail:
   name: テイルアーマー
+  description: じぶんと みかたに むけた、 さきがけて うごく わざは しっぱいする。
 MindsEye:
   name: しんがん
+  description: めいちゅうを さげられず、 かいひを むしし、 ノーマルと かくとうタイプの わざが ゴーストタイプにも あたる。
 SupremeOverlord:
   name: そうだいしょう
+  description: みかたが 1ぴき ひんしだと わざの いりょくが 1.1ばいに なり、 ひんしが 1ぴき ふえる ごとに 0.1ばい ふえて、 さいだい 1.5ばいに なる。
 SupersweetSyrup:
   name: かんろなミツ
+  description: はじめて バトルに でた とき、 あいての かいひが 1だん さがる。
 Hospitality:
   name: おもてなし
+  description: フィールドに でると、 いちばん ダメージを うけた みかたの HPが 1/4 かいふくする。
 ToxicChain:
   name: どくのくさり
+  description: ダメージを あたえる わざは 30%の かくりつで もうどくに する。
 EmbodyAspect:
   name: おもかげやどし
+  description: はじめて バトルに でた とき、 めんの ちからで のうりょくが 1だん あがる。 みどりのめんは すばやさ、 いどのめんは とくぼう、 かまどのめんは こうげき、 いしずえのめんは ぼうぎょ。
 TeraShift:
   name: テラスチェンジ
+  description: フィールドに でると、 テラスタルフォルムに なる。
 TeraShell:
   name: テラスシェル
+  description: HPが まんたんの とき、 ダメージを あたえる わざは すべて こうかが いまひとつに なる。
 TeraformZero:
   name: ゼロフォーミング
+  description: フィールドに でると、 フィールドの てんきと フィールドが すべて なくなる。 ただし ゲンシの そらは のこる。
 PoisonPuppeteer:
   name: どくくぐつ
+  description: どくに した あいてを こんらんも させる。

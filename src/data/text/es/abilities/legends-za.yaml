@@ -2,9 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 MegaSol:
   name: Megasolar
+  description: Sus propios movimientos se lanzan como si hiciera sol, esté como esté el cielo.
 Dragonize:
   name: Piel Dragontina
+  description: Sus movimientos de tipo Normal pasan a ser de tipo Dragón y tienen x1,2 de potencia.
 PiercingDrill:
   name: Turbotaladro
+  description: Sus movimientos de contacto atraviesan una guardia y la rompen, pero solo 1/4 del golpe llega a su destino.
 SpicySpray:
   name: Salpicante
+  description: Cualquier movimiento que le hiere quema al atacante.
+AuraGuard:
+  description: Los movimientos de contacto le hacen 1/2 del daño.
+Eelevate:
+  description: Flota sobre los movimientos de tipo Tierra y las trampas del suelo, y cada rival que debilita le sube 1 nivel su estadística más alta.
+FireMane:
+  description: Sus movimientos de tipo Fuego tienen x1,5 de potencia.

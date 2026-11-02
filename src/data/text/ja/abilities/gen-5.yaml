@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 VictoryStar:
   name: しょうりのほし
+  description: じぶんを ふくむ チームぜんいんの わざの めいちゅうが 1.1ばいに なる。
 IronBarbs:
   name: てつのトゲ
+  description: ちょくせつこうげきの わざを あてた あいては、 トゲで HPが 1/8 へる。
 Defeatist:
   name: よわき
+  description: HPが 1/2 いかの とき、 こうげきと とくこうが 0.5ばいに なる。
 Illusion:
   name: イリュージョン
+  description: フィールドに でる ときは みかたの すがたに なっていて、 わざを うけると もとに もどる。
 Mummy:
   name: ミイラ
+  description: ちょくせつこうげきの わざを あてた あいては、 とくせいを 1つ うしない、 この とくせいに なる。
 PerishBody:
   name: ほろびのボディ
+  description: ちょくせつこうげきの わざを あてた あいては 3ターンで ひんしに なり、 じぶんも ひんしに なる。 バトルに つき 1かいだけ。
 ZenMode:
   name: ダルマモード
+  description: HPが 1/2 より すくないと ダルマモードの すがたに なり、 それより おおいと もとに もどる。
 Dancer:
   name: おどりこ
+  description: だれかが おどりわざを つかうと、 すぐ あとに おなじ わざを ただで だす。
 FurCoat:
   name: ファーコート
+  description: ぶつりわざの ダメージが はんぶんに なる。
 Turboblaze:
   name: ターボブレイズ
+  description: あいての とくせいに じぶんの わざを じゃまされない。
 Teravolt:
   name: テラボルテージ
+  description: あいての とくせいに じぶんの わざを じゃまされない。

@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Berserk:
   name: Cólera
+  description: Sube 1 nivel el Ataque Esp. cuando un golpe le deja con menos de la mitad de sus PS.
 MagicBounce:
   name: Espejo Mágico
+  description: Un movimiento de estado dirigido a él se devuelve a quien lo usó.
 Plus:
   name: Más
+  description: x1,5 de Ataque Esp. mientras un aliado con vida tenga Más o Menos.
 MotorDrive:
   name: Electromotor
+  description: Los movimientos de tipo Eléctrico no le afectan y le suben 1 nivel la Velocidad. Como compañero, x1,5 de probabilidad de captura de los Pokémon salvajes de tipo Eléctrico.
 FlowerGift:
   name: Don Floral
+  description: x1,5 de Ataque y Defensa Esp. para todo su equipo con sol.
 MagmaArmor:
   name: Escudo Magma
+  description: No puede ser congelado. Un huevo encontrado mientras es el compañero eclosiona con la mitad de pasos.
 SuctionCups:
   name: Ventosas
+  description: Nada puede sacarlo a la fuerza del campo.
 Moody:
   name: Veleta
+  description: Cada vez que actúa, una estadística sube 2 niveles y otra baja 1.
 Stamina:
   name: Firmeza
+  description: Sube 1 nivel la Defensa cada vez que recibe un golpe.
 SuperLuck:
   name: Afortunado
+  description: Sube 1 nivel la probabilidad de golpe crítico de sus movimientos. Como compañero, un lanzamiento es crítico el doble de veces.
 Contrary:
   name: Respondón
+  description: Todos los cambios de estadísticas que recibe se invierten.
 StormDrain:
   name: Colector
+  description: Los movimientos de tipo Agua no le afectan y le suben 1 nivel el Ataque Esp. Como compañero, x1,5 de probabilidad de captura de los Pokémon salvajes de tipo Agua.
 MirrorArmor:
   name: Coraza Reflejo
+  description: Una bajada de estadísticas dirigida a él se aplica a quien la dirigió.
 Prankster:
   name: Bromista
+  description: Sus movimientos de estado tienen 1 más de prioridad, así que se preparan antes.
 SandStream:
   name: Chorro Arena
+  description: Al entrar al campo, levanta una tormenta de arena.
 SapSipper:
   name: Herbívoro
+  description: Los movimientos de tipo Planta no le afectan y le suben 1 nivel el Ataque. Como compañero, x1,5 de probabilidad de captura de los Pokémon salvajes de tipo Planta.
 HoneyGather:
   name: Recogemiel
+  description: La primera vez que actúa encuentra una Miel, si no lleva objeto. Como compañero, encuentra una baya cada 384 pasos.
 HugePower:
   name: Potencia
+  description: Duplica su Ataque.
 SpeedBoost:
   name: Impulso
+  description: Sube 1 nivel la Velocidad cada vez que actúa.
 Pickpocket:
   name: Hurto
+  description: Le quita el objeto a quien lo toque, si no lleva ninguno. Como compañero, un Pokémon salvaje que huye deja caer lo que llevaba.
 ShadowTag:
   name: Sombra Trampa
+  description: Nadie del otro lado puede huir, salvo si es de tipo Fantasma. Como compañero, un Pokémon salvaje tiene la mitad de probabilidad de huir.
 Telepathy:
   name: Telepatía
+  description: Prevé el ataque de un aliado y no recibe daño de él.
 LightMetal:
   name: Metal Liviano
+  description: Pesa la mitad de lo que parece.
 QueenlyMajesty:
   name: Regia Presencia
+  description: Nadie de su bando puede ser golpeado por un movimiento rival cuya prioridad acelera su preparación.
 Comatose:
   name: Letargo Perenne
+  description: 'Siempre dormido y aun así actúa: ningún problema de estado le afecta, y lo que busca a un Pokémon dormido lo encuentra a él.'

@@ -2,63 +2,94 @@
 # Every other field is written by hand, and a rerun keeps it.
 PsychicSurge:
   name: サイコメイカー
+  description: フィールドに でると、 サイコフィールドに する。
 GrassySurge:
   name: グラスメイカー
+  description: フィールドに でると、 グラスフィールドに する。
 FullMetalBody:
   name: メタルプロテクト
+  description: ほかの ポケモンに のうりょくを さげられない。 かたやぶりでも おなじ。
 ShadowShield:
   name: ファントムガード
+  description: HPが まんたんの とき、 うける ダメージが はんぶんに なる。 かたやぶりでも おなじ。
 PrismArmor:
   name: プリズムアーマー
+  description: こうかばつぐんの こうげきの ダメージが 1/4 へる。 かたやぶりでも おなじ。
 SoulHeart:
   name: ソウルハート
+  description: フィールドの ほかの ポケモンが ひんしに なる たびに、 とくこうが 1だん あがる。
 BeastBoost:
   name: ビーストブースト
+  description: あいてを たおすと、 いちばん たかい のうりょくが 1だん あがる。
 Neuroforce:
   name: ブレインフォース
+  description: こうかばつぐんの わざの いりょくが 1.25ばいに なる。
 LongReach:
   name: えんかく
+  description: どの わざも ちょくせつこうげきに ならないので、 さわられた ときの とくせいは はたらかない。
 LiquidVoice:
   name: うるおいボイス
+  description: おとの わざが みずタイプに なる。
 Stakeout:
   name: はりこみ
+  description: フィールドに でてから まだ こうどうしていない あいてには、 いりょくが 2ばいに なる。
 BattleBond:
   name: きずなへんげ
+  description: はじめて わざで あいてを たおすと、 その バトルの あいだ サトシゲッコウガに なり、 みずしゅりけんは いりょく 20で かならず 3かい あたる。
 Schooling:
   name: ぎょぐん
+  description: レベル 20 いじょうで HPが 1/4 より おおい あいだは むれた すがたで たたかい、 のうりょくが ずっと たかくなる。 それ いかでは ひとりで たたかう。
 WaterBubble:
   name: すいほう
+  description: ほのおタイプの わざの ダメージが 1/2に なり、 やけどに ならず、 みずタイプの わざの いりょくが 2ばいに なる。
 Corrosion:
   name: ふしょく
+  description: どくタイプや はがねタイプも どくに できる。
 Fluffy:
   name: もふもふ
+  description: ちょくせつこうげきの わざの ダメージが 1/2に なるが、 ほのおタイプの わざの ダメージは 2ばいに なる。
 Receiver:
   name: レシーバー
+  description: みかたが ひんしに なると、 この とくせいの かわりに その みかたの とくせいを うけつぐ。
 WimpOut:
   name: にげごし
+  description: ダメージで HPが 1/2 いかに なると フィールドから ひっこみ、 いちばん つよい みかたが でてくる。
 EmergencyExit:
   name: ききかいひ
+  description: ダメージで HPが 1/2 いかに なると フィールドから ひっこみ、 いちばん つよい みかたが でてくる。
 WaterCompaction:
   name: みずがため
+  description: みずタイプの わざを うける たびに、 ぼうぎょが 2だん あがる。
 SandSpit:
   name: すなはき
+  description: ダメージを あたえる わざを うける たびに、 すなあらしを つかう。
 InnardsOut:
   name: とびだすなかみ
+  description: わざで たおした あいては、 じぶんの のこりの HPと おなじ だけ ダメージを うける。
 ShieldsDown:
   name: リミットシールド
+  description: HPが 1/2 より おおい あいだは からに こもって たたかい、 どんな じょうたいいじょうも きかない。 HPが 1/2 いかに なると、 すばやいが もろい コアの すがたで たたかう。
 SurgeSurfer:
   name: サーフテール
+  description: エレキフィールドの うえでは、 すばやさが 2ばいに なる。
 TanglingHair:
   name: カーリーヘアー
+  description: ちょくせつこうげきの わざを あてた あいては、 すばやさが 1だん さがる。
 Ripen:
   name: じゅくせい
+  description: たべた きのみの かいふくりょうが 2ばいに なり、 のうりょくが あがる だんすうも 2ばいに なる。
 Galvanize:
   name: エレキスキン
+  description: ノーマルタイプの わざが でんきタイプに なり、 いりょくが 1.2ばいに なる。
 PowerOfAlchemy:
   name: かがくのちから
+  description: みかたが ひんしに なると、 この とくせいの かわりに その みかたの とくせいを うけつぐ。
 Disguise:
   name: ばけのかわ
+  description: はじめて うけた わざは ダメージを うけず、 ばけのかわが はがれて HPが 1/8 へる。
 RksSystem:
   name: ＡＲシステム
+  description: もっている メモリの タイプに なる。
 Dazzling:
   name: ビビッドボディ
+  description: みかたぜんいんは、 じゅんびが はやく おわる ゆうせんどの あいての わざを うけない。

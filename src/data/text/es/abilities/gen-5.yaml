@@ -2,23 +2,34 @@
 # Every other field is written by hand, and a rerun keeps it.
 VictoryStar:
   name: Tinovictoria
+  description: Todo su equipo, él incluido, lanza movimientos con x1,1 de Precisión.
 IronBarbs:
   name: Punta Acero
+  description: Quien lo golpea con un movimiento de contacto pierde 1/8 de sus PS por las púas.
 Defeatist:
   name: Flaqueza
+  description: Con 1/2 de PS o menos, su Ataque y su Ataque Esp. caen a x0,5.
 Illusion:
   name: Ilusión
+  description: Sale al campo con el aspecto de un aliado, hasta que le golpea un movimiento.
 Mummy:
   name: Momia
+  description: Quien lo golpea con un movimiento de contacto pierde una de sus habilidades y adquiere esta.
 PerishBody:
   name: Cuerpo Mortal
+  description: Quien lo golpea con un movimiento de contacto se debilita en 3 turnos, y él también. Una vez por combate.
 ZenMode:
   name: Modo Daruma
+  description: Con menos de 1/2 de PS adopta su forma Daruma, y la deja con más de eso.
 Dancer:
   name: Pareja de Baile
+  description: Cuando alguien usa un movimiento de baile, él lanza el mismo justo después, gratis.
 FurCoat:
   name: Pelaje Recio
+  description: Los movimientos físicos le hacen la mitad de daño.
 Turboblaze:
   name: Turbollama
+  description: Las habilidades del objetivo no pueden impedir sus movimientos.
 Teravolt:
   name: Terravoltaje
+  description: Las habilidades del objetivo no pueden impedir sus movimientos.

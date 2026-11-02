@@ -64,7 +64,9 @@ function listFiled(folder: string, skip?: string): string[] {
 }
 
 /** The signature abilities of the translated regions, one field of each in the active locale */
-function describeSignatures(read: (data: { name: string; description: string }) => string) {
+function describeSignatures(
+  read: (data: { name: string; description: string }) => string,
+): Map<string, string> {
   const found = new Map<string, string>();
 
   const ids = new Map<string, number>(Object.entries(ABILITY_IDS));
@@ -74,7 +76,10 @@ function describeSignatures(read: (data: { name: string; description: string }) 
       readFileSync(join(ABILITY_TEXT, 'signature', `${region}.yaml`), 'utf8'),
     );
 
-    for (const name of Object.keys(text as object)) {
+    if (typeof text !== 'object' || text === null) {
+      throw new Error(`${region} has no signature abilities written`);
+    }
+    for (const name of Object.keys(text)) {
       const id = ids.get(name);
 
       if (id === undefined) {

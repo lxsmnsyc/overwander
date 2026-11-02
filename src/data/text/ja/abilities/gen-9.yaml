@@ -107,7 +107,7 @@ TeraShell:
   description: HPが まんたんの とき、 ダメージを あたえる わざは すべて こうかが いまひとつに なる。
 TeraformZero:
   name: ゼロフォーミング
-  description: フィールドに でると、 フィールドの てんきと フィールドが すべて なくなる。 ただし ゲンシの そらは のこる。
+  description: フィールドに でると、 フィールドの てんきと フィールドが すべて なくなる。 ただし おおあめ、 おおひでり、 らんきりゅうは のこる。
 PoisonPuppeteer:
   name: どくくぐつ
   description: どくに した あいてを こんらんも させる。

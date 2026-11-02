@@ -13,7 +13,7 @@ SpicySpray:
   name: Salpicante
   description: Cualquier movimiento que le hiere quema al atacante.
 AuraGuard:
-  description: Los movimientos de contacto le hacen 1/2 del daño.
+  description: Los movimientos de contacto le hacen la mitad de daño.
 Eelevate:
   description: Flota sobre los movimientos de tipo Tierra y las trampas del suelo, y cada rival que debilita le sube 1 nivel su estadística más alta.
 FireMane:

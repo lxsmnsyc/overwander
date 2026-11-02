@@ -20,7 +20,7 @@ PerishBody:
   description: Quien lo golpea con un movimiento de contacto se debilita en 3 turnos, y él también. Una vez por combate.
 ZenMode:
   name: Modo Daruma
-  description: Con menos de 1/2 de PS adopta su forma Daruma, y la deja con más de eso.
+  description: Con menos de 1/2 de PS adopta el Modo Daruma, y vuelve a su forma normal con más de eso.
 Dancer:
   name: Pareja de Baile
   description: Cuando alguien usa un movimiento de baile, él lanza el mismo justo después, gratis.

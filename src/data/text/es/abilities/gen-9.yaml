@@ -107,7 +107,7 @@ TeraShell:
   description: Con los PS al máximo, todo movimiento con daño que le golpea resulta poco eficaz.
 TeraformZero:
   name: Teraformación 0
-  description: Al entrar al campo, se despejan todos los tiempos y campos, aunque un cielo primigenio se mantiene.
+  description: Al entrar al campo, se despejan todos los tiempos y campos, aunque la lluvia torrencial, el sol abrasador y los vientos fuertes se mantienen.
 PoisonPuppeteer:
   name: Títere Tóxico
   description: Lo que envenena también queda confuso.

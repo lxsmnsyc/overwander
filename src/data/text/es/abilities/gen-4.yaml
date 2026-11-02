@@ -23,7 +23,7 @@ CheekPouch:
   description: Al comer una baya, también recupera 1/3 de sus PS, sea cual sea el efecto de la baya.
 AromaVeil:
   name: Velo Aroma
-  description: Ni él ni sus aliados pueden recibir Mofa, Tormento, Otra Vez, Encanto ni Anticura.
+  description: Ni él ni sus aliados pueden recibir Mofa, Tormento, Otra Vez, Atracción ni Anticura.
 Heatproof:
   name: Ignífugo
   description: Los movimientos de tipo Fuego le hacen la mitad de daño, y las quemaduras le quitan la mitad.

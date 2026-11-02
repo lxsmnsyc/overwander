@@ -1,0 +1,9 @@
+# Log: i18n-desc-signature-early
+
+- Read the loader: `readAbilities` in `src/data/abilities/yaml.ts` passes every `text/*/abilities/**/*.yaml` overlay through `localize(data, name, translated, ['name', 'description'])`, so a hand-written `name` on a signature ability is read like any other. No code change was needed.
+- `pnpm official-names` keeps both the entries it did not match and their `name`, but rewrites the two-line header of the file (`Names and categories are generated ...`). The files carry that header so a rerun leaves no diff. Its wording is slightly off for these files (the names are hand-written), but it belongs to the generator, which is outside the owned paths.
+- Method: English lines dumped with the official ja and es names of every move, ability and item they mention; one table per region (`key | ja name | ja line | es name | es line`); a merge script checked missing, extra and duplicate keys, numbers, full stops, kanji, em-dashes, double spaces, a Spanish line ending in `Esp.`, official names for named moves, items and abilities, and collisions of each coined name with every official ability, move, item and species name in the locale and with every other coined name.
+- Collisions found and renamed: Estrujón (Wring Out), Impulso (Speed Boost), Empujón (Arm Thrust), きれあじ (Sharpness), いしあたま (Rock Head), ちどりあし (Tangled Feet), ありじごく (Arena Trap). Gallop was avoided up front because ギャロップ is Rapidash, and Relay because Relevo is Baton Pass.
+- English fix: Sapmark said "Chikorita drinks the same", which is wrong for Bayleef and Meganium and unclear on who drinks (the holder heals). Now "it heals the same amount". No test pins the wording.
+- Spanish lines that would have ended on `Esp.` were reordered so the stop is not doubled.
+- Names that echo a move by containing its word were kept (Aleteo, Mofa in Mirada Burlona, Bostezo Contagioso, ふういん in the Seal names); the skill only forbids the same name.

@@ -2,75 +2,112 @@
 # Every other field is written by hand, and a rerun keeps it.
 LingeringAroma:
   name: Olor Persistente
+  description: Quien lo golpea con un movimiento de contacto cambia una de sus habilidades por esta.
 WellBakedBody:
   name: Cuerpo Horneado
+  description: Los movimientos de tipo Fuego no le hacen nada y le suben 2 niveles la Defensa.
 SeedSower:
   name: Disemillar
+  description: Cuando le golpea un movimiento con daño, crea Campo de Hierba.
 PurifyingSalt:
   name: Sal Purificadora
+  description: No puede ser envenenado, quemado, paralizado, congelado, dormido ni dejado somnoliento, y los movimientos de tipo Fantasma le hacen la mitad de daño.
 Electromorphosis:
   name: Dinamo
+  description: Cuando le golpea un movimiento con daño, su siguiente movimiento de tipo Eléctrico tiene x2 de potencia.
 WindPower:
   name: Energía Eólica
+  description: Cuando le golpea un movimiento de viento, su siguiente movimiento de tipo Eléctrico tiene x2 de potencia.
 GuardDog:
   name: Perro Guardián
+  description: Intimidación le sube el Ataque en lugar de bajárselo, y Rugido y Remolino no pueden echarlo del campo.
 MyceliumMight:
   name: Poder Fúngico
+  description: Sus movimientos de estado se preparan más despacio, pero atraviesan las habilidades del objetivo.
 AngerShell:
   name: Coraza Ira
+  description: Cuando un golpe lo deja con 1/2 de PS o menos, sube 1 nivel el Ataque, el Ataque Esp. y la Velocidad, pero baja 1 nivel la Defensa y la Defensa Esp.
 Opportunist:
   name: Oportunista
+  description: Cuando un rival sube una estadística, sube la misma estadística tantos niveles como el rival.
 RockyPayload:
   name: Transportarrocas
+  description: Sus movimientos de tipo Roca tienen x1,5 de potencia.
 ZeroToHero:
   name: Cambio Heroico
+  description: Un Palafin que abandona el campo vuelve en su Forma Heroica y ya no la pierde.
 ToxicDebris:
   name: Capa Tóxica
+  description: Cuando le golpea un movimiento físico, se esparce una capa de Púas Tóxicas en el bando del atacante.
 Costar:
   name: Unísono
+  description: Al entrar al campo, copia los niveles de estadísticas de un aliado.
 Commander:
   name: Comandar
+  description: Junto a un Dondozo se mete en su boca, donde deja de actuar y nada lo alcanza, y el Dondozo sube 2 niveles todas sus estadísticas.
 Protosynthesis:
   name: Paleosíntesis
+  description: Con sol, o cuando gasta una Energía Potenciadora equipada, su estadística más alta es x1,3, o x1,5 si es la Velocidad.
 QuarkDrive:
   name: Carga Cuark
+  description: En Campo Eléctrico, o cuando gasta una Energía Potenciadora equipada, su estadística más alta es x1,3, o x1,5 si es la Velocidad.
 ThermalExchange:
   name: Termoconversión
+  description: Los movimientos de tipo Fuego que le golpean le suben 1 nivel el Ataque, y no puede ser quemado.
 GoodAsGold:
   name: Cuerpo Áureo
+  description: Los movimientos de estado de los demás no le hacen nada.
 TabletsOfRuin:
   name: Tablilla Debacle
+  description: Todos los demás Pokémon del campo tienen x0,75 de Ataque.
 SwordOfRuin:
   name: Espada Debacle
+  description: Todos los demás Pokémon del campo tienen x0,75 de Defensa.
 VesselOfRuin:
   name: Caldero Debacle
+  description: Todos los demás Pokémon del campo tienen x0,75 de Ataque Esp.
 BeadsOfRuin:
   name: Abalorio Debacle
+  description: Todos los demás Pokémon del campo tienen x0,75 de Defensa Esp.
 OrichalcumPulse:
   name: Latido Oricalco
+  description: Al entrar al campo, intensifica la luz solar, y con sol tiene x1,33 de Ataque.
 HadronEngine:
   name: Motor Hadrónico
+  description: Al entrar al campo, crea Campo Eléctrico, y en Campo Eléctrico tiene x1,33 de Ataque Esp.
 CudChew:
   name: Rumia
+  description: Una baya que come se vuelve a comer la siguiente vez que actúa.
 ArmorTail:
   name: Cola Armadura
+  description: Los movimientos que se adelantan en la cola fallan contra él y sus aliados.
 MindsEye:
   name: Ojo Mental
+  description: No pueden bajarle la Precisión, ignora la Evasión y sus movimientos de tipo Normal y Lucha golpean a los de tipo Fantasma.
 SupremeOverlord:
   name: General Supremo
+  description: Sus movimientos tienen x1,1 de potencia con un aliado debilitado, y 0,1 más por cada uno después, hasta x1,5.
 SupersweetSyrup:
   name: Néctar Dulce
+  description: La primera vez que entra a un combate, los rivales pierden 1 nivel de Evasión.
 Hospitality:
   name: Hospitalidad
+  description: Al entrar al campo, el aliado más herido recupera 1/4 de sus PS.
 ToxicChain:
   name: Cadena Tóxica
+  description: Sus movimientos con daño tienen un 30 % de probabilidad de envenenar gravemente.
 EmbodyAspect:
   name: Evocarrecuerdos
+  description: 'La primera vez que entra a un combate, su máscara sube una estadística 1 nivel: la Velocidad con la Máscara Turquesa, la Defensa Esp. con la Máscara Fuente, el Ataque con la Máscara Horno y la Defensa con la Máscara Cimiento.'
 TeraShift:
   name: Teracambio
+  description: Al entrar al campo, adopta su Forma Teracristal.
 TeraShell:
   name: Teracaparazón
+  description: Con los PS al máximo, todo movimiento con daño que le golpea resulta poco eficaz.
 TeraformZero:
   name: Teraformación 0
+  description: Al entrar al campo, se despejan todos los tiempos y campos, aunque la lluvia torrencial, el sol abrasador y los vientos fuertes se mantienen.
 PoisonPuppeteer:
   name: Títere Tóxico
+  description: Lo que envenena también queda confuso.

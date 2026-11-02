@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Berserk:
   name: ぎゃくじょう
+  description: HPが はんぶんより へる ダメージを うけると、 とくこうが 1だん あがる。
 MagicBounce:
   name: マジックミラー
+  description: じぶんを ねらった へんかわざを、 つかった あいてに はねかえす。
 Plus:
   name: プラス
+  description: いきている みかたが プラスか マイナスの とき、 とくこうが 1.5ばいに なる。
 MotorDrive:
   name: でんきエンジン
+  description: でんきタイプの わざを うけず、 かわりに すばやさが 1だん あがる。 あいぼうに している あいだ、 やせいの でんきタイプの つかまえやすさが 1.5ばいに なる。
 FlowerGift:
   name: フラワーギフト
+  description: はれの とき、 じぶんの チームぜんいんの こうげきと とくぼうが 1.5ばいに なる。
 MagmaArmor:
   name: マグマのよろい
+  description: こおりに ならない。 あいぼうに している あいだ、 みつけた タマゴは はんぶんの ほすうで かえる。
 SuctionCups:
   name: きゅうばん
+  description: フィールドから ひきずりだされない。
 Moody:
   name: ムラっけ
+  description: こうどうする たびに、 のうりょくが 1つ 2だん あがり、 べつの 1つが 1だん さがる。
 Stamina:
   name: じきゅうりょく
+  description: こうげきを うける たびに、 ぼうぎょが 1だん あがる。
 SuperLuck:
   name: きょううん
+  description: わざが きゅうしょに あたる かくりつが 1だん あがる。 あいぼうに している あいだ、 なげが きゅうしょに なる かくりつが 2ばいに なる。
 Contrary:
   name: あまのじゃく
+  description: うける のうりょくの へんかが ぎゃくに なる。
 StormDrain:
   name: よびみず
+  description: みずタイプの わざを うけず、 かわりに とくこうが 1だん あがる。 あいぼうに している あいだ、 やせいの みずタイプの つかまえやすさが 1.5ばいに なる。
 MirrorArmor:
   name: ミラーアーマー
+  description: じぶんに むけられた のうりょく ダウンは、 むけた あいてに かえる。
 Prankster:
   name: いたずらごころ
+  description: へんかわざの ゆうせんどが 1 あがり、 じゅんびが はやく おわる。
 SandStream:
   name: すなおこし
+  description: フィールドに でると、 すなあらしを おこす。
 SapSipper:
   name: そうしょく
+  description: くさタイプの わざを うけず、 かわりに こうげきが 1だん あがる。 あいぼうに している あいだ、 やせいの くさタイプの つかまえやすさが 1.5ばいに なる。
 HoneyGather:
   name: みつあつめ
+  description: はじめて こうどうした ときに、 もちものが なければ あまいミツを みつけてくる。 あいぼうに している あいだ、 384ほ あるくごとに きのみを 1つ みつける。
 HugePower:
   name: ちからもち
+  description: こうげきが 2ばいに なる。
 SpeedBoost:
   name: かそく
+  description: こうどうする たびに、 すばやさが 1だん あがる。
 Pickpocket:
   name: わるいてぐせ
+  description: ふれてきた あいてから、 もちものが なければ もちものを うばう。 あいぼうに している あいだ、 にげた やせいの ポケモンは もっていた ものを おとしていく。
 ShadowTag:
   name: かげふみ
+  description: あいて ぜんいんは にげられない。 ゴーストタイプは のぞく。 あいぼうに している あいだ、 やせいの ポケモンが にげる かくりつが はんぶんに なる。
 Telepathy:
   name: テレパシー
+  description: みかたの こうげきが くるのを さっちして、 ダメージを うけない。
 LightMetal:
   name: ライトメタル
+  description: みかけの はんぶんの おもさに なる。
 QueenlyMajesty:
   name: じょおうのいげん
+  description: みかたぜんいんは、 じゅんびが はやく おわる ゆうせんどの あいての わざを うけない。
 Comatose:
   name: ぜったいねむり
+  description: いつも ねむっていて こうどうできる。 じょうたいいじょうに ならず、 ねむっている あいてを ねらう わざが あたる。

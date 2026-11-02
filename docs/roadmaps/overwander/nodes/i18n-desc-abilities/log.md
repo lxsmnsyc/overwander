@@ -1,0 +1,10 @@
+# Log: i18n-desc-abilities
+
+- Dumped the English lines with the official ja and es names to the scratchpad, wrote a key-to-ja/es table per file and merged with a script that checks keys, full stops, kanji, dashes, double spaces, numbers and the official names of every ability, move or item a line names.
+- Gluttony's English said treats lift a throw "1.5x as far"; the engine raises the cap on the treat bonus (`CheckTreats`). Fixed in a separate `fix:` commit.
+- `special.yaml` and three `legends-za.yaml` abilities have no official name, so their ja and es entries hold a description only.
+- The test now lists the abilities from the English text (all but `signature/`), minimum 300 (318 present).
+- Ran `pnpm official-names` after the merge: no diff, descriptions kept.
+- Review (one fresh agent, every line): five must-fix and six nits, all applied. Aroma Veil's English now says "infatuated" (the engine blocks infatuation; "charmed" read as the move Charm in both translations), so ja says メロメロ and es Atracción. Synchronize (ja), Zen Mode (es, Modo Daruma), Wimp Out and Emergency Exit (ja, より すくなく for "below"), Shields Down (ja, おもな), Ball Fetch (ja), Tinted Lens and Lightning Rod (es), Parental Bond (ja, いりょく), Aura Guard (es). Teraform Zero now names the three primal weathers in both languages and in the term list, in place of the coined "primal sky".
+- Screenshots in ja and es at 1280x720: the catch sheet's ability tooltips for Minior, Wishiwashi, Darmanitan and Zygarde (16 abilities per locale, including the longest lines), and the dex entry's ability tooltips (six species in es, Darmanitan and Greninja in ja; the ja run stalled on later entries in the test script, and the tooltip is the same component as the catch sheet's). No clipping: long lines wrap inside the card.
+- Seen while shooting, outside this node: form names in the dex form picker are English (i18n-form-names), signature abilities are English (the two signature nodes), and biome and time-of-day badges under "where it lives" are English.

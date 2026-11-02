@@ -2,63 +2,94 @@
 # Every other field is written by hand, and a rerun keeps it.
 PsychicSurge:
   name: Psicogénesis
+  description: Al entrar al campo, crea Campo Psíquico.
 GrassySurge:
   name: Herbogénesis
+  description: Al entrar al campo, crea Campo de Hierba.
 FullMetalBody:
   name: Guardia Metálica
+  description: Los demás no pueden bajarle ninguna estadística, ni siquiera con Rompemoldes.
 ShadowShield:
   name: Guardia Espectro
+  description: Recibe la mitad de daño de cualquier golpe cuando tiene los PS al máximo, incluso con Rompemoldes.
 PrismArmor:
   name: Armadura Prisma
+  description: Los golpes supereficaces le hacen 1/4 menos de daño, incluso con Rompemoldes.
 SoulHeart:
   name: Coránima
+  description: Sube 1 nivel el Ataque Esp. cuando se debilita cualquier otro Pokémon del campo.
 BeastBoost:
   name: Ultraimpulso
+  description: Sube 1 nivel su estadística más alta cuando debilita a un rival.
 Neuroforce:
   name: Fuerza Cerebral
+  description: Sus movimientos supereficaces tienen x1,25 de potencia.
 LongReach:
   name: Remoto
+  description: Ninguno de sus movimientos hace contacto, así que nada que reaccione a un toque reacciona con él.
 LiquidVoice:
   name: Voz Fluida
+  description: Sus movimientos de sonido pasan a ser de tipo Agua.
 Stakeout:
   name: Vigilante
+  description: Sus movimientos tienen x2 de potencia contra un rival que no ha actuado desde que entró al campo.
 BattleBond:
   name: Fuerte Afecto
+  description: La primera vez que su movimiento debilita a un rival, se convierte en Greninja Ash durante el resto del combate, y su Shuriken de Agua siempre golpea 3 veces con 20 de potencia.
 Schooling:
   name: Banco
+  description: A partir del nivel 20 combate en banco mientras tiene más de 1/4 de PS, con estadísticas mucho más altas, y en solitario por debajo de eso.
 WaterBubble:
   name: Pompa
+  description: Los movimientos de tipo Fuego le hacen la mitad de daño, no puede ser quemado y sus movimientos de tipo Agua tienen x2 de potencia.
 Corrosion:
   name: Corrosión
+  description: Puede envenenar a los de tipo Veneno y Acero.
 Fluffy:
   name: Peluche
+  description: Los movimientos de contacto le hacen la mitad de daño, pero los de tipo Fuego le hacen el doble.
 Receiver:
   name: Receptor
+  description: Cuando un aliado se debilita, adquiere la habilidad de ese aliado en lugar de esta.
 WimpOut:
   name: Huida
+  description: Cuando un golpe le deja con menos de 1/2 de PS, abandona el campo y entra su aliado más fuerte.
 EmergencyExit:
   name: Retirada
+  description: Cuando un golpe le deja con menos de 1/2 de PS, abandona el campo y entra su aliado más fuerte.
 WaterCompaction:
   name: Hidrorrefuerzo
+  description: Sube 2 niveles la Defensa cada vez que le golpea un movimiento de tipo Agua.
 SandSpit:
   name: Expulsarena
+  description: Lanza Tormenta de Arena cada vez que le golpea un movimiento con daño.
 InnardsOut:
   name: Revés
+  description: Quien lo debilita con un movimiento recibe tanto daño como PS le quedaban a él.
 ShieldsDown:
   name: Escudo Limitado
+  description: Con más de 1/2 de PS combate en su meteorito, que ningún problema de estado grave atraviesa. Con 1/2 de PS o menos combate con su núcleo, más rápido pero más frágil.
 SurgeSurfer:
   name: Cola Surf
+  description: Su Velocidad es x2 en Campo Eléctrico.
 TanglingHair:
   name: Rizos Rebeldes
+  description: Quien lo golpea con un movimiento de contacto pierde 1 nivel de Velocidad.
 Ripen:
   name: Maduración
+  description: Las bayas que come lo curan el doble y le suben el doble de niveles las estadísticas.
 Galvanize:
   name: Piel Eléctrica
+  description: Sus movimientos de tipo Normal pasan a ser de tipo Eléctrico y tienen x1,2 de potencia.
 PowerOfAlchemy:
   name: Reacción Química
+  description: Cuando un aliado se debilita, adquiere la habilidad de ese aliado en lugar de esta.
 Disguise:
   name: Disfraz
+  description: El primer movimiento que le golpea no le hace daño y rompe su disfraz, lo que le cuesta 1/8 de sus PS.
 RksSystem:
   name: Sistema Alfa
+  description: Adopta el tipo del Disco que lleva.
 Dazzling:
   name: Cuerpo Vívido
+  description: Nadie de su bando puede ser golpeado por un movimiento rival cuya prioridad acelera su preparación.

@@ -2,35 +2,52 @@
 # Every other field is written by hand, and a rerun keeps it.
 WindRider:
   name: Surcavientos
+  description: Los movimientos que viajan en el viento no le afectan y le suben 1 nivel el Ataque.
 Truant:
   name: Ausente
+  description: Holgazanea durante 2 segundos tras cada movimiento que termina.
 WonderGuard:
   name: Superguarda
+  description: Solo le afecta un movimiento al que es débil. Los movimientos de estado, el veneno y el tiempo siguen afectándole.
 Normalize:
   name: Normalidad
+  description: Todo lo que usa sale de tipo Normal, diga lo que diga el movimiento.
 PurePower:
   name: Energía Pura
+  description: x2 de Ataque.
 Minus:
   name: Menos
+  description: x1,5 de Ataque Esp. mientras un aliado con vida tenga Más o Menos.
 Stall:
   name: Rezagado
+  description: Todo lo que lanza se prepara más despacio de lo normal.
 ToxicBoost:
   name: Ímpetu Tóxico
+  description: x1,5 de Ataque mientras está envenenado.
 Battery:
   name: Batería
+  description: Sube a x1,3 de potencia los movimientos especiales de sus aliados.
 WhiteSmoke:
   name: Humo Blanco
+  description: Los demás no pueden bajarle ninguna estadística.
 ColorChange:
   name: Cambio Color
+  description: Adopta el tipo del movimiento que acaba de golpearlo.
 HeavyMetal:
   name: Metal Pesado
+  description: Pesa el doble de lo que parece.
 PoisonHeal:
   name: Antídoto
+  description: Cada vez que el veneno le haría daño, le restaura 1/8 de sus PS.
 Forecast:
   name: Predicción
+  description: Un Castform adopta la forma y el tipo del cielo bajo el que está.
 Steelworker:
   name: Acero Templado
+  description: Sus movimientos de tipo Acero tienen x1,5 de potencia, sean cuales sean sus tipos.
 Simple:
   name: Simple
+  description: Todo cambio de estadística que recibe cuenta el doble, sea propio o de otro.
 AirLock:
   name: Bucle Aire
+  description: Mientras está en el campo, el tiempo no afecta a nadie.

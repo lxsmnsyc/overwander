@@ -243,7 +243,7 @@ Steadfast:
 # Bellsprout
 Gluttony:
   name: Gluttony
-  description: Eats its pinch items at 2x the usual HP threshold. As a buddy, treats can lift a throw 1.5x as far as usual.
+  description: Eats its pinch items at 2x the usual HP threshold. As a buddy, the cap on what treats add to a throw is 1.5x as high.
 
 # Tentacool
 ClearBody:

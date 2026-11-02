@@ -2,249 +2,373 @@
 # Every other field is written by hand, and a rerun keeps it.
 Overgrow:
   name: しんりょく
+  description: HPが 1/3 いかの あいだ、 くさタイプの わざの いりょくが 1.5ばいに なる。
 Chlorophyll:
   name: ようりょくそ
+  description: はれの とき、 すばやさが 2ばいに なる。
 ThickFat:
   name: あついしぼう
+  description: ほのおと こおりタイプの わざの ダメージが 1/2に なる。
 Blaze:
   name: もうか
+  description: HPが 1/3 いかの あいだ、 ほのおタイプの わざの いりょくが 1.5ばいに なる。
 SolarPower:
   name: サンパワー
+  description: はれの とき、 とくこうが 2ばいに なるが、 こうどうする たびに HPが 1/8 へる。
 ToughClaws:
   name: かたいツメ
+  description: ちょくせつこうげきの わざの いりょくが 1.3ばいに なる。
 Drought:
   name: ひでり
+  description: フィールドに でると、 はれに する。
 Torrent:
   name: げきりゅう
+  description: HPが 1/3 いかの あいだ、 みずタイプの わざの いりょくが 1.5ばいに なる。
 RainDish:
   name: あめうけざら
+  description: あめの とき、 こうどうする たびに HPが 1/16 かいふくする。
 ShieldDust:
   name: りんぷん
+  description: うけた わざの ついかこうかは ぜったいに おきない。
 RunAway:
   name: にげあし
+  description: やせいの ポケモンとの バトルから かならず にげられる。
 ShedSkin:
   name: だっぴ
+  description: こうどうする たびに 30%の かくりつで じょうたいいじょうが なおる。
 CompoundEyes:
   name: ふくがん
+  description: めいちゅうが 1.3ばいに なる。 あいぼうに している あいだ、 やせいの ポケモンが めずらしい もちものを もっている かくりつが 2.5ばいに なる。
 TintedLens:
   name: いろめがね
+  description: こうかが いまひとつの わざの いりょくが 2ばいに なる。
 Swarm:
   name: むしのしらせ
+  description: HPが 1/3 いかの あいだ、 むしタイプの わざの いりょくが 1.5ばいに なる。
 Sniper:
   name: スナイパー
+  description: きゅうしょに あたった ときの ダメージが 1.5ばいに なる。 あいぼうに している あいだ、 きゅうしょに なった なげは ゆれの はんていを 2かい うける。
 KeenEye:
   name: するどいめ
+  description: ほかの ポケモンに めいちゅうを さげられない。 じぶんの わざは あいての かいひの あがりを むしする。 あいぼうに している あいだ、 やせいの ポケモンの レベルの さいていちが 3 あがる。
 TangledFeet:
   name: ちどりあし
+  description: こんらんしている とき、 かいひの あがりと さがりが 2ばいに なる。
 BigPecks:
   name: はとむね
+  description: ほかの ポケモンに ぼうぎょを さげられない。
 GaleWings:
   name: はやてのつばさ
+  description: HPが まんたんの とき、 ひこうタイプの わざの じゅんびが 1だん はやく おわる。
 Guts:
   name: こんじょう
+  description: じょうたいいじょうの とき、 こうげきが 1.5ばいに なり、 やけどでも ダメージが はんぶんに ならない。
 Hustle:
   name: はりきり
+  description: こうげきが 1.5ばいに なるが、 ぶつりわざの めいちゅうが 20% さがる。 あいぼうに している あいだ、 やせいの ポケモンの レベルの さいこうちが 3 あがる。
 Intimidate:
   name: いかく
+  description: フィールドに でると、 あいて ぜんいんの こうげきを 1だん さげる。 あいぼうに している あいだ、 やせいの ポケモンの レベルの さいていちが 3 あがる。
 Unnerve:
   name: きんちょうかん
+  description: いる あいだ、 あいては きのみを たべられない。
 Static:
   name: せいでんき
+  description: ふれてきた あいてを 30%の かくりつで まひに する。
 LightningRod:
   name: ひらいしん
+  description: でんきタイプの わざを ひきよせ、 ダメージを うけず、 とくこうが 1だん あがる。 あいぼうに している あいだ、 やせいの でんきタイプの つかまえやすさが 1.5ばいに なる。
 SandVeil:
   name: すながくれ
+  description: すなあらしの とき、 あいての わざの めいちゅうが 20% さがる。 すなあらしの ダメージは うけない。
 SandRush:
   name: すなかき
+  description: すなあらしの とき、 すばやさが 2ばいに なる。 すなあらしの ダメージは うけない。
 RoughSkin:
   name: さめはだ
+  description: ふれてきた あいては HPが 1/8 へる。
 PoisonPoint:
   name: どくのトゲ
+  description: ふれてきた あいてを 30%の かくりつで どくに する。
 Rivalry:
   name: とうそうしん
+  description: おなじ せいべつの あいてには いりょくが 1.25ばい、 ぎゃくの せいべつの あいてには 0.75ばいに なる。
 SheerForce:
   name: ちからずく
+  description: ついかこうかの ある わざの いりょくが 1.3ばいに なるが、 ついかこうかは おきない。
 CuteCharm:
   name: メロメロボディ
+  description: ふれてきた あいてを 30%の かくりつで メロメロに する。 あいぼうに している あいだ、 やせいの ポケモンの 2/3が じぶんと ぎゃくの せいべつで あらわれる。
 MagicGuard:
   name: マジックガード
+  description: こうげき いがいの ダメージを ぜんぜん うけない。
 Unaware:
   name: てんねん
+  description: じぶんが あたえる ダメージも うける ダメージも、 あいての のうりょくランクの へんかを むしする。
 FlashFire:
   name: もらいび
+  description: ほのおタイプの わざを うけず、 うけた あとは じぶんの ほのおタイプの わざの いりょくが 1.5ばいに なる。 あいぼうに している あいだ、 やせいの ほのおタイプの つかまえやすさが 1.5ばいに なる。
 Competitive:
   name: かちき
+  description: あいてに のうりょくを さげられると、 とくこうが 2だん あがる。
 Frisk:
   name: おみとおし
+  description: いる あいだ、 あいての もちものを 1つ つかえなく する。 きのみは のぞく。 あいぼうに している あいだ、 やせいの ポケモンの もちものが わかる。
 InnerFocus:
   name: せいしんりょく
+  description: ひるまない。 いかくの こうかも うけない。
 Infiltrator:
   name: すりぬけ
+  description: かべと みがわりを むしして こうげきできる。
 Stench:
   name: あくしゅう
+  description: こうげきした あいてを 10%の かくりつで ひるませる。 あいぼうに している あいだ、 あらわれる やせいの ポケモンが 2ひき へる。
 EffectSpore:
   name: ほうし
+  description: ふれてきた あいてを 30%の かくりつで どく、 まひ、 ねむりの どれかに する。
 DrySkin:
   name: かんそうはだ
+  description: みずタイプの わざを うけず、 HPが 1/4 かいふくする。 あめで かいふくし、 はれで ダメージを うけ、 ほのおタイプの わざの ダメージが 1.25ばいに なる。
 Damp:
   name: しめりけ
+  description: フィールドの だれも じばくや だいばくはつを できない。
 WonderSkin:
   name: ミラクルスキン
+  description: じぶんを ねらう へんかわざの めいちゅうは 50%を こえない。
 ArenaTrap:
   name: ありじごく
+  description: じめんに いる あいては にげられない。 ゴーストタイプは のぞく。 あいぼうに している あいだ、 やせいの ポケモンが 3ひき ふえ、 どの ポケモンも にげる かくりつが はんぶんに なる。
 SandForce:
   name: すなのちから
+  description: すなあらしの とき、 じめん、 いわ、 はがねタイプの わざの いりょくが 1.3ばいに なる。 すなあらしの ダメージは うけない。
 Pickup:
   name: ものひろい
+  description: ほかの ポケモンが つかった どうぐを、 もてる わくが あれば ひろう。 あいぼうに している あいだ、 512ほ あるくごとに どうぐを 1つ みつける。
 Technician:
   name: テクニシャン
+  description: いりょく 60 いかの わざの いりょくが 1.5ばいに なる。
 Limber:
   name: じゅうなん
+  description: まひに ならない。
 CloudNine:
   name: ノーてんき
+  description: いる あいだ、 てんきの こうかを だれも うけない。
 SwiftSwim:
   name: すいすい
+  description: あめの とき、 すばやさが 2ばいに なる。
 VitalSpirit:
   name: やるき
+  description: ねむらない。 あいぼうに している あいだ、 やせいの ポケモンの レベルの さいこうちが 3 あがる。
 AngerPoint:
   name: いかりのつぼ
+  description: きゅうしょに あたると、 こうげきが さいだいまで あがる。
 Defiant:
   name: まけんき
+  description: あいてに のうりょくを さげられると、 こうげきが 2だん あがる。
 Justified:
   name: せいぎのこころ
+  description: あくタイプの わざを うけると、 こうげきが 1だん あがる。
 WaterAbsorb:
   name: ちょすい
+  description: みずタイプの わざを うけず、 HPが 1/4 かいふくする。 あいぼうに している あいだ、 やせいの みずタイプの つかまえやすさが 1.5ばいに なる。
 Synchronize:
   name: シンクロ
+  description: どく、 やけど、 まひに された とき、 その じょうたいいじょうに した あいてにも うつす。 あいぼうに している あいだ、 やせいの ポケモンの 1/2が じぶんと おなじ せいかくに なる。
 NoGuard:
   name: ノーガード
+  description: おたがいの わざが かならず あたる。 あいぼうに している あいだ、 やせいの ポケモンが 3ひき ふえる。
 Steadfast:
   name: ふくつのこころ
+  description: ひるむと、 すばやさが 1だん あがる。
 Gluttony:
   name: くいしんぼう
+  description: ピンチの きのみを ふつうの 2ばいの HPで たべる。 あいぼうに している あいだ、 おやつが なげに くわえる ボーナスの うえげんが 1.5ばいに なる。
 ClearBody:
   name: クリアボディ
+  description: ほかの ポケモンに のうりょくを さげられない。
 LiquidOoze:
   name: ヘドロえき
+  description: HPを すいとられると、 すいとった ほうが ダメージを うける。
 RockHead:
   name: いしあたま
+  description: はんどうの ダメージを うけない。
 Sturdy:
   name: がんじょう
+  description: HPが まんたんの とき、 どんな こうげきでも HP1で たえる。 いちげきひっさつは きかない。
 SolidRock:
   name: ハードロック
+  description: こうかばつぐんの こうげきの ダメージが 1/4 へる。
 FlameBody:
   name: ほのおのからだ
+  description: ふれてきた あいてを 30%の かくりつで やけどに する。 あいぼうに している あいだ、 みつけた タマゴは はんぶんの ほすうで かえる。
 Oblivious:
   name: どんかん
+  description: メロメロに ならず、 いかくの こうかも うけない。
 OwnTempo:
   name: マイペース
+  description: こんらんしない。 いかくの こうかも うけない。
 Regenerator:
   name: さいせいりょく
+  description: ひんしに ならずに フィールドを はなれると、 HPが 1/3 かいふくする。
 MagnetPull:
   name: じりょく
+  description: はがねタイプの あいては にげられない。 ゴーストタイプは のぞく。 あいぼうに している あいだ、 やせいの はがねタイプは まったく にげられない。
 Analytic:
   name: アナライズ
+  description: すでに わざを だしている、 または ためている あいてには、 いりょくが 1.3ばいに なる。
 EarlyBird:
   name: はやおき
+  description: ねむりの じかんが はんぶんに なる。
 Hydration:
   name: うるおいボディ
+  description: あめの とき、 じょうたいいじょうに ならない。
 IceBody:
   name: アイスボディ
+  description: あられの とき、 こうどうする たびに HPが 1/16 かいふくする。 あられの ダメージは うけない。
 SlushRush:
   name: ゆきかき
+  description: あられの とき、 すばやさが 2ばいに なる。
 StickyHold:
   name: ねんちゃく
+  description: もちものを ほかの ポケモンに うばわれない。
 PoisonTouch:
   name: どくしゅ
+  description: ふれた あいてを 30%の かくりつで どくに する。
 ShellArmor:
   name: シェルアーマー
+  description: きゅうしょに あたらない。
 SkillLink:
   name: スキルリンク
+  description: れんぞくこうげきの わざが かならず ぜんぶ あたる。
 Overcoat:
   name: ぼうじん
+  description: すなあらしと あられの ダメージを うけず、 こなの わざも きかない。
 Levitate:
   name: ふゆう
+  description: ふゆうしているので、 おさえつけられない かぎり じめんタイプの わざは あたらない。
 CursedBody:
   name: のろわれボディ
+  description: わざを うけると 30%の かくりつで、 その わざを 8びょうの あいだ ふうじる。
 WeakArmor:
   name: くだけるよろい
+  description: ぶつりこうげきを うけると、 ぼうぎょが 1だん さがり、 すばやさが 2だん あがる。
 Insomnia:
   name: ふみん
+  description: ねむらない。
 Forewarn:
   name: よちむ
+  description: フィールドに でると、 あいての いちばん つよい わざを 8びょうの あいだ つかえなく する。 あいぼうに している あいだ、 やせいの ポケモンが どれくらい にげそうか わかる。
 BadDreams:
   name: ナイトメア
+  description: ねむっている あいては、 こうどうする たびに HPが 1/8 へる。
 HyperCutter:
   name: かいりきバサミ
+  description: ほかの ポケモンに こうげきを さげられない。
 Soundproof:
   name: ぼうおん
+  description: おとの わざを うけない。
 Aftermath:
   name: ゆうばく
+  description: ふれて たおした あいては、 じぶんの HPの 1/4を うしなう。
 Harvest:
   name: しゅうかく
+  description: たべた きのみが また みのる。 はれの ときは かならず、 ほかの ときは 1/2の かくりつで。 あいぼうに している あいだ、 やせいの ポケモンに あげた おやつは、 なげを はずしても のこる。
 BattleArmor:
   name: カブトアーマー
+  description: きゅうしょに あたらない。
 Reckless:
   name: すてみ
+  description: はんどうダメージの ある わざと、 はずすと じぶんが ダメージを うける わざの いりょくが 1.2ばいに なる。
 Unburden:
   name: かるわざ
+  description: もちものが なくなると、 すばやさが 2ばいに なる。
 IronFist:
   name: てつのこぶし
+  description: パンチわざの いりょくが 1.2ばいに なる。
 NeutralizingGas:
   name: かがくへんかガス
+  description: フィールドの ほかの とくせいは すべて なくなった ものとして あつかわれる。
 NaturalCure:
   name: しぜんかいふく
+  description: フィールドを はなれると じょうたいいじょうが なおる。
 SereneGrace:
   name: てんのめぐみ
+  description: わざの ついかこうかが おきる かくりつが 2ばいに なる。
 Healer:
   name: いやしのこころ
+  description: こうどうする たびに 30%の かくりつで みかたの じょうたいいじょうを なおす。
 LeafGuard:
   name: リーフガード
+  description: はれの とき、 じょうたいいじょうに ならない。
 Scrappy:
   name: きもったま
+  description: ノーマルと かくとうタイプの わざが ゴーストタイプにも あたる。 いかくの こうかも うけない。
 WaterVeil:
   name: みずのベール
+  description: やけどに ならない。
 Illuminate:
   name: はっこう
+  description: ほかの ポケモンに めいちゅうを さげられず、 じぶんの わざは あいての かいひの あがりを むしする。 あいぼうに している あいだ、 やせいの ポケモンが 3ひき ふえ、 くらい ばしょが 5マス さきまで あかるくなる。
 Filter:
   name: フィルター
+  description: こうかばつぐんの こうげきの ダメージが 1/4 へる。
 Moxie:
   name: じしんかじょう
+  description: あいてを たおすと、 こうげきが 1だん あがる。
 MoldBreaker:
   name: かたやぶり
+  description: あいての とくせいに じぶんの わざを じゃまされない。
 Rattled:
   name: びびり
+  description: むし、 あく、 ゴーストタイプの わざや いかくを うけると、 すばやさが 1だん あがる。
 Imposter:
   name: かわりもの
+  description: フィールドに でると、 あいての いちばん つよい ポケモンに へんしんする。
 Adaptability:
   name: てきおうりょく
+  description: タイプいっちの わざの いりょくが 1.5ばいでは なく 2ばいに なる。
 Anticipation:
   name: きけんよち
+  description: みがまえた いちばん ひどい あいての わざから うける ダメージが はんぶんに なる。 あいぼうに している あいだ、 やせいの ポケモンが どれくらい にげそうか わかる。
 VoltAbsorb:
   name: ちくでん
+  description: でんきタイプの わざを うけず、 HPが 1/4 かいふくする。 あいぼうに している あいだ、 やせいの でんきタイプの つかまえやすさが 1.5ばいに なる。
 QuickFeet:
   name: はやあし
+  description: じょうたいいじょうの とき、 すばやさが 1.5ばいに なり、 まひでも すばやさが はんぶんに ならない。
 Trace:
   name: トレース
+  description: フィールドに でると、 あいての いちばん つよい ポケモンの とくせいを コピーする。 あいぼうに している あいだ、 やせいの ポケモンの とくせいが わかる。
 Download:
   name: ダウンロード
+  description: あいての ぼうぎょと とくぼうの うち ひくい ほうに あわせて、 こうげきか とくこうが 1だん あがる。
 Sharpness:
   name: きれあじ
+  description: きる わざの いりょくが 1.5ばいに なる。
 Pressure:
   name: プレッシャー
+  description: じぶんを ねらう わざの まちじかんが 2ばいに なる。 あいぼうに している あいだ、 やせいの ポケモンの レベルの さいこうちが 3 あがる。
 StrongJaw:
   name: がんじょうあご
+  description: かみつく わざの いりょくが 1.5ばいに なる。
 Immunity:
   name: めんえき
+  description: どくに ならない。
 SnowCloak:
   name: ゆきがくれ
+  description: あられの とき、 あいての わざの めいちゅうが 20% さがる。 あられの ダメージは うけない。
 SnowWarning:
   name: ゆきふらし
+  description: フィールドに でると、 あられを ふらせる。
 Drizzle:
   name: あめふらし
+  description: フィールドに でると、 あめを ふらせる。
 MarvelScale:
   name: ふしぎなうろこ
+  description: じょうたいいじょうの とき、 ぼうぎょが 1.5ばいに なる。
 Multiscale:
   name: マルチスケイル
+  description: HPが まんたんの とき、 うける ダメージが はんぶんに なる。
 Protean:
   name: へんげんじざい
+  description: つかう わざの タイプに かわるので、 どの わざも タイプいっちに なる。

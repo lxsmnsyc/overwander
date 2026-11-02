@@ -2,9 +2,19 @@
 # Every other field is written by hand, and a rerun keeps it.
 MegaSol:
   name: メガソーラー
+  description: そらの ようすに かかわらず、 じぶんの わざは はれの ときのように でる。
 Dragonize:
   name: ドラゴンスキン
+  description: ノーマルタイプの わざが ドラゴンタイプに なり、 いりょくが 1.2ばいに なる。
 PiercingDrill:
   name: かんつうドリル
+  description: ちょくせつこうげきの わざは まもりを つらぬいて こわすが、 ダメージは 1/4しか あたえられない。
 SpicySpray:
   name: とびだすハバネロ
+  description: ダメージを あたえる わざを うけると、 こうげきした あいてを やけどに する。
+AuraGuard:
+  description: ちょくせつこうげきの わざの ダメージが 1/2に なる。
+Eelevate:
+  description: ういている ので、 じめんタイプの わざと じめんの わなを うけない。 あいてを たおす たびに、 いちばん たかい のうりょくが 1だん あがる。
+FireMane:
+  description: ほのおタイプの わざの いりょくが 1.5ばいに なる。

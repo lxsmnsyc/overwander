@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Libero:
   name: Líbero
+  description: Adopta el tipo de cada movimiento que usa, justo antes de que se ejecute.
 CottonDown:
   name: Pelusa
+  description: Cada vez que le golpea un movimiento con daño, todos los demás Pokémon del campo pierden 1 nivel de Velocidad.
 BallFetch:
   name: Recogebolas
+  description: El primer objeto que alguien lance con Lanzamiento en un combate lo recoge y lo guarda, si no lleva ninguno.
 GulpMissile:
   name: Tragamisil
+  description: Tras Surf o Buceo vuelve a la superficie con una presa, que escupe a quien le golpea después y le quita 1/4 de sus PS. Si la atrapó con más de 1/2 de PS, también le baja 1 nivel la Defensa, y si fue con 1/2 de PS o menos, lo paraliza.
 PropellerTail:
   name: Hélice Caudal
+  description: Sus movimientos alcanzan a quien apuntó, sea lo que sea lo que atraiga los ataques.
 PunkRock:
   name: Punk Rock
+  description: Sus movimientos de sonido tienen x1,3 de potencia, y los movimientos de sonido le hacen la mitad de daño.
 IceScales:
   name: Escama de Hielo
+  description: Los movimientos especiales le hacen la mitad de daño.
 PowerSpot:
   name: Fuente Energía
+  description: Los movimientos de sus aliados tienen x1,3 de potencia.
 IceFace:
   name: Cara de Hielo
+  description: El primer movimiento físico que le golpea no le hace daño y rompe el hielo, dejando una cara más rápida pero más frágil. El granizo o la nieve vuelven a congelarla.
 HungerSwitch:
   name: Mutapetito
+  description: Cada vez que actúa alterna entre Forma Saciada y Forma Voraz, y su Rueda Aural pasa de tipo Eléctrico a Siniestro y viceversa.
 Stalwart:
   name: Acérrimo
+  description: Sus movimientos alcanzan a quien apuntó, sea lo que sea lo que atraiga los ataques.
 SteelySpirit:
   name: Alma Acerada
+  description: Los movimientos de tipo Acero de su equipo, los suyos incluidos, tienen x1,5 de potencia.
 PastelVeil:
   name: Velo Pastel
+  description: Ni él ni sus aliados pueden ser envenenados, y un aliado envenenado se cura cuando entra al campo.
 QuickDraw:
   name: Mano Rápida
+  description: Sus movimientos con daño tienen un 30 % de probabilidad de lanzarse sin preparación.
 CuriousMedicine:
   name: Medicina Extraña
+  description: Al entrar al campo, los niveles de estadísticas de sus aliados vuelven a 0.
 ScreenCleaner:
   name: Antibarrera
+  description: Al entrar al campo, Reflejo, Pantalla de Luz y Velo Aurora desaparecen de ambos bandos.
 GorillaTactics:
   name: Monotema
+  description: x1,5 de Ataque, pero queda atado al primer movimiento que usa hasta que abandona el campo.
 WanderingSpirit:
   name: Alma Errante
+  description: Un movimiento de contacto que le golpea intercambia esta habilidad por una del atacante.
 IntrepidSword:
   name: Espada Indómita
+  description: Sube 1 nivel el Ataque la primera vez que entra a un combate.
 DauntlessShield:
   name: Escudo Recio
+  description: Sube 1 nivel la Defensa la primera vez que entra a un combate.
 UnseenFist:
   name: Puño Invisible
+  description: Sus movimientos de contacto atraviesan Protección, Detección y las demás guardias, y las rompen.
 Transistor:
   name: Transistor
+  description: Sus movimientos de tipo Eléctrico tienen x1,3 de potencia.
 DragonsMaw:
   name: Mandíbula Dragón
+  description: Sus movimientos de tipo Dragón tienen x1,5 de potencia.
 ChillingNeigh:
   name: Relincho Blanco
+  description: Sube 1 nivel el Ataque cuando debilita a un rival.
 GrimNeigh:
   name: Relincho Negro
+  description: Sube 1 nivel el Ataque Esp. cuando debilita a un rival.

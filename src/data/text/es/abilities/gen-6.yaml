@@ -2,51 +2,76 @@
 # Every other field is written by hand, and a rerun keeps it.
 Bulletproof:
   name: Antibalas
+  description: Las bolas, bombas y todo lo que le lancen a distancia no le hacen nada.
 Magician:
   name: Prestidigitador
+  description: Se lleva el objeto equipado de aquel al que acierta con un movimiento, si no lleva ninguno.
 FlowerVeil:
   name: Velo Flor
+  description: Nadie más puede envenenar, quemar, paralizar, congelar, dormir, dejar somnoliento ni bajar una estadística a sus aliados de tipo Planta, él incluido.
 Symbiosis:
   name: Simbiosis
+  description: Entrega su propio objeto equipado a un aliado en cuanto este gasta el suyo.
 GrassPelt:
   name: Manto Frondoso
+  description: Su Defensa cuenta x1,5 mientras está en Campo de Hierba.
 MistySurge:
   name: Nebulogénesis
+  description: Al entrar al campo, crea Campo de Niebla.
 ElectricSurge:
   name: Electrogénesis
+  description: Al entrar al campo, crea Campo Eléctrico.
 MegaLauncher:
   name: Megadisparador
+  description: Sus movimientos de pulso y aura tienen x1,5 de potencia, y su Pulso Cura restaura 1,5 veces más.
 Refrigerate:
   name: Piel Helada
+  description: Sus movimientos de tipo Normal pasan a ser de tipo Hielo y tienen x1,2 de potencia.
 FairyAura:
   name: Aura Feérica
+  description: Todos los movimientos de tipo Hada del campo tienen x1,33 de potencia, los lance quien los lance.
 Triage:
   name: Primer Auxilio
+  description: Sus movimientos de curación se lanzan antes que cualquier otro.
 DarkAura:
   name: Aura Oscura
+  description: Todos los movimientos de tipo Siniestro del campo tienen x1,33 de potencia, los lance quien los lance.
 AuraBreak:
   name: Rompeaura
+  description: Un aura en el campo debilita su tipo a x0,75 en lugar de reforzarlo.
 PowerConstruct:
   name: Agrupamiento
+  description: Con 1/2 de PS, el resto de sus células se reúnen y adopta su Forma Completa.
 EarthEater:
   name: Geofagia
+  description: Los movimientos de tipo Tierra no le hacen nada y le restauran 1/4 de sus PS.
 SteamEngine:
   name: Combustible
+  description: Un movimiento de tipo Fuego o Agua que le golpea le sube 6 niveles la Velocidad.
 SweetVeil:
   name: Velo Dulce
+  description: Mientras está en el campo, nadie de su equipo puede dormirse.
 Pixilate:
   name: Piel Feérica
+  description: Sus movimientos de tipo Normal pasan a ser de tipo Hada y tienen x1,2 de potencia.
 Gooey:
   name: Baba
+  description: Quien lo toque pierde 1 nivel de Velocidad.
 StanceChange:
   name: Cambio Táctico
+  description: Desenvaina la espada para atacar y la envaina de nuevo con Escudo Real.
 Aerilate:
   name: Piel Celeste
+  description: Sus movimientos de tipo Normal pasan a ser de tipo Volador y tienen x1,2 de potencia.
 ParentalBond:
   name: Amor Filial
+  description: Un movimiento que lanza contra un objetivo golpea dos veces, la segunda con x0,25 de potencia.
 PrimordialSea:
   name: Mar del Albor
+  description: Mientras está en el campo, hace que caiga una lluvia torrencial. Los movimientos de tipo Agua tienen x1,5 de potencia, los de tipo Fuego fallan y no se puede poner otro tiempo.
 DesolateLand:
   name: Tierra del Ocaso
+  description: Mientras está en el campo, hace que haga un sol abrasador. Los movimientos de tipo Fuego tienen x1,5 de potencia, los de tipo Agua fallan y no se puede poner otro tiempo.
 DeltaStream:
   name: Ráfaga Delta
+  description: Mientras está en el campo, hace que soplen vientos fuertes. Los movimientos supereficaces contra un tipo Volador le hacen x1 de daño, y no se puede poner otro tiempo.

@@ -44,7 +44,7 @@ SecondBloom:
   description: バトルで はじめて HPが 1/2 みまんに なると、 HPが 1/4 かいふくし、 とくこうが 1だん あがる。
 CarryOff:
   name: つれさり
-  description: こうげきで 20%の かくりつで あいてを ふきとばす。 ふきとばしと おなじ はたらき。
+  description: あてた こうげきは 20%の かくりつで あいてを ふきとばす。 ふきとばしと おなじ はたらき。
 Springheel:
   name: ばねあし
   description: あてた はじめの 3かいの こうげきごとに すばやさが 1だん あがる。

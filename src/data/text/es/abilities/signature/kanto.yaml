@@ -47,7 +47,7 @@ NineTails:
   description: Su Ataque Esp. sube un 8 % por cada golpe recibido, hasta 9 golpes.
 Lullaby:
   name: Nana
-  description: El sueño que causa dura x1,5 más, y sus movimientos tienen x1,5 de potencia contra un objetivo dormido.
+  description: El sueño que causa dura 1,5 veces más, y sus movimientos tienen x1,5 de potencia contra un objetivo dormido.
 Bloodthirst:
   name: Sed de Sangre
   description: Los movimientos de drenaje y Drenadoras le restauran x1,5. Cualquier otra curación que recibe se reduce a la mitad.
@@ -221,7 +221,7 @@ Frostwing:
   description: Al entrar al campo, baja 1 nivel la Velocidad de todos los rivales. Contra un portador de Aleteo Fulminante no surte efecto ningún aleteo.
 Stormwing:
   name: Aleteo Tormenta
-  description: Al entrar al campo, baja 1 nivel la Defensa Esp. de todos los rivales. Contra un portador de Aleteo Percutor no surte efecto ningún aleteo.
+  description: Al entrar al campo, baja 1 nivel la Defensa Esp. de todos los rivales. Contra un portador de Aleteo Golpeador no surte efecto ningún aleteo.
 Emberwing:
   name: Aleteo Ascua
   description: Al entrar al campo, baja 1 nivel la Defensa de todos los rivales. Contra un portador de Aleteo Furioso no surte efecto ningún aleteo.
@@ -271,7 +271,7 @@ Glarewing:
   name: Aleteo Fulminante
   description: Al entrar al campo, baja 1 nivel la Velocidad de todos los rivales. Contra un portador de Aleteo Helado no surte efecto ningún aleteo.
 Strikewing:
-  name: Aleteo Percutor
+  name: Aleteo Golpeador
   description: Al entrar al campo, baja 1 nivel la Defensa Esp. de todos los rivales. Contra un portador de Aleteo Tormenta no surte efecto ningún aleteo.
 Wrathwing:
   name: Aleteo Furioso

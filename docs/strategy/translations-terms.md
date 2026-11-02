@@ -334,7 +334,7 @@ Shared themes:
 | Fungal Bloom     | ほうしのはな               | Floración Fúngica       |
 | Dust Storm       | ほこりあらし               | Tormenta de Polvo       |
 | Undermine        | ほりくずし                 | Socavar                 |
-| Cutpurse         | すりのて                   | Ratero                  |
+| Cutpurse         | すりとり                   | Ratero                  |
 | Headache Burst   | ずつうばくはつ             | Estallido de Jaqueca    |
 | Blind Rage       | われをわすれる             | Ira Ciega               |
 | Chase Down       | おいつめ                   | Acorralar               |
@@ -356,7 +356,7 @@ Shared themes:
 | Living Tunnel    | いきたトンネル             | Túnel Viviente          |
 | Dream Feast      | ゆめのうたげ               | Festín Onírico          |
 | Heavy Pincer     | おもいハサミ               | Pinza Pesada            |
-| Overload         | かふか                     | Sobrecarga              |
+| Overload         | オーバーロード             | Sobrecarga              |
 | Psyseed          | サイコのタネ               | Psisemilla              |
 | Mourning Bone    | とむらいのほね             | Hueso del Duelo         |
 | Second Wind      | にどめのいぶき             | Segundo Aliento         |
@@ -403,7 +403,7 @@ Shared themes:
 | Slow Venom       | おそいどく                 | Veneno Lento            |
 | Leek Shield      | ねぎのたて                 | Escudo de Puerro        |
 | Glarewing        | にらみのはばたき           | Aleteo Fulminante       |
-| Strikewing       | けりのはばたき             | Aleteo Percutor         |
+| Strikewing       | けりのはばたき             | Aleteo Golpeador        |
 | Wrathwing        | いかりのはばたき           | Aleteo Furioso          |
 | Watchfire        | かがりび                   | Fuego de Vigía          |
 | Husk Burst       | からばくはつ               | Estallido de Cáscara    |
@@ -499,7 +499,7 @@ Shared themes:
 | Jeer At         | やじ               | Abucheo              |
 | Tail Light      | おしりのあかり     | Luz Trasera          |
 | Lure Scent      | さそいのかおり     | Aroma Cebo           |
-| Perennial       | しゅくこんのはな   | Perenne              |
+| Perennial       | くりかえしざき     | Perenne              |
 | Bottomless      | そこなし           | Sin Fondo            |
 | Feeding Frenzy  | むさぼりのうず     | Frenesí Alimenticio  |
 | Spout           | ふんすい           | Surtidor             |
@@ -520,7 +520,7 @@ Shared themes:
 | Root Hold       | ねのつかみ         | Agarre de Raíz       |
 | Claw Rush       | つめとっしん       | Embestida de Garra   |
 | Scarred Beauty  | きずあとのびじん   | Belleza Cicatrizada  |
-| Weather Worn    | ふうせつぎたえ     | Curtido por el Clima |
+| Weather Worn    | てんきぎたえ       | Curtido por el Clima |
 | Blend In        | とけこみ           | Pasar Desapercibido  |
 | Malice Pool     | あくいのたまり     | Charco de Malicia    |
 | Soul Harvest    | たましいがり       | Cosecha de Almas     |

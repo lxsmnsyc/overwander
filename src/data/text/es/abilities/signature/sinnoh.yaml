@@ -119,10 +119,10 @@ VoidWeight:
   description: Mientras está en el campo, el nivel de Ataque de cada rival cuenta 1 menos.
 WaningLight:
   name: Luz Menguante
-  description: Mientras está en el campo, todo estado temporal de su equipo dura x0,5, los suyos y los beneficiosos incluidos.
+  description: Mientras está en el campo, todo estado temporal de su equipo dura la mitad, los suyos y los beneficiosos incluidos.
 WaxingDark:
   name: Oscuridad Creciente
-  description: Todo estado temporal que causa a un rival dura x1,5.
+  description: Todo estado temporal que causa a un rival dura 1,5 veces más.
 Heartcurrent:
   name: Corriente del Corazón
   description: Cada nivel de estadística que gana un rival también se le aplica a él.

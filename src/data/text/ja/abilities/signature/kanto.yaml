@@ -29,7 +29,7 @@ Squeeze:
   description: わざを だしている あいだと ためている あいだ、 さいごに ふれた あいては まいびょう HPが 1/16 へる。
 ChainLightning:
   name: れんさでんげき
-  description: あてた でんきタイプの わざが、 ほかの あいて 1ぴきに とんで あたえた ダメージの 1/3を あたえる。
+  description: あてた でんきタイプの わざが、 ほかの たっている あいて 1ぴきに とんで、 あたえた ダメージの 1/3を あたえる。
 CurlUp:
   name: まるまり
   description: こうげきを うけるたびに、 じぶんに まるくなるを つかう。
@@ -64,7 +64,7 @@ Undermine:
   name: ほりくずし
   description: わざを あてた あいては、 バトルが おわるまで ぜんいんから うける ダメージが 5%ずつ ふえ、 さいだい 25%に なる。
 Cutpurse:
-  name: すりのて
+  name: すりとり
   description: それぞれの あいてに さいしょに あてた わざで、 あいての もちものを はたきおとす。
 HeadacheBurst:
   name: ずつうばくはつ
@@ -130,7 +130,7 @@ HeavyPincer:
   name: おもいハサミ
   description: HPが 1/2 いじょうの あいだ、 ちょくせつこうげきの わざの いりょくが 1.45ばいに なる。
 Overload:
-  name: かふか
+  name: オーバーロード
   description: HPが 1/2 みまんだと すばやさが 2ばいに なる。
 Psyseed:
   name: サイコのタネ
@@ -161,7 +161,7 @@ MothersShield:
   description: HPが 1/2 みまんの みかたを ねらう あいての わざは、 かわりに じぶんを ねらう。
 WhirlCurrent:
   name: うずまくながれ
-  description: あめが ふっている あいだ、 あいての ためる じかんと じゅんびが 20% ながくなる。
+  description: あめが ふっている あいだ、 あいての じゅんびと ためる じかんが 20% ながくなる。
 Upstream:
   name: さかのぼり
   description: さいだいHPが じぶんより たかい あいてへの わざの いりょくが 1.35ばいに なる。
@@ -215,7 +215,7 @@ PredatorsDive:
   description: それぞれの あいてに はじめて だす わざの いりょくが 1.5ばいに なる。
 FullBelly:
   name: ふくふくばら
-  description: こうどうする たびに HPが 1/16 かいふくするが、 ためる じかんと じゅんびが 25% ながくなる。
+  description: こうどうする たびに HPが 1/16 かいふくするが、 じゅんびと ためる じかんが 25% ながくなる。
 Frostwing:
   name: こおりのはばたき
   description: フィールドに でると、 あいて ぜんいんの すばやさが 1だん さがる。 にらみのはばたきを もつ あいてには どちらの はばたきも きかない。

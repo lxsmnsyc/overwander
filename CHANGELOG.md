@@ -1,5 +1,33 @@
 # overwander
 
+## 4.52.0
+
+### Minor Changes
+
+- 751b34b: The overworld reads in Japanese and Spanish as well as English: the board, the world map and the overworld dialogs. Pick the language under Settings, Display. Screens not translated yet stay in English.
+
+### Patch Changes
+
+- 1ca566e: The dex entry's evolution line lists Rotom's appliances and Ogerpon's masks once each, one step below the base, instead of repeating them in a loop.
+- 314c3e9: The descriptions of the Gen 1 to 9 abilities, the Legends Z-A abilities and the boss, shadow, Totem, Alpha and Noble abilities now read in Japanese and Spanish.
+- 01629e0: Item descriptions, and the sentences item families are built from, now read in Japanese and Spanish.
+- 45cf352: The descriptions of the Gen 1 to 4 moves now read in Japanese and Spanish.
+- dff3e01: The descriptions of the Gen 5 to 9 moves, the Z-Moves, Max Moves, G-Max Moves, frenzy bursts and the weather moves now read in Japanese and Spanish.
+- 084e08a: The names and descriptions of the signature abilities of the Kanto, Johto, Hoenn and Sinnoh families now read in Japanese and Spanish. Sapmark's English description now says the holder heals, not Chikorita.
+- 46b044f: The names and descriptions of the signature abilities of the Unova, Kalos, Alola, Galar, Hisui and Paldea families now read in Japanese and Spanish.
+- a6d8ba9: Stat and stage names and Zenith names read in Japanese and Spanish, and rerunning the official-names script keeps fields written by hand.
+- 3386fa9: The gym leaders, Elite Four, champions, Battle Frontier brains and facilities, legends, syndicate executives and syndicates now speak Japanese and Spanish: each name (the games' own) and quote, the Pike curtains and Arcade panels, and how a syndicate's people are introduced.
+- f701d70: The people of the towns now speak Japanese and Spanish: their names, descriptions and opening lines, their stalls and scenery, and every line, prompt and toast in their conversations. Prices, fees and egg steps in those conversations now group thousands by language.
+- b7a0017: People and places text (names, quotes, titles, quests, towns, Megas and families) is read in the player's language, ready for Japanese and Spanish files, and Mega and family names in those languages follow the official pokemon names.
+- 7783562: The trainer classes now speak Japanese and Spanish: each class's name and what it says as a duel is put, the trainer sheet names, and the region mark on a class that several regions share.
+- 35866ba: Biomes, skies and their lines, times of day, landmarks, lairs, phenomena, spawn rarities and lair titles now read in Japanese and Spanish, and so do town names: each locale has its own word lists, so a town is the same town in every language and reads like a place of its own (Japanese `…ぐんの かいがらやまタウン`, Spanish `Pueblo Concha del Risco, Quejigal`).
+- bc3b61a: Dates and numbers are written the same way on every machine: a date reads "12 Aug 2026" everywhere, where the friends list, trades, passkeys and the admin pages used to follow the device's own format.
+- ffabcc3: Quests, awards, achievements, titles, dex chains, region names, egg groups and item kinds now read in Japanese and Spanish, with the games' own names for badges, regions and egg groups (`グレーバッジ`, `Medalla Roca`, `かいじゅう`, `Monstruo`).
+- 8db68a9: Battles read in Japanese and Spanish as well as English: the battle view, the duel lobby and its rules, the verdict and the battle history. Status conditions use the games' own Japanese and Spanish names.
+- 6acfa67: The catch box and catch sheet, the bag and candy, the item cards, the move lists and the Pokédex read in Japanese and Spanish as well as English.
+- 0f21e41: The game's shell reads in Japanese and Spanish as well as English: the menu bar and game menu, sign-in and password reset, settings, notifications, news, gifts and friends, the pickers and the shop. Every refusal and gift reason is translated too.
+- 46742c7: Auctions, trades, the raids tab, quests and the profile read in Japanese and Spanish as well as English. Gold amounts on the auction board and in trades are grouped by locale, and a quest goal for one landmark or foe now reads in the singular ("Beat 1 duelling trainer").
+
 ## 4.51.1
 
 ### Patch Changes

@@ -9,3 +9,4 @@
 - Fingerprint test read: it digests terrain, scenery, landmarks, towns and the start for both generations and the cave. It never builds a `ChunkSnapshot`, so it pins no spawn. The design adds no `world.draws` call.
 - Bench: a throwaway vitest file (deleted, working tree clean afterwards) measured cold chunk 1.8 ms, `getSpawns(11)` 0.2 ms, `AleaRNG(string)` plus 3 draws 1.6 microseconds. Board draw per frame was not measured (needs a browser). The contract says so.
 - Checked prose with `check_prose.py`: warnings only (long sentences in a contract with code names).
+- Maintainer's answers applied: K = 8, indices lure 8 to 10 and rare 11, density and cost numbers redone, open questions turned into rules, docs for the build node listed.

@@ -23,10 +23,10 @@ All live in `src/overworld/spawn-life/index.ts`. Times are local milliseconds (t
 
 | Constant | Value | Minecraft | wAthena |
 | --- | --- | --- | --- |
-| `SLOT_COUNT` (ordinary slots per chunk) | 6 | Monster cap 70 per player, scaled by the loaded chunk count (about 0.24 a chunk) | `count` of a spawn line, per map |
+| `SLOT_COUNT` (ordinary slots per chunk) | 8 (equal to today's `SPAWN_COUNT`) | Monster cap 70 per player, scaled by the loaded chunk count (about 0.24 a chunk) | `count` of a spawn line, per map |
 | `LURE_SLOTS` (extra slots only a lure shows) | 3 (same as `LURE_SPAWN_BONUS` today) | No equivalent | No equivalent |
-| `RARE_SLOT` (index of the rare channel, outside K) | 9 | No equivalent | No equivalent |
-| `SLOT_TOTAL` | `SLOT_COUNT + LURE_SLOTS + 1` = 10 | | |
+| `RARE_SLOT` (index of the rare channel, outside K) | 11 | No equivalent | No equivalent |
+| `SLOT_TOTAL` | `SLOT_COUNT + LURE_SLOTS + 1` = 12 | | |
 | `SLOT_PERIOD` (cycle length, present plus rest) | 330 000 (5.5 min) | Spawn attempt every tick, no cycle | `respawnDelay` after a death, no fixed period |
 | `PRESENT_MIN`, `PRESENT_MAX` | 210 000, 270 000 (3.5 to 4.5 min, mean 4) | A mob lives until it despawns: random 1/800 a tick once 32+ blocks from every player and 30 s old; at once past 128 blocks | A monster lives until killed |
 | Rest (derived: `SLOT_PERIOD - present`) | 60 000 to 120 000 (1 to 2 min, mean 90 s) | None | `RespawnMs` plus `rand(RespawnVarianceMs)`, at least 1000 ms |
@@ -44,7 +44,7 @@ All live in `src/overworld/spawn-life/index.ts`. Times are local milliseconds (t
 | `NEAR_RING_CELLS` | 4 | The 24-block minimum distance | `Avoid` cells of a spawn |
 | `RARE_ODDS_SCALE` | 8 (see Rare channel) | | |
 
-The mean live fraction of a slot is 240 / 330 = 0.727. K = 6 is the approved starting number; Cost shows what it does to the density on the board.
+The mean live fraction of a slot is 240 / 330 = 0.727. K = 8 is decided (maintainer). Cost shows the density it gives on the board.
 
 ## Slot clocks
 
@@ -77,7 +77,7 @@ end     = min(start + present, (floor(start / HOUR) + 1) * HOUR)
 `rollSlot(chunk, offset, slot, cycle)` gives the pokemon of one cycle, or `null` when the slot is empty that cycle.
 
 1. **Ground of the hour.** `getSpawnGround` builds, once per (chunk key, hour), the cells a pokemon may start on: every cell of `PLACEMENT_AREA` that is not in the chunk's decorations, landmarks, rock, face cells, lava or the hour's phenomena (the set `getSpawns` builds today). Town cells (`isTownCell`) and country cells are kept in two lists.
-2. **Street slots.** Slot `i` of the first `SLOT_COUNT + LURE_SLOTS` is a street slot when `floor((i + 1) * share) > floor(i * share)`, with `share = streets / (streets + country)`, which is today's rule, so a lure's prefix keeps the street share. A chunk with no street has none. `RARE_SLOT` is never a street slot.
+2. **Street slots.** Slot `i` of the first `SLOT_COUNT + LURE_SLOTS` (0 to 10) is a street slot when `floor((i + 1) * share) > floor(i * share)`, with `share = streets / (streets + country)`, which is today's rule, so a lure's prefix keeps the street share. A chunk with no street has none. `RARE_SLOT` is never a street slot.
 3. **Territories.** Each list is shuffled with the `ground` seed and dealt round-robin to the slots that use it. A slot's territory is its own cells, so two slots never start on the same cell, and no slot needs to know another's state. A street slot with an empty territory falls back to the country list.
 4. **Start cell.** `territory[floor(random() * territory.length)]`.
 5. **Pool.** A street slot rolls the town pool (`getStreetPool`); other slots roll `getCellPool(cell)`, which cuts by the cell's surface (`spawn-surfaces`). Both are read from `new ChunkSnapshot(chunk, start, offset)`, whose timestamp is `start` floored to 5 minutes (the roll window). Time of day, weather, species day and season come from that window, so the board and the server read the same ones.
@@ -115,7 +115,7 @@ The key never held the cell, so movement does not break it. Two cycles of one sl
 
 ### The server check
 
-`meetSpawn(uid, x, y, spawnId, now, offset, depth, cell, individualValue)` replaces the stored-window lookup. The two new arguments are checked with `check` (`server-function-validation`) and the server function is added at the end of its file or the build guard is bumped (`server-function-order`).
+`meetSpawn(uid, x, y, spawnId, now, offset, depth, cell, individualValue)` replaces the stored-window lookup. The two new arguments are checked with `check` (`server-function-validation`). The signature change follows the `server-function-order` skill and its build guard.
 
 1. Parse `spawnId` into `(key, start, slot)`; require `key` to equal the chunk's key for this zone and `slot < SLOT_TOTAL`.
 2. `local = toLocalTime(now, offset)` from the server's clock. Find the cycle whose start is `start`; refuse when none begins there or it is empty.
@@ -124,7 +124,7 @@ The key never held the cell, so movement does not break it. Two cycles of one sl
 5. Position: with `positionAt(area, live, t)` the cell must be within `MEET_DRIFT_CELLS` (Chebyshev) of the position at `local` or at `local - MEET_DRIFT_MS`. Before `spawn-roaming` lands, `positionAt` returns the start cell (leash 0), so the check is the same code.
 6. `startEncounter(uid, snapshotOf(start), spawnId, spawn)` where `snapshotOf(start)` is `new ChunkSnapshot(chunk, start, offset)`.
 
-The server no longer reads `snapshot_spawns`, so a meeting saves that query and the `resolveSnapshot` read. The drift covers latency and the client's synced clock. It lets a pokemon be met up to a second after the server's clock says it left, and no earlier than a second before it appears.
+The meeting no longer needs `snapshot_spawns` for its roll. The table keeps being written until the build has proved this check (see the stored window below). The drift covers latency and the client's synced clock. The client reads the server clock offset it already keeps: `serverNow` and `localNow(zone)` in `src/auth/clock.ts`, refreshed by `syncServerClock`. The board and the fades read time only through `localNow`. It lets a pokemon be met up to a second after the server's clock says it left, and no earlier than a second before it appears.
 
 ## Functions
 
@@ -200,8 +200,13 @@ The loaded chunks and the draw circle do not change: `boardChunks` and `BOARD_RA
 - The first load of the build replaces every chunk's pokemon at once. There is no migration of spawns: the old set was derived and published, never owned.
 - Fled keys written before the build match nothing (they name the old windows) and are swept within the hour. A pokemon a player fled in the last five minutes may be met again as a different pokemon. Acceptable.
 - Encounters already staged keep their `spawn_id`, key and record. `retireEncounter` reads the key from the stored record, so catches and flees of a pre-build meeting still retire it.
-- Rates change: a chunk holds 6 ordinary slots of which 73 percent stand on average, against 8 always standing. Rare pokemon keep their hourly rate through the rare slot. Docs to update by the build node: `docs/mechanics/world-time.md` (the 5 minute row) and `docs/mechanics/encounters.md` (the first two sections).
-- The stored window (`snapshots`) stays for landmark claims. Spawns stop being written to `snapshot_spawns`; the build node decides whether to drop the table (a numbered migration from its own brief).
+- Rates change: a chunk holds 8 ordinary slots of which 73 percent stand on average (5.8), against 8 always standing. Rare pokemon keep their hourly rate through the rare slot. 
+- The stored window (`snapshots`) stays for landmark claims. Spawns keep being written to `snapshot_spawns` until the build has proved the derived server check. Removing the table is a follow-up the build node notes, not part of the build.
+
+### Docs the build node updates
+
+- `docs/mechanics/world-time.md`: the 5 minute row of the refresh table.
+- `docs/mechanics/encounters.md`: the opening sections (the fresh set every five minutes, how many appear).
 
 ### The world fingerprint test
 
@@ -230,9 +235,9 @@ Measured with a throwaway vitest bench on this machine (not kept): 40 chunks of 
 
 Estimates from those (not measured):
 
-- **Derive.** Ground of an hour: one scan of 256 cells plus two shuffles, about the cost of the first half of `getSpawns`, 0.1 ms a chunk a local hour. A roll is one RNG, one pool pick and the coat helpers, about 0.02 ms. A chunk's ten slots roll about 110 cycles an hour, so 2 ms a chunk an hour if every cycle were rolled; only cycles that stand while a chunk is in range are, and each is rolled once (memo per id). On a walk through 5.6 loaded chunks that is about 0.17 rolls a second, under 0.01 ms a second.
-- **Board build** (per step, not per frame). Replaces one `getSpawns(11)` plus `getSpawnCells` per chunk with `liveSpawns` over cached cycles: slot arithmetic of ten slots a chunk, nanoseconds each after the first call. The shared-window wait goes away.
-- **Draw per frame.** Sprites drawn are the pokemon inside the 10.5 cell circle: about 6 ordinary at K = 6 plus 3 with a lure, against 11 today (14 with a lure). The walk adds one position lookup a sprite (an array index and a multiply). Fades add one alpha. Expect no more than today's cost; this is not measured, because the board draw needs a browser and the machine runs no dev server for this node.
+- **Derive.** Ground of an hour: one scan of 256 cells plus two shuffles, about the cost of the first half of `getSpawns`, 0.1 ms a chunk a local hour. A roll is one RNG, one pool pick and the coat helpers, about 0.02 ms. A chunk's twelve slots roll about 131 cycles an hour, so 2.6 ms a chunk an hour if every cycle were rolled; only cycles that stand while a chunk is in range are, and each is rolled once (memo per id). On a walk through 5.6 loaded chunks that is about 0.17 rolls a second, under 0.01 ms a second.
+- **Board build** (per step, not per frame). Replaces one `getSpawns(11)` plus `getSpawnCells` per chunk with `liveSpawns` over cached cycles: slot arithmetic of twelve slots a chunk, nanoseconds each after the first call. The shared-window wait goes away.
+- **Draw per frame.** Sprites drawn are the pokemon inside the 10.5 cell circle: about 8 ordinary at K = 8 plus 3 with a lure, against 11 today (14 with a lure). The walk adds one position lookup a sprite (an array index and a multiply). Fades add one alpha. Expect no more than today's cost; this is not measured, because the board draw needs a browser and the machine runs no dev server for this node.
 - **Roaming.** A flood fill of at most 81 cells (about 20 microseconds, memoised per chunk key, hour, home and habitat) and a path search of at most 81 cells once per pokemon per 5 s epoch. About 2 searches a second on the board. Negligible.
 - **Server.** A meeting is one cycle lookup, one roll and one position, about 0.05 ms, and drops the `snapshot_spawns` select and the `resolveSnapshot` select.
 
@@ -243,26 +248,26 @@ The circle of 10.5 cells has 346 cells, 1.35 chunk areas. Expected pokemon stand
 | K | Ordinary | With a lure (+3 slots) |
 | --- | --- | --- |
 | Today (8 always standing) | 10.8 | 14.9 |
-| 6 (approved start) | 5.9 | 8.8 |
-| 8 | 7.9 | 10.8 |
+| 8 (decided) | 7.9 | 10.8 |
+| 6 (earlier start) | 5.9 | 8.8 |
 | 11 | 10.8 | 13.7 |
 
-The brief's 54 against 72 counts the 9 loaded chunks at full strength. What a player sees is the circle, and the live fraction of 0.727 makes K = 6 about 45 percent thinner than today, not 25. The constant is one line; `SLOT_COUNT` 8 gives about 27 percent fewer and a board that still turns over.
+The brief's 54 against 72 counts the 9 loaded chunks at full strength. What a player sees is the circle, and the live fraction of 0.727 makes K = 8 about 27 percent thinner than today (7.9 against 10.8) with a board that turns over. The hourly rare rate does not depend on K.
 
-## Open questions for the build nodes
+## Decided rules from the open questions
 
-1. **K and the present length.** K = 6 thins the board by 45 percent at 4 minutes present. The maintainer decides between 6, 8 and 11 once a build can be walked. Nothing else depends on the value.
-2. **Rare channel odds.** The scaled rare slot (`RARE_ODDS_SCALE` 8) keeps the hourly rate. The alternative is leaving the bands in every roll, which is simpler and lowers the rate by a third. Decide with the first walk.
-3. **Stored window and `snapshot_spawns`.** Spawns are derived, so the table has no reader after the build. `spawn-lifetimes` should drop the write first, then the table with a numbered migration from its brief. Landmark claims still need the window row.
-4. **Server function shape.** `meetSpawn` gains `cell` and `individualValue`; `server-function-order` and the build guard apply. `spawn-lifetimes` ships the check with a start-cell position, `spawn-roaming` changes only `positionAt`.
-5. **Clock skew.** The board uses the synced local clock. A client more than `MEET_DRIFT_MS` off sees pokemon the server refuses. Measure the sync error before the build and widen the drift if it is large.
-6. **Time of day inside a cycle.** The game clock's periods last 90 minutes and do not align with the hour cut. A cycle reads its pool at its start and may outlast a change of period. Acceptable; say so in the mechanics page if it shows.
-7. **Caves.** There is no time of day or weather underground (`world-caves.md`). The roll window still floors the same way; check that cave chunks read their own pools.
-8. **Roaming crowding and edges.** Clipping the area to the chunk makes roamers near an edge walk less, and two can share a cell. Both are accepted for now; if the board looks crowded, close the cells of other slots' start cells.
-9. **Terraces.** `canStep` is the walker's rule. Whether a roamer may use the same ramps, or stay on its start level, is for `spawn-roaming` to read in the `terraces` skill and settle.
-10. **Teaser.** `world-scene.tsx` calls `getSpawns` for a still scene; it needs one `liveSpawns` call at a fixed time.
-11. **Tests and fixtures that name windows.** Any test that builds a spawn id from a window index must move to cycle starts. The build lists them.
+Settled by the maintainer on 2026-11-03.
+
+1. **K.** 8 ordinary slots per chunk. Slot indices: ordinary 0 to 7, lure 8 to 10, rare 11. `checkSpawnCount(SLOT_COUNT)` then returns the same counts as today (8, 11, 5, 6).
+2. **Rare channel.** The dedicated rare slot stays, at `RARE_ODDS_SCALE` 8, which keeps today's hourly rate.
+3. **Stored window.** `snapshot_spawns` keeps being written until the derived server check is proved. Dropping the table is a follow-up the build node notes.
+4. **Server function shape.** `meetSpawn` follows `server-function-order` and its build guard. `spawn-lifetimes` ships the check with a start-cell position, `spawn-roaming` changes only `positionAt`.
+5. **Clock.** The 1 s allowance stands. The client uses the offset `src/auth/clock.ts` already keeps. If a path is found that does not go through `localNow`, the build adds the offset there.
+6. **Pool timing.** A cycle rolls its pool once, at its start, from the time of day and weather at that moment, and keeps it until it ends, even across a change of period.
+7. **Caves.** Caves use the same slots with the cave pool (`getSpawnPool` already takes the depth).
+8. **Roaming.** Roamers may share a cell and may use terrace ramps a player can walk (`canStep`). The chunk clip stays.
+9. **Teaser and tests.** `world-scene.tsx` moves to `liveSpawns` at a fixed time, and tests that build spawn ids from window indices move to cycle starts. Both are tasks of `spawn-lifetimes`.
 
 ## Changes
 
-- v1: interface and constants written by `spawn-life-design`.
+- v1: interface and constants written by `spawn-life-design`. K set to 8 and the open questions closed by the maintainer.

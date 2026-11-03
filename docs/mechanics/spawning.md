@@ -11,7 +11,7 @@ same places. Nothing about where a pokemon is gets sent between players.
 
 ## Slots
 
-A chunk has **six** slots for the pokemon an ordinary walker sees. Three more
+A chunk has **eight** slots for the pokemon an ordinary walker sees. Three more
 are visible only to a player whose buddy attracts pokemon (a lure, see
 [Meeting pokemon](encounters.md)), and one more is kept for rare pokemon.
 
@@ -22,8 +22,8 @@ Each slot repeats the same cycle:
 | Present | 3.5 to 4.5 minutes, different every cycle |
 | Rest    | 1 to 2 minutes, the rest of 5.5 minutes   |
 
-A slot starts at its own moment in the 5.5 minutes, so the six are never in step.
-On average four or five of a chunk's six are standing at any time.
+A slot starts at its own moment in the 5.5 minutes, so the eight are never in step.
+On average five or six of a chunk's eight are standing at any time.
 
 When a slot's rest ends, it rolls again: a new species, a new individual with
 its own level, nature and values, and a new cell. The roll comes from the chunk,
@@ -80,7 +80,7 @@ every half second, which is half a player's pace. Two things hold it back:
   something happening. Country pokemon never walk into a town, and a pokemon of
   the streets stays on them and keeps within two cells.
 
-A pokemon never leaves its chunk. Where it stands at any moment is worked out from
+It uses the same ramps between levels that a player can walk. Two pokemon may stand on one cell. A pokemon never leaves its chunk. Where it stands at any moment is worked out from
 the clock, so everyone sees it on the same cell. When you press it, the server
 works out where it is and accepts a press within a cell of that.
 
@@ -95,7 +95,7 @@ arrives right next to you, so none pops up under your feet.
 
 | Rule                                   | Value                 |
 | -------------------------------------- | --------------------- |
-| Slots a chunk shows an ordinary walker | 6                     |
+| Slots a chunk shows an ordinary walker | 8                     |
 | Slots only a lure shows                | 3                     |
 | Slots for rare pokemon                 | 1                     |
 | Present                                | 3.5 to 4.5 min        |

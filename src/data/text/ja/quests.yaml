@@ -1,0 +1,54 @@
+# かかれた チェーン、 クエスト、 デイリーの なまえ。 データファイルの
+# キーで ひく
+
+chains:
+  Catching: つかまえやの はじまり
+  Battling: みちばたの ライバル
+  Raiding: レイドの サイレン
+  Phenomena: ふしぎな そらもよう
+  Eggs: タマゴの ふかじょ
+  Happiness: あたたかい なかま
+  Training: コーチング コース
+  Auctions: オークションハウス
+  Biomes: ひろい せかい
+  Friends: みんなで いっしょに
+
+quests:
+  FirstCatch: はじめての ゲット
+  GrowingTeam: ふえる なかま
+  NewFaces: あたらしい かお
+  FieldNotes: フィールドノート
+  PickingFights: しょうぶを しかけろ
+  RocketTrouble: ロケットだんの さわぎ
+  CleanupCrew: おそうじ ぶたい
+  RaidRookie: レイドの しんじん
+  BossDown: ボスを たおせ
+  SirenVeteran: サイレンの ベテラン
+  OddLights: あやしい ひかり
+  StormChaser: あらしを おえ
+  EggSpotting: タマゴを はっけん
+  OutForAWalk: おさんぽ
+  FreshHatch: うまれたて
+  Matchmaker: なこうど
+  NestForANibble: すで ひとくち
+  SideBySide: ならんで あるく
+  DayAtTheSpa: スパの いちにち
+  GrowthSpurt: ぐんぐん せいちょう
+  BalancedDiet: バランスの いい しょくじ
+  NewTricks: あたらしい わざ
+  FullBloom: まんかい
+  OpeningBid: はじまりの ねだん
+  Sold: うれた！
+  OverTheHill: やまを こえて
+  ThroughTheDoor: とびらの むこうへ
+  FarAfield: とおくへ
+  FriendlyFace: なじみの かお
+  FairSwap: フェアな こうかん
+  FineTuning: ちょうせい
+
+daily:
+  RoadsideChallenge: みちばたの チャレンジ
+  LocalRounds: ちいきの みまわり
+  ForagersRounds: さがしやの みまわり
+  WellSupplied: じゅんび ばんたん
+  AnswerTheSiren: サイレンに こたえろ

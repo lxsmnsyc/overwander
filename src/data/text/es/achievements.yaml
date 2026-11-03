@@ -1,0 +1,53 @@
+# Cómo se llama cada rango de logro y cada línea: su nombre, que es también
+# el título que se lleva desde Bronce (con «de platino» detrás en Platino), y la
+# hazaña que cuenta, para la tarjeta emergente
+
+tiers:
+  None: Sin rango
+  Bronze: Bronce
+  Silver: Plata
+  Gold: Oro
+  Platinum: Platino
+lines:
+  Collector:
+    name: Coleccionista
+    deed: Pokémon capturados
+  Hatcher:
+    name: Cuidahuevos
+    deed: Huevos eclosionados
+  Coach:
+    name: Coach
+    deed: Niveles ganados
+  Wayfarer:
+    name: Caminante
+    deed: Pasos andados
+  Socialite:
+    name: Servicial
+    deed: Personas atendidas
+  Forager:
+    name: Cazaalijos
+    deed: Lugares reclamados
+  Raider:
+    name: Incursionista
+    deed: Incursiones ganadas
+  Trader:
+    name: Comerciante
+    deed: Intercambios realizados
+  Auctioneer:
+    name: Rematante
+    deed: Subastas concluidas
+  Confidant:
+    name: Confidente
+    deed: Amistades hechas
+  Wayfinder:
+    name: Trotamundos
+    deed: Portales cruzados
+  Matchmaker:
+    name: Cupido
+    deed: Parejas criadas
+  Purifier:
+    name: Purificante
+    deed: Pokémon oscuros purificados
+  Pathfinder:
+    name: Guía
+    deed: Biomas descubiertos

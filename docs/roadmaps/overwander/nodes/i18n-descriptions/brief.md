@@ -46,7 +46,7 @@ Translations batch 8, part 1 of 7: everything the six description batches need b
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 8). Contract: ../../contracts/registry-text.md. Read the outcomes of `i18n-official-names`, `i18n-templates` and `i18n-ui-catches` (its stubs list the stat names).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 8). Contract: ../../contracts/registry-text.md. Read the outcomes of `i18n-official-names`, `i18n-templates` and `i18n-ui-catches` (its stubs list the stat names).
 - `scripts/i18n/official-names.ts` writes `text/<locale>/{moves,abilities,items,species}/**` from PokeAPI and overwrites each file whole. A `description` written into such a file would be lost on the next run.
 - `STAT_NAMES` and `STAGE_NAMES` (`src/data/constants/stats.ts`) are a plain `stringTable` over `text/en/stats.yaml`. Item descriptions built from them (`berries.ts`, `mints.ts`, `power-items.ts`, `wings.ts`, `vitamins.ts`) go through `deriveLocalized`, so they follow a locale table once there is one. `src/components/app/command-bar/names.ts`, `src/data/species/yaml.ts` and `src/overworld/npcs/hyper-trainer/interact.ts` match or parse the English names and must keep doing so.
 - Zenith names are built as `Zenith <holder>` in English only (i18n-templates outcome, Stubs left).

@@ -37,7 +37,7 @@ Translations batch 2: a script writes the official ja and es names from PokeAPI 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 2; Decided: kana Japanese, Spain's Spanish, official names never translated by hand).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 2; Decided: kana Japanese, Spain's Spanish, official names never translated by hand).
 - PokeAPI's CSV tables on GitHub, pinned to one commit. Language ids: `1` (ja-Hrkt, kana), `11` (ja), `7` (es), `9` (en).
 - Entries are matched by English name. Entries the games do not name (signature abilities, Zeniths, this game's own items) stay English.
 

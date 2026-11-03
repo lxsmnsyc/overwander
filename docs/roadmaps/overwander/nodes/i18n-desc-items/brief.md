@@ -30,7 +30,7 @@ Translations batch 8, part 2 of 7: every item's written description and every fa
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 8; "What every batch does" steps 3 to 8). Contract: ../../contracts/registry-text.md (v3 after i18n-descriptions). Read the outcome of `i18n-descriptions`.
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 8; "What every batch does" steps 3 to 8). Contract: ../../contracts/registry-text.md (v3 after i18n-descriptions). Read the outcome of `i18n-descriptions`.
 - A locale file sits at the same path under `text/ja/` or `text/es/` as the English file and is keyed the same way. Where the generated file already exists (official names), add `description:` beside the generated `name:`; the generator keeps it.
 - The English line describes this engine's behaviour, not the mainline's (the `registry-descriptions` skill). Translate the English line as written, never the official game's flavour text. Official terms (moves, abilities, items, statuses, stats) come from the term list and the registry's own ja and es names.
 - Japanese is kana with spaces between phrases, like the Gen 1 to 5 games, and ends a description with 。. Spanish uses the official Spanish games' terms.

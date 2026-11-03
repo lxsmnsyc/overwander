@@ -51,8 +51,9 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 
 ## Sources
 
-- [translations.md](../../strategy/translations.md), [pixel-effects.md](../../strategy/pixel-effects.md), [dungeons.md](../../strategy/dungeons.md), [rebalance.md](../../strategy/rebalance.md), [app-logic.md](../../strategy/app-logic.md).
+- [pixel-effects.md](../../strategy/pixel-effects.md), [dungeons.md](../../strategy/dungeons.md), [rebalance.md](../../strategy/rebalance.md), [app-logic.md](../../strategy/app-logic.md).
 - `docs/todo.md` and `docs/strategy/README.md`, merged into this roadmap and removed (see git history).
+- `docs/strategy/translations.md`, finished with batch 9 and removed (see git history); its term list stays in `docs/strategy/translations-terms.md`.
 
 ## Coverage
 

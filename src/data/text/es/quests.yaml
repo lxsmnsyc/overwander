@@ -1,0 +1,54 @@
+# Cómo se llama cada cadena, misión y diaria escritas, según la clave de
+# los archivos de datos.
+
+chains:
+  Catching: Inicio en la captura
+  Battling: Rivales del camino
+  Raiding: Sirenas de incursión
+  Phenomena: Tiempo extraño
+  Eggs: El criadero
+  Happiness: Buena compañía
+  Training: Curso de entrenamiento
+  Auctions: Casa de subastas
+  Biomes: El mundo entero
+  Friends: Mejor en compañía
+
+quests:
+  FirstCatch: Primera captura
+  GrowingTeam: Equipo en crecimiento
+  NewFaces: Caras nuevas
+  FieldNotes: Notas de campo
+  PickingFights: Buscando pelea
+  RocketTrouble: Problemas con Team Rocket
+  CleanupCrew: Equipo de limpieza
+  RaidRookie: Debut en incursiones
+  BossDown: Jefe caído
+  SirenVeteran: Veteranía en incursiones
+  OddLights: Luces extrañas
+  StormChaser: Persecución de tormentas
+  EggSpotting: Huevo a la vista
+  OutForAWalk: De paseo
+  FreshHatch: Recién salido del cascarón
+  Matchmaker: Pareja perfecta
+  NestForANibble: Un nido para picar
+  SideBySide: Codo con codo
+  DayAtTheSpa: Día de spa
+  GrowthSpurt: Estirón
+  BalancedDiet: Dieta equilibrada
+  NewTricks: Trucos nuevos
+  FullBloom: Plena floración
+  OpeningBid: Puja inicial
+  Sold: ¡Vendido!
+  OverTheHill: Al otro lado de la colina
+  ThroughTheDoor: Cruzar la puerta
+  FarAfield: Lejos de casa
+  FriendlyFace: Una cara amiga
+  FairSwap: Intercambio justo
+  FineTuning: Ajuste fino
+
+daily:
+  RoadsideChallenge: Desafío del camino
+  LocalRounds: Ronda local
+  ForagersRounds: Ronda de recolección
+  WellSupplied: Provisiones de sobra
+  AnswerTheSiren: Responder a la sirena

@@ -1,6 +1,6 @@
 # Pixel effects strategy
 
-How the overworld and battle effects come to look like the sprites they are drawn over: blocky, with hard edges and few colours, instead of smooth vector shapes and soft gradients. This plan comes after [the translations](translations.md).
+How the overworld and battle effects come to look like the sprites they are drawn over: blocky, with hard edges and few colours, instead of smooth vector shapes and soft gradients.
 
 ## Where things stand
 

@@ -34,7 +34,7 @@ Translations batch 1: each registry `yaml.ts` reads `text/<locale>/` over `text/
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 1)
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 1)
 
 ## Acceptance
 

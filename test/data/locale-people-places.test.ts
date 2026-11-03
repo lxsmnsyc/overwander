@@ -818,3 +818,166 @@ describe('town names in ja and es', () => {
     }
   });
 });
+
+describe('quests, awards, titles and the small name tables in ja and es', () => {
+  const STOP = { ja: '。', es: '.' } as const;
+
+  /** The files this batch closes the plan with */
+  const PROGRESS = [
+    'regions',
+    'title-forms',
+    'dex-chain',
+    'quest-rotations',
+    'quests',
+    'awards',
+    'achievements',
+    'titles',
+    'dex-rungs',
+    'egg-groups',
+    'item-types',
+  ];
+
+  /** The phrase templates among them: every `{param}` is kept */
+  const TEMPLATES = ['title-forms', 'dex-chain', 'quest-rotations'];
+
+  /** Every line of a file with the path it sits at */
+  function lines(value: unknown, where: string): [string, string][] {
+    if (typeof value === 'string') {
+      return [[where, value]];
+    }
+    if (Array.isArray(value)) {
+      return value.flatMap((item, at) => lines(item, `${where}[${at}]`));
+    }
+    if (typeof value === 'object' && value != null) {
+      return Object.entries(value).flatMap(([key, item]) => lines(item, `${where}.${key}`));
+    }
+    return [];
+  }
+
+  it('write every entry English has, in both locales', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      for (const file of PROGRESS) {
+        const written = new Map(lines(read(locale, file), file));
+
+        for (const [where] of lines(read('en', file), file)) {
+          if (!written.get(where)) {
+            missing.push(`${locale} ${where}`);
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('end a line on a full stop where English does, 。 in Japanese', () => {
+    const open: string[] = [];
+
+    for (const locale of ['ja', 'es'] as const) {
+      for (const file of PROGRESS) {
+        const written = new Map(lines(read(locale, file), file));
+
+        for (const [where, english] of lines(read('en', file), file)) {
+          if (english.endsWith('.') && !written.get(where)?.endsWith(STOP[locale])) {
+            open.push(`${locale} ${where}`);
+          }
+        }
+      }
+    }
+    expect(open).toEqual([]);
+  });
+
+  it('keep every parameter of the phrase templates and the quest names', () => {
+    const found: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      for (const file of [...TEMPLATES, 'quests', 'awards', 'achievements']) {
+        const written = new Map(lines(read(locale, file), file));
+
+        for (const [where, english] of lines(read('en', file), file)) {
+          const used = parameters(written.get(where) ?? '').toSorted();
+
+          if (used.join() !== parameters(english).toSorted().join()) {
+            found.push(`${locale} ${where}`);
+          }
+        }
+      }
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('write no kanji in ja, comments included', () => {
+    for (const file of PROGRESS) {
+      expect(readFileSync(join(TEXT, 'ja', `${file}.yaml`), 'utf8'), file).not.toMatch(
+        /\p{Script=Han}/u,
+      );
+    }
+  });
+
+  it('give the official names of the egg groups, regions and the Kanto badges', () => {
+    const groups = v.parse(v.record(v.string(), v.string()), read('ja', 'egg-groups'));
+    const groupsEs = v.parse(v.record(v.string(), v.string()), read('es', 'egg-groups'));
+    const regions = v.parse(v.record(v.string(), v.string()), read('ja', 'regions'));
+    const regionsEs = v.parse(v.record(v.string(), v.string()), read('es', 'regions'));
+    const awards = v.parse(v.record(v.string(), v.string()), read('ja', 'awards'));
+    const awardsEs = v.parse(v.record(v.string(), v.string()), read('es', 'awards'));
+
+    expect([groups.Monster, groups.Field, groups.NoEggsDiscovered]).toEqual([
+      'かいじゅう',
+      'りくじょう',
+      'タマゴみはっけん',
+    ]);
+    expect([groupsEs.Monster, groupsEs.HumanLike, groupsEs.NoEggsDiscovered]).toEqual([
+      'Monstruo',
+      'Humanoide',
+      'Desconocido',
+    ]);
+    expect([regions.Unova, regions.Paldea]).toEqual(['イッシュ', 'パルデア']);
+    expect([regionsEs.Unova, regionsEs.Hoenn]).toEqual(['Teselia', 'Hoenn']);
+    expect([awards.BoulderBadge, awards.MarshBadge]).toEqual(['グレーバッジ', 'ゴールドバッジ']);
+    expect([awardsEs.BoulderBadge, awardsEs.MarshBadge]).toEqual([
+      'Medalla Roca',
+      'Medalla Pantano',
+    ]);
+  });
+
+  it('say no two egg groups, item kinds, quests or achievement lines by one name', () => {
+    for (const locale of ['ja', 'es']) {
+      for (const file of ['egg-groups', 'item-types', 'dex-rungs', 'titles']) {
+        const names = lines(read(locale, file), file).map(([, line]) => line);
+
+        expect(new Set(names).size, `${locale} ${file}`).toBe(names.length);
+      }
+
+      const quests = v.parse(
+        v.object({
+          chains: v.record(v.string(), v.string()),
+          quests: v.record(v.string(), v.string()),
+          daily: v.record(v.string(), v.string()),
+        }),
+        read(locale, 'quests'),
+      );
+      const names = Object.values({ ...quests.chains, ...quests.quests, ...quests.daily });
+
+      expect(new Set(names).size, `${locale} quests`).toBe(names.length);
+    }
+  });
+
+  it('read the quest names, the dex chain and the titles in the locale when asked', async () => {
+    const { CHAINS } = await import('../../src/data/quests');
+    const { getTitleName, professorTitle, lineTitle } = await import('../../src/data/ids/titles');
+    const { default: Regions } = await import('../../src/data/ids/regions');
+    const { AchievementLine } = await import('../../src/data/ids/achievements');
+
+    active.locale = 'ja';
+    expect(getTitleName(professorTitle(Regions.Kanto))).toBe('カントーの はかせ');
+    expect(Object.values(CHAINS).at(-1)?.name).toBe('イッシュずかん');
+    active.locale = 'es';
+    expect(getTitleName(professorTitle(Regions.Kanto))).toBe('Prof. de Kanto');
+    expect(getTitleName(lineTitle(AchievementLine.Collector, true))).toBe(
+      'Coleccionista de platino',
+    );
+    expect(Object.values(CHAINS).at(-1)?.name).toBe('Pokédex de Teselia');
+  });
+});

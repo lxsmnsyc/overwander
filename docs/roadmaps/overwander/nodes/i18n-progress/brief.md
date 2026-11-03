@@ -1,7 +1,7 @@
 ---
 id: i18n-progress
 title: Translate quests, awards and titles, and close batch 9
-status: todo
+status: active
 priority: should
 type: feature
 outline: false
@@ -51,7 +51,7 @@ Translations batch 9, part 6 of 6, the last of the plan: quests, awards (badges 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 9; "What every batch does" steps 3 to 8). Read the outcome of `i18n-people-places` for how each file is read in a locale.
+- Source: the translation plan, `docs/strategy/translations.md`, removed by this node (see git history) (The order, batch 9; "What every batch does" steps 3 to 8). Read the outcome of `i18n-people-places` for how each file is read in a locale.
 - A locale file sits at the same path under `text/ja/` or `text/es/` as the English file and is keyed the same way.
 - Japanese is kana with spaces between phrases, like the Gen 1 to 5 games; a sentence ends with 。. Spanish is the games' Spanish as Spain uses it.
 - Terms the games already name use the official term in that locale. Everything this engine invented is translated once and recorded in `docs/strategy/translations-terms.md`; reuse what is there.

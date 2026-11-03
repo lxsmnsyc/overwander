@@ -1,0 +1,6 @@
+# ちほうの ずかんの チェーンに つく なまえ。 `rung` は dex-rungs.yaml に
+# ない ダンの なまえで、 1から かぞえる
+
+complete: '{region}ずかん かんせい'
+rung: '{region}ずかん {number}'
+chain: '{region}ずかん'

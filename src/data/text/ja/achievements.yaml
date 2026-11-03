@@ -1,0 +1,53 @@
+# じっせきの ランクと ラインの なまえ。 ラインの なまえは ブロンズから
+# つける しょうごうでもあり (プラチナでは マスターが つく)、 `deed` は
+# かぞえる ことがら。 ホバーカードに でる
+
+tiers:
+  None: ランクなし
+  Bronze: ブロンズ
+  Silver: シルバー
+  Gold: ゴールド
+  Platinum: プラチナ
+lines:
+  Collector:
+    name: コレクター
+    deed: つかまえた ポケモン
+  Hatcher:
+    name: タマゴふかしや
+    deed: かえした タマゴ
+  Coach:
+    name: コーチ
+    deed: あげた レベル
+  Wayfarer:
+    name: あるきびと
+    deed: あるいた ほすう
+  Socialite:
+    name: にんきもの
+    deed: せわに なった ひとの かず
+  Forager:
+    name: さがしや
+    deed: てにいれた ばしょ
+  Raider:
+    name: レイダー
+    deed: かった レイド
+  Trader:
+    name: トレーダー
+    deed: おこなった こうかん
+  Auctioneer:
+    name: オークショニア
+    deed: おわった オークション
+  Confidant:
+    name: しんゆう
+    deed: できた フレンド
+  Wayfinder:
+    name: ポータルわたり
+    deed: くぐった ポータル
+  Matchmaker:
+    name: なこうど
+    deed: かけあわせた ペア
+  Purifier:
+    name: リライバー
+    deed: リライブした ダークポケモン
+  Pathfinder:
+    name: たんけんか
+    deed: みつけた バイオーム

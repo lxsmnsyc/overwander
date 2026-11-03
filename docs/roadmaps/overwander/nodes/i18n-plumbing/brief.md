@@ -30,7 +30,7 @@ Translations batch 0: Paraglide, a locale setting beside the theme that defaults
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 0)
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 0)
 
 ## Acceptance
 

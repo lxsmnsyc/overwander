@@ -44,7 +44,7 @@ Translations batch 7, part 1 of 3: everything a player sees around every screen 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 7; "What every batch does" is the procedure, steps 2 to 8). Batch 7 is split in three: this shell, then `i18n-ui-catches` and `i18n-ui-social`.
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 7; "What every batch does" is the procedure, steps 2 to 8). Batch 7 is split in three: this shell, then `i18n-ui-catches` and `i18n-ui-social`.
 - Read the outcomes of `i18n-ui-overworld` and `i18n-ui-battle` for the pattern: Paraglide messages in `src/i18n/messages/{en,ja,es}.json`, `test/i18n/messages.test.ts`, the term list, message tables held as functions and called when shown, plurals with a `*` catch-all.
 - In scope:
   - `src/components/app/**`: the GameMenu, panel titles, the command bar, the login form and announcements.

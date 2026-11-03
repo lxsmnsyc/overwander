@@ -38,7 +38,7 @@ Translations batch 7, part 2 of 3: the catch box and catch sheet, the bag and ca
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 7; "What every batch does" steps 2 to 8). Read the outcomes of `i18n-ui-battle` and `i18n-ui-shell` for the pattern and the shared keys to reuse.
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 7; "What every batch does" steps 2 to 8). Read the outcomes of `i18n-ui-battle` and `i18n-ui-shell` for the pattern and the shared keys to reuse.
 - In scope:
   - `src/components/catches/**`: the catch dialog and its sections, the lists, picker and cards, Ability Patch, Bottle Cap, PP Up, and the buddy. This is the most text, including `' · fainted'` in `catch-summary.ts`.
   - `src/components/items/**`, `src/components/dex/**`, `src/components/moves/**` and `src/components/sprites/**`.

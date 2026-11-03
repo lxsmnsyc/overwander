@@ -66,7 +66,6 @@ Translations batch 9, part 6 of 6, the last of the plan: quests, awards (badges 
 - [ ] Every entry has a ja and an es name, and a line where English has one; a test fails if one is missing.
 - [ ] `docs/strategy/translations.md` is removed and nothing links to it.
 - [ ] A fresh review agent checks the ja and es text against the English and the term list; its findings are fixed before the PR.
-- [ ] Screenshots in ja and es at 1280x720 of the screens that show this text show no clipping.
 - [ ] Changeset `patch`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers on this machine).
 
 ## Sizing

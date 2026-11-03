@@ -369,26 +369,28 @@ describe('families and Megas named from species', () => {
 });
 
 describe('the NPCs, their stalls and their scenery in ja and es', () => {
-  const NPC_FIELDS = ['name', 'description', 'quote', 'spent'] as const;
+  const NPC_FIELDS = ['name', 'description', 'quote', 'spent'];
+  const PEOPLE = v.record(v.string(), v.record(v.string(), v.string()));
+  const LINES = v.record(v.string(), v.string());
 
   it('write every person, stall and kind of scenery, with the fields English writes', () => {
     const missing: string[] = [];
+    const english = v.parse(PEOPLE, read('en', 'npcs'));
 
     for (const locale of ['ja', 'es']) {
-      const english = read('en', 'npcs') as Record<string, Record<string, string>>;
-      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
+      const written = v.parse(PEOPLE, read(locale, 'npcs'));
 
       for (const [key, person] of Object.entries(english)) {
         for (const field of NPC_FIELDS) {
-          if (person[field] != null && !written[key]?.[field]) {
+          if (field in person && !written[key]?.[field]) {
             missing.push(`${locale} ${key}.${field}`);
           }
         }
       }
       for (const file of ['vendor-stalls', 'decorations']) {
-        const lines = read(locale, file) as Record<string, string>;
+        const lines = v.parse(LINES, read(locale, file));
 
-        for (const key of Object.keys(read('en', file) as object)) {
+        for (const key of Object.keys(v.parse(LINES, read('en', file)))) {
           if (!lines[key]) {
             missing.push(`${locale} ${file} ${key}`);
           }
@@ -405,9 +407,7 @@ describe('the NPCs, their stalls and their scenery in ja and es', () => {
       ['ja', '。'],
       ['es', '.'],
     ]) {
-      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
-
-      for (const [key, person] of Object.entries(written)) {
+      for (const [key, person] of Object.entries(v.parse(PEOPLE, read(locale, 'npcs')))) {
         if (!person.description.endsWith(stop)) {
           open.push(`${locale} ${key}`);
         }
@@ -418,8 +418,9 @@ describe('the NPCs, their stalls and their scenery in ja and es', () => {
 
   it('say no two people by the same name in one locale', () => {
     for (const locale of ['ja', 'es']) {
-      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
-      const names = Object.values(written).map((person) => person.name);
+      const names = Object.values(v.parse(PEOPLE, read(locale, 'npcs'))).map(
+        (person) => person.name,
+      );
 
       expect(new Set(names).size, locale).toBe(names.length);
     }

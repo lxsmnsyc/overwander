@@ -19,8 +19,8 @@ Renames from the first reading: es `Gran {name}` to `{name} de platino` (a prefi
 
 | Template | ja | es |
 | --- | --- | --- |
-| professor | カントーはかせ, イッシュはかせ | Prof. de Kanto, Prof. de Teselia |
-| master | マスターコレクター, マスターエリートトレーナー | Coleccionista de platino, Entrenador guay de platino |
+| professor | カントーの はかせ, イッシュの はかせ | Prof. de Kanto, Prof. de Teselia |
+| master | コレクターマスター, エリートトレーナーマスター | Coleccionista de platino, Entrenador guay de platino |
 | type | ほのおタイプの たつじん, でんきタイプの マスター | Especialista de tipo Fuego, Maestría de tipo Eléctrico |
 | dex chain | カントーずかん, カントーずかん かんせい | Pokédex de Kanto, Pokédex de Kanto completa |
 | rotations | ちゅうもく: クリムガン, ヤンチャムハント | Destacado: Druddigon, La caza de Pancham |
@@ -45,7 +45,7 @@ Renames from the first reading: es `Gran {name}` to `{name} de platino` (a prefi
 
 ## To confirm
 
-- ja Silver / Gold Print names (`ぎんの タワープリント` and the rest) and es Gold as `Estampa de color` (WikiDex gives "de plata" and "de color" for the Sinnoh prints; the engine's Hall / Tower / Arcade prints are mapped by hand). The Battle Frontier symbol silver and gold: ja `ぎんの / きんの ...シンボル` and es `... de plata / de oro` come from WikiDex's captions.
+- ja Silver / Gold Print names (`ぎんの タワープリント` and the rest; the engine's prints are mapped by hand to the games' Sinnoh prints) and the six ja symbols other than `ブレイブシンボル` (`ガッツ`, `ラック`, `ノウレッジ`, `アビリティ`, `スピリッツ`, `タクティクス`), whose silver and gold forms (`ぎんの / きんの ...`) are coined from WikiDex's English names.
 - ja item kinds that the games do not name: `しんかの どうぐ` (Evolution), `きたえる どうぐ` (Training), `たからもの` (Valuables); es `Objetos evolutivos`, `Objetos de entrenamiento` (WikiDex prints `Tesoros` for Valuables and `Objetos equipables` is the term list's).
 - ja `ふめい` and es `Desconocida` for the Unknown region.
 - ja `ポータルわたり`, `さがしや`, `なこうど`, `リライバー`, `たんけんか`, `でんせつやぶり`, `してんのう せいふくしゃ` and es `Cazaalijos`, `Rematante`, `Purificante`, `Trotamundos`, `Rompeleyendas`, `Conquista del Alto Mando`: coined, reread for a second meaning, not checked by a native speaker.

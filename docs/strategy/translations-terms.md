@@ -440,10 +440,10 @@ Official (WikiDex): the gym badges of Kanto to Kalos (the ja column is the badge
 | X Defeated | {name}を たおした | {name} derrotado/derrotada (the gender of the person) | Award |
 | Team X Repelled | {team}を おいはらった | {team} repelido | Award |
 | Silver / Gold Print | ぎんの / きんの ...プリント | Estampa de plata / de color | Frontier awards (es from WikiDex's Estampas) |
-| {region} Professor | {region}はかせ | Prof. de {region} | Title (an abbreviation keeps it neutral in gender) |
-| Master {name} | マスター{name} | {name} de platino | Title (es is neutral in gender and number) |
+| {region} Professor | {region}の はかせ | Prof. de {region} | Title (an abbreviation keeps it neutral in gender) |
+| Master {name} | {name}マスター | {name} de platino | Title (es is neutral in gender and number) |
 | {type} Specialist, {type} Master | {type}タイプの たつじん, ...の マスター | Especialista de tipo, Maestría de tipo | Type titles |
-| Collector, Hatcher, Coach, Wayfarer, Socialite, Forager | コレクター, タマゴふかしや, コーチ, あるきびと, にんきもの, さがしや | Coleccionista, Cuidahuevos, Coach, Caminante, Servicial, Cazaalijos | Achievement lines (es nouns are the same for any gender) |
+| Collector, Hatcher, Coach, Wayfarer, Socialite, Forager | コレクター, タマゴふかしや, コーチ, あるきびと, にんきもの, さがしや | Coleccionista, Cuidahuevos, Coach, Caminante, Sociable, Cazaalijos | Achievement lines (es nouns are the same for any gender) |
 | Raider, Trader, Auctioneer, Confidant, Wayfinder, Matchmaker, Purifier, Pathfinder | レイダー, トレーダー, オークショニア, しんゆう, ポータルわたり, なこうど, リライバー, たんけんか | Incursionista, Comerciante, Rematante, Confidente, Trotamundos, Cupido, Purificante, Guía | Achievement lines |
 | Unranked, Bronze, Silver, Gold, Platinum | ランクなし, ブロンズ, シルバー, ゴールド, プラチナ | Sin rango, Bronce, Plata, Oro, Platino | Tiers |
 | Field Researcher, Dex Scholar, Dex Master, Dex Sage | フィールドワーカー, ずかん がくしゃ, ずかん マスター, ずかん けんじゃ | Investigación de campo, Erudición, Maestría, Sabiduría de la Pokédex | Dex rungs |

@@ -1,7 +1,7 @@
 ---
 id: i18n-people-experts
 title: Translate the gym leaders, Elite Four and other experts
-status: active
+status: done
 priority: should
 type: feature
 outline: false

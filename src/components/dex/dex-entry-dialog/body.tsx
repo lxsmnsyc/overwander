@@ -18,11 +18,10 @@ import { SpriteAnim } from '../../../data/ids/sprite-anims';
 import { getItemData, getSpeciesFossil } from '../../../data/items';
 import { getMoveData } from '../../../data/moves';
 import {
-  type EvolutionData,
   type SpeciesData,
-  getBaseSpecies,
   getFamilyName,
   getSpeciesData,
+  listEvolutionLine,
 } from '../../../data/species';
 import {
   EvolutionCondition,
@@ -54,16 +53,6 @@ import {
 import { For, type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
 import { answered, failed, readable } from '../../app/resource-reads';
 import { m } from '../../../i18n/paraglide/messages.js';
-
-/** How many stages a line is walked to, so a data loop cannot run away */
-const LINE_LIMIT = 24;
-
-/** One stage of an evolution line, and what it takes to reach it */
-interface LineStage {
-  species: Species;
-  depth: number;
-  from?: EvolutionData;
-}
 
 /** The sum of a species' base stats */
 function totalOf(data: SpeciesData): number {
@@ -241,25 +230,6 @@ export function DexEntryBody(
     return { met: seen || owned, owned, shiny: sparkled };
   };
 
-  /** The whole line this species belongs to, from its first stage down */
-  const lineOf = (species: Species): LineStage[] => {
-    const stages: LineStage[] = [];
-    const walk = (at: Species, depth: number, from?: EvolutionData): void => {
-      if (stages.length > LINE_LIMIT) {
-        return;
-      }
-      stages.push({ species: at, depth, from });
-      for (const next of getSpeciesData(at).evolvesInto ?? []) {
-        if (next.species !== at) {
-          walk(next.species, depth + 1, next);
-        }
-      }
-    };
-
-    walk(getBaseSpecies(species), 0);
-    return stages;
-  };
-
   /**
    * One move, as a row. The **level** is a column of its own on the
    * far left rather than a word among the numbers on the right: a
@@ -402,7 +372,7 @@ export function DexEntryBody(
                 </span>
                 {/* A long branching line scrolls inside its own box */}
                 <ul class="m-0 flex min-h-0 list-none flex-col gap-1 overflow-y-auto p-0">
-                  <For each={lineOf(entry().species)}>
+                  <For each={listEvolutionLine(entry().species)}>
                     {(stage) => (
                       <li
                         class={`flex items-center gap-2 rounded-lg px-1 text-left text-sm ${

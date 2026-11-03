@@ -54,6 +54,7 @@ import {
   getSpentHeldItem,
   isFeaturedSpecies,
   isOneInAHundred,
+  listEvolutionLine,
   meetsEvolutionCriteria,
   registerSpecies,
   settleHandover,
@@ -305,6 +306,27 @@ describe('evolution data', () => {
     for (const shape of ROTOM_FORMS) {
       expect(getSpawnRarity(shape)).toBe(SpawnRarity.Elusive);
     }
+  });
+
+  it('lists every line once, its shapes side by side one step down', () => {
+    // Rotom's appliances and Ogerpon's masks link back to the base and
+    // to each other, which once walked round the wheel in the dex
+    for (const species of getRegisteredSpecies()) {
+      const line = listEvolutionLine(species).map((stage) => stage.species);
+      expect(new Set(line).size, `line of ${species}`).toBe(line.length);
+    }
+
+    const rotom = listEvolutionLine(Species.RotomHeat);
+    expect(rotom[0]).toMatchObject({ species: Species.Rotom, depth: 0 });
+    expect(rotom.slice(1).map((stage) => stage.depth)).toEqual(rotom.slice(1).map(() => 1));
+    expect(rotom.map((stage) => stage.species).sort()).toEqual([...ROTOM_FORMS].sort());
+
+    expect(listEvolutionLine(Species.OgerponHearthflame)).toMatchObject([
+      { species: Species.Ogerpon, depth: 0 },
+      { species: Species.OgerponWellspring, depth: 1 },
+      { species: Species.OgerponHearthflame, depth: 1 },
+      { species: Species.OgerponCornerstone, depth: 1 },
+    ]);
   });
 
   it('rearranges a Deoxys on a Meteorite, never into the shape it is in', () => {

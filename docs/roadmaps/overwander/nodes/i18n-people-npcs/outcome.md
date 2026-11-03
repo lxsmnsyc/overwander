@@ -64,3 +64,9 @@ Walk up to each person; the name, quote and spent line show on the conversation,
 ## Size
 
 - Estimated M, actual M.
+
+## Caller's checks
+
+- `pnpm test` (2 workers): 281 files, 5802 tests pass. `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review read every ja and es line and name; its fixes and the user's name decisions (Hyper Trainer after the official feature, es Trader Comerciante, ja Tree じゅもく) are applied.
+- Screenshots skipped at the maintainer's call: a test could not hold the player beside the Pokémon Center or market (the position written next to the landmark did not take), so no NPC screen was captured.

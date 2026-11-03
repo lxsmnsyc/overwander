@@ -8,7 +8,7 @@ import { FAMILY_NAMES } from '../../src/data/ids/text';
 import { FAMILY_IDS } from '../../src/data/ids/names';
 import { getMegaBase, getSpeciesData, listMegas } from '../../src/data/species';
 import { COUNTY_NAMES, TOWN_JOINERS, checkTownWords } from '../../src/data/overworld/town-names';
-import { localeFile, localeFieldTable, localeLines } from '../../src/data/yaml';
+import { localeFieldTable, localeFile, localeLines } from '../../src/data/yaml';
 import * as v from 'valibot';
 
 /**
@@ -99,10 +99,10 @@ function faults(overlay: unknown, english: unknown, where: string): string[] {
     const found: string[] = [];
 
     for (const [key, value] of Object.entries(overlay)) {
-      if (!Object.hasOwn(english, key)) {
-        found.push(`${where}: ${key} is not in English`);
-      } else {
+      if (Object.hasOwn(english, key)) {
         found.push(...faults(value, Reflect.get(english, key), `${where}.${key}`));
+      } else {
+        found.push(`${where}: ${key} is not in English`);
       }
     }
     return found;
@@ -224,12 +224,18 @@ describe('town names by locale', () => {
   };
 
   it('holds a locale to the lengths of English', () => {
-    expect(() => checkTownWords(words, words, 'f')).not.toThrow();
-    expect(() => checkTownWords({ ...words, tails: ['x', 'y'] }, words, 'f')).toThrow(/tails/);
-    expect(() => checkTownWords({ ...words, counties: [] }, words, 'f')).toThrow(/counties/);
-    expect(() => checkTownWords({ ...words, heads: { Beach: ['a'] } }, words, 'f')).toThrow(
-      /8 heads/,
-    );
+    expect(() => {
+      checkTownWords(words, words, 'f');
+    }).not.toThrow();
+    expect(() => {
+      checkTownWords({ ...words, tails: ['x', 'y'] }, words, 'f');
+    }).toThrow(/tails/);
+    expect(() => {
+      checkTownWords({ ...words, counties: [] }, words, 'f');
+    }).toThrow(/counties/);
+    expect(() => {
+      checkTownWords({ ...words, heads: { Beach: ['a'] } }, words, 'f');
+    }).toThrow(/8 heads/);
   });
 
   it('joins the parts English welds, Japanese from the county and Spanish title first', () => {

@@ -223,9 +223,9 @@ function townWordsFor(locale: Locale): {
   }
   // English words keep English's joiner, whatever the locale: a locale
   // that has written no lists reads English names, not half translated ones
-  const join = here === words ? TOWN_JOINERS[baseLocale] : TOWN_JOINERS[locale];
+  const own = here !== words && Object.hasOwn(TOWN_JOINERS, locale);
 
-  return { words: here, heads, join: join ?? TOWN_JOINERS[baseLocale] };
+  return { words: here, heads, join: TOWN_JOINERS[own ? locale : baseLocale] };
 }
 
 /** Where a region sits inside its own county, on one axis */

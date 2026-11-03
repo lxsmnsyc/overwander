@@ -2,7 +2,7 @@
 
 ## Built
 
-- `src/data/text/{ja,es}/` files for `gym-leaders` (55), `elite` (23), `champions` (6), `frontier` (13), `frontier-rooms` (5 curtains, 7 panels), `legends` (5), `executives` (17), `syndicates` (6) and `syndicate-titles` (`grunt`, `person`): every key English has, name and quote or greeting.
+- `src/data/text/{ja,es}/` files for `gym-leaders` (54), `elite` (24), `champions` (6), `frontier` (13), `frontier-rooms` (5 curtains, 7 panels), `legends` (5), `executives` (18), `syndicates` (6) and `syndicate-titles` (`grunt`, `person`): every key English has, name and quote or greeting.
 - `test/data/locale-people-places.test.ts`: four checks (all fields written in ja and es, curtains, panels and phrases written, every quote closes a sentence, phrase parameters match English).
 - `docs/strategy/translations-terms.md`: the people table and the team and facility table.
 - Changeset `.changeset/i18n-people-experts.md`, `patch`.

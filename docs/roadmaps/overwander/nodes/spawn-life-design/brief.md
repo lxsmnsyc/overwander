@@ -1,7 +1,7 @@
 ---
 id: spawn-life-design
 title: Design spawn radius, caps and roaming
-status: todo
+status: active
 priority: should
 type: spike
 outline: false
@@ -40,6 +40,18 @@ Decide how wild pokemon come and go on the board, the way mobs do in Minecraft o
 - [ ] Roaming: a deterministic path from seed and time, a leash radius from its home cell, which surfaces it may cross (by its kind: ground, water, flying), how fast, and what it does near towns, stops and other landmarks.
 - [ ] Identity: a key that survives movement, how fled and met pokemon are remembered, and how the server checks a meeting at a moving cell.
 - [ ] What it costs: board draw per frame, chunk derive time, and whether the world fingerprint test moves.
+
+## Decided with the maintainer (2026-11-03)
+
+The maintainer approved this model; the contract writes it down with exact constants and interfaces, and the mechanics page explains it.
+
+- **Slots, not one batch.** Each chunk has K slots, each on its own cycle with a phase from the seed: a pokemon is present for a while, then the slot rests for a respawn gap with variance, then rolls again. What appears and where comes from (chunk, slot, cycle). Starting numbers: K = 6 per chunk (about 54 in view against 72 today), present about 4 minutes, gap 1 to 2 minutes.
+- **The cap stays per chunk.** A per-player or global cap would make existence depend on where other players stand, which the derived world cannot carry. Lures add slots; legendaries and rare spawns keep their own channel outside K.
+- **Caught and fled.** Gone for that player until its cycle ends; the slot returns on its own clock.
+- **Identity.** The key is (chunk, slot, cycle) plus the roll, not the cell. The server works out where the pokemon is at the moment of a meeting and allows a cell of drift for latency.
+- **Roaming is a separate later build** (`spawn-roaming`), designed here but shipped after the slots: a waypoint every 5 seconds from the seed, a leash of 4 cells around the start cell, 1 cell a step, only on surfaces the species' kind may stand on, never on landmarks; towns get their own rule.
+- **No closest-distance rule tied to players.** A pokemon fades in when its slot starts; a small ring around the player only changes what is drawn.
+- Measure the cost (board draw per frame, chunk derive time) and say whether the world fingerprint test pins spawns.
 
 ## Acceptance
 

@@ -83,16 +83,16 @@ KalosSchoolKid:
   name: じゅくがえり
   quote: "トレーナーズスクールで タイプの あいしょうを ならったよ。 ぼくを ためして！"
 KalosPreschooler:
-  name: ようちえんじ
+  name: えんじ
   quote: ママが きょうは おおきい おにいさんと ひとり バトルして いいって！ きみだよ！
 KalosRollerSkater:
-  name: ローラースケーター
+  name: ローラースケート
   quote: ミアレから ずっと すべってきたの。 つかまえられるものなら つかまえてみて！
 KalosPunkGuy:
-  name: パンクボーイ
+  name: バッドガイ
   quote: いい ふくだな。 これから おこることが おしいぜ。
 KalosPunkGirl:
-  name: パンクガール
+  name: バッドガール
   quote: まよってるみたいね。 わたしの ポケモンが でぐちを おしえてあげる。
 KalosSocialite:
   name: セレブ
@@ -104,16 +104,16 @@ KalosClerk:
   name: ビジネスマン
   quote: ミアレは ねむらないし、 オフィスも ねむらない。 てみじかに たのむよ。
 KalosGardener:
-  name: ガーデナー
+  name: にわし
   quote: かだんに きを つけて。 わたしの ポケモンは そこで そだったの。
 SkyTrainer:
   name: スカイトレーナー
   quote: バトルは そらでしか しないの。 うえを みて！
 FairyTaleGirl:
-  name: メルヘンおとめ
+  name: メルヘンしょうじょ
   quote: むかしむかし、 あるところに わたしの おはなしに まよいこんだ トレーナーが いました…
 FurisodeGirl:
-  name: ふりそでガール
+  name: ふりそで
   quote: シャトーの ために せいいっぱい おしゃれを したの。 しわには させないわ。
 Butler:
   name: しつじ
@@ -122,5 +122,5 @@ Tourist:
   name: かんこうきゃく
   quote: あうたびに ビビヨンの はねが ちがうの。 わたしの コレクションを みにきて！
 RisingStar:
-  name: ホープ
+  name: ホープトレーナー
   quote: みんな わたしが つぎの スターだって いうの。 ちがうと しょうめいできるなら、 してみて。

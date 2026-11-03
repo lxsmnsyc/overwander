@@ -7,13 +7,13 @@ KalosAceTrainer:
   quote: En todas las ciudades de Kalos hay un entrenador como yo. Yo soy el que sigue invicto.
 KalosLass:
   name: Chica
-  quote: ¡Ah, un retador! Hoy mi Pokémon y yo vamos a juego, así que no podemos perder.
+  quote: ¡Ah, alguien con quien combatir! Hoy mi Pokémon y yo vamos a juego, así que no podemos perder.
 KalosYoungster:
   name: Joven
   quote: Desenterré a todo mi equipo en las tierras baldías. ¿Quieres verlo?
 KalosBlackBelt:
   name: Karateka
-  quote: Entrené en el dojo de Ciudad Romantis. Enséñame dónde entrenaste tú.
+  quote: Entrené en el dojo de Ciudad Yantra. Enséñame dónde entrenaste tú.
 KalosBattleGirl:
   name: Luchadora
   quote: Corelia dice que hay que pelear con todo el corazón. ¡Ahí va el mío!
@@ -58,7 +58,7 @@ KalosBackpacker:
   quote: He recorrido todas las rutas de Kalos dos veces. Esta, tres.
 KalosArtist:
   name: Artista
-  quote: Quieto. Mis Pokémon quieren pintarte en plena derrota.
+  quote: No te muevas. Mis Pokémon quieren pintarte en plena derrota.
 KalosCyclist:
   name: Ciclista
   quote: El camino de bicicletas está cerrado por obras, así que hoy la carrera eres tú.
@@ -76,7 +76,7 @@ KalosMaid:
   quote: El château debe estar impecable. Empezaré por quitarte de en medio.
 KalosTwins:
   name: Gemelas
-  quote: "¡Terminamos los combates la una de la otra! ¡Vosotros no terminaréis el nuestro!"
+  quote: "¡Terminamos los combates la una de la otra! ¡Tú no terminarás el nuestro!"
 KalosVeteran:
   name: Veterano
   quote: Recorrí la Calle Victoria antes de que nacieras. Veamos qué ha cambiado.
@@ -94,7 +94,7 @@ KalosPunkGuy:
   quote: Bonito conjunto. Lástima lo que le va a pasar.
 KalosPunkGirl:
   name: Chica mala
-  quote: Pareces perdida. Mis Pokémon pueden enseñarte la salida.
+  quote: Te has perdido, ¿verdad? Mis Pokémon pueden enseñarte la salida.
 KalosSocialite:
   name: Marquesa
   quote: Todo el que importa en Kalos ha combatido conmigo. Puedes unirte a ellos.
@@ -112,7 +112,7 @@ SkyTrainer:
   quote: Solo combato en el aire. ¡Mira arriba!
 FairyTaleGirl:
   name: Niña soñadora
-  quote: Érase una vez un entrenador que se perdió en mi cuento...
+  quote: Érase una vez alguien que se perdió en mi cuento...
 FurisodeGirl:
   name: Jovencita con kimono
   quote: Me puse lo mejor para el château. No lo arrugarás.

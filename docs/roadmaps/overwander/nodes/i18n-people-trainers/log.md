@@ -18,3 +18,11 @@
 - Spain Spanish: tú and vosotros, "Pokémon" invariable, no "acá", "tipo" only for the elemental type (the Poké Maniac says tipo Roca).
 - Tests: three checks added to `test/data/locale-people-places.test.ts`: every class and sheet has a name and quote in ja and es, every quote ends with 。 or a full stop (or ！ ？ … and their Latin forms), and classes with one English name share one name in each locale. The parity test already lists every file of the batch and passes.
 - Region mark: `trainer-names.yaml` is `{name}（{region}）` in ja and `{name} ({region})` in es. Regions have no ja or es file yet (`regions.yaml`), so the mark reads the English region name until `i18n-places` writes it.
+
+## Review
+
+- A fresh review checked the class names against WikiDex pages; four were spot-checked by the caller (Fogonero キャンプファイヤー, Hinchas ファンクラブ, Mecánico でんきやのオヤジ, Macarra こわいおじさん). 25 ja names were corrected (list in the outcome). Suit Actor is marked coined in the term list.
+- es: Crush Girl sheet is Chica fuerte (it duplicated Black Belt); Shalour is Ciudad Yantra (Romantis is Laverre); the Channeler NPC is Exorcista, and so are the four es messages that said la Médium (Médium is the Psychic class).
+- Player gender: the player may be either, so lines that assumed one were reworded: Artist "No te muevas", Sinnoh Reporter "Derrota en directo ante las cámaras", Kalos Punk Girl "Te has perdido, ¿verdad?", Unova Harlequin "Esa cara tan seria tiene arreglo.", Young Couple "Prueba con los dos, si te atreves.", Kalos Twins "¡Tú no terminarás el nuestro!". The sweep also found Kalos Lass "¡Ah, alguien con quien combatir!" (was un retador), Kalos Fairy Tale Girl "alguien que se perdió", and Nursery Aide "Una sola persona como tú". Forms where the speaker describes themself stay.
+- ja: Johto Medium says こんやは (こんばんは reads as the greeting); Hoenn and Sinnoh Ninja Boy say 2かい (ふたたび means "again"), so the Sinnoh third time follows.
+- Kept: Doctor Enfermero, Tourist Turista, Infielder Pitcher, Linebacker Quarterback, Teacher Profesora, Socialite Marquesa.

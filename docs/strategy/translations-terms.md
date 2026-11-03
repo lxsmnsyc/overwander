@@ -1215,3 +1215,169 @@ Shared themes:
 | Mask Aura        | おめんのオーラ     | Aura de Máscara       |
 | Prismatic        | なないろ           | Prismático            |
 | Puppet Strings   | あやつりいと       | Hilos de Marioneta    |
+
+## Places, weather and towns
+
+Batch 9, part 5. Verified on WikiDex where the games name the thing; the rest is coined and checked against the official ability, move, item and species names of each locale.
+
+### Biomes
+
+This engine's own names; the games name no biome. Coined.
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Deep Ocean | しんかい | Océano profundo | coined |
+| Ocean | うみ | Océano | coined |
+| Coral Reef | サンゴしょう | Arrecife de coral | coined |
+| Beach | すなはま | Playa | coined |
+| Mangrove | マングローブ | Manglar | coined |
+| Swamp | ぬまち | Pantano | coined |
+| Tropical Rainforest | ねったい うりん | Selva tropical | coined |
+| Tropical Seasonal Forest | ねったい きせつりん | Bosque tropical estacional | coined |
+| Savanna | サバンナ | Sabana | coined |
+| Desert | さばく | Desierto | coined |
+| Shrubland | かんぼくち | Matorral | coined |
+| Grassland | そうげん | Pradera | coined |
+| Temperate Forest | おんたいりん | Bosque templado | coined |
+| Temperate Rainforest | おんたい うりん | Selva templada | coined |
+| Cold Desert | かんれい さばく | Desierto frío | coined |
+| Taiga | タイガ | Taiga | coined |
+| Tundra | ツンドラ | Tundra | coined |
+| Mountain | やま | Montaña | coined |
+| Alpine Tundra | こうざん ツンドラ | Tundra alpina | coined |
+| Glacier | ひょうが | Glaciar | coined |
+| Woodland | はやし | Arboleda | coined |
+| Steppe | ステップ | Estepa | coined |
+| Montane Forest | さんがくりん | Bosque montano | coined |
+| Polar Ocean | きょくちの うみ | Océano polar | coined |
+| Volcano | かざん | Volcán | coined |
+| Badlands | バッドランド | Tierras baldías | coined |
+| Rocky Coast | いわはま | Costa rocosa | coined |
+| Bog | しつげん | Turbera | coined |
+| Kelp Forest | コンブの もり | Bosque de algas | coined |
+| Beyond | かなた | Más allá | coined |
+
+### Skies
+
+Sky names. Where the games name a weather (Rain, Fog, Hail, Sandstorm, Snow, Heavy rain, Volcanic ash) the games' word is used; the rest is coined.
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Clear | はれ | Despejado | WikiDex (Despejado) |
+| Cloudy | くもり | Nublado | WikiDex (Nublado) |
+| Overcast | どんより | Cubierto | coined |
+| Breezy | そよかぜ | Brisa | coined |
+| Drizzle | こさめ | Llovizna | coined |
+| Rain | あめ | Lluvia | WikiDex |
+| Downpour | おおあめ | Diluvio | WikiDex (Diluvio) |
+| Thunderstorm | らいう | Tormenta eléctrica | ja coined, かみなり is Thunder; es WikiDex (Tormenta) |
+| Mist | もや | Neblina | coined |
+| Fog | きり | Niebla | WikiDex |
+| Haze | かすみ | Calima | coined |
+| Frost | しも | Escarcha | coined |
+| Snow | ゆき | Nieve | WikiDex |
+| Blizzard | ふぶき | Ventisca | WikiDex (Ventisca) |
+| Hail | あられ | Granizo | WikiDex |
+| Sandstorm | すなあらし | Tormenta de arena | WikiDex |
+| Dust Haze | すなぼこり | Bruma de polvo | coined |
+| Heatwave | ねっぱ | Ola de calor | coined |
+| Falling Ash | かざんばい | Ceniza volcánica | WikiDex (Ceniza volcánica) |
+| Aurora | オーロラ | Aurora | coined |
+| Rainbow | にじ | Arcoíris | coined |
+| Pollen Drift | かふん | Polen | coined |
+| Meteor Shower | ながれぼしの あめ | Lluvia de meteoros | WikiDex (Lluvia de meteoros); ja coined, りゅうせいぐん is Draco Meteor |
+| Fata Morgana | しんきろう | Fata Morgana | coined |
+| Dark Day | ひるの やみ | Día oscuro | coined |
+| Fogbow | しろにじ | Arco de niebla | coined |
+
+### Times of day
+
+Coined.
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Morning | あさ | Mañana | coined |
+| Day | ひる | Día | coined |
+| Evening | ゆうがた | Tarde | coined |
+| Night | よる | Noche | coined |
+
+### Spawn rarities
+
+Read after 「の」 in ja and after "que sea" in es (masculine singular, lower case). Legendary and Mythical are the official terms (でんせつ, まぼろし; legendario, singular).
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Common | ふつう | común | coined |
+| Uncommon | ややレア | poco común | coined |
+| Rare | レア | raro | coined |
+| Scarce | ごくレア | escaso | coined |
+| Elusive | ちょうレア | esquivo | coined |
+| Prized | きちょう | preciado | coined |
+| Legendary | でんせつ | legendario | term list |
+| Mythical | まぼろし | singular | term list |
+
+### Landmarks
+
+Where the games name the thing, the official term.
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Item Cache | どうぐの かくしば | Alijo de objetos | coined |
+| Legendary Raid | でんせつ レイド | Incursión legendaria | coined |
+| Shadow Raid | ダーク レイド | Incursión oscura | coined |
+| Berry Patch | きのみの はたけ | Huerto de bayas | coined |
+| Nest | す | Nido | term list |
+| Wandering NPC | たびびと | Viajero | term list (wanderer) |
+| Portal | ポータル | Portal | term list |
+| Team Rocket | ロケットだん | Team Rocket | term list |
+| Trainer | トレーナー | Entrenador | term list |
+| Gym Leader | ジムリーダー | Líder de gimnasio | official |
+| Elite Four | してんのう | Alto Mando | term list |
+| Champion | チャンピオン | Campeón | official |
+| Market | マーケット | Mercado | coined |
+| Gym Seat | ジムシート | Puesto de Gimnasio | term list |
+| Auction Board | オークションの けいじばん | Tablón de subastas | coined |
+| Apricorn Tree | ぼんぐりの き | Árbol de bonguris | coined |
+| Frontier Brain | フロンティアブレーン | As de la Frontera | coined |
+| Pokémon Center | ポケモンセンター | Centro Pokémon | WikiDex |
+| Cave | ほらあな | Cueva | coined |
+| Honey Tree | ミツの き | Árbol de Miel | term list |
+| Max Raid | マックスレイド | Incursión Dinamax | term list / WikiDex |
+| Totem | ぬし | Dominante | term list |
+| Alpha | オヤブン | Alfa | term list |
+| Noble Arena | キングの アリーナ | Arena señorial | coined |
+| Tera Crystal | テラレイドの けっしょう | Teracristal | WikiDex (Teracristal); ja coined |
+
+### Phenomena
+
+
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Hidden Grotto | かくしあな | Claro Oculto | term list |
+| Dust Cloud | すなけむり | Nube de polvo | coined |
+| Rippling Water | さざなみ | Agua rizada | coined |
+| Flying Shadow | とぶ かげ | Sombra voladora | coined |
+
+### Lair titles
+
+| English | ja | es |
+| --- | --- | --- |
+| {biome} Lair | {biome}の すあな | Guarida de {biome} |
+| Shadow {place} | ダーク{place} | {place} (Oscuro) |
+
+### Lairs
+
+The names the mainline gave these places, in `text/{ja,es}/lairs.yaml`. Read on WikiDex or PokeAPI: Seafoam Islands, Mt. Ember, Cerulean Cave, Burned Tower, Whirl Islands, Bell Tower, Ilex Forest, the Hoenn ruins, Southern Island, Marine Cave, Sky Pillar, Birth Island, the three lakes, Spear Pillar, Turnback Cave, Stark Mountain, Snowpoint Temple, Flower Paradise, Navel Rock, Embedded Tower, Winding Woods, Frost Cavern, Terminus Cave, Aether Paradise, the Alola ruins and altars, Ten Carat Hill, Poni Grove. The rest are written from memory or translated literally, and are listed under "To confirm" in the node's outcome.
+
+### Town words
+
+`text/{ja,es}/town-names.yaml` follows English's lengths and order, so a town is the same in every language.
+
+| | ja | es |
+| --- | --- | --- |
+| Shape | `{county}ぐんの {mark}{head}{tail} {title}` | `{title} {mark} {head} {tail}, {county}` |
+| Titles | タウン, シティ welded on; むら, さと, ちく and the rest after a space | Pueblo, Ciudad, Aldea, Caserío, Municipio, Puesto, Embarcadero, Cruce, Molinos, Descanso, Barrio, Parada |
+| Tail | a place noun welded to the head (やま, みなと, もり) | a phrase (del Risco, de la Atalaya), not a suffix |
+| Mark | a prefix (しん, ふる, ポート, フォート) | a masculine word needing no agreement (Nuevo, Viejo, Gran, Puerto, Fuerte) |
+| County | a kana word + ぐん | a Spanish comarca name |

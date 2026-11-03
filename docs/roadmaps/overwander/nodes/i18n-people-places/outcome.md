@@ -64,3 +64,10 @@ Families: a family is called what the pokemon it is named for is called. `ids/te
 ## Size
 
 - Estimated M, actual M.
+
+## Caller's checks
+
+- `pnpm test` (2 workers, alone on the machine): 279 of 281 files pass. `yaml-mapper.test.ts` and `raid-sites.test.ts` timed out under load and pass when run alone (2.4 s and 2.7 s against a 20 s limit).
+- `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review checked the branch; its findings are applied (phrase templates for composed names, lazy dex chain names, Tatsugiri Mega form names, WeatherDemo URL keys, helper names, the Zenith rewrap reverted). It compared English town names against main for 6,291,456 towns with no difference.
+- No screenshots: nothing a player sees changes.

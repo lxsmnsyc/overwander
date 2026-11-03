@@ -11,6 +11,14 @@ How each file is read (new helpers are in `src/data/yaml.ts`):
 - Trainer classes (`trainers/<region>.yaml`) by `readLocaleText` and `addLocaleText`, one file a region. `TRAINER_NAMES` is an accessor per class: the classes that carry their region are chosen from the English names (`ENGLISH_TRAINER_NAMES`, new), and the region is added in the active locale. `trainer-sheets.yaml` is keyed by sheet path and read by `localeLines`.
 - `npcs.yaml`: `createNpc` returns a definition whose `name`, `description`, `quote` and `spent` are accessors (`localize`).
 - `quests.yaml`: each written quest, chain and daily has a `name` accessor (`localizeLine`). A dex chain's rung names come from `dex-rungs.yaml` (a list; a locale writing it writes all of it) and are read each time a dex quest is asked for.
+- Names the code builds out of other names are phrase files, read lazily per locale by `localePhrases` (a `{param}` mark is filled in when the line is asked for). A locale writes the file beside the English one, keeping every `{param}` English uses (the parity test checks it):
+  - `titles`: `title-forms.yaml` (`professor`, `master`, `type-specialist`, `type-master`), with `regions.yaml` for the region names (`REGION_TITLES`; `REGION_NAMES` stays the lower-case sprite folder name and is never shown).
+  - Trainer classes told apart by region: `trainer-names.yaml` (`region`).
+  - Dex chains: `dex-chain.yaml` (`complete`, `rung`, `chain`) beside `dex-rungs.yaml`. A chain's name is read when asked for, so `CHAINS` follows the language.
+  - Rotating quests: `quest-rotations.yaml` (`fresh`, `featured`, `stroll`, `hunt`).
+  - Lairs: `lair-titles.yaml` (`ground`, `shadow`).
+  - Syndicate people: `syndicate-titles.yaml` (`grunt`, `person`: team, title and name in the locale's order).
+  - Official region names for ja are カントー ジョウト ホウエン シンオウ イッシュ カロス アローラ ガラル ヒスイ パルデア; none of these files has a ja or es file yet, so nothing changes there.
 - `town-names.yaml`: see below.
 - `megas.yaml` and the new `mega-names.yaml`: see below.
 
@@ -25,7 +33,7 @@ Families: a family is called what the pokemon it is named for is called. `ids/te
 ## Not derived
 
 - Families with no official ja or es species name yet (the species files have none): Rolycoly, Cufant, Zarude, Squawkabilly, Maschiff, Shroodle, Klawf, Bombirdier, Flamigo, BruteBonnet, IronJugulis, WoChien, ChienPao, Okidogi, IronBoulder, IronCrown. They read English until the species have names.
-- Megas in ja: Mega Tatsugiri Stretchy and Mega Tatsugiri Droopy read `メガTatsugiri Stretchy` and `メガTatsugiri Droopy`, since the forms have no name of their own in ja. Every other ja Mega and every es Mega follows its pokemon's name.
+- None among Megas. Mega Tatsugiri Stretchy and Droopy are written in `text/{ja,es}/megas.yaml` with their form names (ja `メガシャリタツ（のびたすがた）` and `（たれたすがた）`; es `Mega-Tatsugiri (Forma Recta)` and `(Forma Lánguida)`). The es form names are from memory and are not in the repo to check against.
 
 ## Deviations
 
@@ -36,9 +44,10 @@ Families: a family is called what the pokemon it is named for is called. `ids/te
 
 ## Stubs left
 
-- English words built in code stay English: "Grunt" in `gruntName`, the `Master` and `Professor` titles in `ids/titles.ts`, `Featured:` and `Daily Stroll` in the quest rotations, `Pokedex` and `Complete` in the dex chain, region names (`REGION_NAMES`, used in `TRAINER_NAMES` and titles). They need templates in YAML in a later node.
-- `bossName` and `executiveName` still join team, title and name in English order.
-- The search vocabulary (`src/model/search/catch/vocabulary.ts`) lists these names as they read in the active locale when asked.
+- English strings the NPC scripts build in `src/overworld/npcs/*/interact` (prices, "gold", level lines) are dialog code outside this batch and stay English.
+- Catch and auction search now match names in the player's locale, so an English query does not match for a ja player. That is by design until the `names` table of the gamedata plan.
+- The parity test only checks the files listed in `FILES`, so a misspelled locale file name is ignored by it (the loaders still refuse a locale file with no English counterpart, but only for files they glob).
+- Families with no official ja or es species name yet read English (list above).
 
 ## Gotchas
 

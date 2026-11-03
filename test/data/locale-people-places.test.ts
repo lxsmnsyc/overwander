@@ -506,3 +506,109 @@ describe('the trainer classes and sheets in ja and es', () => {
     expect(found).toEqual([]);
   });
 });
+
+describe('the gym leaders, Elite Four and other experts in ja and es', () => {
+  const PEOPLE = v.record(v.string(), v.record(v.string(), v.string()));
+  const LINES = v.record(v.string(), v.string());
+  const CLOSING = {
+    ja: /[。！？…]」?$/u,
+    es: /[.!?…][»]?$/u,
+  };
+  /** Each file, and the fields every entry of it writes */
+  const PEOPLE_FILES: Record<string, string[]> = {
+    'gym-leaders': ['name', 'quote'],
+    elite: ['name', 'quote'],
+    champions: ['name', 'greeting'],
+    legends: ['name', 'greeting'],
+    executives: ['name', 'quote'],
+    frontier: ['name', 'house', 'greeting'],
+    syndicates: ['name', 'boss', 'boss-title', 'executive-title', 'boss-quote', 'grunt-quote'],
+  };
+
+  /** Every field of every entry a locale file holds, as `file key.field`, with its text */
+  function written(locale: string, file: string, keys: string[]): Map<string, string> {
+    const lines = new Map<string, string>();
+    const people = v.parse(PEOPLE, read(locale, file));
+
+    for (const key of keys) {
+      for (const field of PEOPLE_FILES[file]) {
+        lines.set(`${locale} ${file} ${key}.${field}`, people[key]?.[field] ?? '');
+      }
+    }
+    return lines;
+  }
+
+  it('write every field of every person and team that English writes', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      for (const file of Object.keys(PEOPLE_FILES)) {
+        const keys = Object.keys(v.parse(PEOPLE, read('en', file)));
+
+        for (const [where, text] of written(locale, file, keys)) {
+          if (!text) {
+            missing.push(where);
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('write every Pike curtain, Arcade panel and syndicate phrase', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      const english = v.parse(v.record(v.string(), LINES), read('en', 'frontier-rooms'));
+      const rooms = v.parse(v.record(v.string(), LINES), read(locale, 'frontier-rooms'));
+
+      for (const [section, lines] of Object.entries(english)) {
+        for (const key of Object.keys(lines)) {
+          if (!rooms[section]?.[key]) {
+            missing.push(`${locale} frontier-rooms ${section}.${key}`);
+          }
+        }
+      }
+      const titles = v.parse(LINES, read(locale, 'syndicate-titles'));
+
+      for (const key of Object.keys(v.parse(LINES, read('en', 'syndicate-titles')))) {
+        if (!titles[key]) {
+          missing.push(`${locale} syndicate-titles ${key}`);
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('end every quote and greeting on a mark that closes a sentence', () => {
+    const open: string[] = [];
+
+    for (const locale of ['ja', 'es'] as const) {
+      for (const file of Object.keys(PEOPLE_FILES)) {
+        const keys = Object.keys(v.parse(PEOPLE, read('en', file)));
+
+        for (const [where, text] of written(locale, file, keys)) {
+          const field = where.slice(where.lastIndexOf('.') + 1);
+
+          if ((field.endsWith('quote') || field === 'greeting') && !CLOSING[locale].test(text)) {
+            open.push(where);
+          }
+        }
+      }
+    }
+    expect(open).toEqual([]);
+  });
+
+  it('give each syndicate phrase the same parameters as English', () => {
+    for (const locale of ['ja', 'es']) {
+      const titles = v.parse(LINES, read(locale, 'syndicate-titles'));
+      const english = v.parse(LINES, read('en', 'syndicate-titles'));
+
+      for (const key of Object.keys(english)) {
+        expect(parameters(titles[key]).toSorted(), `${locale} ${key}`).toEqual(
+          parameters(english[key]).toSorted(),
+        );
+      }
+    }
+  });
+});

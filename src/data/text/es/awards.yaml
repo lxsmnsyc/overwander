@@ -52,16 +52,16 @@ HoennChampion: Campeonato de Hoenn
 StevenDefeated: Máximo derrotado
 SilverBraveSymbol: Símbolo de la Valentía de plata
 GoldBraveSymbol: Símbolo de la Valentía de oro
-SilverGutsSymbol: Símbolo de Coraje de plata
-GoldGutsSymbol: Símbolo de Coraje de oro
+SilverGutsSymbol: Símbolo del Coraje de plata
+GoldGutsSymbol: Símbolo del Coraje de oro
 SilverLuckSymbol: Símbolo de la Fortuna de plata
 GoldLuckSymbol: Símbolo de la Fortuna de oro
-SilverKnowledgeSymbol: Símbolo de Saber de plata
-GoldKnowledgeSymbol: Símbolo de Saber de oro
+SilverKnowledgeSymbol: Símbolo del Saber de plata
+GoldKnowledgeSymbol: Símbolo del Saber de oro
 SilverAbilitySymbol: Símbolo de la Destreza de plata
 GoldAbilitySymbol: Símbolo de la Destreza de oro
-SilverSpiritsSymbol: Símbolo de Ánimo de plata
-GoldSpiritsSymbol: Símbolo de Ánimo de oro
+SilverSpiritsSymbol: Símbolo del Ánimo de plata
+GoldSpiritsSymbol: Símbolo del Ánimo de oro
 SilverTacticsSymbol: Símbolo de la Táctica de plata
 GoldTacticsSymbol: Símbolo de la Táctica de oro
 MagmaGruntDefeated: Equipo Magma repelido
@@ -97,8 +97,8 @@ SilverFactoryPrint: Estampa de plata de la Fábrica
 GoldFactoryPrint: Estampa de color de la Fábrica
 SilverArcadePrint: Estampa de plata de la Ruleta
 GoldArcadePrint: Estampa de color de la Ruleta
-SilverCastlePrint: Estampa de plata de la Castillo
-GoldCastlePrint: Estampa de color de la Castillo
+SilverCastlePrint: Estampa de plata del Castillo
+GoldCastlePrint: Estampa de color del Castillo
 SilverHallPrint: Estampa de plata de la Sala
 GoldHallPrint: Estampa de color de la Sala
 TrioBadge: Medalla Trío

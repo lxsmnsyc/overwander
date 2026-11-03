@@ -971,7 +971,7 @@ describe('quests, awards, titles and the small name tables in ja and es', () => 
     const { AchievementLine } = await import('../../src/data/ids/achievements');
 
     active.locale = 'ja';
-    expect(getTitleName(professorTitle(Regions.Kanto))).toBe('カントーはかせ');
+    expect(getTitleName(professorTitle(Regions.Kanto))).toBe('カントーの はかせ');
     expect(Object.values(CHAINS).at(-1)?.name).toBe('イッシュずかん');
     active.locale = 'es';
     expect(getTitleName(professorTitle(Regions.Kanto))).toBe('Prof. de Kanto');

@@ -22,8 +22,8 @@ lines:
     name: Caminante
     deed: Pasos andados
   Socialite:
-    name: Servicial
-    deed: Personas atendidas
+    name: Sociable
+    deed: Personas que te atendieron
   Forager:
     name: Cazaalijos
     deed: Lugares reclamados

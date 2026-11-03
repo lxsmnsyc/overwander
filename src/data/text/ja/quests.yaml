@@ -2,7 +2,7 @@
 # キーで ひく
 
 chains:
-  Catching: つかまえやの はじまり
+  Catching: ゲットの はじまり
   Battling: みちばたの ライバル
   Raiding: レイドの サイレン
   Phenomena: ふしぎな そらもよう
@@ -37,7 +37,7 @@ quests:
   BalancedDiet: バランスの いい しょくじ
   NewTricks: あたらしい わざ
   FullBloom: まんかい
-  OpeningBid: はじまりの ねだん
+  OpeningBid: さいしょの にゅうさつ
   Sold: うれた！
   OverTheHill: やまを こえて
   ThroughTheDoor: とびらの むこうへ

@@ -33,7 +33,11 @@ vi.mock('../../../src/auth/safari', () => ({
 }));
 
 const { createStore } = await import('../../../src/game/store');
-const { default: createBoardInteractions } = await import('../../../src/game/overworld/interact');
+const {
+  default: createBoardInteractions,
+  Opening,
+  getOpened,
+} = await import('../../../src/game/overworld/interact');
 const { default: Landmark } = await import('../../../src/data/overworld/landmark');
 const { BOARD_CELLS, PLAYER_CELL } = await import('../../../src/game/overworld/board-metrics');
 
@@ -118,7 +122,7 @@ describe('createBoardInteractions', () => {
     await vi.waitFor(() => {
       expect(said).toEqual(['Nobody is standing there any more.']);
     });
-    expect(acts.challenge.get()).toBeNull();
+    expect(acts.opened.get()).toBeNull();
   });
 
   it('offers a nest egg rather than taking it, and refuses presses while it is open', async () => {
@@ -127,12 +131,12 @@ describe('createBoardInteractions', () => {
 
     acts.reach(at);
     await vi.waitFor(() => {
-      expect(acts.eggOffer.get()?.state).toBe('offered');
+      expect(getOpened(acts.opened.get(), Opening.Egg)?.offer.state).toBe('offered');
     });
     expect(acts.engaged()).toBe(true);
     acts.takeEgg();
     await vi.waitFor(() => {
-      expect(acts.eggOffer.get()).toBeNull();
+      expect(acts.opened.get()).toBeNull();
     });
   });
 });

@@ -1,0 +1,17 @@
+# Cómo se llama cada leyenda y lo que dice, donde dice algo
+
+Red:
+  name: Rojo
+  greeting: Rojo no dice nada. Lleva la mano a una Poké Ball.
+Steven:
+  name: Máximo
+  greeting: Máximo da vueltas a una piedra en la mano. «Esperaba un combate de verdad.»
+N:
+  name: 'N'
+  greeting: N ladea la cabeza. «Enséñame qué sois tus Pokémon y tú los unos para los otros.»
+Alder:
+  name: Mirto
+  greeting: Mirto ríe y estira los hombros. «Disfrutemos de este combate, ¿te parece?»
+AZ:
+  name: A. Z.
+  greeting: A. Z. te mira desde arriba. «Fui rey en otro tiempo. Enséñame qué es un Entrenador.»

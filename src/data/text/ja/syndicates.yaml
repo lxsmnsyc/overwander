@@ -1,0 +1,45 @@
+# チームの なまえ、 かれらの ランクの よびかた、 そして ボスと したっぱが
+# へやの まえで たちはだかる ときの せりふ
+
+Rocket:
+  name: ロケットだん
+  boss: サカキ
+  boss-title: ボス
+  executive-title: かんぶ
+  boss-quote: ほう、 おまえが そうか。 おまえの ちからを みせて みろ。
+  grunt-quote: この みちは ちがうぞ、 ガキ。 おれたち さんにんが そう いってる。
+Magma:
+  name: マグマだん
+  boss: マツブサ
+  boss-title: リーダー
+  executive-title: かんぶ
+  boss-quote: うみの ばんは おわりだ。 わたしは りくに ほんらいの ちからを かえす。
+  grunt-quote: この だいちは かならず ねうちが でる。 どけ。
+Aqua:
+  name: アクアだん
+  boss: アオギリ
+  boss-title: リーダー
+  executive-title: かんぶ
+  boss-quote: すべては みずから はじまった。 わたしは それを かえすだけだ。
+  grunt-quote: しおは みちて くる。 おまえが どいても どかなくても な。
+Galactic:
+  name: ギンガだん
+  boss: アカギ
+  boss-title: ボス
+  executive-title: かんぶ
+  boss-quote: この せかいは こころで できて いる。 こころこそ けってんだ。 わたしは それを なくす。
+  grunt-quote: ふるい せかいは ここで おわる。 おまえが さきに いっても いいぞ。
+Plasma:
+  name: プラズマだん
+  boss: ゲーチス
+  boss-title: けんじん
+  executive-title: かんぶ
+  boss-quote: おまえの うしろの ポケモンは ぜんぶ わたしが とりもどす。 まず それからだ。
+  grunt-quote: ポケモンを かいほうしろ。 しないなら わたしたちが する。 とびらは ふたつだ。
+Flare:
+  name: フレアだん
+  boss: フラダリ
+  boss-title: ボス
+  executive-title: かがくしゃ
+  boss-quote: この せかいは うばう ものが おおすぎる。 おまえが うばう さいごの ものが おまえの ポケモンだ。
+  grunt-quote: みらいは おしゃれな ものだけの もの。 ざんねん、 おまえは しっかくだ。

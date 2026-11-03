@@ -1,7 +1,7 @@
 ---
 id: i18n-people-trainers
 title: Translate the trainer classes
-status: active
+status: done
 priority: should
 type: feature
 outline: false

@@ -1,0 +1,17 @@
+# Cómo se llaman las cortinas de la Sierpe y los paneles de la Ruleta, para
+# la frase con la que se anuncia un combate
+
+curtains:
+  Poisoned: envenenados
+  Burned: quemados
+  Paralysed: paralizados
+  Asleep: dormidos
+  Healed: curados
+panels:
+  Sun: sale el sol
+  Rain: cae la lluvia
+  Sandstorm: se levanta la arena
+  Hail: cae el granizo
+  Stripped: todos los objetos equipados se quedan en la puerta
+  Poisoned: todos quedan envenenados
+  Mended: todos quedan curados

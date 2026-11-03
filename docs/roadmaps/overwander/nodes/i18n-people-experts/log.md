@@ -1,0 +1,25 @@
+# Log: i18n-people-experts
+
+- Files: `text/{ja,es}/{gym-leaders,elite,champions,frontier,frontier-rooms,legends,executives,syndicates,syndicate-titles}.yaml`, every key English has. Counts: gym leaders 54, Elite Four 24, champions 6, Frontier Brains 13, legends 5, executives 18, syndicates 6, frontier-rooms 5 curtains and 7 panels, syndicate-titles 2 phrases.
+- Method: every name was read on WikiDex (character, facility and team pages; the infobox prints the Japanese name). Quotes are written in each character's voice; ja is kana with spaces between phrases and 。 stops; es is Spain Spanish, tú, no assumed gender for the player.
+- Surprises in the Spanish names (all read on WikiDex, kept): Morty is Morti, Wake is Mananti, Juan is Galano, Maylene is Brega, Candice is Inverna, Cress is Maíz, Chili is Zeo, Roxie is Hiedra, Marlon is Ciprián, Will is Mento, Sidney is Sixto, Marshal is Lotto and Grimsley is Aza (the two are not in the order of the Unova ja names), Wikstrom is Tileo, Siebold is Narciso, Archer is Atlas, Mars is Venus, Jupiter is Ceres, Colress is Acromo, Zinzolin is Menek.
+- WikiDex mixes the Spanish forms of Spain and Latin America on some pages. Spain forms chosen: Valeria, Corelia, Amaro, Lysson, Xero, Melia, Máximo (Peñas), Cintia, Dianta (the page headers read "Cynthia/Cintia" and "Diantha/Dianta" without saying which is Spain; to confirm).
+- Wake: the infobox name is マキシマム仮面 (kana マキシマムかめん); マキシ is the name under the mask. Used the kana of the infobox.
+- Frontier: the facility is the `house`, written as the official facility name. Battle Hall in ja is バトルステージ (see Review).
+- Teams: ja ロケットだん, マグマだん, アクアだん, ギンガだん, プラズマだん, フレアだん. es Team Rocket, Equipo Magma, Equipo Aqua, Equipo Galaxia, Equipo Plasma, Team Flare. WikiDex says Spain uses "Team Magma" in the anime and "Equipo Magma" in the games; the games' form was taken.
+- Ranks: the English file has one title per team, so the Spanish ranks cannot agree with a person's gender. The two titles that would have to change with the person are written with a slash (Ejecutivo/a, Científico/a); Comandante and Líder are the same for both. ja uses かんぶ for every executive rank (official for Rocket, Magma, Aqua and Galactic), けんじん for the Plasma sage and かがくしゃ for the Flare scientist.
+- Phrases: ja `grunt` is `{team}の したっぱ` and `person` is `{team} {title} {name}`, the order of the games. es `grunt` is `Recluta del {team}` and `person` is `{name}, {title} del {team}` ("Aquiles, Líder del Equipo Aqua").
+- Proper nouns in quotes: Mt. Pyre is おくりびやま and Monte Pírico (WikiDex). Crasher Wake's quote named the Fen Badge; the badge is named again in the review (see Review). Johto stays ジョウト and Johto.
+- Gender and Spain pass over the es quotes: "kid" and "child" were dropped (Brock, Agatha), "listo" for the player became "¡Vamos allá!" (Chili), "retador" became "aspirante" (Wikstrom) and "alguien que quiere combatir" (Drasna). Speakers who describe themselves keep their gender (Débora maestra dragón, Rojo, Azul campeón).
+- Second-reading pass over what this engine wrote itself (the Pike curtains and Arcade panels, the Flare scientist title): ja ひざしが でる, あめが ふる, すなが まいあがる, あられが ふる, どくに おかされた, やけどを おった, まひした, ねむらされた, かいふくした; es envenenados, quemados, paralizados, dormidos, curados, sale el sol, cae la lluvia, se levanta la arena, cae el granizo. No second reading found; no rename.
+- Collision check (script folding katakana onto hiragana, dropping spaces and accents) of every name, boss and facility against every ability, move, item and species name of its locale: one match, es Coro (Greta), which is also an ability name. Kept: it is the official Spanish name of Greta.
+- Tests: four checks in `test/data/locale-people-places.test.ts` (every field of every person and team written in ja and es, every curtain, panel and syndicate phrase written, every quote and greeting closes a sentence, the syndicate phrases keep English's parameters). The parity test already listed every file and passes.
+- Terms: "Gym leaders, Elite Four, champions, Frontier Brains, legends and executives" table and the team and facility table in `docs/strategy/translations-terms.md`.
+
+## Review
+
+- Battle Hall ja is バトルステージ: the WikiDex infobox's バトルファクトリー is a copy error; the Korean and French names and a Japanese wiki snippet call Argenta's facility the Stage.
+- Crasher Wake's quote names the Fen Badge again: ja フェンバッジ, es Medalla Ciénaga (WikiDex).
+- es Flare boss rank is Líder, not Jefe (WikiDex calls Lysson "líder del Team Flare").
+- ja quotes: Chuck got a predicate (`おまえの ポケモンは やねの したで きたえるのだろう！`); Colress speaks politely (`みたいのです`, `データとして ですが`, `きみ`); Wikstrom `わが つるぎと` and `ちょうせんしゃよ`; Pryce `きゅうじゅっかい`; split words joined (おもしろいの, けいさんずみだ, かくれられないわ, しっかくだ, ふたつだ, ちゅうけいで) and te-forms split before their auxiliary in every file (`みせて みろ`, `つれて きなさい`, `みて いる`, `その わけを`, `きを つけ`).
+- es quotes: Aqua grunt `La marea sube, te muevas o no.`; Argenta `Nadie detrás de quien esconderse.`; N `qué sois tus Pokémon y tú los unos para los otros`; Red `una Poké Ball`.

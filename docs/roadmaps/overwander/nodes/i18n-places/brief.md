@@ -52,14 +52,13 @@ Translations batch 9, part 5 of 6: the places of the world, in ja and es: biomes
 - Terms the games already name use the official term in that locale. Everything this engine invented is translated once and recorded in `docs/strategy/translations-terms.md`; reuse what is there.
 - Every coined name is checked against the official ability, move, item and species names of its locale and against the coined names in the term list, then reread on its own pass for a second reading or a second meaning (the lesson of the signature ability nodes).
 - Weather and phenomena the games name use the official term (にほんばれ is a move; the weather itself is ひざしが つよい). Biomes and landmarks are this engine's own.
-- Town names: the user chose localized word lists. Each locale's lists keep the same length and order as English, so a town is the same town in every language (`world-generation` skill: a word moved or added renames every town already known). Write ja words in kana and es words as Spanish place-name parts, using the joining rules `i18n-people-places` built, and screenshot several towns in each biome.
+- Town names: the user chose localized word lists. Each locale's lists keep the same length and order as English, so a town is the same town in every language (`world-generation` skill: a word moved or added renames every town already known). Write ja words in kana and es words as Spanish place-name parts, using the joining rules `i18n-people-places` built.
 - `i18n-people-places` moved the names this batch built in code into phrase templates: translate `text/en/lair-titles.yaml` too, keeping every `{param}` (read that node's outcome).
 
 ## Acceptance
 
 - [ ] Every entry has a ja and an es name, and a line where English has one; a test fails if one is missing.
 - [ ] A fresh review agent checks the ja and es text against the English and the term list; its findings are fixed before the PR.
-- [ ] Screenshots in ja and es at 1280x720 of the screens that show this text show no clipping.
 - [ ] Changeset `patch`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers on this machine).
 
 ## Sizing

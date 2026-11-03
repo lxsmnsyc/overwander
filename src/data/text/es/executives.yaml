@@ -1,0 +1,56 @@
+# Cómo se llama cada ejecutivo y lo que dice al cerrar el paso a la celda
+
+Archer:
+  name: Atlas
+  quote: Yo dirijo esta operación. Tú eres un inconveniente en ella.
+Ariana:
+  name: Atenea
+  quote: Jugando a los héroes, ¿eh? Disfrutaré derribándote.
+Proton:
+  name: Protón
+  quote: Soy el más cruel de los ejecutivos. Pregunta a cualquiera que quede.
+Petrel:
+  name: Petrel
+  quote: Jeje, ¿creías que yo era el jefe? Para ti es casi lo mismo.
+Tabitha:
+  name: Tatiano
+  quote: El líder tiene planes para esta tierra. Estás pisándola.
+Courtney:
+  name: Carola
+  quote: 'Analizando tus posibilidades. Resultado: ninguna. Procediendo.'
+Matt:
+  name: Matías
+  quote: ¡Oooh, un desafío! No caigas demasiado rápido, me aburro.
+Shelly:
+  name: Silvina
+  quote: El mar toma lo que quiere. Hoy quiere apartarte.
+Mars:
+  name: Venus
+  quote: Estorbas a un mundo mejor. Apártate o te apartarán.
+Jupiter:
+  name: Ceres
+  quote: No te lo tomes como algo personal. Yo apenas me lo tomo así.
+Saturn:
+  name: Saturno
+  quote: Tengo mis dudas sobre todo esto. Ninguna es sobre vencerte.
+Colress:
+  name: Acromo
+  quote: Quiero ver la fuerza que alcanza un Pokémon contigo. Únicamente como datos.
+Zinzolin:
+  name: Menek
+  quote: Pasarás frío mucho antes de terminar. Empieza.
+Xerosic:
+  name: Xero
+  quote: Fascinante. Veamos cómo aguantan tus Pokémon bajo estrés.
+Aliana:
+  name: Amapola
+  quote: El mundo es feo, así que lo estamos arreglando. Tú formas parte de lo feo.
+Bryony:
+  name: Begonia
+  quote: Calculando tus probabilidades. Se redondean a nada.
+Celosia:
+  name: Caléndula
+  quote: Solo lo hermoso se queda. Yo decidiré si tú te quedas.
+Mable:
+  name: Melia
+  quote: Los científicos estamos ocupados. Hagámoslo rápido y en silencio.

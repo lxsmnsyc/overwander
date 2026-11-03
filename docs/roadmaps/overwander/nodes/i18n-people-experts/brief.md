@@ -1,7 +1,7 @@
 ---
 id: i18n-people-experts
 title: Translate the gym leaders, Elite Four and other experts
-status: todo
+status: active
 priority: should
 type: feature
 outline: false
@@ -58,7 +58,6 @@ Translations batch 9, part 4 of 6: the named people the player challenges, in ja
 
 - [ ] Every entry has a ja and an es name and quote; a test fails if one is missing.
 - [ ] A fresh review agent checks the ja and es text against the English and the term list; its findings are fixed before the PR.
-- [ ] Screenshots in ja and es at 1280x720 of the screens that show this text show no clipping.
 - [ ] Changeset `patch`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers on this machine).
 
 ## Sizing

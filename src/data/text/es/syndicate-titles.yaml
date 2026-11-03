@@ -1,0 +1,6 @@
+# Cómo se presenta a la gente de un sindicato: el nombre, el cargo y el equipo
+# ("Aquiles, Líder del Equipo Aqua"). `grunt` es la tropa, que es un uniforme
+# y no una persona
+
+grunt: 'Recluta del {team}'
+person: '{name}, {title} del {team}'

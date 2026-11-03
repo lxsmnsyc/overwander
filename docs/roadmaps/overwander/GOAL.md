@@ -9,7 +9,7 @@ branches:
 
 ## Outcome
 
-Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, wild pokemon come, go and roam around the player, and the remaining items are in (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
+Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, wild pokemon come, go and roam around the player, the remaining items are in, the whole UI is redesigned on one design system, and a shiny dex tracks shiny coats (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
 
 ## Acceptance
 

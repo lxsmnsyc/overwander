@@ -59,3 +59,10 @@ Renames from the first reading: es `Gran {name}` to `{name} de platino` (a prefi
 ## Size
 
 - Estimated M, actual M.
+
+## Caller's checks
+
+- `pnpm test` (2 workers): 281 files, 5826 tests pass. `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review verified the badges, egg groups, symbols and prints on WikiDex, assembled every template with real values and read every line; its fixes are in e6647b13d.
+- The links to `docs/strategy/translations.md` in GOAL.md and the i18n briefs now name it as removed, with git history as the source; `gamedata-names` carries the one note it needed from the plan.
+- No screenshots: dropped for batch 9 at the maintainer's call.

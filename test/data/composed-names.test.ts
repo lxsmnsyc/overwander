@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import registerGameData from '../../src/data/index';
-import { TYPE_IDS, SYNDICATE_IDS, EXECUTIVE_IDS, LAIR_IDS } from '../../src/data/ids/names';
+import { EXECUTIVE_IDS, LAIR_IDS, SYNDICATE_IDS, TYPE_IDS } from '../../src/data/ids/names';
 import Biome from '../../src/data/ids/biome';
 import Regions from '../../src/data/ids/regions';
 import {
@@ -17,6 +17,7 @@ import { getDailyQuests, getWeeklyHunt } from '../../src/data/quests/rotations';
 import { CHAINS } from '../../src/data/quests';
 import { getLairTitle } from '../../src/data/overworld/lair';
 import { bossName, executiveName, gruntName } from '../../src/data/overworld/syndicate';
+
 registerGameData();
 
 /**
@@ -104,60 +105,67 @@ const EXPECTED = [
 
 it('builds the same English strings from its templates', () => {
   const out: string[] = [];
-  for (const r of [Regions.Kanto, Regions.Paldea, Regions.Unova])
-    out.push(`title|prof|${getTitleName(professorTitle(r))}`);
-  for (const t of [TYPE_IDS.Fire, TYPE_IDS.Water]) {
-    out.push(`title|type0|${getTitleName(typeTitle(t, false))}`);
-    out.push(`title|type1|${getTitleName(typeTitle(t, true))}`);
+
+  for (const region of [Regions.Kanto, Regions.Paldea, Regions.Unova]) {
+    out.push(`title|prof|${getTitleName(professorTitle(region))}`);
   }
-  out.push(
-    `title|line0|${getTitleName(lineTitle(AchievementLine.Collector, false))}`,
-    `title|line1|${getTitleName(lineTitle(AchievementLine.Collector, true))}`,
-  );
-  for (const c of TRAINER_TRADES.slice(0, 3)) {
-    out.push(
-      `title|tr0|${getTitleName(trainerTitle(c, false))}`,
-      `title|tr1|${getTitleName(trainerTitle(c, true))}`,
-    );
+  for (const type of [TYPE_IDS.Fire, TYPE_IDS.Water]) {
+    out.push(`title|type0|${getTitleName(typeTitle(type, false))}`);
+    out.push(`title|type1|${getTitleName(typeTitle(type, true))}`);
   }
-  out.push(
-    `title|ladder|${getTitleName(0)}`,
-    `title|ladder|${getTitleName(2)}`,
-    `title|none|${getTitleName(150)}`,
-  );
+  out.push(`title|line0|${getTitleName(lineTitle(AchievementLine.Collector, false))}`);
+  out.push(`title|line1|${getTitleName(lineTitle(AchievementLine.Collector, true))}`);
+  for (const trade of TRAINER_TRADES.slice(0, 3)) {
+    out.push(`title|tr0|${getTitleName(trainerTitle(trade, false))}`);
+    out.push(`title|tr1|${getTitleName(trainerTitle(trade, true))}`);
+  }
+  out.push(`title|ladder|${getTitleName(0)}`, `title|ladder|${getTitleName(2)}`);
+  out.push(`title|none|${getTitleName(150)}`);
+
   const marked: string[] = [];
-  for (const [id, n] of Object.entries(TRAINER_NAMES))
-    if (n.includes('(')) marked.push(`${id}|${n}`);
-  out.push(...marked.slice(0, 6).map((m) => `trainer|${m}`), `trainer|count|${marked.length}`);
-  for (const r of [Regions.Kanto, Regions.Hoenn, Regions.Paldea]) {
-    const c = getDexChain(r);
-    out.push(`dex|chain|${c?.name}`);
-    for (const [id, q] of getDexQuests(r)) out.push(`dex|${id}|${q.name}`);
+
+  for (const [id, name] of Object.entries(TRAINER_NAMES)) {
+    if (name.includes('(')) {
+      marked.push(`${id}|${name}`);
+    }
+  }
+  for (const line of marked.slice(0, 6)) {
+    out.push(`trainer|${line}`);
+  }
+  out.push(`trainer|count|${marked.length}`);
+
+  for (const region of [Regions.Kanto, Regions.Hoenn, Regions.Paldea]) {
+    out.push(`dex|chain|${getDexChain(region)?.name}`);
+    for (const [id, quest] of getDexQuests(region)) {
+      out.push(`dex|${id}|${quest.name}`);
+    }
   }
   out.push(`chains|${CHAINS[100 + Regions.Kanto]?.name}`);
-  for (const t of [
+
+  const days = [
     Date.UTC(2026, 0, 1),
     Date.UTC(2026, 3, 9),
     Date.UTC(2026, 6, 21),
     Date.UTC(2026, 10, 3),
-  ]) {
-    for (const q of getDailyQuests(t)) out.push(`daily|${t}|${q.slot}|${q.name}`);
-    out.push(`weekly|${t}|${getWeeklyHunt(t).name}`);
+  ];
+
+  for (const day of days) {
+    for (const quest of getDailyQuests(day)) {
+      out.push(`daily|${day}|${quest.slot}|${quest.name}`);
+    }
+    out.push(`weekly|${day}|${getWeeklyHunt(day).name}`);
   }
-  for (const [l, id] of Object.entries(LAIR_IDS).slice(0, 2)) {
-    out.push(
-      `lair|${l}|${getLairTitle(id, Biome.Taiga, false)}`,
-      `lair|${l}|${getLairTitle(id, Biome.Taiga, true)}`,
-    );
+  for (const [name, id] of Object.entries(LAIR_IDS).slice(0, 2)) {
+    out.push(`lair|${name}|${getLairTitle(id, Biome.Taiga, false)}`);
+    out.push(`lair|${name}|${getLairTitle(id, Biome.Taiga, true)}`);
   }
-  out.push(
-    `lair|none|${getLairTitle(null, Biome.Taiga, false)}`,
-    `lair|none|${getLairTitle(null, Biome.Woodland, true)}`,
-  );
-  for (const s of Object.values(SYNDICATE_IDS)) {
-    out.push(`syn|${gruntName(s)}|${bossName(s)}`);
-    for (const e of Object.values(EXECUTIVE_IDS).slice(0, 2))
-      out.push(`exec|${executiveName(s, e)}`);
+  out.push(`lair|none|${getLairTitle(null, Biome.Taiga, false)}`);
+  out.push(`lair|none|${getLairTitle(null, Biome.Woodland, true)}`);
+  for (const team of Object.values(SYNDICATE_IDS)) {
+    out.push(`syn|${gruntName(team)}|${bossName(team)}`);
+    for (const executive of Object.values(EXECUTIVE_IDS).slice(0, 2)) {
+      out.push(`exec|${executiveName(team, executive)}`);
+    }
   }
   expect(out).toEqual(EXPECTED);
 });

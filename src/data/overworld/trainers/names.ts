@@ -1,16 +1,21 @@
-import * as v from 'valibot';
 import { REGION_NAMES } from '../../species/regions';
-import sheetsFile from '../../text/en/trainer-sheets.yaml';
-import { TRAINER_BASE_NAMES, TRAINER_CLASSES, TRAINER_REGIONS, type TrainerClass } from './classes';
+import { localeLines } from '../../yaml';
+import {
+  ENGLISH_TRAINER_NAMES,
+  TRAINER_BASE_NAMES,
+  TRAINER_CLASSES,
+  TRAINER_REGIONS,
+  type TrainerClass,
+} from './classes';
 
 /**
  * The sheets a class stands in that the mainline names differently,
  * which is the other half of a pair: a Black Belt met in the Crush
  * Girl's sheet is a Crush Girl
  */
-export const TRAINER_SHEET_NAMES: Record<string, string> = v.parse(
-  v.record(v.string(), v.string()),
-  sheetsFile,
+export const TRAINER_SHEET_NAMES: Record<string, string> = localeLines(
+  import.meta.glob('../../text/*/trainer-sheets.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/trainer-sheets.yaml',
 );
 
 /**
@@ -24,8 +29,10 @@ function buildTrainerNames(): Record<number, string> {
   const seen = new Set<string>();
   const shared = new Set<string>();
 
+  // Which classes share a name is settled on the English names, so the
+  // same classes carry their region in every locale
   for (const trainer of TRAINER_CLASSES) {
-    const name = TRAINER_BASE_NAMES[trainer];
+    const name = ENGLISH_TRAINER_NAMES[trainer];
 
     if (seen.has(name)) {
       shared.add(name);
@@ -33,15 +40,22 @@ function buildTrainerNames(): Record<number, string> {
     seen.add(name);
   }
 
-  const named: Record<number, string> = { ...TRAINER_BASE_NAMES };
+  const named: Record<number, string> = {};
 
   for (const trainer of TRAINER_CLASSES) {
-    const name = TRAINER_BASE_NAMES[trainer];
-    const region = REGION_NAMES[TRAINER_REGIONS[trainer]];
+    const marked = shared.has(ENGLISH_TRAINER_NAMES[trainer]);
 
-    if (shared.has(name)) {
-      named[trainer] = `${name} (${region.slice(0, 1).toUpperCase()}${region.slice(1)})`;
-    }
+    // Read in the active locale each time, since the server renders several at once
+    Object.defineProperty(named, trainer, {
+      configurable: true,
+      enumerable: true,
+      get: () => {
+        const name = TRAINER_BASE_NAMES[trainer];
+        const region = REGION_NAMES[TRAINER_REGIONS[trainer]];
+
+        return marked ? `${name} (${region.slice(0, 1).toUpperCase()}${region.slice(1)})` : name;
+      },
+    });
   }
   return named;
 }

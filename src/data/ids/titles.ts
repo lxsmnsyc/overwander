@@ -10,8 +10,7 @@ import {
   type AchievementLine,
   LINE_NAMES,
 } from '../achievements';
-import titlesFile from '../text/en/titles.yaml';
-import { stringTable } from '../yaml';
+import { localeStringTable } from '../yaml';
 
 /**
  * Player titles: one may be worn on the profile at a time. A title is
@@ -145,10 +144,10 @@ export function titleTrainer(title: Title): TrainerClass | null {
   return TRAINER_TRADES.includes(trainer) ? trainer : null;
 }
 
-const LADDER_TITLE_NAMES = stringTable<LadderTitle>(
+const LADDER_TITLE_NAMES = localeStringTable<LadderTitle>(
   LADDER_TITLE_IDS,
-  titlesFile,
-  'text/en/titles.yaml',
+  import.meta.glob('../text/*/titles.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/titles.yaml',
 );
 
 /**

@@ -4,8 +4,7 @@ import { LEAGUE_HONORS } from '../../ids/awards';
 import Champion from '../../ids/champions';
 import { AWARD_IDS, CHAMPION_IDS, SPECIES_IDS } from '../../ids/names';
 import type { Species } from '../../ids/species';
-import namesFile from '../../text/en/champions.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { idOf, idsOf, localeFieldTable } from '../../yaml';
 import championsFile from './champions.yaml';
 
 export { Champion };
@@ -22,15 +21,25 @@ const CHAMPION = v.strictObject({
   party: v.array(v.string()),
 });
 
-const SAID = v.strictObject({ name: v.string(), greeting: v.string() });
+const SAID_TEXT = import.meta.glob('../../text/*/champions.yaml', { eager: true, import: 'default' });
 
 /** Every champion, in the order they are numbered */
 export const CHAMPIONS: Champion[] = [];
 
-export const CHAMPION_NAMES: Record<number, string> = {};
+export const CHAMPION_NAMES = localeFieldTable<Champion>(
+  CHAMPION_IDS,
+  SAID_TEXT,
+  'text/<locale>/champions.yaml',
+  'name',
+);
 
 /** What a champion says as the last fight of their league is put */
-export const CHAMPION_GREETINGS: Record<number, string> = {};
+export const CHAMPION_GREETINGS = localeFieldTable<Champion>(
+  CHAMPION_IDS,
+  SAID_TEXT,
+  'text/<locale>/champions.yaml',
+  'greeting',
+);
 
 /** Which league each champion is the top of */
 export const CHAMPION_LEAGUES: Record<number, string> = {};
@@ -67,13 +76,6 @@ for (const [name, written] of Object.entries(
   }
 }
 CHAMPIONS.sort((one, two) => one - two);
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
-  const champion = idOf<Champion>(CHAMPION_IDS, name, `text/en/champions.yaml: ${name}`);
-
-  CHAMPION_NAMES[champion] = said.name;
-  CHAMPION_GREETINGS[champion] = said.greeting;
-}
 
 // Every champion the enum has is written down, so no seat stands empty or nameless
 for (const [name, champion] of Object.entries(CHAMPION_IDS)) {

@@ -3,8 +3,7 @@ import type { InventoryEntry } from '../../auth/inventory';
 import type { Items } from '../../data/ids/items';
 import { NPC_IDS } from '../../data/ids/names';
 import type Npc from '../../data/ids/npcs';
-import textFile from '../../data/text/en/npcs.yaml';
-import { idOf } from '../../data/yaml';
+import { idOf, localize, readEntryOverlays, splitLocales } from '../../data/yaml';
 import type ChunkSnapshot from '../chunk-snapshot';
 import type { Conversation } from '../../components/forms/conversation';
 import type { ToastRequest } from '../../components/styled';
@@ -77,11 +76,20 @@ const TEXT = v.strictObject({
   spent: v.optional(v.string()),
 });
 
-/** Every person's words, from `text/en/npcs.yaml` */
-const NPC_TEXT = new Map<Npc, NpcText>();
+const TEXT_FILES = splitLocales(
+  import.meta.glob<unknown>('../../data/text/*/npcs.yaml', { eager: true, import: 'default' }),
+);
 
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), textFile))) {
-  NPC_TEXT.set(idOf<Npc>(NPC_IDS, name, `text/en/npcs.yaml: ${name}`), said);
+/** What each locale writes of each person's words, by the name the file keys them by */
+const NPC_OVERLAYS = readEntryOverlays(TEXT_FILES.overlays);
+
+/** Every person's words in English, from `text/en/npcs.yaml`, with the name it is keyed by */
+const NPC_TEXT = new Map<Npc, [key: string, said: NpcText]>();
+
+for (const file of Object.values(TEXT_FILES.english)) {
+  for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), file))) {
+    NPC_TEXT.set(idOf<Npc>(NPC_IDS, name, `text/en/npcs.yaml: ${name}`), [name, said]);
+  }
 }
 
 /**
@@ -93,10 +101,16 @@ export function createNpc(
   id: Npc,
   definition: Omit<NpcDefinition, 'id' | keyof NpcText>,
 ): NpcDefinition {
-  const said = NPC_TEXT.get(id);
+  const written = NPC_TEXT.get(id);
 
-  if (said == null) {
+  if (written == null) {
     throw new Error(`Npc ${id} needs its words in text/en/npcs.yaml`);
   }
-  return { id, ...said, ...definition };
+
+  const [key, said] = written;
+  const npc: NpcDefinition = { id, ...said, ...definition };
+
+  // The words read in the player's locale, the rest of the person is code
+  localize(npc, key, NPC_OVERLAYS, ['name', 'description', 'quote', 'spent']);
+  return npc;
 }

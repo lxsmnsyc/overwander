@@ -2,8 +2,7 @@ import * as v from 'valibot';
 import type Biome from '../ids/biome';
 import { BIOME_IDS, PHENOMENON_IDS } from '../ids/names';
 import Phenomenon from '../ids/phenomena';
-import namesFile from '../text/en/phenomena.yaml';
-import { idOf, idsOf } from '../yaml';
+import { idOf, idsOf, localeStringTable } from '../yaml';
 import biomesFile from './biome-phenomena.yaml';
 import { ItemTypes, Items } from '../ids/items';
 import { listItemsByType } from '../items';
@@ -21,12 +20,11 @@ import { getRegisteredSpecies, getSpeciesData } from '../species';
 export default Phenomenon;
 
 /** What each phenomenon is called, out of `text/en/phenomena.yaml` */
-export const PHENOMENON_NAMES: Record<number, string> = {};
-
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  PHENOMENON_NAMES[idOf<Phenomenon>(PHENOMENON_IDS, name, `text/en/phenomena.yaml: ${name}`)] =
-    title;
-}
+export const PHENOMENON_NAMES = localeStringTable<Phenomenon>(
+  PHENOMENON_IDS,
+  import.meta.glob('../text/*/phenomena.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/phenomena.yaml',
+);
 
 /**
  * What each biome can host, drawn from uniformly every window, out of

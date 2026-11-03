@@ -9,8 +9,7 @@ import { AWARD_IDS, BIOME_IDS, GYM_LEADER_IDS, SPECIES_IDS, TYPE_IDS } from '../
 import type { Species } from '../../ids/species';
 import { getTeachableMoves } from '../../items/machines';
 import { getMoveData } from '../../moves';
-import namesFile from '../../text/en/gym-leaders.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { idOf, idsOf, localeFieldTable } from '../../yaml';
 import biomesFile from './biome-gym-leaders.yaml';
 import leadersFile from './gym-leaders.yaml';
 
@@ -41,15 +40,25 @@ const LEADER = v.strictObject({
   signature: v.string(),
 });
 
-const SAID = v.strictObject({ name: v.string(), quote: v.string() });
+const SAID_TEXT = import.meta.glob('../../text/*/gym-leaders.yaml', { eager: true, import: 'default' });
 
 /** Every leader, in the order they are numbered */
 export const GYM_LEADERS: GymLeader[] = [];
 
-export const GYM_LEADER_NAMES: Record<number, string> = {};
+export const GYM_LEADER_NAMES = localeFieldTable<GymLeader>(
+  GYM_LEADER_IDS,
+  SAID_TEXT,
+  'text/<locale>/gym-leaders.yaml',
+  'name',
+);
 
 /** What each says as the challenge is put */
-export const GYM_LEADER_QUOTES: Record<number, string> = {};
+export const GYM_LEADER_QUOTES = localeFieldTable<GymLeader>(
+  GYM_LEADER_IDS,
+  SAID_TEXT,
+  'text/<locale>/gym-leaders.yaml',
+  'quote',
+);
 
 /** What each leader fields */
 export const GYM_LEADER_TYPES: Record<number, Types> = {};
@@ -106,13 +115,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEADER
   }
 }
 GYM_LEADERS.sort((one, two) => one - two);
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
-  const leader = idOf<GymLeader>(GYM_LEADER_IDS, name, `text/en/gym-leaders.yaml: ${name}`);
-
-  GYM_LEADER_NAMES[leader] = said.name;
-  GYM_LEADER_QUOTES[leader] = said.quote;
-}
 
 // Every leader the enum has is written down, so none stands nameless or bare
 for (const [name, leader] of Object.entries(GYM_LEADER_IDS)) {

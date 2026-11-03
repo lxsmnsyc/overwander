@@ -1,8 +1,6 @@
-import * as v from 'valibot';
 import VendorKind from '../ids/vendor-kinds';
 import { VENDOR_KIND_IDS } from '../ids/names';
-import stallsFile from '../text/en/vendor-stalls.yaml';
-import { idOf } from '../yaml';
+import { localeStringTable } from '../yaml';
 import { BALL_ITEMS, ItemFlags, Items, getMachineItem } from '../ids/items';
 import { getItemData } from '../items';
 import { BATTLE_ITEMS } from '../items/battle-items';
@@ -53,13 +51,11 @@ export const VENDOR_KINDS: VendorKind[] = [
  * from across the chunk, so it says the shelf rather than the trade.
  * The words are `text/en/vendor-stalls.yaml`
  */
-export const VENDOR_KIND_NAMES: Record<number, string> = {};
-
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), stallsFile))) {
-  VENDOR_KIND_NAMES[
-    idOf<VendorKind>(VENDOR_KIND_IDS, name, `text/en/vendor-stalls.yaml: ${name}`)
-  ] = title;
-}
+export const VENDOR_KIND_NAMES = localeStringTable<VendorKind>(
+  VENDOR_KIND_IDS,
+  import.meta.glob('../text/*/vendor-stalls.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/vendor-stalls.yaml',
+);
 
 /**
  * How many kinds one crate holds. Six was too thin a slice of any

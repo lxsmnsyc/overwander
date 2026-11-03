@@ -28,8 +28,7 @@ import {
   TYPE_IDS,
 } from '../../ids/names';
 import type { Species } from '../../ids/species';
-import namesFile from '../../text/en/elite.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { idOf, idsOf, localeFieldTable } from '../../yaml';
 import biomesFile from './biome-elite.yaml';
 import eliteFile from './elite.yaml';
 import type { ExpertPool } from './pools';
@@ -52,7 +51,7 @@ const MEMBER = v.strictObject({
   }),
 });
 
-const SAID = v.strictObject({ name: v.string(), quote: v.string() });
+const SAID_TEXT = import.meta.glob('../../text/*/elite.yaml', { eager: true, import: 'default' });
 
 /** The league whose Elite Four a mark is one of */
 function leagueOf(honor: Awards, where: string): string {
@@ -67,10 +66,20 @@ function leagueOf(honor: Awards, where: string): string {
 /** Every seat, in the order they are numbered */
 export const ELITE_MEMBERS: EliteMember[] = [];
 
-export const ELITE_MEMBER_NAMES: Record<number, string> = {};
+export const ELITE_MEMBER_NAMES = localeFieldTable<EliteMember>(
+  ELITE_MEMBER_IDS,
+  SAID_TEXT,
+  'text/<locale>/elite.yaml',
+  'name',
+);
 
 /** What each says as they rise */
-export const ELITE_MEMBER_QUOTES: Record<number, string> = {};
+export const ELITE_MEMBER_QUOTES = localeFieldTable<EliteMember>(
+  ELITE_MEMBER_IDS,
+  SAID_TEXT,
+  'text/<locale>/elite.yaml',
+  'quote',
+);
 
 /** Which league each seat belongs to, read off the mark it pays */
 export const ELITE_MEMBER_LEAGUES: Record<number, string> = {};
@@ -120,13 +129,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), MEMBER
   ELITE_MEMBER_POOLS[member] = pool;
 }
 ELITE_MEMBERS.sort((one, two) => one - two);
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
-  const member = idOf<EliteMember>(ELITE_MEMBER_IDS, name, `text/en/elite.yaml: ${name}`);
-
-  ELITE_MEMBER_NAMES[member] = said.name;
-  ELITE_MEMBER_QUOTES[member] = said.quote;
-}
 
 // Every seat the enum has is written down, so none stands nameless or bare
 for (const [name, member] of Object.entries(ELITE_MEMBER_IDS)) {

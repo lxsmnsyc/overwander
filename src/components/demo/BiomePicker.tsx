@@ -11,8 +11,16 @@ export const DEFAULT_DEMO_BIOME = Biome.AlpineTundra;
 
 const OPTIONS: { value: Biome; label: string }[] = [];
 
-for (const [key, label] of Object.entries(BIOME_NAMES)) {
-  OPTIONS.push({ value: Number(key), label });
+for (const key of Object.keys(BIOME_NAMES)) {
+  const value = Number(key);
+
+  // Read each time, so the label follows the player's language
+  OPTIONS.push({
+    value,
+    get label() {
+      return BIOME_NAMES[value];
+    },
+  });
 }
 
 /** A biome read back out of the address, or the default */

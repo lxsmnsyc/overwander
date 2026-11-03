@@ -1,16 +1,15 @@
 import { ItemTypes } from '../ids/items';
 import { ITEM_TYPE_IDS } from '../ids/names';
-import itemTypeNamesFile from '../text/en/item-types.yaml';
-import { stringTable } from '../yaml';
+import { localeStringTable } from '../yaml';
 
 /**
  * What each kind of item is called. The enum carries ids alone, and a
  * bag that can be narrowed down to one kind needs a word for each
  */
-export const ITEM_TYPE_NAMES = stringTable<ItemTypes>(
+export const ITEM_TYPE_NAMES = localeStringTable<ItemTypes>(
   ITEM_TYPE_IDS,
-  itemTypeNamesFile,
-  'text/en/item-types.yaml',
+  import.meta.glob('../text/*/item-types.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/item-types.yaml',
 );
 
 /**

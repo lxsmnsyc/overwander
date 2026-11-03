@@ -2,8 +2,7 @@ import * as v from 'valibot';
 import type Biome from '../ids/biome';
 import Decoration from '../ids/decorations';
 import { BIOME_IDS, DECORATION_IDS } from '../ids/names';
-import namesFile from '../text/en/decorations.yaml';
-import { idOf, idsOf } from '../yaml';
+import { idOf, idsOf, localeStringTable } from '../yaml';
 import biomesFile from './biome-decorations.yaml';
 
 export default Decoration;
@@ -20,12 +19,11 @@ const BIOME = v.strictObject({
   pictures: v.optional(v.record(v.string(), v.array(v.string()))),
 });
 
-export const DECORATION_NAMES: Record<number, string> = {};
-
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  DECORATION_NAMES[idOf<Decoration>(DECORATION_IDS, name, `text/en/decorations.yaml: ${name}`)] =
-    title;
-}
+export const DECORATION_NAMES = localeStringTable<Decoration>(
+  DECORATION_IDS,
+  import.meta.glob('../text/*/decorations.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/decorations.yaml',
+);
 
 /**
  * How many pieces of scenery a chunk carries. Enough to furnish it,

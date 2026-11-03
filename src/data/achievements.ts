@@ -20,8 +20,7 @@ import {
 import { AchievementLine, AchievementTier } from './ids/achievements';
 import type { Species } from './ids/species';
 import { getSpeciesData } from './species';
-import achievementTextFile from './text/en/achievements.yaml';
-import { idOf, idsOf, stringTable } from './yaml';
+import { idOf, idsOf, localeFieldTable, localeStringTable } from './yaml';
 
 /**
  * Achievements: lifetime awards in 4 tiers, derived from the same
@@ -32,18 +31,16 @@ import { idOf, idsOf, stringTable } from './yaml';
  * each line counts and its thresholds are `achievements.yaml`.
  */
 
-const ACHIEVEMENT_TEXT = v.parse(
-  v.strictObject({
-    tiers: v.unknown(),
-    lines: v.record(v.string(), v.strictObject({ name: v.string(), deed: v.string() })),
-  }),
-  achievementTextFile,
-);
+const ACHIEVEMENT_TEXT = import.meta.glob('./text/*/achievements.yaml', {
+  eager: true,
+  import: 'default',
+});
 
-export const TIER_NAMES = stringTable<AchievementTier>(
+export const TIER_NAMES = localeStringTable<AchievementTier>(
   ACHIEVEMENT_TIER_IDS,
-  ACHIEVEMENT_TEXT.tiers,
-  'text/en/achievements.yaml: tiers',
+  ACHIEVEMENT_TEXT,
+  'text/<locale>/achievements.yaml: tiers',
+  'tiers',
 );
 
 type Thresholds = [number, number, number, number];
@@ -107,22 +104,22 @@ export const ACHIEVEMENT_LINES: AchievementLine[] = [
  * prefixed at Platinum, so each has to read as something a player
  * would wear
  */
-export const LINE_NAMES: Record<number, string> = {};
+export const LINE_NAMES = localeFieldTable<AchievementLine>(
+  ACHIEVEMENT_LINE_IDS,
+  ACHIEVEMENT_TEXT,
+  'text/<locale>/achievements.yaml: lines',
+  'name',
+  'lines',
+);
 
 /** What each line is counting, said for the hover card */
-export const LINE_DEEDS: Record<number, string> = {};
-
-for (const [name, said] of Object.entries(ACHIEVEMENT_TEXT.lines)) {
-  const line = idOf(ACHIEVEMENT_LINE_IDS, name, `text/en/achievements.yaml: ${name}`);
-
-  LINE_NAMES[line] = said.name;
-  LINE_DEEDS[line] = said.deed;
-}
-for (const [name, line] of Object.entries(ACHIEVEMENT_LINE_IDS)) {
-  if (!Object.hasOwn(LINE_NAMES, line)) {
-    throw new Error(`text/en/achievements.yaml: ${name} is missing`);
-  }
-}
+export const LINE_DEEDS = localeFieldTable<AchievementLine>(
+  ACHIEVEMENT_LINE_IDS,
+  ACHIEVEMENT_TEXT,
+  'text/<locale>/achievements.yaml: lines',
+  'deed',
+  'lines',
+);
 
 /**
  * What each line asks of the counters: a metric, narrowed the way a

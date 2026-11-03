@@ -189,6 +189,31 @@ export interface TownParts {
   county: string;
 }
 
+/** The Spanish titles that take a feminine adjective */
+const FEMININE_TITLES = new Set(['Ciudad', 'Aldea', 'Parada']);
+
+/** The Spanish titles that are plural */
+const PLURAL_TITLES = new Set(['Molinos']);
+
+/** The marks that are adjectives, by the stem they inflect from */
+const ADJECTIVE_MARKS = new Map([
+  ['Nuevo', 'Nuev'],
+  ['Viejo', 'Viej'],
+  ['Alto', 'Alt'],
+  ['Bajo', 'Baj'],
+  ['Pequeño', 'Pequeñ'],
+]);
+
+/** A Spanish mark made to agree with the title it follows ("Ciudad Nueva", "Molinos Nuevos") */
+function agreeSpanish(mark: string, title: string): string {
+  const stem = ADJECTIVE_MARKS.get(mark);
+
+  if (stem == null) {
+    return mark;
+  }
+  return `${stem}${FEMININE_TITLES.has(title) ? 'a' : 'o'}${PLURAL_TITLES.has(title) ? 's' : ''}`;
+}
+
 /**
  * How a locale puts a name together, for a locale that writes its own
  * word lists. English welds the tail onto the head, sets the title
@@ -198,11 +223,17 @@ export interface TownParts {
 export const TOWN_JOINERS: Record<string, (parts: TownParts) => string> = {
   [baseLocale]: ({ mark, head, tail, title, county }) =>
     `${mark == null ? '' : `${mark} `}${head}${tail} ${title}, ${county}`,
-  // Largest first, with no spaces: the county, the mark, the name, the title
-  ja: ({ mark, head, tail, title, county }) => `${county}${mark ?? ''}${head}${tail}${title}`,
-  // The title comes first, then the mark, as in "Pueblo Nuevo Concha, Ashmarch"
+  // Like "さざなみぐんの しんかいがらやまタウン": the county first and set off
+  // by ぐんの, as an address runs from the largest place down, then the name
+  // in one word (mark, head, tail), then the title. タウン and シティ weld on
+  // as in the games; the other titles are words of their own and stand apart
+  ja: ({ mark, head, tail, title, county }) =>
+    `${county}ぐんの ${mark ?? ''}${head}${tail}${/^\p{Script=Katakana}/u.test(title) ? '' : ' '}${title}`,
+  // Title first, then the mark, as in "Ciudad Nueva Concha del Risco, Marca
+  // Ceniza". The mark agrees with the title like "Ciudad Real" and "Pueblo
+  // Nuevo" do, and the tail is a phrase of its own ("del Risco")
   es: ({ mark, head, tail, title, county }) =>
-    `${title} ${mark == null ? '' : `${mark} `}${head}${tail}, ${county}`,
+    `${title} ${mark == null ? '' : `${agreeSpanish(mark, title)} `}${head} ${tail}, ${county}`,
 };
 
 /** The head lists of each locale's words by biome id, read once */

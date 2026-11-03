@@ -1,0 +1,11 @@
+# どれだけ ついて いないと であえないかを ひとことで。 「{band}の ポケモン」と
+# つづけて よむので、 どれも なまえの ことばで おわる
+
+Base: ふつう
+Uncommon: ややレア
+Rare: レア
+Scarce: ごくレア
+Elusive: ちょうレア
+Prized: きちょう
+Special: でんせつ
+Mythical: まぼろし

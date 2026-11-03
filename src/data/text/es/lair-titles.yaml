@@ -1,0 +1,6 @@
+# Cómo se llama un lugar de incursión fuera de su sitio. `ground` es una
+# guarida sin sitio propio, por el bioma en que está, y `shadow` pone una
+# incursión oscura tras el nombre del lugar
+
+ground: 'Guarida de {biome}'
+shadow: '{place} (Oscuro)'

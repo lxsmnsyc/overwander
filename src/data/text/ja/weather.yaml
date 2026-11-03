@@ -1,0 +1,81 @@
+# そらの なまえと、 えでは つたわらない ことを ひとこと。 ゆうりに なる
+# タイプは タイプで あらわし、 ゆかは どの そらでも おなじなので、 ここには かかない
+
+Clear:
+  name: はれ
+  description: ふつうの そら。 なにも つよくならないのは、 この そらだけ。
+Cloudy:
+  name: くもり
+  description: くもが でて、 その したは ふつうの ひ。
+Overcast:
+  name: どんより
+  description: チャンクに ふたを した ような、 ひらたい はいいろの くも。
+Breezy:
+  name: そよかぜ
+  description: チャンクを ふきぬける、 ほどよい かぜ。
+Drizzle:
+  name: こさめ
+  description: かるい あめ。
+Rain:
+  name: あめ
+  description: ふりつづく あめ。
+Downpour:
+  name: おおあめ
+  description: はげしく ふる あめ。
+Thunderstorm:
+  name: らいう
+  description: かみなりを ともなう あめ。
+Mist:
+  name: もや
+  description: とおくまで みとおせない くうき。
+Fog:
+  name: きり
+  description: じめんから わき たつ、 こい きり。
+Haze:
+  name: かすみ
+  description: あつく よどんだ くうき。
+Frost:
+  name: しも
+  description: なにもかもに おりる ほどの さむさ。
+Snow:
+  name: ゆき
+  description: チャンクに ふる ゆき。
+Blizzard:
+  name: ふぶき
+  description: よこから ふきつける ゆき。 そなえの ない ものを けずって いく。
+Hail:
+  name: あられ
+  description: いたい ほど はげしく ふる こおり。 そなえの ない ものを けずって いく。
+Sandstorm:
+  name: すなあらし
+  description: かぜに まう すな。 そなえの ない ものを けずって いく。
+DustHaze:
+  name: すなぼこり
+  description: かぜの ない くうきに ういた ほこり。
+Heatwave:
+  name: ねっぱ
+  description: かぜも あめも ともなわない、 ただの あつさ。
+FallingAsh:
+  name: かざんばい
+  description: どこからか ふって くる はい。
+Aurora:
+  name: オーロラ
+  description: きたの はてに かがやく ひかり。 とくに めずらしい そらの ひとつ。
+Rainbow:
+  name: にじ
+  description: ひろい みずうみや うみに かかる アーチ。 とくに めずらしい そらの ひとつ。
+PollenDrift:
+  name: かふん
+  description: きぎの あいだを ながれる かふん。
+MeteorShower:
+  name: ながれぼしの あめ
+  description: いちばん めずらしい そら。 すべての タイプが ゆうりに なり、 いろちがいが 8ばい でやすく なる。
+FataMorgana:
+  name: しんきろう
+  description: ゆらめく まぼろし。 すべての タイプが ゆうりに なる。 8ひきに 1ぴきが かくれとくせいを、 64ひきに 1ぴきが とくゆうとくせいを もつ。
+DarkDay:
+  name: ひるの やみ
+  description: しょうごが やみに つつまれる。 すべての タイプが ゆうりに なり、 わたされる ポケモンの 4ひきに 1ぴきは ダークポケモン。
+Fogbow:
+  name: しろにじ
+  description: いろの ぬけた にじ。 であう ポケモンの 4ひきに 1ぴきは 5つめの わざ、 16ひきに 1ぴきは 6つめの わざの あきが ある。

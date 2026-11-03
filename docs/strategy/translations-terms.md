@@ -414,7 +414,7 @@ Team and facility names:
 | Team Plasma | プラズマだん | Equipo Plasma | WikiDex |
 | Team Flare | フレアだん | Team Flare | WikiDex (Spain) |
 | grunt | したっぱ | Recluta | WikiDex (es); ja official term |
-| Boss, Leader | ボス, リーダー | Líder (Flare: Jefe) | WikiDex (es) |
+| Boss, Leader | ボス, リーダー | Líder | WikiDex (es) |
 | Sage (Plasma) | けんじん | Sabio | es WikiDex; ja to confirm |
 | Admin, Commander, Executive | かんぶ | Comandante (Magma, Aqua, Galactic), Ejecutivo/a (Rocket, Plasma) | es WikiDex; ja かんぶ to confirm |
 | Scientist (Flare) | かがくしゃ | Científico/a | Engine title; to confirm |
@@ -427,7 +427,8 @@ Team and facility names:
 | Battle Dome | バトルドーム | Cúpula Batalla | WikiDex |
 | Battle Arcade | バトルルーレット | Ruleta Batalla | WikiDex |
 | Battle Castle | バトルキャッスル | Castillo Batalla | WikiDex |
-| Battle Hall | バトルホール | Sala Batalla | es WikiDex; ja from memory, the WikiDex page prints バトルファクトリー, to confirm |
+| Battle Hall | バトルステージ | Sala Batalla | es WikiDex; ja Stage (the WikiDex infobox prints バトルファクトリー, a copy error; the Korean, French and a Japanese wiki name it the Stage) |
+| Fen Badge | フェンバッジ | Medalla Ciénaga | WikiDex |
 | Mt. Pyre | おくりびやま | Monte Pírico | WikiDex |
 
 ## Status conditions

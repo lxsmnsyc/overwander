@@ -20,23 +20,23 @@ Written by this engine (not the games): the Pike curtain and Arcade panel phrase
 
 - None.
 
+## Verified on WikiDex
+
+Crasher Wake マキシマムかめん (infobox マキシマム仮面), Cintia and Dianta as the Spain forms, Vito y Leti, Máximo, A. Z., N, the es ranks Líder, Comandante and Ejecutivo, every Frontier Brain name and facility, and the Fen Badge (ja フェンバッジ, es Medalla Ciénaga). Battle Hall in ja is バトルステージ: the WikiDex infobox prints バトルファクトリー, a copy error, and the Korean and French names and a Japanese wiki call it the Stage.
+
 ## To confirm
 
-- ja Battle Hall バトルホール: from memory. The WikiDex page of Sala Batalla prints バトルファクトリー, which looks wrong.
-- ja Crasher Wake マキシマムかめん: the kana of the infobox's マキシマム仮面; the name under the mask is マキシ.
-- es Equipo Magma and Equipo Aqua versus Team Magma and Team Aqua in Spain: WikiDex gives Equipo for the games and Team for the anime.
-- es Cintia and Dianta as the Spain forms (the page headers read "Cynthia/Cintia" and "Diantha/Dianta").
-- Tate is Vito and Liza is Leti (WikiDex gives "Vito y Leti" for the pair).
-- Ranks: ja かんぶ for Plasma and Flare executives, けんじん (Plasma sage) and かがくしゃ (Flare scientist); es Líder for most bosses (WikiDex), Jefe for Flare, Sabio for Plasma, Comandante and Ejecutivo/a.
-- ja N and AZ stay in Latin letters (the games write them so); es N and A. Z. (WikiDex).
-- ja badge names and the Fen Badge: the Wake quote says "the badge" instead.
-- es Máximo for Steven: WikiDex gives Máximo Peñas in Spain; the short first name was used.
-- The English quotes' voices were matched from memory of the games; the review should check the longest ja quotes for natural phrase breaks.
+- es Equipo Magma and Equipo Aqua versus Team Magma and Team Aqua in the Spain games: WikiDex only sources the anime's Team.
+- es Equipo Galaxia: from a disambiguation page.
+- ja かんぶ (Plasma and Flare executives) and かがくしゃ (Flare scientist).
+- The ja title order without の (`{team} {title} {name}`).
+- The character voices come from memory of the games.
 
 ## Verification
 
 - `pnpm typecheck` exit 0; `rtk proxy pnpm exec oxlint src test` exit 0 (warnings only, none new from this node).
-- `pnpm exec vitest run --maxWorkers=2 test/data test/i18n`: 40 files, 605 tests pass.
+- `pnpm exec vitest run --maxWorkers=2 test/data test/i18n`: 40 files, 605 tests pass (after the review fixes).
+- A fresh review's fixes are applied (log, "Review").
 - No kanji in the new ja files (`test/data/official-names.test.ts` is in the run).
 - The full suite, `pnpm official-names` and the fresh review are left for the caller. No screenshots (not asked for this node).
 

@@ -1,0 +1,7 @@
+# Los nombres de la cadena de la Pokédex de una región, a partir del nombre
+# de la región. `rung` es el nombre de un peldaño que dex-rungs.yaml no
+# lista, contado desde 1
+
+complete: 'Pokédex de {region} completa'
+rung: 'Pokédex de {region}, nivel {number}'
+chain: 'Pokédex de {region}'

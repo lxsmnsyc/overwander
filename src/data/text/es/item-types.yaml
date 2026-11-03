@@ -1,0 +1,13 @@
+# Cómo se llama cada clase de objeto. En plural, porque el filtro de la
+# mochila nombra un estante y no una cosa
+
+Medicine: Botiquín
+PokeBall: Poké Balls
+Berry: Bayas
+Held: Objetos equipables
+Machine: Máquinas
+KeyItem: Objetos clave
+Evolution: Objetos evolutivos
+Valuable: Tesoros
+Training: Objetos de entrenamiento
+Fossil: Fósiles

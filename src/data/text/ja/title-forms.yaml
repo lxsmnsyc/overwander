@@ -1,0 +1,8 @@
+# しょうごうを なまえから つくる かたち。 `professor` は ちほうの ずかんの
+# しょうごう、 `master` は しごとや ラインの いちばん うえ、
+# `type-specialist` と `type-master` は タイプの ふたつの ランク
+
+professor: '{region}はかせ'
+master: 'マスター{name}'
+type-specialist: '{name}タイプの たつじん'
+type-master: '{name}タイプの マスター'

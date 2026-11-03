@@ -1,0 +1,11 @@
+# Cómo se forma un título a partir del nombre al que corresponde.
+# `professor` es el título que vale la Pokédex de una región, `master` el
+# rango más alto de un oficio o una línea (el platino, que no cambia con el
+# género ni el número del nombre), `type-specialist` y
+# `type-master` los dos rangos de un tipo. Ninguno da por hecho el género
+# de quien lo lleva
+
+professor: 'Prof. de {region}'
+master: '{name} de platino'
+type-specialist: 'Especialista de tipo {name}'
+type-master: 'Maestría de tipo {name}'

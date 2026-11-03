@@ -1,0 +1,8 @@
+# Los nombres de las misiones que rotan. `fresh` es la primera diaria de un
+# día sin familia destacada, `featured` la de un día que la tiene,
+# `stroll` el paseo y `hunt` la caza de la semana
+
+fresh: Capturas frescas
+featured: 'Destacado: {family}'
+stroll: Paseo diario
+hunt: 'La caza de {family}'

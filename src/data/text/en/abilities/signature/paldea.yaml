@@ -155,7 +155,7 @@ StormCloud:
   description: Each Electric move it lands has a 15% chance to lay Electric Terrain.
 TrackLaying:
   name: Track Laying
-  description: "Each Ground move it lands lays a layer of Stealth Rock under the target's side, at most once every 15 seconds."
+  description: "Each Ground move it lands lays Stealth Rock under the target's side, at most once every 15 seconds."
 IcePack:
   name: Ice Pack
   description: Its Ice moves aimed at a teammate heal that teammate 1/4 of their max HP instead of hurting them.

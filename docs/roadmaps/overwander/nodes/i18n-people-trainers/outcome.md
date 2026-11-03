@@ -45,3 +45,9 @@ Still memory-only (the review could not fetch them): Juggler ジャグラー, Ho
 ## Size
 
 - Estimated L, actual L.
+
+## Caller's checks
+
+- `pnpm test` (2 workers): 277 of 281 files passed while another project's tests ran on the machine; the 4 that timed out (generation-fingerprint, raid demo, placement-invariants, tera-sites) pass when run alone. `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review checked the class names against WikiDex class pages (which print the Japanese name); the caller spot-checked four of its corrections. Its fixes are in df0851311.
+- Screenshots skipped at the maintainer's call: the test helper that places the player beside a landmark does not hold (see the NPC node), so no duel prompt was captured.

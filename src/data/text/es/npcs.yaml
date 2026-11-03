@@ -15,7 +15,7 @@ DaycareLady:
 NurseJoy:
   name: Enfermera Joy
   description: Cura al equipo gratis, tantas veces como se pida.
-  quote: Anda, dámelos todos. Sin cargo. El mostrador siempre está abierto.
+  quote: Anda, dámelos todos. Gratis. El mostrador siempre está abierto.
 Groomer:
   name: Peluquero
   description: Cepilla a un Pokémon para que quiera más a su Entrenador, a cambio de dinero.
@@ -39,7 +39,7 @@ FossilManiac:
   quote: ¡Los desenterré yo mismo! Dos preciosidades, y me separo de una. Solo de una, ojo.
   spent: Esa era la única que podía soltar. La próxima vez habré desenterrado más.
 FossilScientist:
-  name: Científica de Fósiles
+  name: Científico de Fósiles
   description: Revive fósiles convirtiéndolos en Pokémon, gratis.
   quote: ¿Un fósil? ¡Maravilloso! Tráelo. Ha esperado ahí dentro más que suficiente.
 MoveTutor:
@@ -62,7 +62,7 @@ Channeler:
 Kurt:
   name: Kurt
   description: Talla Bonguris para convertirlos en Balls, gratis.
-  quote: ¿Bonguris, eh? Trae acá. Una Ball por cada uno, y el color decide cuál. Sin cargo, la recolección la hiciste tú.
+  quote: ¿Bonguris, eh? Dámelos. Una Ball por cada uno, y el color decide cuál. Gratis, la recolección la hiciste tú.
 Geologist:
   name: Geólogo
   description: Vende piedras y gemas, y compra casi de todo.
@@ -72,12 +72,12 @@ DojoMaster:
   description: Entrena a un Pokémon para que pueda tener un movimiento más, a cambio de una Escama Corazón.
   quote: Un Pokémon puede cargar con más de lo que cree. Una Escama Corazón y haré sitio para otro movimiento.
 Trader:
-  name: Intercambiador
-  description: Cambia uno de seis Pokémon de tierras lejanas por otro del mismo tipo.
-  quote: Los he traído desde muy lejos. Cualquiera por uno tuyo, siempre que sea del mismo tipo.
+  name: Comerciante
+  description: Cambia uno de seis Pokémon de tierras lejanas por otro de la misma rareza.
+  quote: Los he traído desde muy lejos. Cualquiera por uno tuyo, siempre que sea de la misma rareza.
   spent: Un intercambio por parada. La próxima vez traeré caras nuevas.
 HyperTrainer:
-  name: Superentrenador
-  description: Entrena un valor de un Pokémon hasta el máximo, a cambio de dinero por punto.
-  quote: Bueno no es lo mismo que lo mejor. Enséñame uno y elige el valor, y lo llevaré hasta lo más alto. Te costará.
+  name: Entrenador Extremo
+  description: Entrena un IV de un Pokémon hasta el máximo, a cambio de dinero por punto.
+  quote: Bueno no es lo mismo que lo mejor. Enséñame uno y elige el IV, y lo llevaré hasta lo más alto. Te costará.
   spent: Uno por visita. Tráeme el siguiente cuando vuelva.

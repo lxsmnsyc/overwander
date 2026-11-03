@@ -39,7 +39,11 @@ const kurt: NpcScript = async (visit) => {
       entries: apricorns,
       none: m.npc_kurt_none(),
       step: m.npc_kurt_step(),
-      have: { amount: carrying, short: carrying === 0, unit: m.npc_unit_apricorns() },
+      have: {
+        amount: carrying,
+        short: carrying === 0,
+        unit: m.npc_unit_apricorns({ count: carrying }),
+      },
       counts: true,
       note: (entry) => ballName(entry.item),
       card: (entry) => <Detail label={m.npc_kurt_becomes()}>{ballName(entry.item)}</Detail>,

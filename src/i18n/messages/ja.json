@@ -1821,7 +1821,15 @@
       }
     }
   ],
-  "npc_unit_apricorns": "ぼんぐり",
+  "npc_unit_apricorns": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=*": "ぼんぐり"
+      }
+    }
+  ],
   "npc_the_heart_scale": "ハートのウロコ",
   "npc_gold_spent": "おかね −{amount}",
   "npc_gold_gained": "おかね +{amount}",
@@ -1844,7 +1852,7 @@
   "npc_breeder_step": "ペアを えらぶ",
   "npc_breeder_empty": "かけあわせられる ポケモンが いない。",
   "npc_breeder_incompatible": "この 2ひきは まったく あわないな。",
-  "npc_breeder_refused": "だめだったね。 くみあわせが わるいか、 おかねが たりないか、 この じかんわくに もう わたしと かけあわせたかだ。",
+  "npc_breeder_refused": "だめだったね。 くみあわせが わるいか、 おかねが たりないか、 この じかんわくに もう かけあわせたかだ。",
   "npc_breeder_toast_title": "タマゴ",
   "npc_breeder_toast": "あいぼうに して あるこう。 おかね −{fee}",
   "npc_breeder_done": "いい タマゴだ。 そばに おいて、 あるき つづけなさい。",
@@ -1895,7 +1903,7 @@
   "npc_groomer_action": "ブラッシング",
   "npc_groomer_empty": "せわを する ポケモンが いない。",
   "npc_groomer_detail": "なつきど {from} → {to}",
-  "npc_groomer_refused": "その こは あずかれないな。 ダークポケモンか、 もう なかよしか、 この じかんわくに もう あっているか だ。",
+  "npc_groomer_refused": "その こは あずかれないな。 ダークポケモンか、 もう なかよしか、 この じかんわくに もう あっているかだ。",
   "npc_groomer_done": "ブラシで ごしごし、 たっぷり かわいがったぞ。 もどってきた ポケモンは {mood}。 (おかね −{fee})",
   "npc_hyper_verb": "えらぶ",
   "npc_hyper_action": "きたえる",
@@ -1918,7 +1926,15 @@
   "npc_reminder_action": "おもいださせる",
   "npc_reminder_empty": "わすれた わざが ある ポケモンが いない。",
   "npc_reminder_heading": "おぼえて わすれた わざ",
-  "npc_reminder_count": "わすれた わざ {count}つ",
+  "npc_reminder_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=*": "わすれた わざ {count}つ"
+      }
+    }
+  ],
   "npc_reminder_done": "ふむふむ、 あたまを ぽんと たたくと…… おもいだした。 (ハートのウロコ −1)",
   "npc_tutor_action": "おしえる",
   "npc_tutor_empty": "おしえられる ポケモンが いない。",

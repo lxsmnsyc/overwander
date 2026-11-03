@@ -1534,7 +1534,7 @@
   "item_bag_help_held": "Los objetos equipables se le dan a un Pokémon desde su ficha.",
   "item_bag_help_machines": "Las máquinas enseñan un movimiento, y los objetos evolutivos hacen evolucionar a los Pokémon que los necesitan.",
   "item_bag_help_training": "Los objetos de entrenamiento cambian los valores o el esfuerzo de un Pokémon.",
-  "item_bag_help_fossils": "La Científica de Fósiles revive los fósiles, y los objetos de valor solo sirven para venderlos.",
+  "item_bag_help_fossils": "El Científico de Fósiles revive los fósiles, y los objetos de valor solo sirven para venderlos.",
   "item_bag_help_candies": "Los caramelos son de una familia. Todos los Pokémon de esa línea gastan la misma reserva para subir de nivel, y liberar a uno devuelve algunos.",
   "item_relic_no_place": "Da un paseo primero: una reliquia se usa donde está el jugador.",
   "item_relic_nothing": "Esa reliquia no ha invocado nada.",
@@ -2429,13 +2429,22 @@
       }
     }
   ],
-  "npc_unit_apricorns": "bonguris",
+  "npc_unit_apricorns": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "bonguri",
+        "countPlural=*": "bonguris"
+      }
+    }
+  ],
   "npc_the_heart_scale": "La Escama Corazón",
   "npc_gold_spent": "−{amount} de dinero",
   "npc_gold_gained": "+{amount} de dinero",
   "npc_change": "{from} → {to}",
   "npc_name_times": "{name} ×{amount}",
-  "npc_price_note": "{price} ₽",
+  "npc_price_note": "{price} de dinero",
   "npc_buy": "Comprar",
   "npc_sell": "Vender",
   "npc_crate_empty": "La caja está vacía.",
@@ -2508,7 +2517,7 @@
   "npc_hyper_verb": "Elegir",
   "npc_hyper_action": "Entrenar",
   "npc_hyper_empty": "No tienes nada que entrenar.",
-  "npc_hyper_step": "Elige un valor",
+  "npc_hyper_step": "Elige un IV",
   "npc_hyper_top": "Ya al máximo",
   "npc_hyper_stat": "{stat}  {value} → {max}",
   "npc_hyper_refused": "Este no. Te falta dinero, o no es tuyo para entrenarlo.",
@@ -2526,7 +2535,16 @@
   "npc_reminder_action": "Recordar",
   "npc_reminder_empty": "No tienes nada que haya olvidado algo.",
   "npc_reminder_heading": "Lo que ha aprendido y olvidado",
-  "npc_reminder_count": "{count} olvidados",
+  "npc_reminder_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} olvidado",
+        "countPlural=*": "{count} olvidados"
+      }
+    }
+  ],
   "npc_reminder_done": "Un murmullo, un toquecito en la cabeza, y ya lo recuerda. (−1 Escama Corazón)",
   "npc_tutor_action": "Enseñar",
   "npc_tutor_empty": "No tienes nada que pueda enseñar.",
@@ -2544,9 +2562,9 @@
   "npc_trader_next": "Siguiente",
   "npc_trader_action": "Intercambiar",
   "npc_trader_verb": "Dar",
-  "npc_trader_empty": "No tienes nada de ese tipo para dar.",
+  "npc_trader_empty": "No tienes nada de esa rareza para dar.",
   "npc_trader_line": "{name}, Nv. {level}. Aceptaré cualquiera de los tuyos que sea {band}.",
-  "npc_trader_refused": "Ese no. Es tu compañero, o uno con el que no puedes separarte.",
+  "npc_trader_refused": "Ese no. Es tu compañero, o uno del que no puedes separarte.",
   "npc_trader_toast": "Intercambiado. Llega listo para lo que traiga un intercambio.",
   "npc_trader_done": "Un trato justo. Cuídalo por mí."
 }

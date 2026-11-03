@@ -32,7 +32,7 @@ Translations batch 3: text the code builds out of other text (item descriptions 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 3).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 3).
 - The item families already keep their sentences as templates with parameters under `templates:` in `text/<locale>/items/`. What was missing: a locale's templates were skipped, every built description was written once in English when the items registered, and a few lines were joined by hand (`' and '`, `', ' … ' or '`, `' '`).
 - A line built at registration is written in whatever locale registered it: English on the server, the page's locale in the browser. Once a locale is served the two would disagree.
 

@@ -37,7 +37,7 @@ Translations batch 9, part 2 of 6: what the people in towns are called and say, 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 9; "What every batch does" steps 3 to 8). Read the outcome of `i18n-people-places` for how each file is read in a locale.
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 9; "What every batch does" steps 3 to 8). Read the outcome of `i18n-people-places` for how each file is read in a locale.
 - A locale file sits at the same path under `text/ja/` or `text/es/` as the English file and is keyed the same way.
 - Japanese is kana with spaces between phrases, like the Gen 1 to 5 games; a sentence ends with 。. Spanish is the games' Spanish as Spain uses it.
 - Terms the games already name use the official term in that locale. Everything this engine invented is translated once and recorded in `docs/strategy/translations-terms.md`; reuse what is there.

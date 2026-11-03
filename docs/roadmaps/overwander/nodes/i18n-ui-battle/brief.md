@@ -40,7 +40,7 @@ Translations batch 6: the battle view, the duel lobby and rules, the past-battle
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 6; "What every batch does" is the procedure, steps 2 to 8).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 6; "What every batch does" is the procedure, steps 2 to 8).
 - Batch 5 (`i18n-ui-overworld`, read its outcome) set the pattern: Paraglide messages in `src/i18n/messages/{en,ja,es}.json`, `test/i18n/messages.test.ts` checks keys and parameters across locales, `docs/strategy/translations-terms.md` holds the terms, and Settings has the language picker. Reuse its terms; add new ones to the list.
 - In scope:
   - `src/components/battle/**`: battle view and top bar, unit cards, party, teams preview, spectators, watch, lobby invite, duel rules, verdict, history (the most strings).

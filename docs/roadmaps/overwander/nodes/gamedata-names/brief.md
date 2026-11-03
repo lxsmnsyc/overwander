@@ -29,6 +29,6 @@ A `names (kind, id, locale, name)` table so search works in the player's languag
 
 ## Context
 
-- Source: docs/todo.md: Platform, Game data in the database; ../../../../strategy/translations.md (Database)
+- Source: docs/todo.md: Platform, Game data in the database; the translation plan's Database note (now removed): once the official names land, `game_data` gains a `names (kind, id, locale, name)` table, so box and auction search work in the player's language
 
 Outline: broken into a full brief when `plan.py refine` lists it.

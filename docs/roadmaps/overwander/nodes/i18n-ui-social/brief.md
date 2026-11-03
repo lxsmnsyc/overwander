@@ -36,7 +36,7 @@ Translations batch 7, part 3 of 3, and the last interface batch: auctions, trade
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 7; "What every batch does" steps 2 to 8). Read the outcomes of `i18n-ui-shell` and `i18n-ui-catches` for shared keys to reuse.
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 7; "What every batch does" steps 2 to 8). Read the outcomes of `i18n-ui-shell` and `i18n-ui-catches` for shared keys to reuse.
 - In scope: `src/components/{auctions,trades,raids,quests,profile}/**`. Quest goals (`quests-tab/describe.tsx`, such as "Earn {n} gold") are built in code and become messages here. Quest names are batch 9.
 - Award names, titles and raid titles stay on their lookups (batch 9).
 

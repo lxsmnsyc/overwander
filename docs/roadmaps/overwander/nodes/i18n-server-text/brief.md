@@ -36,7 +36,7 @@ Translations batch 4: what the server tells a player is a code and its parameter
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 4).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 4).
 - Most server functions already answer with data or a typed result the browser describes. What was left: about 20 sentences thrown as `Error`s (signed out, banned, closed, paced, friends, teleport, the command bar, validation) and the reasons the game writes on the gifts it gives (starter, quest, daily, hunt), which are stored in the database.
 - Every place the browser showed a failure read `error.message` directly.
 

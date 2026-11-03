@@ -37,7 +37,7 @@ Translations batch 5, the first batch players see: the overworld HUD, the world 
 
 ## Context
 
-- Source: ../../../../strategy/translations.md (The order, batch 5; "What every batch does" is the procedure, steps 2 to 8).
+- Source: the translation plan, `docs/strategy/translations.md`, removed when batch 9 closed (see git history) (The order, batch 5; "What every batch does" is the procedure, steps 2 to 8).
 - Batches 0 to 4 are done. Paraglide messages live in `src/i18n/messages/{en,ja,es}.json`; `refusal_*` from batch 4 is the only set so far, and `ja`/`es` fall back to English per message. `src/i18n/locale.ts` has `chooseLocale`, which nothing calls yet. Registry names (species, moves, items) already follow the locale since batch 2.
 - In scope: every player-facing string in `src/components/overworld/**` (HoneyTree, Nest, Portal, Safari, Stop, GymSeat, WorldMap dialogs, the board HUD in `overworld-tab/board.tsx`, cell notes, weather icon labels) and in `src/game/overworld/**` (the lines `interact.ts` returns or announces, `challengers.ts` rule and prize text, `windows.ts`). `src/game` may import Paraglide messages: they are plain functions, not Solid.
 - Out of scope: NPC dialogue, trainer and gym leader names, town, quest, award, weather and biome names (batch 9, `i18n-people-places`; keep calling the existing name lookups), battle (batch 6), every other screen (batch 7).

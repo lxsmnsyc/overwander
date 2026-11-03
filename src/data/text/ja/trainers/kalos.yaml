@@ -1,0 +1,126 @@
+# カロスの トレーナーの クラスの なまえと、 しょうぶを いどまれた ときの せりふ。
+# ふたつの ちほうに いる クラスは おなじ なまえで、 がめんが ちほうを つけたす。
+
+KalosAceTrainer:
+  name: エリートトレーナー
+  quote: カロスの どの まちにも わたしのような トレーナーが いる。 わたしは まけなかった ほうよ。
+KalosLass:
+  name: ミニスカート
+  quote: あら、 ちょうせんしゃね！ きょうは ポケモンと おそろいだから、 まけないわ。
+KalosYoungster:
+  name: たんパンこぞう
+  quote: ぼくの チームは ぜんぶ あれちから ほりだしたんだ。 みてみる？
+KalosBlackBelt:
+  name: からておう
+  quote: ショウヨウシティの どうじょうで きたえた。 きみは どこで きたえたのか みせてみろ。
+KalosBattleGirl:
+  name: バトルガール
+  quote: コルニさんは ぜんりょくで たたかえって いうの。 わたしの ぜんりょくを みせるわ！
+KalosBeauty:
+  name: おねえさん
+  quote: ミアレシティの バトルは ひとつの ぶたいよ。 ついてこられると いいわね。
+KalosFisherman:
+  name: つりびと
+  quote: かわは あさから ずっと しずかだった。 きみで がまんするか。
+KalosSwimmer:
+  name: かいパンやろう
+  quote: アズールわんから およいで きたんだ。 バトルは いい きゅうけいさ。
+KalosHiker:
+  name: やまおとこ
+  quote: この どうくつは だれも あるいた ことのない ところまで つづいている。 わたしの ポケモンもな。
+KalosPsychic:
+  name: サイキッカー
+  quote: ロストホテルで この であいを よちした。 けつまつも よちしたわ。
+KalosHexManiac:
+  name: オカルトマニア
+  quote: ふふふ… もりの かぼちゃが、 あなたが くると おしえてくれたの。
+KalosScientist:
+  name: けんきゅういん
+  quote: はつでんしょは じゅんちょうに うなっている。 わたしの ポケモンが うならせている。
+KalosWorker:
+  name: さぎょういん
+  quote: ひるやすみだ。 きみを たおす じかんは たっぷり ある。
+KalosRichBoy:
+  name: おぼっちゃま
+  quote: パパが シャトーに ぼくの せきを かってくれた。 となりに すわりたければ じつりょくを みせて。
+KalosPokeFan:
+  name: ポケモンファン
+  quote: わたしの ポケモンが どれだけ ふわふわか みた？ もっと ちかくで。 もっと！
+KalosRanger:
+  name: ポケモンレンジャー
+  quote: ハクダンのもりは わたしが まもっている。 きみは わたしの パトロールの うえを あるいている。
+KalosBreeder:
+  name: ポケモンブリーダー
+  quote: この こたちは ぜんぶ タマゴから そだてたの。 きみのような トレーナーを しっているわ。
+KalosBackpacker:
+  name: バックパッカー
+  quote: カロスの どの みちも 2かいは あるいた。 この みちは 3かいめだ。
+KalosArtist:
+  name: アーティスト
+  quote: じっと して。 わたしの ポケモンが まけるところの きみを えがきたいって。
+KalosCyclist:
+  name: サイクリング
+  quote: サイクリングロードは こうじちゅうだから、 きょうの レースあいては きみだ。
+KalosGentleman:
+  name: ジェントルマン
+  quote: おちゃの まえの けっとうが カロスの ならわしだ。 さあ、 どうぞ。
+KalosLady:
+  name: おじょうさま
+  quote: わたくしの おにわは さいて、 チームも さいているの。 はじめましょうか？
+KalosWaiter:
+  name: ギャルソン
+  quote: おせきの じゅんびが まだです。 おまちの あいだ、 バトルは いかがですか？
+KalosMaid:
+  name: メイド
+  quote: シャトーは ちりひとつ あってはなりません。 まず きみを かたづけます。
+KalosTwins:
+  name: ふたごちゃん
+  quote: "わたしたちは おたがいの バトルを しめくくるの！ わたしたちの バトルは しめくくれないわよ！"
+KalosVeteran:
+  name: ベテラントレーナー
+  quote: チャンピオンロードは きみが うまれる まえに あるいた。 なにが かわったか みせてもらおう。
+KalosSchoolKid:
+  name: じゅくがえり
+  quote: "トレーナーズスクールで タイプの あいしょうを ならったよ。 ぼくを ためして！"
+KalosPreschooler:
+  name: えんじ
+  quote: ママが きょうは おおきい おにいさんと ひとり バトルして いいって！ きみだよ！
+KalosRollerSkater:
+  name: ローラースケート
+  quote: ミアレから ずっと すべってきたの。 つかまえられるものなら つかまえてみて！
+KalosPunkGuy:
+  name: バッドガイ
+  quote: いい ふくだな。 これから おこることが おしいぜ。
+KalosPunkGirl:
+  name: バッドガール
+  quote: まよってるみたいね。 わたしの ポケモンが でぐちを おしえてあげる。
+KalosSocialite:
+  name: セレブ
+  quote: カロスで だいじな ひとは みんな わたくしと バトルしたわ。 あなたも なかまに いれて あげる。
+KalosChef:
+  name: コック
+  quote: わたしの ちゅうぼうは あつい。 チームも あつい。
+KalosClerk:
+  name: ビジネスマン
+  quote: ミアレは ねむらないし、 オフィスも ねむらない。 てみじかに たのむよ。
+KalosGardener:
+  name: にわし
+  quote: かだんに きを つけて。 わたしの ポケモンは そこで そだったの。
+SkyTrainer:
+  name: スカイトレーナー
+  quote: バトルは そらでしか しないの。 うえを みて！
+FairyTaleGirl:
+  name: メルヘンしょうじょ
+  quote: むかしむかし、 あるところに わたしの おはなしに まよいこんだ トレーナーが いました…
+FurisodeGirl:
+  name: ふりそで
+  quote: シャトーの ために せいいっぱい おしゃれを したの。 しわには させないわ。
+Butler:
+  name: しつじ
+  quote: やしきの かぎは わたくしが あずかっております。 きみの はいぼくも でございます。
+Tourist:
+  name: かんこうきゃく
+  quote: あうたびに ビビヨンの はねが ちがうの。 わたしの コレクションを みにきて！
+RisingStar:
+  name: ホープトレーナー
+  quote: みんな わたしが つぎの スターだって いうの。 ちがうと しょうめいできるなら、 してみて。

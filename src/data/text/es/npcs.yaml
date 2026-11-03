@@ -55,7 +55,7 @@ Chef:
   description: Vende bebidas y golosinas, y compra casi de todo.
   quote: Recién salido del fogón y de la nevera. Si tu Pokémon lo lleva, come bien.
 Channeler:
-  name: Médium
+  name: Exorcista
   description: Invoca una habilidad más en un Pokémon, a cambio de una Escama Corazón.
   quote: Hay más en él de lo que sabe. Una Escama Corazón y lo invocaré. Lo que responda no me corresponde elegirlo.
   spent: He invocado lo que podía. El resto esperará hasta que vuelva a pasar por aquí.

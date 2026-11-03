@@ -59,7 +59,7 @@ Taken from the games, never translated fresh. Names of species, moves, items, ab
 | Tera type                                  | テラスタイプ                                                                                 | teratipo                                                                 |
 | hidden ability                             | かくれとくせい                                                                               | habilidad oculta                                                         |
 | fossil                                     | かせき                                                                                       | fósil                                                                    |
-| Channeler (the NPC)                        | きとうし                                                                                     | la Médium                                                                |
+| Channeler (the NPC)                        | きとうし                                                                                     | la Exorcista                                                             |
 | Breeder, Move Tutor                        | そだてや, わざおしえ                                                                         | Guardería, Tutor de Movimientos                                          |
 | Kanto … Paldea                             | カントー, ジョウト, ホウエン, シンオウ, イッシュ, カロス, アローラ, ガラル, ヒスイ, パルデア | Kanto, Johto, Hoenn, Sinnoh, Teselia, Kalos, Alola, Galar, Hisui, Paldea |
 | bag pockets                                | くすり, モンスターボール, きのみ, もちもの, わざマシン, だいじなもの                         | Botiquín, Poké Balls, Bayas, Objetos equipables, Máquinas, Objetos clave |
@@ -160,7 +160,7 @@ The names in `text/<locale>/npcs.yaml`, `vendor-stalls.yaml` and `decorations.ya
 | Move Tutor                                                   | わざおしえ                                                             | Tutor de Movimientos                                                                | Official                                                    |
 | Trainer                                                      | トレーナー                                                             | Entrenador                                                                          |                                                             |
 | Chef                                                         | コック                                                                 | Cocinero                                                                            | The Cook class's word                                       |
-| Channeler                                                    | きとうし                                                               | Médium                                                                              |                                                             |
+| Channeler                                                    | きとうし                                                               | Exorcista                                                                           |                                                             |
 | Kurt                                                         | ガンテツ                                                               | Kurt                                                                                | Official                                                    |
 | Geologist                                                    | ちしつがくしゃ                                                         | Geólogo                                                                             | Coined                                                      |
 | Dojo Master                                                  | どうじょうの しはん                                                    | Maestro del Dojo                                                                    |                                                             |
@@ -171,6 +171,110 @@ The names in `text/<locale>/npcs.yaml`, `vendor-stalls.yaml` and `decorations.ya
 | Pine, Palm, Mushrooms                                        | マツ, ヤシ, キノコ                                                     | Pino, Palmera, Setas                                                                | まつ alone also reads as "to wait"                          |
 
 NPC lines name a Heart Scale as ハートのウロコ and Escama Corazón (plural Escamas Corazón), an apricorn as ぼんぐり and Bonguri, and money as おかね and de dinero. A trader's line fills in the rarity band in whatever language the band is written in.
+
+## Trainer classes
+
+The names in `text/<locale>/trainers/*.yaml`. A class the games name uses the games' word. Where several regions share a class it is one name for all (the screen adds the region). Sheet-only names (Crush Girl, Picnicker, Cowgirl, Idol, Cameraman, Monsieur, Madame, Schoolboy, Schoolgirl, Waitress) are in `trainer-sheets.yaml`.
+
+| English | ja | es | Notes |
+| --- | --- | --- | --- |
+| Ace Trainer | エリートトレーナー | Entrenador guay | Official |
+| Lass | ミニスカート | Chica | Official |
+| Black Belt | からておう | Karateka | Official |
+| Bird Keeper | とりつかい | Ornitólogo | Official |
+| Biker | ぼうそうぞく | Motorista | Official |
+| Hiker | やまおとこ | Montañero | Official |
+| Poké Maniac | かいじゅうマニア | Pokémaníaco | WikiDex infobox (ja) |
+| Bug Catcher | むしとりしょうねん | Cazabichos | Official |
+| Channeler | きとうし | Exorcista | Official. The Channeler NPC reads the same word |
+| Burglar | どろぼう | Ladrón | Official |
+| Swimmer | かいパンやろう | Nadador | Official |
+| Rocker | でんきグループ | Rockero | WikiDex infobox (ja) |
+| Psychic | サイキッカー | Médium | Official |
+| Beauty | おねえさん | Bella | Official. Modelo in the later games; one name for every region |
+| Fisherman | つりびと | Pescador | Official |
+| Sailor | ふなのり | Marinero | Official |
+| Gentleman | ジェントルマン | Caballero | Official. Duque and Aristócrata in the later games; one name for every region |
+| Super Nerd | りかけいのおとこ | Súper necio | Official |
+| Juggler | ジャグラー | Malabarista | ja to confirm |
+| Tamer | もうじゅうつかい | Domador | WikiDex infobox (ja) |
+| Engineer | でんきやのオヤジ | Mecánico | WikiDex infobox (ja) |
+| Gambler | ギャンブラー | Jugador | Official |
+| Sage | ぼうず | Pensador | WikiDex infobox (ja) |
+| Skier | スキーヤー | Esquiador | Official |
+| Scientist | けんきゅういん | Científico | Official |
+| Firebreather | ヒフキやろう | Comefuego | WikiDex infobox (ja) |
+| Medium | イタコ | Mentalista | WikiDex infobox (ja) |
+| Teacher | せんせい | Profesora | Official |
+| School Kid | じゅくがえり | Escolar | Official. Colegial in Gold and Silver; one name for every region |
+| Youngster | たんパンこぞう | Joven | Official |
+| Camper | キャンプボーイ | Campista | Official |
+| Boarder | スノーボーダー | Snow-boarder | Official |
+| Ninja Boy | にんじゃごっこ | Chico ninja | Official |
+| Tuber | うきわボーイ | Playero | Official |
+| Poké Fan | ポケモンファン | Pokéfan | Official |
+| Kindler | キャンプファイヤー | Fogonero | WikiDex infobox (ja) |
+| Battle Girl | バトルガール | Luchadora | Official |
+| Expert | たつじん | Pokéabu | Official |
+| Ruin Maniac | いせきマニア | Ruinamaníaco | Official |
+| Street Thug | こわいおじさん | Macarra | WikiDex infobox (ja); the female form is こわいおねえさん; es official (Kalos) |
+| Dragon Tamer | ドラゴンつかい | Domadragón | Official |
+| Aroma Lady | アロマなおねえさん | Señorita aroma | Official |
+| Young Couple | ラブラブカップル | Pareja joven | Official |
+| Pokémon Breeder | ポケモンブリーダー | Criapokémon | Official; the same words as the Breeder NPC |
+| Pokémon Ranger | ポケモンレンジャー | Pokéguarda | Official |
+| Collector | コレクター | Pokécolector | Official |
+| Reporter | レポーター | Reportera | Official |
+| Rich Boy | おぼっちゃま | Niño bien | Official |
+| Parasol Lady | パラソルおねえさん | Dama parasol | Official |
+| Triathlete | トライアスリート | Triatleta | Official |
+| Worker | さぎょういん | Operario | Official. Obrero in Diamond and Pearl; one name for every region |
+| Rancher | ぼくじょうおじさん | Ranchero | WikiDex infobox (ja) |
+| Cyclist | サイクリング | Ciclista | Official |
+| Poké Kid | ポケモンごっこ | Pokéchica | WikiDex infobox (ja) |
+| Artist | アーティスト | Artista | Official |
+| Waiter | ウエーター | Camarero | WikiDex infobox (ja) |
+| Twins | ふたごちゃん | Gemelas | Official |
+| Policeman | おまわりさん | Policía | Official |
+| Jogger | ジョギング | Corredor | ja to confirm |
+| Roughneck | スキンヘッズ | Calvo | Official |
+| Clown | ピエロ | Payaso | Official |
+| Guitarist | ギタリスト | Guitarrista | Official |
+| Veteran | ベテラントレーナー | Veterano | Official |
+| Backpacker | バックパッカー | Mochilero | Official |
+| Baker | パティシエール | Pastelera | Official |
+| Clerk | ビジネスマン | Oficinista | Official |
+| Dancer | ブレイクダンサー | Breakdancer | Official |
+| Depot Agent | てつどういん | Ferroviario | WikiDex infobox (ja) |
+| Doctor | ドクター | Enfermero | es official |
+| Harlequin | クラウン | Arlequín | WikiDex infobox (ja) |
+| Hoopster | バスケせんしゅ | Pívot | ja to confirm |
+| Infielder | やきゅうせんしゅ | Pitcher | ja to confirm |
+| Janitor | せいそういん | Limpiador | WikiDex infobox (ja) |
+| Lady | おじょうさま | Damisela | Official |
+| Linebacker | フットボーラー | Quarterback | WikiDex infobox (ja) |
+| Maid | メイド | Criada | Official |
+| Musician | ミュージシャン | Cantautor | Official |
+| Nursery Aide | ほいくし | Seño | ja to confirm |
+| Pilot | パイロット | Piloto | Official |
+| Smasher | テニスプレイヤー | Tenista | WikiDex infobox (ja) |
+| Socialite | セレブ | Marquesa | Official |
+| Striker | サッカーせんしゅ | Delantero | Official |
+| Suit Actor | スーツアクター | Actor de disfraz | Coined (not an official class); ja unconfirmed |
+| Backers | ファンクラブ | Hinchas | WikiDex infobox (ja) |
+| Hex Maniac | オカルトマニア | Bruja | Official |
+| Garçon (Waiter in Kalos) | ギャルソン | Garçon | Official |
+| Roller Skater | ローラースケート | Patinadora | WikiDex infobox (ja) |
+| Punk Guy, Punk Girl | バッドガイ, バッドガール | Chico malo, Chica mala | WikiDex infobox (ja) |
+| Chef | コック | Cocinero | Official; the Chef NPC's word |
+| Gardener | にわし | Jardinero | WikiDex infobox (ja) |
+| Sky Trainer | スカイトレーナー | Entrenador aéreo | Official |
+| Fairy Tale Girl | メルヘンしょうじょ | Niña soñadora | WikiDex infobox (ja) |
+| Furisode Girl | ふりそで | Jovencita con kimono | WikiDex infobox (ja) |
+| Butler | しつじ | Mayordomo leal | ja to confirm |
+| Tourist | かんこうきゃく | Turista | ja to confirm |
+| Rising Star | ホープトレーナー | Entrenador promesa | WikiDex infobox (ja) |
+| Preschooler | えんじ | Preescolar | WikiDex infobox (ja) |
 
 ## Status conditions
 

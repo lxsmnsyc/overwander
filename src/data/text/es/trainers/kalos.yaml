@@ -1,0 +1,127 @@
+# Cómo se llaman las clases de entrenador de Kalos y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+KalosAceTrainer:
+  name: Entrenador guay
+  quote: En todas las ciudades de Kalos hay un entrenador como yo. Yo soy el que sigue invicto.
+KalosLass:
+  name: Chica
+  quote: ¡Ah, alguien con quien combatir! Hoy mi Pokémon y yo vamos a juego, así que no podemos perder.
+KalosYoungster:
+  name: Joven
+  quote: Desenterré a todo mi equipo en las tierras baldías. ¿Quieres verlo?
+KalosBlackBelt:
+  name: Karateka
+  quote: Entrené en el dojo de Ciudad Yantra. Enséñame dónde entrenaste tú.
+KalosBattleGirl:
+  name: Luchadora
+  quote: Corelia dice que hay que pelear con todo el corazón. ¡Ahí va el mío!
+KalosBeauty:
+  name: Bella
+  quote: Un combate en Ciudad Luminalia es una actuación. Procura seguirme el ritmo.
+KalosFisherman:
+  name: Pescador
+  quote: El río ha estado tranquilo toda la mañana. Tendrás que valer tú.
+KalosSwimmer:
+  name: Nadador
+  quote: He venido nadando desde Bahía Azul. Un combate es un buen descanso.
+KalosHiker:
+  name: Montañero
+  quote: Esta cueva llega más hondo de lo que nadie ha caminado. Mis Pokémon también.
+KalosPsychic:
+  name: Médium
+  quote: Preví este encuentro en el hotel abandonado. También preví cómo acaba.
+KalosHexManiac:
+  name: Bruja
+  quote: Jejeje... Las calabazas del bosque me dijeron que vendrías.
+KalosScientist:
+  name: Científico
+  quote: La central eléctrica zumba que da gusto. Mis Pokémon hacen que siga zumbando.
+KalosWorker:
+  name: Operario
+  quote: Hora de comer. Tiempo de sobra para derribarte.
+KalosRichBoy:
+  name: Niño bien
+  quote: Mi padre me compró un palco en el château. Gánate un asiento a mi lado.
+KalosPokeFan:
+  name: Pokéfan
+  quote: ¿Has visto lo suaves que son mis Pokémon? Mira más de cerca. ¡Más cerca!
+KalosRanger:
+  name: Pokéguarda
+  quote: Yo vigilo el Bosque Novarte. Estás pisando mi ronda.
+KalosBreeder:
+  name: Criapokémon
+  quote: Crié a todos estos desde el huevo. Conocen a los de tu clase.
+KalosBackpacker:
+  name: Mochilero
+  quote: He recorrido todas las rutas de Kalos dos veces. Esta, tres.
+KalosArtist:
+  name: Artista
+  quote: No te muevas. Mis Pokémon quieren pintarte en plena derrota.
+KalosCyclist:
+  name: Ciclista
+  quote: El camino de bicicletas está cerrado por obras, así que hoy la carrera eres tú.
+KalosGentleman:
+  name: Caballero
+  quote: Un duelo antes del té es lo que se estila en Kalos. Tú primero.
+KalosLady:
+  name: Damisela
+  quote: Mi jardín está en flor, y mi equipo también. ¿Empezamos?
+KalosWaiter:
+  name: Garçon
+  quote: Su mesa aún no está lista. ¿Un combate mientras espera, quizá?
+KalosMaid:
+  name: Criada
+  quote: El château debe estar impecable. Empezaré por quitarte de en medio.
+KalosTwins:
+  name: Gemelas
+  quote: "¡Terminamos los combates la una de la otra! ¡Tú no terminarás el nuestro!"
+KalosVeteran:
+  name: Veterano
+  quote: Recorrí la Calle Victoria antes de que nacieras. Veamos qué ha cambiado.
+KalosSchoolKid:
+  name: Escolar
+  quote: "¡En la Escuela de Entrenadores nos enseñaron las ventajas de tipos! ¡Ponme a prueba!"
+KalosPreschooler:
+  name: Preescolar
+  quote: ¡Mamá dice que hoy puedo combatir con un mayor! ¡Contigo!
+KalosRollerSkater:
+  name: Patinadora
+  quote: He venido patinando desde Ciudad Luminalia. ¡Atrápame si puedes!
+KalosPunkGuy:
+  name: Chico malo
+  quote: Bonito conjunto. Lástima lo que le va a pasar.
+KalosPunkGirl:
+  name: Chica mala
+  quote: Te has perdido, ¿verdad? Mis Pokémon pueden enseñarte la salida.
+KalosSocialite:
+  name: Marquesa
+  quote: Todo el que importa en Kalos ha combatido conmigo. Puedes unirte a ellos.
+KalosChef:
+  name: Cocinero
+  quote: Mi cocina arde. Mi equipo también.
+KalosClerk:
+  name: Oficinista
+  quote: Ciudad Luminalia no duerme, y sus oficinas tampoco. Sé breve.
+KalosGardener:
+  name: Jardinero
+  quote: Cuidado con los parterres. Mis Pokémon se criaron en ellos.
+SkyTrainer:
+  name: Entrenador aéreo
+  quote: Solo combato en el aire. ¡Mira arriba!
+FairyTaleGirl:
+  name: Niña soñadora
+  quote: Érase una vez alguien que se perdió en mi cuento...
+FurisodeGirl:
+  name: Jovencita con kimono
+  quote: Me puse lo mejor para el château. No lo arrugarás.
+Butler:
+  name: Mayordomo leal
+  quote: Las llaves de la casa están a mi cargo. Y también tu derrota.
+Tourist:
+  name: Turista
+  quote: ¡Cada Vivillon que encuentro tiene alas nuevas! ¡Ven a ver mi colección!
+RisingStar:
+  name: Entrenador promesa
+  quote: Todos dicen que soy lo próximo. Demuéstrales que se equivocan, si puedes.

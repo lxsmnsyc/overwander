@@ -1,0 +1,70 @@
+# Cómo se llaman las clases de entrenador de Kanto y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+AceTrainer:
+  name: Entrenador guay
+  quote: Solo viajo con los mejores. Veamos con qué viajas tú.
+Lass:
+  name: Chica
+  quote: ¡Hola! ¿Quieres combatir? He estado practicando.
+BlackBelt:
+  name: Karateka
+  quote: Mis Pokémon entrenan tan duro como yo. Ponlos a prueba.
+BirdKeeper:
+  name: Ornitólogo
+  quote: Mis aves te rondan desde que te vieron aparecer.
+Biker:
+  name: Motorista
+  quote: Bonito camino. Es nuestro. Pelea con nosotros si lo quieres.
+Hiker:
+  name: Montañero
+  quote: Yo he subido hasta aquí andando. Tú pasarás por encima de mí.
+PokeManiac:
+  name: Pokémaníaco
+  quote: ¡No has visto un tipo Roca hasta que veas el mío!
+BugCatcher:
+  name: Cazabichos
+  quote: ¡Los he cazado todos yo solito! ¡Todos, todos!
+Channeler:
+  name: Exorcista
+  quote: Algo se ha puesto a tu espalda. Es mío.
+Burglar:
+  name: Ladrón
+  quote: Me llevo lo que quiero. Hoy quiero tu racha de victorias.
+Swimmer:
+  name: Nadador
+  quote: He venido nadando. Luchar contigo es la parte fácil.
+Rocker:
+  name: Rockero
+  quote: ¡Más alto! A mis Pokémon les gusta fuerte y con descargas.
+Psychic:
+  name: Médium
+  quote: Vas a decidir combatir conmigo. Yo ya lo he visto.
+Beauty:
+  name: Bella
+  quote: Me estás mirando. Combate conmigo mejor, es menos descortés.
+Fisherman:
+  name: Pescador
+  quote: Llevo aquí sentado desde el alba. Por fin ha picado algo.
+Sailor:
+  name: Marinero
+  quote: He tirado de cuerdas con peor tiempo del que tú has caminado jamás.
+Gentleman:
+  name: Caballero
+  quote: ¿Una apuesta, entonces? ¿No? Bueno, un combate servirá igual.
+SuperNerd:
+  name: Súper necio
+  quote: He leído todos los estudios sobre esto. Tú no has leído ninguno.
+Juggler:
+  name: Malabarista
+  quote: No quites ojo a las bolas. Ese era el truco, y has mirado a otro lado.
+Tamer:
+  name: Domador
+  quote: Los míos hacen lo que se les manda. Veamos qué tal los tuyos.
+Engineer:
+  name: Mecánico
+  quote: He construido la mitad de las máquinas de este camino. Conoce las demás.
+Gambler:
+  name: Jugador
+  quote: Doble o nada con este. Tú no tienes voz ni voto.

@@ -426,3 +426,83 @@ describe('the NPCs, their stalls and their scenery in ja and es', () => {
     }
   });
 });
+
+describe('the trainer classes and sheets in ja and es', () => {
+  const CLASSES = v.record(v.string(), v.object({ name: v.string(), quote: v.string() }));
+  const LINES = v.record(v.string(), v.string());
+  const REGIONS = ['kanto', 'johto', 'hoenn', 'sinnoh', 'kalos', 'unova'];
+
+  it('write a name and a quote for every class and a name for every sheet', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      for (const region of REGIONS) {
+        const english = v.parse(CLASSES, read('en', `trainers/${region}`));
+        const written = v.parse(CLASSES, read(locale, `trainers/${region}`));
+
+        for (const key of Object.keys(english)) {
+          if (!written[key]?.name || !written[key]?.quote) {
+            missing.push(`${locale} ${region} ${key}`);
+          }
+        }
+      }
+      const sheets = v.parse(LINES, read(locale, 'trainer-sheets'));
+
+      for (const key of Object.keys(v.parse(LINES, read('en', 'trainer-sheets')))) {
+        if (!sheets[key]) {
+          missing.push(`${locale} sheet ${key}`);
+        }
+      }
+      if (!v.parse(LINES, read(locale, 'trainer-names')).region) {
+        missing.push(`${locale} trainer-names region`);
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('end every quote on a full stop, 。 in Japanese, or a mark that closes a sentence', () => {
+    const open: string[] = [];
+
+    for (const [locale, closing] of [
+      ['ja', /[。！？…]$/u],
+      ['es', /[.!?…]$/u],
+    ] as const) {
+      for (const region of REGIONS) {
+        for (const [key, entry] of Object.entries(
+          v.parse(CLASSES, read(locale, `trainers/${region}`)),
+        )) {
+          if (!closing.test(entry.quote)) {
+            open.push(`${locale} ${key}`);
+          }
+        }
+      }
+    }
+    expect(open).toEqual([]);
+  });
+
+  it('keep the classes English names alike under one name in ja and es', () => {
+    const found: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      const byEnglish = new Map<string, Set<string>>();
+
+      for (const region of REGIONS) {
+        const english = v.parse(CLASSES, read('en', `trainers/${region}`));
+        const written = v.parse(CLASSES, read(locale, `trainers/${region}`));
+
+        for (const [key, entry] of Object.entries(english)) {
+          const names = byEnglish.get(entry.name) ?? new Set<string>();
+
+          names.add(Object.hasOwn(written, key) ? written[key].name : '');
+          byEnglish.set(entry.name, names);
+        }
+      }
+      for (const [name, names] of byEnglish) {
+        if (names.size > 1) {
+          found.push(`${locale} ${name}: ${[...names].join(', ')}`);
+        }
+      }
+    }
+    expect(found).toEqual([]);
+  });
+});

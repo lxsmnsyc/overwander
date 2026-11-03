@@ -1,0 +1,130 @@
+# Cómo se llaman las clases de entrenador de Sinnoh y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+Ranger:
+  name: Pokéguarda
+  quote: Yo cuido este tramo del campo. Eso incluye decidir quién lo cruza.
+Worker:
+  name: Operario
+  quote: Excavamos este túnel a través de la montaña. Tú eres lo más fácil de mi día.
+Rancher:
+  name: Ranchero
+  quote: Crié a todos estos en la manada. Hacen lo que se les dice.
+Cyclist:
+  name: Ciclista
+  quote: Bajé esa cuesta a toda velocidad. Seguirme el ritmo es cosa tuya.
+PokeKid:
+  name: Pokéchica
+  quote: Los míos son más monos que los tuyos. Y pegan más fuerte. ¿Quieres verlo?
+Collector:
+  name: Pokécolector
+  quote: Tengo una de cada rareza de este país. Ganarte me redondearía la colección.
+Artist:
+  name: Artista
+  quote: No te muevas. Quiero pintar el momento en que te das cuenta.
+Reporter:
+  name: Reportera
+  quote: Derrota en directo ante las cámaras. Ya tengo el titular, solo te necesito a ti.
+RichBoy:
+  name: Niño bien
+  quote: El dinero no compra un buen Pokémon. Pero sí mucho entrenamiento.
+Waiter:
+  name: Camarero
+  quote: La cocina arde y mis Pokémon también. Pide algo.
+ParasolLady:
+  name: Dama parasol
+  quote: La lluvia no me toca. Tampoco lo hará nada de lo que saques tú.
+Twins:
+  name: Gemelas
+  quote: Pensamos lo mismo a la vez. Te superamos en número dos veces.
+Policeman:
+  name: Policía
+  quote: Yo mantengo el orden en este camino. Combatir contigo cuenta como mantenerlo.
+Jogger:
+  name: Corredor
+  quote: Veinte kilómetros antes de desayunar. Un combate es mi vuelta a la calma.
+Breeder:
+  name: Criapokémon
+  quote: Todos estos nacieron en mis manos. Por eso pelean por mí.
+SinnohAceTrainer:
+  name: Entrenador guay
+  quote: He recorrido todos los caminos al norte de aquí. Ninguno me detuvo tampoco.
+SinnohLass:
+  name: Chica
+  quote: Aquí fuera hace un frío que pela y sigo ganando. Ahora te toca a ti.
+SinnohBugCatcher:
+  name: Cazabichos
+  quote: El bosque de aquí está lleno de ellos, y yo me levanté el primero.
+SinnohSwimmer:
+  name: Nadador
+  quote: Este lago es agua de deshielo. Lo crucé a nado igualmente. Tú calienta antes.
+SinnohYoungster:
+  name: Joven
+  quote: ¡Excavé media montaña para encontrar este! ¡Míralo!
+SinnohSchoolKid:
+  name: Escolar
+  quote: Este trimestre hacemos gráficas de resultados de combate. Tú eres un punto de datos.
+SinnohCamper:
+  name: Campista
+  quote: Anoche dormí sobre una losa de roca. Debajo encontré esto.
+SinnohBeauty:
+  name: Bella
+  quote: Hago concursos además de combates. A ti solo te toca perder uno.
+SinnohFisherman:
+  name: Pescador
+  quote: Hice un agujero en el hielo y esperé cuatro horas. Tú eres mejor captura.
+SinnohSailor:
+  name: Marinero
+  quote: Llevo el barco por la bahía. La travesía es más dura que yo.
+SinnohGentleman:
+  name: Caballero
+  quote: Un poco de deporte antes de la cena. Procura que sea interesante.
+SinnohScientist:
+  name: Científico
+  quote: Estudiamos a los Pokémon que salen de la montaña. Los tuyos nos servirán de control.
+SinnohBirdKeeper:
+  name: Ornitólogo
+  quote: Los míos sobrevuelan toda la cordillera. Nada de aquí abajo les preocupa.
+SinnohHiker:
+  name: Montañero
+  quote: Subo el paso y vuelvo antes del mediodía. Estás en medio de la bajada.
+SinnohPsychic:
+  name: Médium
+  quote: Los espíritus del lago dejan una especie de zumbido. Llevo años escuchándolo.
+SinnohSkier:
+  name: Esquiador
+  quote: La nieve polvo de aquí arriba es la mejor que hay. Mi equipo también.
+SinnohBlackBelt:
+  name: Karateka
+  quote: El dojo de Ciudad Rocavelo no rechaza a nadie. Pero tampoco perdona a nadie.
+SinnohDragonTamer:
+  name: Domadragón
+  quote: Encontré el huevo en una cueva bajo la cima. Crié lo que salió de él.
+SinnohGuitarist:
+  name: Guitarrista
+  quote: Aquí todo funciona con energía solar. Este amplificador también. Échate atrás.
+SinnohAromaLady:
+  name: Señorita aroma
+  quote: Aquí todo crece despacio y se agarra con fuerza. Mis Pokémon también.
+SinnohRuinManiac:
+  name: Ruinamaníaco
+  quote: Hay cámaras bajo este país más antiguas que la Liga. Las excavo yo.
+SinnohNinjaBoy:
+  name: Chico ninja
+  quote: Has pasado junto a mí dos veces. A la tercera te cuesta un combate.
+SinnohTuber:
+  name: Playero
+  quote: El agua está fría y no pienso salir. Combate conmigo desde ahí.
+SinnohPokeFan:
+  name: Pokéfan
+  quote: Tengo fotos de cada uno de estos. Ahora quiero una tuya perdiendo.
+SinnohRoughneck:
+  name: Calvo
+  quote: Este tramo del camino es nuestro. El peaje es un combate, ganes o pierdas.
+SinnohClown:
+  name: Payaso
+  quote: Mira las manos. No, las otras manos. Demasiado tarde.
+SinnohCouple:
+  name: Pareja joven
+  quote: Hicimos juntos toda la ruta. También te derrotaremos juntos.

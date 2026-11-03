@@ -1,0 +1,28 @@
+# Log: i18n-people-trainers
+
+- Files: `text/{ja,es}/trainers/{kanto,johto,hoenn,sinnoh,kalos,unova}.yaml` (Kanto 22, Johto 22, Hoenn 32, Sinnoh 42, Kalos 41, Unova 48 classes: 207 in each locale), `trainer-sheets.yaml` (18 sheets) and `trainer-names.yaml` (`region`). Every key English has is written, name and quote.
+- Method: official class names first. Spanish names were read on WikiDex (`Clase_de_Entrenador`, both halves of the page). Japanese names are from memory (Bulbapedia and the Japanese wiki block automated reads); each one not certain is listed under "To confirm" in the outcome and marked "ja to confirm" in the term list.
+- One name per English name: classes that several regions share (Ace Trainer, Lass, Gentleman, Beauty, School Kid, Worker...) read the same in every region, because the screen adds the region. Where the games changed the name between generations, the name of the most regions won, and the test `keep the classes English names alike under one name` pins it:
+  - es Beauty is Bella (Kanto, Hoenn, Sinnoh), not Modelo (Unova, Kalos).
+  - es Gentleman is Caballero (Kanto, Johto, Hoenn, Sinnoh), not Duque or Aristócrata.
+  - es School Kid is Escolar (Hoenn onward), not Colegial (Gold and Silver).
+  - es Worker is Operario (Unova, Kalos), not Obrero (Diamond and Pearl).
+  - es Skier is Esquiador, not Esquiadora (Gold and Silver).
+  - es Swimmer is Nadador. es Camper is Campista. es Waiter is Camarero (Mesero is Latin American).
+- Pokémon Ranger, Breeder, Chef and Channeler: ja and es use the same word as the NPC (ブリーダー and Criapokémon for the Breeder NPC, コック and Cocinero for the Chef, きとうし for the Channeler). In Spanish the Channeler class is Exorcista, but the NPC batch gave the Channeler NPC Médium, which is also the Psychic class; flagged in the outcome, not changed here (`npcs.yaml` is not in this node's paths).
+- Kalos "Garçon" is the Waiter of Kalos (English name Garçon), kept as Garçon in es and ギャルソン in ja.
+- Coined or unconfirmed names: ja Rocker ロッカー, Street Thug ちんぴら, Kindler ほのおつかい, Crush Girl かくとうガール (a sheet name); es Suit Actor Actor de disfraz, Crush Girl Karateka (the sheet reads as the female Black Belt). Street Thug in es is Macarra, the Kalos official name. Others on the ja side are from memory.
+- Collision check (script folding katakana onto hiragana, dropping spaces and accents) of every class and sheet name against every ability, move, item and species name of its locale: the only exact matches are どろぼう / Ladrón, the official Burglar class, which is also the official name of the move Thief. Kept: both are the games' own words.
+- Second-reading pass: ちんぴら is a slang for a punk, fitting a street thug; ホープ also means "hope", but is the class word for a rising star; Seño (Nursery Aide) is the Spanish games' own school-teacher slang; Macarra is Spain slang for a tough, official. No coined name was renamed after the pass. ja スーツアクター was kept (the actor in the costume, no second reading found).
+- Quotes: translated as put, in each class's voice (Youngster, School Kid and Bug Catcher childish; Gentleman, Lady, Butler and Maid formal; Biker, Roughneck and Street Thug gruff). Proper nouns use the locale's official place and character names: ja カイナシティ, ムロタウン, ミナモシティ, トバリシティ, ナギサシティ, コガネシティ, ミアレシティ, ショウヨウシティ, ハクダンのもり, アズールわん, シジマ, コルニ, デボンコーポレーション; es Ciudad Trigal, Aníbal, Ciudad Portual, Ciudad Calagua, Ciudad Rocavelo, Corporación Devon, Ciudad Luminalia, Ciudad Romantis, Corelia, Bahía Azul, Bosque Novarte, Calle Victoria. Where I was unsure of a place's name (Dewford, Sunyshore, Terminus Cave, the Lost Hotel in ja) the quote says "the island", "the cave", "solar power" instead.
+- Spain Spanish: tú and vosotros, "Pokémon" invariable, no "acá", "tipo" only for the elemental type (the Poké Maniac says tipo Roca).
+- Tests: three checks added to `test/data/locale-people-places.test.ts`: every class and sheet has a name and quote in ja and es, every quote ends with 。 or a full stop (or ！ ？ … and their Latin forms), and classes with one English name share one name in each locale. The parity test already lists every file of the batch and passes.
+- Region mark: `trainer-names.yaml` is `{name}（{region}）` in ja and `{name} ({region})` in es. Regions have no ja or es file yet (`regions.yaml`), so the mark reads the English region name until `i18n-places` writes it.
+
+## Review
+
+- A fresh review checked the class names against WikiDex pages; four were spot-checked by the caller (Fogonero キャンプファイヤー, Hinchas ファンクラブ, Mecánico でんきやのオヤジ, Macarra こわいおじさん). 25 ja names were corrected (list in the outcome). Suit Actor is marked coined in the term list.
+- es: Crush Girl sheet is Chica fuerte (it duplicated Black Belt); Shalour is Ciudad Yantra (Romantis is Laverre); the Channeler NPC is Exorcista, and so are the four es messages that said la Médium (Médium is the Psychic class).
+- Player gender: the player may be either, so lines that assumed one were reworded: Artist "No te muevas", Sinnoh Reporter "Derrota en directo ante las cámaras", Kalos Punk Girl "Te has perdido, ¿verdad?", Unova Harlequin "Esa cara tan seria tiene arreglo.", Young Couple "Prueba con los dos, si te atreves.", Kalos Twins "¡Tú no terminarás el nuestro!". The sweep also found Kalos Lass "¡Ah, alguien con quien combatir!" (was un retador), Kalos Fairy Tale Girl "alguien que se perdió", and Nursery Aide "Una sola persona como tú". Forms where the speaker describes themself stay.
+- ja: Johto Medium says こんやは (こんばんは reads as the greeting); Hoenn and Sinnoh Ninja Boy say 2かい (ふたたび means "again"), so the Sinnoh third time follows.
+- Kept: Doctor Enfermero, Tourist Turista, Infielder Pitcher, Linebacker Quarterback, Teacher Profesora, Socialite Marquesa.

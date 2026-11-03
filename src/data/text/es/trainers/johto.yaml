@@ -1,0 +1,70 @@
+# Cómo se llaman las clases de entrenador de Johto y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+Sage:
+  name: Pensador
+  quote: La torre enseña paciencia. Mis Pokémon tienen más que tú.
+Skier:
+  name: Esquiador
+  quote: Bajé esta pendiente más rápido de lo que piensas. Sigue mi ritmo.
+Scientist:
+  name: Científico
+  quote: Mis Pokémon son de acero. Los tuyos son, como mucho, datos interesantes.
+JohtoPokeManiac:
+  name: Pokémaníaco
+  quote: Crío dragones desde que sé andar. Enséñame lo que has criado tú.
+JohtoBurglar:
+  name: Ladrón
+  quote: Nada bueno pasa en este camino de noche. El motivo soy yo.
+JohtoAceTrainer:
+  name: Entrenador guay
+  quote: He recorrido las dos regiones. Tú te has topado conmigo.
+JohtoLass:
+  name: Chica
+  quote: ¡En mi pueblo todos dicen que soy la mejor! ¡Vamos a comprobarlo!
+JohtoBlackBelt:
+  name: Karateka
+  quote: Entreno en la cascada con Aníbal. Lo vas a notar.
+JohtoBirdKeeper:
+  name: Ornitólogo
+  quote: Mis aves recorren toda la costa. Las tuyas han visto un solo camino.
+JohtoBiker:
+  name: Motorista
+  quote: Recorremos estos caminos de noche. O te apartas o peleas.
+JohtoBugCatcher:
+  name: Cazabichos
+  quote: El concurso terminó, pero yo no dejé de cazar. ¡Mira estos!
+JohtoSwimmer:
+  name: Nadador
+  quote: Aquí el agua está más fría. No me ha frenado.
+Firebreather:
+  name: Comefuego
+  quote: Echo fuego para ganarme la vida. Mis Pokémon lo hacen mejor.
+Medium:
+  name: Mentalista
+  quote: Los muertos están charlatanes esta noche. Todos dicen tu nombre.
+Teacher:
+  name: Profesora
+  quote: Empieza la clase. La lección de hoy es perder con elegancia.
+SchoolKid:
+  name: Escolar
+  quote: He hecho las cuentas de este combate. No te va a gustar el resultado.
+Youngster:
+  name: Joven
+  quote: Llevo cavando en la tierra desde el amanecer. ¡Mira lo que ha salido!
+Camper:
+  name: Campista
+  quote: Llevo tres días en esta montaña. Encontré piedras. Y encontré a estos.
+JohtoGentleman:
+  name: Caballero
+  quote: Tengo casa en Ciudad Trigal y mal genio en el camino.
+JohtoSuperNerd:
+  name: Súper necio
+  quote: Mis notas dicen que pierdes en cuatro minutos. Vamos a comprobarlo.
+JohtoJuggler:
+  name: Malabarista
+  quote: Seis en el aire y ninguno se ha caído. Mira esto.
+Boarder:
+  name: Snow-boarder
+  quote: Bajé esa pared de lado. Lo difícil es quedarse quieto.

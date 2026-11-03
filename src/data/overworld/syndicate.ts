@@ -4,7 +4,7 @@ import type Biome from '../ids/biome';
 import Executive from '../ids/executives';
 import { AWARD_IDS, BIOME_IDS, EXECUTIVE_IDS, SYNDICATE_IDS } from '../ids/names';
 import Syndicate from '../ids/syndicates';
-import { idOf, idsOf, localeFieldTable } from '../yaml';
+import { idOf, idsOf, localeFieldTable, localePhrases } from '../yaml';
 import executivesFile from './executives.yaml';
 import syndicatesFile from './syndicates.yaml';
 
@@ -176,6 +176,13 @@ for (const [name, executive] of Object.entries(EXECUTIVE_IDS)) {
   }
 }
 
+/** How a team's people are introduced, team first and title before the name */
+const SYNDICATE_PHRASES = localePhrases(
+  import.meta.glob('../text/*/syndicate-titles.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/syndicate-titles.yaml',
+  ['grunt', 'person'],
+);
+
 /** Whose cell this is, in this biome */
 export function getSyndicate(biome: Biome): Syndicate {
   return CLAIMED.get(biome) ?? Syndicate.Rocket;
@@ -183,17 +190,25 @@ export function getSyndicate(biome: Biome): Syndicate {
 
 /** "Team Aqua Leader Archie" */
 export function bossName(syndicate: Syndicate): string {
-  return `${SYNDICATE_NAMES[syndicate]} ${SYNDICATE_BOSS_TITLES[syndicate]} ${SYNDICATE_BOSS_NAMES[syndicate]}`;
+  return SYNDICATE_PHRASES('person', {
+    team: SYNDICATE_NAMES[syndicate],
+    title: SYNDICATE_BOSS_TITLES[syndicate],
+    name: SYNDICATE_BOSS_NAMES[syndicate],
+  });
 }
 
 /** "Team Magma Admin Tabitha" */
 export function executiveName(syndicate: Syndicate, executive: Executive): string {
-  return `${SYNDICATE_NAMES[syndicate]} ${SYNDICATE_EXECUTIVE_TITLES[syndicate]} ${EXECUTIVE_NAMES[executive]}`;
+  return SYNDICATE_PHRASES('person', {
+    team: SYNDICATE_NAMES[syndicate],
+    title: SYNDICATE_EXECUTIVE_TITLES[syndicate],
+    name: EXECUTIVE_NAMES[executive],
+  });
 }
 
 /** "Team Aqua Grunt", who is a uniform rather than a person */
 export function gruntName(syndicate: Syndicate): string {
-  return `${SYNDICATE_NAMES[syndicate]} Grunt`;
+  return SYNDICATE_PHRASES('grunt', { team: SYNDICATE_NAMES[syndicate] });
 }
 
 /** Every mark they pay, for the shelf that lists them */

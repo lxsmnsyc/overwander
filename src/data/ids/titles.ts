@@ -3,14 +3,14 @@ import { TRAINER_BASE_NAMES, TRAINER_TRADES, type TrainerClass } from '../overwo
 import LadderTitle from './ladder-titles';
 import { LADDER_TITLE_IDS } from './names';
 import Regions from './regions';
-import { REGIONS, REGION_NAMES } from '../species/regions';
+import { REGIONS, REGION_TITLES } from '../species/regions';
 import {
   ACHIEVEMENT_LINES,
   ACHIEVEMENT_TYPES,
   type AchievementLine,
   LINE_NAMES,
 } from '../achievements';
-import { localeStringTable } from '../yaml';
+import { localePhrases, localeStringTable } from '../yaml';
 
 /**
  * Player titles: one may be worn on the profile at a time. A title is
@@ -144,6 +144,13 @@ export function titleTrainer(title: Title): TrainerClass | null {
   return TRAINER_TRADES.includes(trainer) ? trainer : null;
 }
 
+/** How a title is put together out of the name it is for */
+const TITLE_FORMS = localePhrases(
+  import.meta.glob('../text/*/title-forms.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/title-forms.yaml',
+  ['professor', 'master', 'type-specialist', 'type-master'],
+);
+
 const LADDER_TITLE_NAMES = localeStringTable<LadderTitle>(
   LADDER_TITLE_IDS,
   import.meta.glob('../text/*/titles.yaml', { eager: true, import: 'default' }),
@@ -159,9 +166,7 @@ export function getTitleName(title: Title): string | null {
   const region = titleProfessor(title);
 
   if (region != null) {
-    const name = REGION_NAMES[region];
-
-    return `${name.slice(0, 1).toUpperCase()}${name.slice(1)} Professor`;
+    return TITLE_FORMS('professor', { region: REGION_TITLES[region] });
   }
 
   const trainer = titleTrainer(title);
@@ -171,7 +176,7 @@ export function getTitleName(title: Title): string | null {
     // what a player is called, and nobody is called a Swimmer (Johto)
     const name = TRAINER_BASE_NAMES[trainer];
 
-    return title % 2 === 1 ? `Master ${name}` : name;
+    return title % 2 === 1 ? TITLE_FORMS('master', { name }) : name;
   }
 
   const type = titleType(title);
@@ -179,7 +184,7 @@ export function getTitleName(title: Title): string | null {
   if (type != null) {
     const name = TYPE_NAMES[type];
 
-    return title % 2 === 1 ? `${name} Master` : `${name} Specialist`;
+    return TITLE_FORMS(title % 2 === 1 ? 'type-master' : 'type-specialist', { name });
   }
 
   const line = titleLine(title);
@@ -187,7 +192,7 @@ export function getTitleName(title: Title): string | null {
   if (line != null) {
     const name = LINE_NAMES[line];
 
-    return title % 2 === 1 ? `Master ${name}` : name;
+    return title % 2 === 1 ? TITLE_FORMS('master', { name }) : name;
   }
   if (title >= LINE_TITLE_BASE) {
     return null;

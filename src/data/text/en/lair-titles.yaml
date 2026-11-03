@@ -1,0 +1,6 @@
+# What a raid landmark is called out of its place. `ground` names a lair
+# that stands in no lair of its own after the biome it is in, and `shadow`
+# puts a shadow raid in front of a place's name
+
+ground: '{biome} Lair'
+shadow: 'Shadow {place}'

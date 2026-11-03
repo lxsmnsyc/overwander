@@ -2,8 +2,8 @@ import * as v from 'valibot';
 import type Awards from '../ids/awards';
 import { Items } from '../ids/items';
 import type Regions from '../ids/regions';
-import { REGIONS, REGION_DEXES, REGION_NAMES } from '../species/regions';
-import { localeFile } from '../yaml';
+import { REGIONS, REGION_DEXES, REGION_TITLES } from '../species/regions';
+import { localeFile, localePhrases } from '../yaml';
 import {
   type ChainData,
   type Chains,
@@ -46,12 +46,12 @@ export function dexChainId(region: Regions): Chains {
   return DEX_CHAIN_BASE + region;
 }
 
-/** A region's name with its capital back on, off the lower-case sheet names */
-function regionTitle(region: Regions): string {
-  const name = REGION_NAMES[region];
-
-  return name.slice(0, 1).toUpperCase() + name.slice(1);
-}
+/** The names a region's chain and its last rungs are given, out of the region's name */
+const DEX_PHRASES = localePhrases(
+  import.meta.glob('../text/*/dex-chain.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/dex-chain.yaml',
+  ['complete', 'rung', 'chain'],
+);
 
 /**
  * What each rung is called. The last is the region's name, since
@@ -67,9 +67,12 @@ const RUNG_NAMES = localeFile(
 
 function rungName(region: Regions, rung: number, rungs: number): string {
   if (rung === rungs - 1) {
-    return `${regionTitle(region)} Complete`;
+    return DEX_PHRASES('complete', { region: REGION_TITLES[region] });
   }
-  return RUNG_NAMES.read()[rung] ?? `${regionTitle(region)} Dex ${rung + 1}`;
+  return (
+    RUNG_NAMES.read()[rung] ??
+    DEX_PHRASES('rung', { region: REGION_TITLES[region], number: rung + 1 })
+  );
 }
 
 /**
@@ -140,8 +143,13 @@ export function getDexChain(region: Regions): ChainData | null {
   for (let rung = 0; rung < dex.milestones.length; rung++) {
     quests.push(dexQuestId(region, rung));
   }
-  return {
-    name: `${regionTitle(region)} Pokedex`,
-    quests,
-  };
+  const chain: ChainData = { name: '', quests };
+
+  // Named in the player's locale each time it is read, since the board is built once
+  Object.defineProperty(chain, 'name', {
+    configurable: true,
+    enumerable: true,
+    get: () => DEX_PHRASES('chain', { region: REGION_TITLES[region] }),
+  });
+  return chain;
 }

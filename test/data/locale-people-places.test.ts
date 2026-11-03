@@ -8,7 +8,7 @@ import { FAMILY_NAMES } from '../../src/data/ids/text';
 import { FAMILY_IDS } from '../../src/data/ids/names';
 import { getMegaBase, getSpeciesData, listMegas } from '../../src/data/species';
 import { COUNTY_NAMES, TOWN_JOINERS, checkTownWords } from '../../src/data/overworld/town-names';
-import { localeFieldTable, localeFile, localeLines } from '../../src/data/yaml';
+import { localeFieldTable, localeFile, localeLines, localePhrases } from '../../src/data/yaml';
 import * as v from 'valibot';
 
 /**
@@ -67,6 +67,13 @@ const FILES = [
   'dex-rungs',
   'families',
   'megas',
+  'regions',
+  'title-forms',
+  'dex-chain',
+  'quest-rotations',
+  'lair-titles',
+  'syndicate-titles',
+  'trainer-names',
   'mega-names',
   'egg-groups',
   'item-types',
@@ -211,6 +218,28 @@ describe('a table read in the active locale', () => {
     expect(file.read()).toEqual(['あ']);
     active.locale = 'es';
     expect(file.read()).toEqual(['a']);
+  });
+});
+
+describe('phrases the code fills in', () => {
+  const files = {
+    '../text/en/p.yaml': { hello: 'Hello {name}', plain: 'Plain' },
+    '../text/ja/p.yaml': { hello: '{name}さん' },
+  };
+
+  it('fills the parameters in the active locale and reads the rest in English', () => {
+    const phrase = localePhrases(files, 'p', ['hello', 'plain']);
+
+    expect(phrase('hello', { name: 'Ash' })).toBe('Hello Ash');
+    active.locale = 'ja';
+    expect(phrase('hello', { name: 'Ash' })).toBe('Ashさん');
+    expect(phrase('plain')).toBe('Plain');
+  });
+
+  it('fails on a parameter that was not given, a key English lacks and a key left out', () => {
+    expect(() => localePhrases(files, 'p', ['hello', 'plain'])('hello')).toThrow(/name/);
+    expect(() => localePhrases(files, 'p', ['hello'])).toThrow(/plain/);
+    expect(() => localePhrases(files, 'p', ['hello', 'plain', 'more'])).toThrow(/more/);
   });
 });
 

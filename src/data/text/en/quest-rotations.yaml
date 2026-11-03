@@ -1,0 +1,8 @@
+# The names of the rotating quests. `fresh` is the first daily on a day
+# that features no family, `featured` the one on a day that does, `stroll`
+# the walk, and `hunt` the week's bounty
+
+fresh: Fresh Catches
+featured: 'Featured: {family}'
+stroll: Daily Stroll
+hunt: 'The {family} Hunt'

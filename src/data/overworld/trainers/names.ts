@@ -1,5 +1,5 @@
-import { REGION_NAMES } from '../../species/regions';
-import { localeLines } from '../../yaml';
+import { REGION_TITLES } from '../../species/regions';
+import { localeLines, localePhrases } from '../../yaml';
 import {
   ENGLISH_TRAINER_NAMES,
   TRAINER_BASE_NAMES,
@@ -16,6 +16,13 @@ import {
 export const TRAINER_SHEET_NAMES: Record<string, string> = localeLines(
   import.meta.glob('../../text/*/trainer-sheets.yaml', { eager: true, import: 'default' }),
   'text/<locale>/trainer-sheets.yaml',
+);
+
+/** How a class is told apart from the same trade in another region */
+const TRAINER_PHRASES = localePhrases(
+  import.meta.glob('../../text/*/trainer-names.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/trainer-names.yaml',
+  ['region'],
 );
 
 /**
@@ -51,9 +58,9 @@ function buildTrainerNames(): Record<number, string> {
       enumerable: true,
       get: () => {
         const name = TRAINER_BASE_NAMES[trainer];
-        const region = REGION_NAMES[TRAINER_REGIONS[trainer]];
-
-        return marked ? `${name} (${region.slice(0, 1).toUpperCase()}${region.slice(1)})` : name;
+        return marked
+          ? TRAINER_PHRASES('region', { name, region: REGION_TITLES[TRAINER_REGIONS[trainer]] })
+          : name;
       },
     });
   }

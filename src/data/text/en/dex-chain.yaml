@@ -1,0 +1,6 @@
+# The names a region's dex chain is given, out of its name. `rung` is the
+# name of a rung past the ones dex-rungs.yaml lists, counted from 1
+
+complete: '{region} Complete'
+rung: '{region} Dex {number}'
+chain: '{region} Pokedex'

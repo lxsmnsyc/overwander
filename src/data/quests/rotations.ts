@@ -8,6 +8,7 @@ import { getFamilyName, getRegisteredSpecies, getSpeciesData } from '../species'
 import { getFeaturedFamilies } from '../species/day';
 import { type MetricRequirement, RequirementKind } from './index';
 import { DAILY_POOL } from './written';
+import { localePhrases } from '../yaml';
 
 /**
  * The rotating quests: a fresh set of dailies every UTC day and one
@@ -16,6 +17,13 @@ import { DAILY_POOL } from './written';
  * Progress is the same lifetime counters measured from a baseline the
  * server snapshots when the window first sees the player.
  */
+
+/** The names of the rotating quests that the game writes itself */
+const ROTATION_PHRASES = localePhrases(
+  import.meta.glob('../text/*/quest-rotations.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/quest-rotations.yaml',
+  ['fresh', 'featured', 'stroll', 'hunt'],
+);
 
 export interface RotationReward {
   item: Items;
@@ -69,13 +77,13 @@ export function getDailyQuests(now: number): RotationQuest[] {
     featured == null
       ? {
           slot: 0,
-          name: 'Fresh Catches',
+          name: ROTATION_PHRASES('fresh'),
           requirement: ask(Metric.Catches, 3),
           rewards: [{ item: Items.PokeBall, amount: 5 }],
         }
       : {
           slot: 0,
-          name: `Featured: ${getFamilyName(featured)}`,
+          name: ROTATION_PHRASES('featured', { family: getFamilyName(featured) }),
           requirement: ask(Metric.Catches, 2, { family: featured }),
           rewards: [
             { item: Items.RareCandy, amount: 1 },
@@ -90,7 +98,7 @@ export function getDailyQuests(now: number): RotationQuest[] {
     spotlight,
     {
       slot: 1,
-      name: 'Daily Stroll',
+      name: ROTATION_PHRASES('stroll'),
       requirement: ask(Metric.Steps, 3000),
       rewards: [{ item: Items.SitrusBerry, amount: 2 }],
     },
@@ -129,7 +137,7 @@ export function getWeeklyHunt(now: number): RotationQuest {
 
   return {
     slot: 0,
-    name: `The ${getFamilyName(family)} Hunt`,
+    name: ROTATION_PHRASES('hunt', { family: getFamilyName(family) }),
     requirement: ask(Metric.Catches, 5, { family }),
     rewards: [
       { item: Items.RareCandy, amount: 2 },

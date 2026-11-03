@@ -2,7 +2,7 @@ import { TRAINER_NAMES } from '../../../data/overworld/trainers';
 import { Foe, Landmark, Metric } from '../../../model/quest-record';
 import { AWARD_NAMES } from '../../../data/awards';
 import type Regions from '../../../data/ids/regions';
-import { REGION_NAMES } from '../../../data/species/regions';
+import { REGION_TITLES } from '../../../data/species/regions';
 import type { QuestPayout } from '../../../auth/quests';
 import { TYPE_NAMES } from '../../../data/constants/types';
 import { Items } from '../../../data/ids/items';
@@ -61,11 +61,9 @@ const FOE_GOALS: Record<Foe, (inputs: { count: number }) => string> = {
   [Foe.GymSeat]: m.quest_foe_gym_seat,
 };
 
-/** A region's name with its capital back on, off the sheet-directory names */
+/** A region's name in the player's language */
 function regionTitle(region: Regions): string {
-  const name = REGION_NAMES[region];
-
-  return name.slice(0, 1).toUpperCase() + name.slice(1);
+  return REGION_TITLES[region];
 }
 
 /** One requirement, as a line of words */

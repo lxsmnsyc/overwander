@@ -2,7 +2,7 @@ import * as v from 'valibot';
 import type Awards from '../ids/awards';
 import { AWARD_IDS, REGION_IDS } from '../ids/names';
 import Regions from '../ids/regions';
-import { idOf } from '../yaml';
+import { idOf, localeStringTable } from '../yaml';
 import regionsFile from './regions.yaml';
 import type { Species } from '../ids/species';
 import {
@@ -68,6 +68,16 @@ export const REGION_NAMES: Record<Regions, string> = {
   [Regions.Hisui]: 'hisui',
   [Regions.Paldea]: 'paldea',
 };
+
+/**
+ * What each region is called where it is shown, in the player's
+ * language. `REGION_NAMES` is for filing sprites and never shown
+ */
+export const REGION_TITLES = localeStringTable<Regions>(
+  REGION_IDS,
+  import.meta.glob('../text/*/regions.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/regions.yaml',
+);
 
 for (const [name, written] of Object.entries(v.parse(v.record(v.string(), REGION), regionsFile))) {
   const where = `regions.yaml: ${name}`;

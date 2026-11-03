@@ -1,0 +1,4 @@
+# A trainer class that more than one region puts on the road is told
+# apart by its region
+
+region: '{name} ({region})'

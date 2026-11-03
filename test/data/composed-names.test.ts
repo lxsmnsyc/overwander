@@ -11,7 +11,7 @@ import {
   typeTitle,
 } from '../../src/data/ids/titles';
 import { AchievementLine } from '../../src/data/achievements';
-import { TRAINER_NAMES, TRAINER_TRADES, trainerNameIn } from '../../src/data/overworld/trainers';
+import { TRAINER_NAMES, TRAINER_TRADES } from '../../src/data/overworld/trainers';
 import { getDexChain, getDexQuests } from '../../src/data/quests/dex';
 import { getDailyQuests, getWeeklyHunt } from '../../src/data/quests/rotations';
 import { CHAINS } from '../../src/data/quests';

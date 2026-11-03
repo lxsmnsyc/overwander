@@ -522,6 +522,47 @@ export function localizeLine<T extends object>(
   });
 }
 
+/** A text file of lines with `{name}` marks, asked for by key in the active locale */
+export type Phrases<K extends string> = (
+  key: K,
+  params?: Readonly<Record<string, string | number>>,
+) => string;
+
+/**
+ * A file of phrases the code puts names into (`{region} Professor`).
+ * English writes every key in `keys` and no other; a locale may write
+ * some and read the rest in English. The line is picked and filled in
+ * when it is asked for, so the server can use several locales at once
+ */
+export function localePhrases<K extends string>(
+  files: Record<string, unknown>,
+  where: string,
+  keys: readonly K[],
+): Phrases<K> {
+  const text = readLocaleText(files, where);
+
+  for (const key of keys) {
+    if (!text.english.has(key)) {
+      throw new Error(`${where}: ${key} is missing`);
+    }
+  }
+  for (const key of text.english.keys()) {
+    if (!keys.some((known) => known === key)) {
+      throw new Error(`${where}: ${key} is not a phrase the game asks for`);
+    }
+  }
+  return (key, params = {}) => {
+    const line = text.translated.get(key)?.get(currentLocale()) ?? text.english.get(key) ?? '';
+
+    return line.replaceAll(/\{(\w+)\}/g, (_, name: string) => {
+      if (!Object.hasOwn(params, name)) {
+        throw new Error(`${where}: ${key} asks for {${name}}, which was not given`);
+      }
+      return String(params[name]);
+    });
+  };
+}
+
 /** A whole text file read in the active locale, and the English it falls back to */
 export interface LocaleFile<T> {
   english: T;

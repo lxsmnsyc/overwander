@@ -36,6 +36,29 @@ const COUNTDOWN_TICK = 1000;
 
 export type Outcome = 'won' | 'lost' | 'draw';
 
+/**
+ * Where one watched battle stands. It moves forward one step at a time,
+ * except that a failed build drops back to waiting on the next record,
+ * and leaving the view ends it from anywhere
+ */
+const enum WatchPhase {
+  /** No record yet, or the last build failed and the next record tries again */
+  Waiting = 0,
+  /** The first record is in and the teams are being read */
+  Building = 1,
+  /** The engine is set up, waiting on the canvas to have every sheet */
+  Built = 2,
+  /** The field is drawn and the count is running */
+  Counting = 3,
+  Running = 4,
+  /** The engine settled the fight, and the result has been sent off once */
+  Settled = 5,
+  /** The player walked out of a grunt's fight, and the loss has been sent off */
+  Conceded = 6,
+  /** The view is gone, so a late payout is said in passing instead */
+  Left = 7,
+}
+
 /** What each way a fight ends is stamped on its record as */
 const OUTCOME_STAMPS: Record<Outcome, BattleOutcome> = {
   won: BattleOutcome.Won,
@@ -103,12 +126,7 @@ export default function createBattleWatch(
   const counting = createStore<number | null>(null);
   const status = createStore<string | null>(null);
   const candy = createStore<CandyEarned[]>([]);
-  let recorded = false;
-  let drawable = false;
-  let sounded = false;
-  let building = false;
-  /** Whether the view has been left, so a late payout is said in passing instead */
-  let gone = false;
+  let phase = WatchPhase.Waiting;
 
   const say = (caught: unknown): void => {
     status.set(describeFailure(caught));
@@ -172,7 +190,7 @@ export default function createBattleWatch(
   const build = (loaded: BattleRecord): void => {
     listBattleTeams(loaded)
       .then((teams) => {
-        if (gone) {
+        if (phase !== WatchPhase.Building) {
           return;
         }
 
@@ -197,20 +215,22 @@ export default function createBattleWatch(
         // every sheet, so it is not spent over an empty field
         built.battle.initialize();
         instance.set(built);
+        phase = WatchPhase.Built;
       })
       .catch((caught: unknown) => {
         // The next record that arrives tries again
-        building = false;
+        if (phase === WatchPhase.Building) {
+          phase = WatchPhase.Waiting;
+        }
         say(caught);
       });
   };
 
-  /** Recorded once, by whichever fighter sees it end */
+  /** Recorded by whichever fighter sees it end; `check` calls it once */
   const settle = (result: Outcome): void => {
-    if (active.replay || !fought() || recorded) {
+    if (active.replay || !fought()) {
       return;
     }
-    recorded = true;
 
     const won = result === 'won';
     const stamped = OUTCOME_STAMPS[result];
@@ -237,7 +257,7 @@ export default function createBattleWatch(
             stamped,
           );
 
-          if (gone) {
+          if (phase === WatchPhase.Left) {
             events.candyInPassing(earned);
           } else {
             candy.set(earned);
@@ -267,15 +287,17 @@ export default function createBattleWatch(
 
   /** Read on every tick of the fight, and acted on the once it settles */
   const check = (): void => {
+    if (phase !== WatchPhase.Running) {
+      return;
+    }
+
     const result = outcome();
 
     if (result == null) {
       return;
     }
-    if (!sounded) {
-      sounded = true;
-      events.settled(result);
-    }
+    phase = WatchPhase.Settled;
+    events.settled(result);
     settle(result);
   };
 
@@ -291,7 +313,7 @@ export default function createBattleWatch(
 
     if (
       active.replay ||
-      recorded ||
+      phase >= WatchPhase.Settled ||
       outcome() != null ||
       loaded == null ||
       getBattleKind(loaded) !== BattleKind.Npc ||
@@ -299,7 +321,7 @@ export default function createBattleWatch(
     ) {
       return;
     }
-    recorded = true;
+    phase = WatchPhase.Conceded;
 
     // Collected before the engine is torn down, the aftermath first:
     // conceding still pays for whatever the party put down
@@ -331,6 +353,7 @@ export default function createBattleWatch(
       // The last step starts the battle rather than counting to zero
       countdown = null;
       counting.set(null);
+      phase = WatchPhase.Running;
       instance.get()?.battle.start();
     }, COUNTDOWN_TICK);
   };
@@ -347,8 +370,8 @@ export default function createBattleWatch(
     const unwatch = watchBattle(active.id, (loaded) => {
       record.set(loaded);
       // Built from the first record that arrives; later ones only restamp it
-      if (loaded != null && !building) {
-        building = true;
+      if (loaded != null && phase === WatchPhase.Waiting) {
+        phase = WatchPhase.Building;
         build(loaded);
       }
     });
@@ -371,7 +394,7 @@ export default function createBattleWatch(
     }, POLL_INTERVAL);
 
     return () => {
-      gone = true;
+      phase = WatchPhase.Left;
       unwatch();
       clearInterval(poll);
       stopCounting();
@@ -394,10 +417,10 @@ export default function createBattleWatch(
     opponent,
     ready: () => {
       // Once: a canvas that reported twice would start the count over itself
-      if (drawable) {
+      if (phase !== WatchPhase.Built) {
         return;
       }
-      drawable = true;
+      phase = WatchPhase.Counting;
       count(COUNTDOWN);
       events.started();
     },

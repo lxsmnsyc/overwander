@@ -473,3 +473,48 @@ export function getSpentHeldItem(evolution: EvolutionData, covered = false): Ite
   }
   return evolution.item ?? null;
 }
+
+/** One stage of an evolution line, and what it takes to reach it */
+export interface LineStage {
+  species: Species;
+  /** How many evolutions below the line's first stage it sits */
+  depth: number;
+  /** The road that leads into it, absent on the first stage */
+  from?: EvolutionData;
+}
+
+/**
+ * The whole line a species belongs to, from its first stage down, in
+ * the order a tree of it reads. Each species appears once. Shapes that
+ * move between each other (Rotom's appliances, Ogerpon's masks) link
+ * back to the base and to one another, so every next stage is claimed
+ * before any of them is walked: they sit side by side one step down
+ * rather than under each other
+ */
+export function listEvolutionLine(species: Species): LineStage[] {
+  const stages: LineStage[] = [];
+  const claimed = new Set<Species>();
+
+  function walk(at: Species, depth: number, from?: EvolutionData): void {
+    stages.push({ species: at, depth, from });
+
+    // Claim every stage this one leads to before walking into any, so
+    // a sibling reached again through another sibling is not repeated
+    const next: EvolutionData[] = [];
+    for (const road of getSpeciesData(at).evolvesInto ?? []) {
+      if (!claimed.has(road.species)) {
+        claimed.add(road.species);
+        next.push(road);
+      }
+    }
+
+    for (const road of next) {
+      walk(road.species, depth + 1, road);
+    }
+  }
+
+  const base = getBaseSpecies(species);
+  claimed.add(base);
+  walk(base, 0);
+  return stages;
+}

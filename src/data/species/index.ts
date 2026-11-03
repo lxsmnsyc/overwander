@@ -61,10 +61,11 @@ export {
   getSpentHeldItem,
   isFullyEvolved,
   lineEvolvesByItem,
+  listEvolutionLine,
   meetsEvolutionCriteria,
   settleHandover,
 } from './evolution';
-export type { EvolutionContext, Handover } from './evolution';
+export type { EvolutionContext, Handover, LineStage } from './evolution';
 export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
 export {
   getRareShape,

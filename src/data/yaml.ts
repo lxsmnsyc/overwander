@@ -205,6 +205,26 @@ export function readOverlays(
 }
 
 /**
+ * `readOverlays` for a text file keyed by entry at its top level (the
+ * people's `npcs.yaml`): each locale's entries, whichever of its files
+ * they are in
+ */
+export function readEntryOverlays(
+  overlays: ReadonlyMap<Locale, Record<string, unknown>>,
+): EntryOverlays {
+  return readOverlays(overlays, (files) => {
+    const entries = new Map<string, unknown>();
+
+    for (const file of Object.values(files)) {
+      for (const [key, entry] of Object.entries(v.parse(v.record(v.string(), v.unknown()), file))) {
+        entries.set(key, entry);
+      }
+    }
+    return entries;
+  });
+}
+
+/**
  * Makes each named field of a record read in the active locale.
  *
  * The field becomes an accessor on the record itself, so everything
@@ -268,55 +288,318 @@ export function extendRecord<T extends object, C extends Partial<T>>(base: T, ch
   return record as T & C;
 }
 
-/**
- * `stringTable` for a file every locale writes: `files` is the glob of
- * one file across the locale folders (`../text/*\/types.yaml`). Each
- * entry a locale translates reads in the active locale
- */
-export function localeStringTable<T extends number>(
-  ids: Readonly<Record<string, T>>,
-  files: Record<string, unknown>,
-  where: string,
-): Record<number, string> {
-  // English is the whole table, as `stringTable` reads it
-  const byLocale = splitLocales(files);
+/** The one English file of a text file's glob across the locale folders */
+function findEnglishFile(byLocale: LocaleFiles, where: string): unknown {
   const englishFiles = Object.values(byLocale.english);
 
   if (englishFiles.length !== 1) {
     throw new Error(`${where}: expected one English file, found ${englishFiles.length}`);
   }
+  return englishFiles[0];
+}
 
-  const table = stringTable(ids, englishFiles[0], where);
+/** The part of a file a table is read from, the whole file when no section is named */
+function pickSection(file: unknown, section: string | undefined, where: string): unknown {
+  if (section == null) {
+    return file;
+  }
+  if (!isRecord(file) || !Object.hasOwn(file, section)) {
+    throw new Error(`${where}: ${section} is missing`);
+  }
+  return file[section];
+}
 
-  // What each other locale calls each entry
-  const translated = new Map<number, Map<Locale, string>>();
+/**
+ * A text file read into lines, English and then what each other
+ * locale writes over it, entry by entry
+ */
+export interface LocaleText {
+  english: Map<string, string>;
+  translated: Map<string, Map<Locale, string>>;
+}
+
+/** One map of lines, read as a table of strings or as one field of each entry */
+function readLines(
+  file: unknown,
+  field: string | undefined,
+  where: string,
+  complete: boolean,
+): Map<string, string> {
+  const lines = new Map<string, string>();
+
+  if (field == null) {
+    for (const [key, said] of Object.entries(v.parse(v.record(v.string(), v.string()), file))) {
+      lines.set(key, said);
+    }
+    return lines;
+  }
+  for (const [key, entry] of Object.entries(
+    v.parse(v.record(v.string(), v.record(v.string(), v.string())), file),
+  )) {
+    if (Object.hasOwn(entry, field)) {
+      lines.set(key, entry[field]);
+    } else if (complete) {
+      throw new Error(`${where}: ${key} has no ${field}`);
+    }
+  }
+  return lines;
+}
+
+/**
+ * Reads a text file every locale may write. `files` is the glob of that
+ * one file across the locale folders. A flat file of lines is read as
+ * it is; with a `field`, each entry is a map and the line is that
+ * field of it. `section` names the part of the file to read
+ */
+export function readLocaleText(
+  files: Record<string, unknown>,
+  where: string,
+  field?: string,
+  section?: string,
+): LocaleText {
+  const byLocale = splitLocales(files);
+  const english = readLines(
+    pickSection(findEnglishFile(byLocale, where), section, where),
+    field,
+    where,
+    true,
+  );
+  const translated = new Map<string, Map<Locale, string>>();
 
   for (const [locale, placed] of byLocale.overlays) {
     for (const [path, file] of Object.entries(placed)) {
-      for (const [name, said] of Object.entries(v.parse(v.record(v.string(), v.string()), file))) {
-        const id = idOf(ids, name, `${path}: ${name}`);
-        let names = translated.get(id);
+      for (const [key, said] of readLines(pickSection(file, section, path), field, path, false)) {
+        let names = translated.get(key);
 
         if (names == null) {
           names = new Map();
-          translated.set(id, names);
+          translated.set(key, names);
         }
         names.set(locale, said);
       }
     }
   }
+  return { english, translated };
+}
 
-  // A translated entry reads the active locale, the rest stay plain English
-  for (const [id, names] of translated) {
-    const english = table[id];
+/** Makes one entry of a table read in the active locale, where some locale translates it */
+function defineLine<K extends string | number>(
+  table: Record<K, string>,
+  key: K,
+  english: string,
+  names: ReadonlyMap<Locale, string> | undefined,
+): void {
+  if (names == null) {
+    return;
+  }
+  Object.defineProperty(table, key, {
+    configurable: true,
+    enumerable: true,
+    get: () => names.get(currentLocale()) ?? english,
+  });
+}
 
-    Object.defineProperty(table, id, {
-      configurable: true,
-      enumerable: true,
-      get: () => names.get(currentLocale()) ?? english,
-    });
+/**
+ * Adds a text file's entries to a table that several files fill (the
+ * trainer classes, one file a region). A translated entry reads the
+ * active locale, the rest stay plain English
+ */
+export function addLocaleText<T extends number>(
+  table: Record<number, string>,
+  ids: Readonly<Record<string, T>>,
+  text: LocaleText,
+  where: string,
+): void {
+  for (const [name, said] of text.english) {
+    table[idOf(ids, name, `${where}: ${name}`)] = said;
+  }
+  for (const [name, names] of text.translated) {
+    const id = idOf(ids, name, `${where}: ${name}`);
+
+    defineLine(table, id, table[id], names);
+  }
+}
+
+function buildTable<T extends number>(
+  ids: Readonly<Record<string, T>>,
+  text: LocaleText,
+  where: string,
+): Record<number, string> {
+  // English is the whole table, as `stringTable` reads it: every id has its line
+  const table = stringTable(ids, Object.fromEntries(text.english), where);
+
+  addLocaleText(table, ids, { english: new Map(), translated: text.translated }, where);
+  return table;
+}
+
+/**
+ * `stringTable` for a file every locale writes: `files` is the glob of
+ * one file across the locale folders (`../text/*\/types.yaml`). Each
+ * entry a locale translates reads in the active locale. `section` names
+ * the part of the file to read, for a file that holds several tables.
+ * `derived` is what a locale's entries are worked out to be where its
+ * own file does not write them (a family named for its species)
+ */
+export function localeStringTable<T extends number>(
+  ids: Readonly<Record<string, T>>,
+  files: Record<string, unknown>,
+  where: string,
+  section?: string,
+  derived?: ReadonlyMap<Locale, Readonly<Record<string, string>>>,
+): Record<number, string> {
+  const text = readLocaleText(files, where, undefined, section);
+
+  for (const [locale, lines] of derived ?? []) {
+    for (const [key, said] of Object.entries(lines)) {
+      let names = text.translated.get(key);
+
+      // A line the locale writes itself wins over the derived one
+      if (text.english.has(key) && !names?.has(locale)) {
+        if (names == null) {
+          names = new Map();
+          text.translated.set(key, names);
+        }
+        names.set(locale, said);
+      }
+    }
+  }
+  return buildTable(ids, text, where);
+}
+
+/**
+ * `localeStringTable` for a file whose entries are maps (a leader's
+ * `name` and `quote`): the table of one `field` of every entry. A
+ * locale may translate one field of an entry and leave the rest
+ */
+export function localeFieldTable<T extends number>(
+  ids: Readonly<Record<string, T>>,
+  files: Record<string, unknown>,
+  where: string,
+  field: string,
+  section?: string,
+): Record<number, string> {
+  return buildTable(ids, readLocaleText(files, where, field, section), where);
+}
+
+/**
+ * A table of lines keyed by something that is not an id (a sheet's
+ * path). Each entry a locale translates reads in the active locale
+ */
+export function localeLines(files: Record<string, unknown>, where: string): Record<string, string> {
+  const text = readLocaleText(files, where);
+  const table: Record<string, string> = Object.fromEntries(text.english);
+
+  for (const [key, names] of text.translated) {
+    defineLine(table, key, table[key], names);
   }
   return table;
+}
+
+/**
+ * Makes a field of a record one entry of a text file: what the record
+ * reads is the line in the active locale, written once in English
+ * when no locale translates it. For records built once out of a
+ * written file (a quest, a person)
+ */
+export function localizeLine<T extends object>(
+  record: T,
+  field: keyof T & string,
+  text: LocaleText,
+  key: string,
+): void {
+  const names = text.translated.get(key);
+
+  if (names == null) {
+    return;
+  }
+
+  const english = text.english.get(key);
+
+  Object.defineProperty(record, field, {
+    configurable: true,
+    enumerable: true,
+    get: () => names.get(currentLocale()) ?? english,
+  });
+}
+
+/** A text file of lines with `{name}` marks, asked for by key in the active locale */
+export type Phrases<K extends string> = (
+  key: K,
+  params?: Readonly<Record<string, string | number>>,
+) => string;
+
+/**
+ * A file of phrases the code puts names into (`{region} Professor`).
+ * English writes every key in `keys` and no other; a locale may write
+ * some and read the rest in English. The line is picked and filled in
+ * when it is asked for, so the server can use several locales at once
+ */
+export function localePhrases<K extends string>(
+  files: Record<string, unknown>,
+  where: string,
+  keys: readonly K[],
+): Phrases<K> {
+  const text = readLocaleText(files, where);
+
+  for (const key of keys) {
+    if (!text.english.has(key)) {
+      throw new Error(`${where}: ${key} is missing`);
+    }
+  }
+  for (const key of text.english.keys()) {
+    if (!keys.some((known) => known === key)) {
+      throw new Error(`${where}: ${key} is not a phrase the game asks for`);
+    }
+  }
+  return (key, params = {}) => {
+    const line = text.translated.get(key)?.get(currentLocale()) ?? text.english.get(key) ?? '';
+
+    return line.replaceAll(/\{(\w+)\}/g, (_, name: string) => {
+      if (!Object.hasOwn(params, name)) {
+        throw new Error(`${where}: ${key} asks for {${name}}, which was not given`);
+      }
+      return String(params[name]);
+    });
+  };
+}
+
+/** A whole text file read in the active locale, and the English it falls back to */
+export interface LocaleFile<T> {
+  english: T;
+  read: () => T;
+}
+
+/**
+ * A whole text file that is not a table (a list, or a bundle of
+ * lists), read in the active locale. A locale that writes the file
+ * writes all of it, so a list never mixes two languages. Read it when
+ * it is used, not once at load. `check` holds a locale's file against
+ * English, for what the shape alone cannot say (two lists of one length)
+ */
+export function localeFile<T>(
+  files: Record<string, unknown>,
+  where: string,
+  schema: v.GenericSchema<unknown, T>,
+  check?: (written: T, english: T, where: string) => void,
+): LocaleFile<T> {
+  const byLocale = splitLocales(files);
+  const english = v.parse(schema, findEnglishFile(byLocale, where));
+  const written = new Map<Locale, T>();
+
+  for (const [locale, placed] of byLocale.overlays) {
+    for (const [path, file] of Object.entries(placed)) {
+      let read: T;
+
+      try {
+        read = v.parse(schema, file);
+      } catch (error) {
+        throw new Error(`${path} must write the whole file: ${String(error)}`, { cause: error });
+      }
+      check?.(read, english, path);
+      written.set(locale, read);
+    }
+  }
+  return { english, read: () => written.get(currentLocale()) ?? english };
 }
 
 /**

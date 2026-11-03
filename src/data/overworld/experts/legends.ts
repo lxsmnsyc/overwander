@@ -3,8 +3,7 @@ import type Awards from '../../ids/awards';
 import Legend from '../../ids/legends';
 import { AWARD_IDS, LEGEND_IDS, SPECIES_IDS } from '../../ids/names';
 import type { Species } from '../../ids/species';
-import namesFile from '../../text/en/legends.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { idOf, idsOf, localeFieldTable } from '../../yaml';
 import legendsFile from './legends.yaml';
 
 export { Legend };
@@ -20,15 +19,25 @@ const LEGEND = v.strictObject({
   party: v.array(v.string()),
 });
 
-const SAID = v.strictObject({ name: v.string(), greeting: v.string() });
+const SAID_TEXT = import.meta.glob('../../text/*/legends.yaml', { eager: true, import: 'default' });
 
 /** Every legend, in the order they are numbered */
 export const LEGENDS: Legend[] = [];
 
-export const LEGEND_NAMES: Record<number, string> = {};
+export const LEGEND_NAMES = localeFieldTable<Legend>(
+  LEGEND_IDS,
+  SAID_TEXT,
+  'text/<locale>/legends.yaml',
+  'name',
+);
 
 /** What a legend says, where they say anything at all */
-export const LEGEND_GREETINGS: Record<number, string> = {};
+export const LEGEND_GREETINGS = localeFieldTable<Legend>(
+  LEGEND_IDS,
+  SAID_TEXT,
+  'text/<locale>/legends.yaml',
+  'greeting',
+);
 
 /** The sheets each is seen in */
 export const LEGEND_CHARSETS: Record<number, string[]> = {};
@@ -53,13 +62,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LEGEND
   LEGEND_PARTIES[legend] = idsOf<Species>(SPECIES_IDS, written.party, where);
 }
 LEGENDS.sort((one, two) => one - two);
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), SAID), namesFile))) {
-  const legend = idOf<Legend>(LEGEND_IDS, name, `text/en/legends.yaml: ${name}`);
-
-  LEGEND_NAMES[legend] = said.name;
-  LEGEND_GREETINGS[legend] = said.greeting;
-}
 
 // Every legend the enum has is written down, so none turns up nameless or bare
 for (const [name, legend] of Object.entries(LEGEND_IDS)) {

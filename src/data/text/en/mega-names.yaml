@@ -1,0 +1,8 @@
+# How a Mega is named from the pokemon it is a Mega of. A locale writes its
+# own, and fills in its own name for the pokemon. `variant` puts the letter
+# of a Mega with more than one form (Mega Charizard X) after the name.
+# Megas.yaml has the English names written out, and a locale may write one
+# there to override what these make
+
+name: Mega {base}
+variant: '{name} {letter}'

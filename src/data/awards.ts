@@ -1,8 +1,7 @@
 import * as v from 'valibot';
 import type Awards from './ids/awards';
 import { AWARD_IDS } from './ids/names';
-import namesFile from './text/en/awards.yaml';
-import { idOf, stringTable } from './yaml';
+import { idOf, localeStringTable } from './yaml';
 import awardsFile from './awards.yaml';
 
 /**
@@ -10,7 +9,11 @@ import awardsFile from './awards.yaml';
  * `awards.yaml` and `text/en/awards.yaml`; the numbers are
  * `ids/awards.ts`
  */
-export const AWARD_NAMES = stringTable<Awards>(AWARD_IDS, namesFile, 'text/en/awards.yaml');
+export const AWARD_NAMES = localeStringTable<Awards>(
+  AWARD_IDS,
+  import.meta.glob('./text/*/awards.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/awards.yaml',
+);
 
 /** Each award's color, for the earned state of its disc */
 export const AWARD_COLORS: Record<number, string> = {};

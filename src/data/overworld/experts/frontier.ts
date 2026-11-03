@@ -14,10 +14,8 @@ import {
 } from '../../ids/names';
 import type { Species } from '../../ids/species';
 import type { Statuses } from '../../ids/status';
-import namesFile from '../../text/en/frontier.yaml';
-import roomTextFile from '../../text/en/frontier-rooms.yaml';
 import type Weather from '../weather/kinds';
-import { idOf, idsOf, stringTable } from '../../yaml';
+import { idOf, idsOf, localeFieldTable, localeStringTable } from '../../yaml';
 import frontierFile from './frontier.yaml';
 import roomsFile from './frontier-rooms.yaml';
 import { getWorldExpertPool } from './pools';
@@ -39,18 +37,36 @@ const BRAIN = v.strictObject({
   'gold-party': v.array(v.string()),
 });
 
-const TEXT = v.strictObject({ name: v.string(), house: v.string(), greeting: v.string() });
+const TEXT_FILES = import.meta.glob('../../text/*/frontier.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 /** Every Brain, in the order they are numbered */
 export const FRONTIER_BRAINS: FrontierBrain[] = [];
 
-export const FRONTIER_BRAIN_NAMES: Record<number, string> = {};
+export const FRONTIER_BRAIN_NAMES = localeFieldTable<FrontierBrain>(
+  FRONTIER_BRAIN_IDS,
+  TEXT_FILES,
+  'text/<locale>/frontier.yaml',
+  'name',
+);
 
 /** The house each of them keeps, which is what the rule is named for */
-export const FRONTIER_FACILITY_NAMES: Record<number, string> = {};
+export const FRONTIER_FACILITY_NAMES = localeFieldTable<FrontierBrain>(
+  FRONTIER_BRAIN_IDS,
+  TEXT_FILES,
+  'text/<locale>/frontier.yaml',
+  'house',
+);
 
 /** What each says as the house is entered */
-export const FRONTIER_GREETINGS: Record<number, string> = {};
+export const FRONTIER_GREETINGS = localeFieldTable<FrontierBrain>(
+  FRONTIER_BRAIN_IDS,
+  TEXT_FILES,
+  'text/<locale>/frontier.yaml',
+  'greeting',
+);
 
 /** The sheets each is seen in */
 export const FRONTIER_BRAIN_CHARSETS: Record<number, string[]> = {};
@@ -104,14 +120,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), BRAIN)
   FRONTIER_BRAIN_GOLD_PARTIES[brain] = idsOf<Species>(SPECIES_IDS, written['gold-party'], where);
 }
 FRONTIER_BRAINS.sort((one, two) => one - two);
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), namesFile))) {
-  const brain = idOf<FrontierBrain>(FRONTIER_BRAIN_IDS, name, `text/en/frontier.yaml: ${name}`);
-
-  FRONTIER_BRAIN_NAMES[brain] = said.name;
-  FRONTIER_FACILITY_NAMES[brain] = said.house;
-  FRONTIER_GREETINGS[brain] = said.greeting;
-}
 
 // Every Brain the enum has is written down, so no house stands empty or nameless
 for (const [name, brain] of Object.entries(FRONTIER_BRAIN_IDS)) {
@@ -168,16 +176,17 @@ for (const [name, status] of Object.entries(rooms.curtains)) {
     status == null ? null : idOf<Statuses>(STATUS_IDS, status, where);
 }
 
-const ROOM_TEXT = v.parse(
-  v.strictObject({ curtains: v.unknown(), panels: v.unknown() }),
-  roomTextFile,
-);
+const ROOM_TEXT = import.meta.glob('../../text/*/frontier-rooms.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 /** What each curtain is called, for the line the fight is announced with */
-export const PIKE_CURTAIN_NAMES = stringTable<PikeCurtain>(
+export const PIKE_CURTAIN_NAMES = localeStringTable<PikeCurtain>(
   PIKE_CURTAIN_IDS,
-  ROOM_TEXT.curtains,
-  'text/en/frontier-rooms.yaml: curtains',
+  ROOM_TEXT,
+  'text/<locale>/frontier-rooms.yaml: curtains',
+  'curtains',
 );
 
 /**
@@ -206,10 +215,11 @@ for (const [name, sky] of Object.entries(rooms.panels)) {
 }
 
 /** What each panel is called, for the line the fight is announced with */
-export const ARCADE_PANEL_NAMES = stringTable<ArcadePanel>(
+export const ARCADE_PANEL_NAMES = localeStringTable<ArcadePanel>(
   ARCADE_PANEL_IDS,
-  ROOM_TEXT.panels,
-  'text/en/frontier-rooms.yaml: panels',
+  ROOM_TEXT,
+  'text/<locale>/frontier-rooms.yaml: panels',
+  'panels',
 );
 
 /**

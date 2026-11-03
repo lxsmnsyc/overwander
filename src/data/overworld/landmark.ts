@@ -1,8 +1,7 @@
 import * as v from 'valibot';
 import Landmark from '../ids/landmarks';
 import { LANDMARK_IDS } from '../ids/names';
-import namesFile from '../text/en/landmarks.yaml';
-import { idOf } from '../yaml';
+import { idOf, localeStringTable } from '../yaml';
 import landmarksFile from './landmarks.yaml';
 
 export default Landmark;
@@ -39,7 +38,11 @@ export const LANDMARKS: Landmark[] = [];
 export const LANDMARK_WEIGHTS: Record<number, number> = {};
 
 /** Display names for the landmarks */
-export const LANDMARK_NAMES: Record<number, string> = {};
+export const LANDMARK_NAMES = localeStringTable<Landmark>(
+  LANDMARK_IDS,
+  import.meta.glob('../text/*/landmarks.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/landmarks.yaml',
+);
 
 /** What each is drawn as, where it is drawn as a thing at all */
 export const LANDMARK_ART: Record<number, LandmarkArt> = {};
@@ -58,10 +61,6 @@ for (const [name, written] of Object.entries(
   };
 }
 LANDMARKS.sort((one, two) => one - two);
-
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  LANDMARK_NAMES[idOf<Landmark>(LANDMARK_IDS, name, `text/en/landmarks.yaml: ${name}`)] = title;
-}
 
 // Every landmark the enum has is written down, so none is unrollable or nameless
 for (const [name, landmark] of Object.entries(LANDMARK_IDS)) {

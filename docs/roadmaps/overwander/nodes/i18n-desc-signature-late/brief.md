@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-signature-late
 title: Translate signature abilities, Unova to Paldea
-status: todo
+status: done
 priority: should
 type: feature
 outline: false

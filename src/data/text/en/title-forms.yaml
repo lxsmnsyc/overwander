@@ -1,0 +1,8 @@
+# How a title is put together out of the name it is for. `professor` is the
+# title a region's dex is worth, `master` the top tier of a trade or line,
+# `type-specialist` and `type-master` the two tiers of a type
+
+professor: '{region} Professor'
+master: 'Master {name}'
+type-specialist: '{name} Specialist'
+type-master: '{name} Master'

@@ -1,7 +1,7 @@
 ---
 id: i18n-desc-signature-early
 title: Translate signature abilities, Kanto to Sinnoh
-status: active
+status: done
 priority: should
 type: feature
 outline: false

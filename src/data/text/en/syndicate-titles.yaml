@@ -1,0 +1,6 @@
+# How a syndicate's people are introduced: the team first and the title
+# before the name, as the games do ("Team Aqua Leader Archie").
+# `grunt` is the rank and file, who are a uniform rather than a person
+
+grunt: '{team} Grunt'
+person: '{team} {title} {name}'

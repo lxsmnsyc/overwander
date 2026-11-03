@@ -3,13 +3,7 @@ import type { Types } from '../../constants/types';
 import { REGION_IDS, TRAINER_IDS, TYPE_IDS } from '../../ids/names';
 import type Regions from '../../ids/regions';
 import TrainerClass from '../../ids/trainers';
-import hoennText from '../../text/en/trainers/hoenn.yaml';
-import johtoText from '../../text/en/trainers/johto.yaml';
-import kalosText from '../../text/en/trainers/kalos.yaml';
-import kantoText from '../../text/en/trainers/kanto.yaml';
-import sinnohText from '../../text/en/trainers/sinnoh.yaml';
-import unovaText from '../../text/en/trainers/unova.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { addLocaleText, idOf, idsOf, readLocaleText } from '../../yaml';
 import hoennFile from './classes/hoenn.yaml';
 import johtoFile from './classes/johto.yaml';
 import kalosFile from './classes/kalos.yaml';
@@ -42,16 +36,38 @@ const CLASS = v.strictObject({
   ace: v.optional(v.literal(true)),
 });
 
-const TEXT = v.strictObject({ name: v.string(), quote: v.string() });
-
 /** Each region's files, the class a file is filed under being its region */
-const REGION_FILES: [region: string, classes: unknown, text: unknown][] = [
-  ['kanto', kantoFile, kantoText],
-  ['johto', johtoFile, johtoText],
-  ['hoenn', hoennFile, hoennText],
-  ['sinnoh', sinnohFile, sinnohText],
-  ['unova', unovaFile, unovaText],
-  ['kalos', kalosFile, kalosText],
+const REGION_FILES: [region: string, classes: unknown, text: Record<string, unknown>][] = [
+  [
+    'kanto',
+    kantoFile,
+    import.meta.glob('../../text/*/trainers/kanto.yaml', { eager: true, import: 'default' }),
+  ],
+  [
+    'johto',
+    johtoFile,
+    import.meta.glob('../../text/*/trainers/johto.yaml', { eager: true, import: 'default' }),
+  ],
+  [
+    'hoenn',
+    hoennFile,
+    import.meta.glob('../../text/*/trainers/hoenn.yaml', { eager: true, import: 'default' }),
+  ],
+  [
+    'sinnoh',
+    sinnohFile,
+    import.meta.glob('../../text/*/trainers/sinnoh.yaml', { eager: true, import: 'default' }),
+  ],
+  [
+    'unova',
+    unovaFile,
+    import.meta.glob('../../text/*/trainers/unova.yaml', { eager: true, import: 'default' }),
+  ],
+  [
+    'kalos',
+    kalosFile,
+    import.meta.glob('../../text/*/trainers/kalos.yaml', { eager: true, import: 'default' }),
+  ],
 ];
 
 /** Every class, in the order they are numbered */
@@ -97,6 +113,12 @@ export const TRAINER_TRADE: Record<number, TrainerClass> = {};
  */
 export const TRAINER_BASE_NAMES: Record<number, string> = {};
 
+/**
+ * The same names in English alone, for code that tells classes apart by
+ * name whatever language is shown
+ */
+export const ENGLISH_TRAINER_NAMES: Record<number, string> = {};
+
 /** What each says as the duel is put to the player */
 export const TRAINER_QUOTES: Record<number, string> = {};
 
@@ -127,12 +149,17 @@ for (const [file, classes, text] of REGION_FILES) {
       ACE_TRAINERS.add(trainer);
     }
   }
-  for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), text))) {
-    const trainer = idOf<TrainerClass>(TRAINER_IDS, name, `text/en/trainers/${file}.yaml: ${name}`);
 
-    TRAINER_BASE_NAMES[trainer] = said.name;
-    TRAINER_QUOTES[trainer] = said.quote;
+  // Each region's words, in the player's locale, by the class they are filed under
+  const textFile = `text/<locale>/trainers/${file}.yaml`;
+
+  const names = readLocaleText(text, textFile, 'name');
+
+  addLocaleText(TRAINER_BASE_NAMES, TRAINER_IDS, names, textFile);
+  for (const [name, said] of names.english) {
+    ENGLISH_TRAINER_NAMES[idOf<TrainerClass>(TRAINER_IDS, name, textFile)] = said;
   }
+  addLocaleText(TRAINER_QUOTES, TRAINER_IDS, readLocaleText(text, textFile, 'quote'), textFile);
 }
 
 // Filed by region, numbered across them: the number is the order

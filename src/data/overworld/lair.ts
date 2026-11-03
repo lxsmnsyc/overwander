@@ -6,8 +6,7 @@ import Lairs from '../ids/lairs';
 import { BIOME_IDS, LAIR_IDS, SPECIES_IDS } from '../ids/names';
 import type { Species } from '../ids/species';
 import { getTrueShadowCounterpart } from '../species/true-shadow';
-import namesFile from '../text/en/lairs.yaml';
-import { idOf, idsOf } from '../yaml';
+import { idOf, idsOf, localePhrases, localeStringTable } from '../yaml';
 import biomeLairsFile from './biome-lairs.yaml';
 import lairsFile from './lairs.yaml';
 
@@ -35,7 +34,11 @@ const LAIR = v.strictObject({
 export const LAIR_SPECIES: Record<number, Species[]> = {};
 
 /** What each is called, by lair */
-export const LAIR_NAMES: Record<number, string> = {};
+export const LAIR_NAMES = localeStringTable<Lairs>(
+  LAIR_IDS,
+  import.meta.glob('../text/*/lairs.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/lairs.yaml',
+);
 
 /**
  * Every lair there is but the reserved ones, in the order they are
@@ -77,10 +80,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), LAIR),
   }
 }
 EVERY_LAIR.sort((one, two) => one - two);
-
-for (const [name, title] of Object.entries(v.parse(v.record(v.string(), v.string()), namesFile))) {
-  LAIR_NAMES[idOf(LAIR_IDS, name, `text/en/lairs.yaml: ${name}`)] = title;
-}
 
 // Every lair the enum has is written down, so none reads as nameless or empty
 for (const [name, lair] of Object.entries(LAIR_IDS)) {
@@ -215,6 +214,13 @@ export function getSpeciesLairs(species: Species): Lairs[] {
   return EVERY_LAIR.filter((lair) => LAIR_SPECIES[lair].includes(resident));
 }
 
+/** How a lair that is only a stretch of ground, and a shadow of any, are named */
+const LAIR_PHRASES = localePhrases(
+  import.meta.glob('../text/*/lair-titles.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/lair-titles.yaml',
+  ['ground', 'shadow'],
+);
+
 /**
  * What a raid on this landmark is called.
  *
@@ -226,9 +232,10 @@ export function getSpeciesLairs(species: Species): Lairs[] {
  * Lair**
  */
 export function getLairTitle(lair: Lairs | null, biome: Biome, shadow: boolean): string {
-  const place = lair == null ? `${BIOME_NAMES[biome]} Lair` : LAIR_NAMES[lair];
+  const place =
+    lair == null ? LAIR_PHRASES('ground', { biome: BIOME_NAMES[biome] }) : LAIR_NAMES[lair];
 
-  return shadow ? `Shadow ${place}` : place;
+  return shadow ? LAIR_PHRASES('shadow', { place }) : place;
 }
 
 export default Lairs;

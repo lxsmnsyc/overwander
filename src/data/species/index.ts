@@ -66,7 +66,13 @@ export {
   settleHandover,
 } from './evolution';
 export type { EvolutionContext, Handover, LineStage } from './evolution';
-export { REGIONS, REGION_NAMES, getSpeciesByRegion, getSpeciesRegion } from './regions';
+export {
+  REGIONS,
+  REGION_NAMES,
+  REGION_TITLES,
+  getSpeciesByRegion,
+  getSpeciesRegion,
+} from './regions';
 export {
   getRareShape,
   getSeasonalCoat,

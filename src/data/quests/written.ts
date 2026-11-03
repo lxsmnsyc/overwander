@@ -26,8 +26,7 @@ import type Npc from '../ids/npcs';
 import type Regions from '../ids/regions';
 import type { Species } from '../ids/species';
 import type TrainerClass from '../ids/trainers';
-import namesFile from '../text/en/quests.yaml';
-import { idOf } from '../yaml';
+import { type LocaleText, idOf, localizeLine, readLocaleText } from '../yaml';
 import dailyFile from './daily.yaml';
 import questsFile from './quests.yaml';
 import {
@@ -99,11 +98,12 @@ const DAILY_FILE = v.record(
   }),
 );
 
-const NAMES_FILE = v.strictObject({
-  chains: v.record(NAME, v.string()),
-  quests: v.record(NAME, v.string()),
-  daily: v.record(NAME, v.string()),
-});
+const QUEST_TEXT = import.meta.glob('../text/*/quests.yaml', { eager: true, import: 'default' });
+
+/** What each locale calls the written chains, quests and dailies, by the name the files key them by */
+const CHAIN_NAMES = readLocaleText(QUEST_TEXT, 'text/<locale>/quests.yaml', undefined, 'chains');
+const QUEST_NAMES = readLocaleText(QUEST_TEXT, 'text/<locale>/quests.yaml', undefined, 'quests');
+const DAILY_NAMES = readLocaleText(QUEST_TEXT, 'text/<locale>/quests.yaml', undefined, 'daily');
 
 /** A counter requirement and its narrowing */
 function readCounter(written: v.InferOutput<typeof COUNTER>, where: string): MetricRequirement {
@@ -209,14 +209,14 @@ function readReward(written: v.InferOutput<typeof REWARD>, where: string): Quest
 }
 
 /** The name a file keys something by, or a clear failure where text/en has none */
-function nameOf(names: Record<string, string>, key: string, where: string): string {
-  if (!Object.hasOwn(names, key)) {
+function nameOf(names: LocaleText, key: string, where: string): string {
+  const name = names.english.get(key);
+
+  if (name == null) {
     throw new Error(`${where} needs a name in text/en/quests.yaml`);
   }
-  return names[key];
+  return name;
 }
-
-const names = v.parse(NAMES_FILE, namesFile);
 const written = v.parse(QUESTS_FILE, questsFile);
 
 export const WRITTEN_CHAINS: Record<number, ChainData> = {};
@@ -237,11 +237,10 @@ for (const [name, quest] of Object.entries(written.quests)) {
   for (const reward of quest.rewards) {
     rewards.push(readReward(reward, where));
   }
-  WRITTEN_QUESTS[idOf<Quests>(QUEST_IDS, name, where)] = {
-    name: nameOf(names.quests, name, where),
-    requirements,
-    rewards,
-  };
+  const data: QuestData = { name: nameOf(QUEST_NAMES, name, where), requirements, rewards };
+
+  localizeLine(data, 'name', QUEST_NAMES, name);
+  WRITTEN_QUESTS[idOf<Quests>(QUEST_IDS, name, where)] = data;
 }
 
 for (const [name, members] of Object.entries(written.chains)) {
@@ -257,7 +256,10 @@ for (const [name, members] of Object.entries(written.chains)) {
     }
     quests.push(quest);
   }
-  WRITTEN_CHAINS[chain] = { name: nameOf(names.chains, name, where), quests };
+  const data: ChainData = { name: nameOf(CHAIN_NAMES, name, where), quests };
+
+  localizeLine(data, 'name', CHAIN_NAMES, name);
+  WRITTEN_CHAINS[chain] = data;
   WRITTEN_CHAIN_ORDER.push(chain);
 }
 
@@ -289,9 +291,12 @@ for (const [key, daily] of Object.entries(v.parse(DAILY_FILE, dailyFile))) {
   for (const reward of daily.rewards) {
     rewards.push({ item: idOf<Items>(ITEM_IDS, reward.item, where), amount: reward.amount });
   }
-  DAILY_POOL.push({
-    name: nameOf(names.daily, key, where),
+  const quest: DailyQuest = {
+    name: nameOf(DAILY_NAMES, key, where),
     requirement: readCounter(daily.requirement, where),
     rewards,
-  });
+  };
+
+  localizeLine(quest, 'name', DAILY_NAMES, key);
+  DAILY_POOL.push(quest);
 }

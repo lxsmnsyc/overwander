@@ -3,8 +3,7 @@ import type { Types } from '../../constants/types';
 import { BATTLE_WEATHER_IDS, TYPE_IDS, WEATHER_IDS } from '../../ids/names';
 import type { Weathers } from '../../ids/status';
 import Weather from '../../ids/weather';
-import textFile from '../../text/en/weather.yaml';
-import { idOf, idsOf } from '../../yaml';
+import { idOf, idsOf, localeFieldTable } from '../../yaml';
 import kindsFile from './kinds.yaml';
 
 export default Weather;
@@ -19,15 +18,28 @@ const KIND = v.strictObject({
   battle: v.string(),
 });
 
-const TEXT = v.strictObject({ name: v.string(), description: v.string() });
+const WEATHER_TEXT = import.meta.glob('../../text/*/weather.yaml', {
+  eager: true,
+  import: 'default',
+});
 
-export const WEATHER_NAMES: Record<number, string> = {};
+export const WEATHER_NAMES = localeFieldTable<Weather>(
+  WEATHER_IDS,
+  WEATHER_TEXT,
+  'text/<locale>/weather.yaml',
+  'name',
+);
 
 /** What each sky is drawn as on the world map, where a chunk is one square of colour */
 export const WEATHER_COLORS: Record<number, string> = {};
 
 /** One line on each sky, and only what a picture of it cannot say */
-export const WEATHER_DESCRIPTIONS: Record<number, string> = {};
+export const WEATHER_DESCRIPTIONS = localeFieldTable<Weather>(
+  WEATHER_IDS,
+  WEATHER_TEXT,
+  'text/<locale>/weather.yaml',
+  'description',
+);
 
 /**
  * The types each sky is kind to. These are the world's own pairings
@@ -54,13 +66,6 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), KIND),
   } else {
     WEATHER_TYPES[sky] = idsOf<Types>(TYPE_IDS, written.favours, where);
   }
-}
-
-for (const [name, said] of Object.entries(v.parse(v.record(v.string(), TEXT), textFile))) {
-  const sky = idOf<Weather>(WEATHER_IDS, name, `text/en/weather.yaml: ${name}`);
-
-  WEATHER_NAMES[sky] = said.name;
-  WEATHER_DESCRIPTIONS[sky] = said.description;
 }
 
 // Every sky the enum has is written down, so none is drawn bare or nameless

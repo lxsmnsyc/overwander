@@ -4,9 +4,7 @@ import type Biome from '../ids/biome';
 import Executive from '../ids/executives';
 import { AWARD_IDS, BIOME_IDS, EXECUTIVE_IDS, SYNDICATE_IDS } from '../ids/names';
 import Syndicate from '../ids/syndicates';
-import executiveTextFile from '../text/en/executives.yaml';
-import syndicateTextFile from '../text/en/syndicates.yaml';
-import { idOf, idsOf } from '../yaml';
+import { idOf, idsOf, localeFieldTable, localePhrases } from '../yaml';
 import executivesFile from './executives.yaml';
 import syndicatesFile from './syndicates.yaml';
 
@@ -27,18 +25,22 @@ const SYNDICATE = v.strictObject({
   biomes: v.array(v.string()),
 });
 
-const SYNDICATE_TEXT = v.strictObject({
-  name: v.string(),
-  boss: v.string(),
-  'boss-title': v.string(),
-  'executive-title': v.string(),
-  'boss-quote': v.string(),
-  'grunt-quote': v.string(),
+const SYNDICATE_TEXT = import.meta.glob('../text/*/syndicates.yaml', {
+  eager: true,
+  import: 'default',
 });
 
-const EXECUTIVE_TEXT = v.strictObject({ name: v.string(), quote: v.string() });
+const EXECUTIVE_TEXT = import.meta.glob('../text/*/executives.yaml', {
+  eager: true,
+  import: 'default',
+});
 
-export const EXECUTIVE_NAMES: Record<number, string> = {};
+export const EXECUTIVE_NAMES = localeFieldTable<Executive>(
+  EXECUTIVE_IDS,
+  EXECUTIVE_TEXT,
+  'text/<locale>/executives.yaml',
+  'name',
+);
 
 export const EXECUTIVE_CHARSETS: Record<number, string[]> = {};
 
@@ -46,7 +48,12 @@ export const EXECUTIVE_CHARSETS: Record<number, string[]> = {};
 export const EXECUTIVE_HONORS: Record<number, Awards> = {};
 
 /** What each says as they bar the cell */
-export const EXECUTIVE_QUOTES: Record<number, string> = {};
+export const EXECUTIVE_QUOTES = localeFieldTable<Executive>(
+  EXECUTIVE_IDS,
+  EXECUTIVE_TEXT,
+  'text/<locale>/executives.yaml',
+  'quote',
+);
 
 for (const [name, written] of Object.entries(v.parse(v.record(v.string(), RANK), executivesFile))) {
   const where = `executives.yaml: ${name}`;
@@ -55,19 +62,16 @@ for (const [name, written] of Object.entries(v.parse(v.record(v.string(), RANK),
   EXECUTIVE_CHARSETS[executive] = written.sheets;
   EXECUTIVE_HONORS[executive] = idOf<Awards>(AWARD_IDS, written.honor, where);
 }
-for (const [name, said] of Object.entries(
-  v.parse(v.record(v.string(), EXECUTIVE_TEXT), executiveTextFile),
-)) {
-  const executive = idOf<Executive>(EXECUTIVE_IDS, name, `text/en/executives.yaml: ${name}`);
-
-  EXECUTIVE_NAMES[executive] = said.name;
-  EXECUTIVE_QUOTES[executive] = said.quote;
-}
 
 /** Every team, in the order they are numbered */
 export const SYNDICATES: Syndicate[] = [];
 
-export const SYNDICATE_NAMES: Record<number, string> = {};
+export const SYNDICATE_NAMES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'name',
+);
 
 /** The uniform the rank and file are met in */
 export const SYNDICATE_GRUNT_CHARSETS: Record<number, string[]> = {};
@@ -84,17 +88,32 @@ export const SYNDICATE_GRUNT_HONORS: Record<number, Awards> = {};
  */
 export const SYNDICATE_EXECUTIVES: Record<number, Executive[]> = {};
 
-export const SYNDICATE_BOSS_NAMES: Record<number, string> = {};
+export const SYNDICATE_BOSS_NAMES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'boss',
+);
 
 export const SYNDICATE_BOSS_CHARSETS: Record<number, string[]> = {};
 
 export const SYNDICATE_BOSS_HONORS: Record<number, Awards> = {};
 
 /** What each boss says as they bar the cell */
-export const SYNDICATE_BOSS_QUOTES: Record<number, string> = {};
+export const SYNDICATE_BOSS_QUOTES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'boss-quote',
+);
 
 /** What the rank and file say as they bar the cell */
-export const SYNDICATE_GRUNT_QUOTES: Record<number, string> = {};
+export const SYNDICATE_GRUNT_QUOTES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'grunt-quote',
+);
 
 /**
  * What each team calls its own ranks. A person at one of these
@@ -102,9 +121,19 @@ export const SYNDICATE_GRUNT_QUOTES: Record<number, string> = {};
  * first and title before the name, so who is standing there says
  * which organisation and how far up it in one line
  */
-export const SYNDICATE_BOSS_TITLES: Record<number, string> = {};
+export const SYNDICATE_BOSS_TITLES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'boss-title',
+);
 
-export const SYNDICATE_EXECUTIVE_TITLES: Record<number, string> = {};
+export const SYNDICATE_EXECUTIVE_TITLES = localeFieldTable<Syndicate>(
+  SYNDICATE_IDS,
+  SYNDICATE_TEXT,
+  'text/<locale>/syndicates.yaml',
+  'executive-title',
+);
 
 /**
  * Whose cell each biome is. A biome nobody claims is Rocket's, so one
@@ -131,19 +160,6 @@ for (const [name, written] of Object.entries(
 }
 SYNDICATES.sort((one, two) => one - two);
 
-for (const [name, said] of Object.entries(
-  v.parse(v.record(v.string(), SYNDICATE_TEXT), syndicateTextFile),
-)) {
-  const syndicate = idOf<Syndicate>(SYNDICATE_IDS, name, `text/en/syndicates.yaml: ${name}`);
-
-  SYNDICATE_NAMES[syndicate] = said.name;
-  SYNDICATE_BOSS_NAMES[syndicate] = said.boss;
-  SYNDICATE_BOSS_TITLES[syndicate] = said['boss-title'];
-  SYNDICATE_EXECUTIVE_TITLES[syndicate] = said['executive-title'];
-  SYNDICATE_BOSS_QUOTES[syndicate] = said['boss-quote'];
-  SYNDICATE_GRUNT_QUOTES[syndicate] = said['grunt-quote'];
-}
-
 // Every team and every executive the enums have is written down, so
 // nobody bars a cell nameless or bare
 for (const [name, syndicate] of Object.entries(SYNDICATE_IDS)) {
@@ -160,6 +176,13 @@ for (const [name, executive] of Object.entries(EXECUTIVE_IDS)) {
   }
 }
 
+/** How a team's people are introduced, team first and title before the name */
+const SYNDICATE_PHRASES = localePhrases(
+  import.meta.glob('../text/*/syndicate-titles.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/syndicate-titles.yaml',
+  ['grunt', 'person'],
+);
+
 /** Whose cell this is, in this biome */
 export function getSyndicate(biome: Biome): Syndicate {
   return CLAIMED.get(biome) ?? Syndicate.Rocket;
@@ -167,17 +190,25 @@ export function getSyndicate(biome: Biome): Syndicate {
 
 /** "Team Aqua Leader Archie" */
 export function bossName(syndicate: Syndicate): string {
-  return `${SYNDICATE_NAMES[syndicate]} ${SYNDICATE_BOSS_TITLES[syndicate]} ${SYNDICATE_BOSS_NAMES[syndicate]}`;
+  return SYNDICATE_PHRASES('person', {
+    team: SYNDICATE_NAMES[syndicate],
+    title: SYNDICATE_BOSS_TITLES[syndicate],
+    name: SYNDICATE_BOSS_NAMES[syndicate],
+  });
 }
 
 /** "Team Magma Admin Tabitha" */
 export function executiveName(syndicate: Syndicate, executive: Executive): string {
-  return `${SYNDICATE_NAMES[syndicate]} ${SYNDICATE_EXECUTIVE_TITLES[syndicate]} ${EXECUTIVE_NAMES[executive]}`;
+  return SYNDICATE_PHRASES('person', {
+    team: SYNDICATE_NAMES[syndicate],
+    title: SYNDICATE_EXECUTIVE_TITLES[syndicate],
+    name: EXECUTIVE_NAMES[executive],
+  });
 }
 
 /** "Team Aqua Grunt", who is a uniform rather than a person */
 export function gruntName(syndicate: Syndicate): string {
-  return `${SYNDICATE_NAMES[syndicate]} Grunt`;
+  return SYNDICATE_PHRASES('grunt', { team: SYNDICATE_NAMES[syndicate] });
 }
 
 /** Every mark they pay, for the shelf that lists them */

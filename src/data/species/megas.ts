@@ -25,6 +25,8 @@ interface MegaShape {
   key: string;
   mega: Species;
   base: Species;
+  /** The pokemon whose name the Mega's is made from: the base, or the plain pokemon where the base is a form */
+  named: Species;
   name: string;
   stats: Record<Stats, number>;
   types: Types[];
@@ -60,6 +62,18 @@ const MEGA_TEMPLATES = readLocaleText(
   'text/<locale>/mega-names.yaml',
 );
 
+/**
+ * The species a Mega is named for. Mega Floette is a Mega of the Eternal
+ * Flower form, but it is called for Floette, as Mega Zygarde is for
+ * Zygarde: the Mega's own key, less its Mega suffix, when that is a
+ * pokemon, and the base otherwise
+ */
+function namedFor(key: string, base: string): string {
+  const plain = key.replace(/Mega[XYZ]?$/, '');
+
+  return Object.hasOwn(SPECIES_IDS, plain) ? plain : base;
+}
+
 /** The letter a Mega with more than one form is told apart by */
 const LETTERED = /Mega([XYZ])$/;
 
@@ -81,7 +95,7 @@ function nameMega(shape: MegaShape, locale: Locale): string {
     return shape.name;
   }
 
-  const base = name.replace('{base}', getSpeciesData(shape.base).name);
+  const base = name.replace('{base}', getSpeciesData(shape.named).name);
   const letter = LETTERED.exec(shape.key)?.[1];
   const variant = MEGA_TEMPLATES.translated.get('variant')?.get(locale);
 
@@ -120,6 +134,7 @@ function readMegas(): MegaShape[] {
         key,
         mega: idOf(SPECIES_IDS, key, where),
         base: idOf(SPECIES_IDS, entry.base, where),
+        named: idOf(SPECIES_IDS, namedFor(key, entry.base), where),
         name,
         stats: readStats(entry.stats, where),
         types: idsOf<Types>(TYPE_IDS, entry.types, where),

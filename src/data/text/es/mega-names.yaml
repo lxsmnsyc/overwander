@@ -1,0 +1,4 @@
+# El nombre de una megaevolución se forma con el del Pokémon del que procede.
+
+name: Mega-{base}
+variant: '{name} {letter}'

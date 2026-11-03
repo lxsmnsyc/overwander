@@ -37,7 +37,10 @@ const BRAIN = v.strictObject({
   'gold-party': v.array(v.string()),
 });
 
-const TEXT_FILES = import.meta.glob('../../text/*/frontier.yaml', { eager: true, import: 'default' });
+const TEXT_FILES = import.meta.glob('../../text/*/frontier.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 /** Every Brain, in the order they are numbered */
 export const FRONTIER_BRAINS: FrontierBrain[] = [];

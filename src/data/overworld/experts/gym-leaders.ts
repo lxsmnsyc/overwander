@@ -40,7 +40,10 @@ const LEADER = v.strictObject({
   signature: v.string(),
 });
 
-const SAID_TEXT = import.meta.glob('../../text/*/gym-leaders.yaml', { eager: true, import: 'default' });
+const SAID_TEXT = import.meta.glob('../../text/*/gym-leaders.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 /** Every leader, in the order they are numbered */
 export const GYM_LEADERS: GymLeader[] = [];

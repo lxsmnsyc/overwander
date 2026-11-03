@@ -3,7 +3,7 @@ import type Awards from '../ids/awards';
 import { Items } from '../ids/items';
 import type Regions from '../ids/regions';
 import { REGIONS, REGION_DEXES, REGION_NAMES } from '../species/regions';
-import rungsFile from '../text/en/dex-rungs.yaml';
+import { localeFile } from '../yaml';
 import {
   type ChainData,
   type Chains,
@@ -59,13 +59,17 @@ function regionTitle(region: Regions): string {
  * it are the titles a collector picks up on the way, and a ladder
  * longer than the titles falls back to counting
  */
-const RUNG_NAMES = v.parse(v.array(v.string()), rungsFile);
+const RUNG_NAMES = localeFile(
+  import.meta.glob('../text/*/dex-rungs.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/dex-rungs.yaml',
+  v.array(v.string()),
+);
 
 function rungName(region: Regions, rung: number, rungs: number): string {
   if (rung === rungs - 1) {
     return `${regionTitle(region)} Complete`;
   }
-  return RUNG_NAMES[rung] ?? `${regionTitle(region)} Dex ${rung + 1}`;
+  return RUNG_NAMES.read()[rung] ?? `${regionTitle(region)} Dex ${rung + 1}`;
 }
 
 /**
@@ -107,11 +111,19 @@ export function getDexQuests(region: Regions): Map<Quests, QuestData> {
   }
 
   for (const [rung, count] of dex.milestones.entries()) {
-    quests.set(dexQuestId(region, rung), {
+    const quest: QuestData = {
       name: rungName(region, rung, dex.milestones.length),
       requirements: [{ kind: RequirementKind.Dex, count, region }],
       rewards: rungRewards(dex.medal, rung, dex.milestones.length),
+    };
+
+    // The rung's title is read in the player's locale each time it is asked for
+    Object.defineProperty(quest, 'name', {
+      configurable: true,
+      enumerable: true,
+      get: () => rungName(region, rung, dex.milestones.length),
     });
+    quests.set(dexQuestId(region, rung), quest);
   }
   return quests;
 }

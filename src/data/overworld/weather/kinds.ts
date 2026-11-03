@@ -18,7 +18,10 @@ const KIND = v.strictObject({
   battle: v.string(),
 });
 
-const WEATHER_TEXT = import.meta.glob('../../text/*/weather.yaml', { eager: true, import: 'default' });
+const WEATHER_TEXT = import.meta.glob('../../text/*/weather.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 export const WEATHER_NAMES = localeFieldTable<Weather>(
   WEATHER_IDS,

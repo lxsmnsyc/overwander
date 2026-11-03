@@ -485,10 +485,7 @@ export function localeFieldTable<T extends number>(
  * A table of lines keyed by something that is not an id (a sheet's
  * path). Each entry a locale translates reads in the active locale
  */
-export function localeLines(
-  files: Record<string, unknown>,
-  where: string,
-): Record<string, string> {
+export function localeLines(files: Record<string, unknown>, where: string): Record<string, string> {
   const text = readLocaleText(files, where);
   const table: Record<string, string> = Object.fromEntries(text.english);
 
@@ -525,31 +522,43 @@ export function localizeLine<T extends object>(
   });
 }
 
+/** A whole text file read in the active locale, and the English it falls back to */
+export interface LocaleFile<T> {
+  english: T;
+  read: () => T;
+}
+
 /**
  * A whole text file that is not a table (a list, or a bundle of
  * lists), read in the active locale. A locale that writes the file
  * writes all of it, so a list never mixes two languages. Read it when
- * it is used, not once at load
+ * it is used, not once at load. `check` holds a locale's file against
+ * English, for what the shape alone cannot say (two lists of one length)
  */
 export function localeFile<T>(
   files: Record<string, unknown>,
   where: string,
   schema: v.GenericSchema<unknown, T>,
-): () => T {
+  check?: (written: T, english: T, where: string) => void,
+): LocaleFile<T> {
   const byLocale = splitLocales(files);
   const english = v.parse(schema, englishFileOf(byLocale, where));
   const written = new Map<Locale, T>();
 
   for (const [locale, placed] of byLocale.overlays) {
     for (const [path, file] of Object.entries(placed)) {
+      let read: T;
+
       try {
-        written.set(locale, v.parse(schema, file));
+        read = v.parse(schema, file);
       } catch (error) {
         throw new Error(`${path} must write the whole file: ${String(error)}`, { cause: error });
       }
+      check?.(read, english, path);
+      written.set(locale, read);
     }
   }
-  return () => written.get(currentLocale()) ?? english;
+  return { english, read: () => written.get(currentLocale()) ?? english };
 }
 
 /**

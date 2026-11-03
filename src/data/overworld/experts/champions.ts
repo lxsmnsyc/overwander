@@ -21,7 +21,10 @@ const CHAMPION = v.strictObject({
   party: v.array(v.string()),
 });
 
-const SAID_TEXT = import.meta.glob('../../text/*/champions.yaml', { eager: true, import: 'default' });
+const SAID_TEXT = import.meta.glob('../../text/*/champions.yaml', {
+  eager: true,
+  import: 'default',
+});
 
 /** Every champion, in the order they are numbered */
 export const CHAMPIONS: Champion[] = [];

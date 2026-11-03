@@ -39,7 +39,18 @@ const ABILITY_TEXT = join(import.meta.dirname, '../../src/data/text/en/abilities
  * The regions whose signature abilities are translated, names and
  * descriptions both. A batch that translates more regions adds them here
  */
-const SIGNATURE_REGIONS = ['kanto', 'johto', 'hoenn', 'sinnoh'];
+const SIGNATURE_REGIONS = [
+  'kanto',
+  'johto',
+  'hoenn',
+  'sinnoh',
+  'unova',
+  'kalos',
+  'alola',
+  'galar',
+  'hisui',
+  'paldea',
+];
 
 /**
  * The key of every entry written in the English text under a folder,

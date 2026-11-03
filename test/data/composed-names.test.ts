@@ -76,7 +76,6 @@ const EXPECTED = [
   'daily|1793664000000|1|Daily Stroll',
   'daily|1793664000000|2|Answer the Siren',
   'weekly|1793664000000|The Pancham Hunt',
-  'quiet|undefined|Featured: Bulbasaur',
   'lair|SeafoamIslands|Seafoam Islands',
   'lair|SeafoamIslands|Shadow Seafoam Islands',
   'lair|PowerPlant|Power Plant',

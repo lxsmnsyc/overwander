@@ -1,0 +1,45 @@
+# Cómo se llama cada sindicato, cómo llama a sus rangos y lo que dicen su jefe
+# y sus reclutas al cerrar el paso a la celda
+
+Rocket:
+  name: Team Rocket
+  boss: Giovanni
+  boss-title: Líder
+  executive-title: Ejecutivo/a
+  boss-quote: Así que eres tú. Enséñame lo que tienes.
+  grunt-quote: Te has equivocado de camino. Tres de los míos opinan lo mismo.
+Magma:
+  name: Equipo Magma
+  boss: Magno
+  boss-title: Líder
+  executive-title: Comandante
+  boss-quote: El mar ya ha tenido su turno. Yo le devuelvo a la tierra lo suyo.
+  grunt-quote: Este suelo va a valer algo. Largo de aquí.
+Aqua:
+  name: Equipo Aqua
+  boss: Aquiles
+  boss-title: Líder
+  executive-title: Comandante
+  boss-quote: Todo empezó en el agua. Yo solo lo devuelvo a casa.
+  grunt-quote: La marea sube te muevas o no.
+Galactic:
+  name: Equipo Galaxia
+  boss: Helio
+  boss-title: Líder
+  executive-title: Comandante
+  boss-quote: Este mundo está hecho de espíritu, y el espíritu es el defecto. Prescindiré de él.
+  grunt-quote: El viejo mundo acaba aquí. Puedes ir primero, si quieres.
+Plasma:
+  name: Equipo Plasma
+  boss: Ghechis
+  boss-title: Sabio
+  executive-title: Ejecutivo
+  boss-quote: Cada Pokémon que tienes a tu espalda es uno que recuperaré. Empezando por esos.
+  grunt-quote: Libéralos, o lo haremos nosotros. Esas son las dos puertas.
+Flare:
+  name: Team Flare
+  boss: Lysson
+  boss-title: Jefe
+  executive-title: Científico/a
+  boss-quote: El mundo está demasiado lleno de gente que toma. Tus Pokémon serán lo último que tomes.
+  grunt-quote: Solo la gente con estilo tiene futuro. Lo siento, tú no cumples.

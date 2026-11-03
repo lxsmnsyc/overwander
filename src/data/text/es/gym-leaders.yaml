@@ -1,0 +1,164 @@
+# Cómo se llama cada líder de gimnasio y lo que dice al plantearse el desafío
+
+Brock:
+  name: Brock
+  quote: La roca es sólida. Demuéstrame que tu temple lo es más.
+Misty:
+  name: Misty
+  quote: Mis Pokémon de tipo Agua son más duros de lo que parecen. Yo también.
+LtSurge:
+  name: Teniente Surge
+  quote: ¡Firmes ya! Si sobrevives a mi descarga eléctrica, la medalla es tuya.
+Erika:
+  name: Erika
+  quote: Hoy la hierba está en calma. ¿Empezamos?
+Koga:
+  name: Koga
+  quote: El veneno de un ninja actúa despacio. Tu derrota no lo hará.
+Sabrina:
+  name: Sabrina
+  quote: Ya había visto este combate. Lo que no vi es que ganases.
+Blaine:
+  name: Blaine
+  quote: ¡Mi fuego arde con fuerza! Trae agua. No te servirá de nada.
+Giovanni:
+  name: Giovanni
+  quote: Has interferido por última vez. Arrodíllate ante mí.
+Falkner:
+  name: Pegaso
+  quote: Los pájaros de mi padre nos observan. No me dejes en ridículo ante ellos.
+Bugsy:
+  name: Antón
+  quote: He estudiado a los Pokémon de tipo Bicho toda mi vida. Tú, no.
+Whitney:
+  name: Blanca
+  quote: ¡Pareces fuerte! Pero yo lo soy más, y no voy a llorar por ello.
+Morty:
+  name: Morti
+  quote: Los fantasmas me muestran cosas. Ahora mismo me muestran tu derrota.
+Chuck:
+  name: Aníbal
+  quote: ¡Yo entreno bajo las cascadas! ¡Tus Pokémon entrenan bajo un techo!
+Jasmine:
+  name: Yasmina
+  quote: Esto... Lo siento. Mis Pokémon de tipo Acero no caen fácilmente.
+Pryce:
+  name: Fredo
+  quote: He visto noventa inviernos. No aguantarás ni uno.
+Clair:
+  name: Débora
+  quote: Soy la mejor maestra dragón. Intenta demostrar lo contrario.
+Roxanne:
+  name: Petra
+  quote: Estudié los Pokémon de tipo Roca en la academia. Veamos qué has estudiado tú.
+Brawly:
+  name: Marcial
+  quote: ¡Soy una gran ola en camino! ¡Ven y estréllate contra mí!
+Wattson:
+  name: Erico
+  quote: ¡Jajajaja! ¡Mis máquinas funcionan con mis Pokémon! ¡Cuidado con la descarga!
+Flannery:
+  name: Candela
+  quote: Mi abuelo me dejó este gimnasio. Pienso mantenerlo caliente.
+Norman:
+  name: Norman
+  quote: Soy el padre de alguien y no me ando con contemplaciones. Ven.
+Winona:
+  name: Alana
+  quote: He volado con las aves toda mi vida. No nos vas a tocar.
+Tate:
+  name: Vito
+  quote: Mi hermana sabe lo que voy a hacer. ¿Y tú?
+Liza:
+  name: Leti
+  quote: Mi hermano y yo compartimos una medalla. Aun así, tendrás que ganártela.
+Juan:
+  name: Galano
+  quote: El agua es elegancia, y la elegancia es fuerza. Observa.
+Roark:
+  name: Roco
+  quote: Me paso el día sacando fósiles de esta roca. Sacarte a ti será más rápido.
+Gardenia:
+  name: Gardenia
+  quote: Los Pokémon de tipo Planta son maravillosos, y los míos son maravillosamente crueles.
+Maylene:
+  name: Brega
+  quote: Soy joven para dirigir un gimnasio. Nadie me lo ha quitado aún.
+CrasherWake:
+  name: Mananti
+  quote: ¡Crash! La medalla está a mi espalda, y también un muro de agua.
+Fantina:
+  name: Fantina
+  quote: Mis fantasmas bailan y nunca pierden el paso. ¿Empezamos?
+Byron:
+  name: Acerón
+  quote: Mi hijo dirige su propio gimnasio. Ninguno de los dos regala nada.
+Candice:
+  name: Inverna
+  quote: ¡Concentración! Eso es todo lo que hace falta. La mía nunca ha fallado.
+Volkner:
+  name: Lectro
+  quote: Llevo años aburrido. Por favor, que merezca la pena la electricidad.
+Cilan:
+  name: Millo
+  quote: Permíteme probar tu estilo de combate. Seguro que está poco hecho.
+Chili:
+  name: Zeo
+  quote: ¡Mi fuego arde más que el de mis hermanos juntos! ¡Vamos allá!
+Cress:
+  name: Maíz
+  quote: La compostura gana combates. Yo tengo bastante.
+Lenora:
+  name: Aloe
+  quote: ¿Quieres la medalla? Entonces enséñame algo digno de mi museo.
+Burgh:
+  name: Camus
+  quote: Mis Pokémon de tipo Bicho y yo estamos creando algo hermoso. Procura no estropearlo.
+Elesa:
+  name: Camila
+  quote: Los focos te apuntan ya. Veamos qué tal pierdes.
+Clay:
+  name: Yakón
+  quote: Yo mismo excavé este gimnasio. No te irás con él tan barato.
+Skyla:
+  name: Gerania
+  quote: He volado por todas las rutas de esta región. No podrás escapar de mí.
+Brycen:
+  name: Junco
+  quote: Dejé los escenarios por el hielo. Aquí nadie actúa.
+Drayden:
+  name: Lirio
+  quote: A un dragón no se le doma con desearlo. Enséñame lo que tienes.
+Cheren:
+  name: Cheren
+  quote: Antes perseguía la fuerza. Ahora la enseño. Veamos qué has aprendido.
+Roxie:
+  name: Hiedra
+  quote: ¡Sube el volumen! Si mi veneno no te alcanza, ¡lo hará el ruido!
+Marlon:
+  name: Ciprián
+  quote: El mar hace lo que quiere, y yo también. Que sea un buen combate.
+Viola:
+  name: Violeta
+  quote: No te muevas, quiero esta foto. Es en la que pierdes.
+Grant:
+  name: Lino
+  quote: Todo muro tiene un camino hacia arriba. Veamos si encuentras el mío.
+Korrina:
+  name: Corelia
+  quote: ¡Patines puestos, puños en alto! ¡Espero que puedas seguirme el ritmo!
+Ramos:
+  name: Amaro
+  quote: Un jardín requiere paciencia, y vencerme también.
+Clemont:
+  name: Lem
+  quote: ¡El futuro es ahora, gracias a la ciencia! ¡Mira mi invento en acción!
+Valerie:
+  name: Valeria
+  quote: Oh, una visita. Mis Pokémon de tipo Hada son dulces, hasta que dejan de serlo.
+Olympia:
+  name: Ástrid
+  quote: Ya he visto cómo acaba esto. ¿Lo representamos?
+Wulfric:
+  name: Édel
+  quote: ¡Ja! Un buen combate calienta los huesos. ¡Vamos, entonces!

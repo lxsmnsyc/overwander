@@ -1,0 +1,17 @@
+# チューブの カーテンと ルーレットの パネルの なまえ。
+# しょうぶの はじまりを つげる ぶんに はいる
+
+curtains:
+  Poisoned: どくに おかされた
+  Burned: やけどを おった
+  Paralysed: まひした
+  Asleep: ねむらされた
+  Healed: かいふくした
+panels:
+  Sun: ひざしが でる
+  Rain: あめが ふる
+  Sandstorm: すなが まいあがる
+  Hail: あられが ふる
+  Stripped: もちものは ぜんぶ いりぐちに おいて いく
+  Poisoned: みんな どくに おかされる
+  Mended: みんな かいふくする

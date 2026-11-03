@@ -1,0 +1,55 @@
+# Cómo se llama cada As del Frente Batalla, la instalación que dirige (de la que
+# recibe su nombre su regla) y lo que dice al entrar
+
+Brandon:
+  name: Valente
+  house: Pirámide Batalla
+  greeting: Has venido a mi pirámide. Deja todo en la puerta y sube.
+Greta:
+  name: Coro
+  house: Dojo Batalla
+  greeting: El reloj corre. Lucha como si importara, porque te juzgan.
+Lucy:
+  name: Fortunia
+  house: Sierpe Batalla
+  greeting: Elige una cortina. Lo que hay detrás no es obra mía y no me importa.
+Noland:
+  name: Sabino
+  house: Fábrica Batalla
+  greeting: Aquí nada es tuyo y nada es mío. Elige tres y veamos.
+Anabel:
+  name: Destra
+  house: Torre Batalla
+  greeting: Aquí arriba no hay trucos. Mis tres contra tus tres. Empieza cuando quieras.
+Spenser:
+  name: Aniceto
+  house: Palacio Batalla
+  greeting: En mi palacio nadie recibe órdenes. Trae a tres cuyo corazón ya conozcas.
+Tucker:
+  name: Tactio
+  house: Cúpula Batalla
+  greeting: Enséñame primero a tus tres. La Cúpula siempre responde, y al público le encanta una respuesta.
+Palmer:
+  name: Jericor
+  house: Torre Batalla
+  greeting: Mi hijo habla de ti. Veamos si exageraba.
+Thorton:
+  name: Espinal
+  house: Fábrica Batalla
+  greeting: Pokémon de alquiler para ambos, sin preparación. Yo he hecho los cálculos. Tú, no.
+Dahlia:
+  name: Delila
+  house: Ruleta Batalla
+  greeting: ¡Hazla girar! Lo que salga nos toca a los dos. Esa es la gracia.
+Darach:
+  name: Kokuran
+  house: Castillo Batalla
+  greeting: La señorita observa. Me temo que la casa se reserva su propia medicina.
+Caitlin:
+  name: Catleya
+  house: Castillo Batalla
+  greeting: Suele hacerlo Kokuran por mí. Hoy tengo demasiada curiosidad y lo haré yo.
+Argenta:
+  name: Argenta
+  house: Sala Batalla
+  greeting: Uno mío, uno tuyo. Nadie más detrás del que esconderse.

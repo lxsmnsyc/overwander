@@ -1,0 +1,20 @@
+# Cómo se llama cada campeón y el saludo al plantearse el último combate de su liga
+
+Blue:
+  name: Azul
+  greeting: Azul sonríe con suficiencia. «Soy el Campeón de aquí. ¡Hasta luego, cocodrilo!»
+Lance:
+  name: Lance
+  greeting: Lance te mira de arriba abajo. «Así que has llegado hasta aquí. Muéstrame lo mejor que tienes.»
+Wallace:
+  name: Plubio
+  greeting: Plubio hace una reverencia. «Hagamos esto hermoso, y hagámoslo breve.»
+Cynthia:
+  name: Cintia
+  greeting: Cintia cierra su libro. «He estado esperando a alguien que merezca el equipo entero.»
+Iris:
+  name: Iris
+  greeting: Iris sonríe de oreja a oreja. «Todos me decían que era demasiado joven para este asiento. Ven a comprobarlo.»
+Diantha:
+  name: Dianta
+  greeting: Dianta sonríe como si las cámaras estuvieran grabando. «¿Les damos una escena que merezca recordarse?»

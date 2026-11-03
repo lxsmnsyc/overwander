@@ -13,3 +13,13 @@
   - es: Comerciante (Trader) was written first and renamed Intercambiador: Comerciante names the vendor, chef and geologist as well. Cañas (Reed) became Juncos: cañas are beers in Spain. Kept: Peluquero, Vendedor, Cocinero, Geólogo, Superentrenador, Peñasco, Tocón, Puesto de ... for the stalls.
 - Tests: `test/data/locale-people-places.test.ts` gains three checks (every person, stall and scenery line written in ja and es with the fields English has; descriptions end on 。 or .; no two people share a name in a locale). The existing parity test covers the new YAML; `test/i18n/messages.test.ts` covers the 122 messages without a change. `test/data/official-names.test.ts` (no kanji in ja text) passes.
 - Lint: the first run of the new test failed `no-unsafe-type-assertion`; the checks now read the YAML through valibot schemas (03c677642).
+
+## Review and user decisions
+
+- User decisions: Hyper Trainer named for the official feature (ja すごいとっくんの コーチ, es Entrenador Extremo; the Super Training row in the term list was wrong, that is Gen 6). Trader in es is Comerciante, chosen by the user, so the Intercambiador rename is undone. Tree scenery in ja is じゅもく. Groomer in es stays Peluquero. わざおもいだし is official and stays.
+- Japanese fixes: Groomer quote names the pokemon as the subject; Kurt's quote says つんだ (picked, harvested) instead of えらんだ; the stray space in the groomer's refusal is gone; the breeder's refusal no longer says the player bred with him (この じかんわくに もう かけあわせたか).
+- Spanish fixes (Spain): "Sin cargo" is "Gratis" for Nurse Joy and Kurt, and Kurt's "Trae acá" is "Dámelos"; the Trader's "tipo" (read as an elemental type) is "rareza" in the description, quote and empty line; "uno del que no puedes separarte"; Fossil Scientist is Científico (the English lines say "he"); the Hyper Trainer's "valor" is "IV", as the term list has it.
+- Plurals: `npc_reminder_count` is a plural in en, ja and es (es olvidado / olvidados). `npc_unit_apricorns` is a plural in all three (apricorn / apricorns, bonguri / bonguris), and Kurt passes the count, so English "1 apricorns" now reads "1 apricorn".
+- Money: es `npc_price_note` read "{price} ₽" beside "de dinero" everywhere else; it follows `ui_gold` now ("{price} de dinero"). ja already writes おかね {price} like `ui_gold`.
+- The trader's `{band}` stays English in ja and es until `i18n-places` writes `spawn-rarities.yaml`; noted under stubs.
+- Kept: npc_daycare_done says cariño, which the English line lacks, because it matches her voice.

@@ -12,7 +12,7 @@
 ## Deviations
 
 - Shared paths touched: the terms file, and `test/data/locale-people-places.test.ts` instead of a new test file.
-- English changed in one way: prices, fees and egg steps in the conversations now group thousands (`formatNumber`), so 12500 reads 12,500 (12.500 in Spanish). It is its own commit; amounts under a thousand read as before.
+- English changed in two ways: prices, fees and egg steps in the conversations now group thousands (`formatNumber`), so 12500 reads 12,500 (12.500 in Spanish), in its own commit; and the apricorn count on Kurt's chip is a plural, so "1 apricorns" reads "1 apricorn". Amounts under a thousand read as before.
 - `src/overworld/npcs/groomer/interact.ts` imports `sayFriendship` from `src/components/catches/catch-summary` for the mood word, instead of `describeFriendship` (English words, no locale).
 
 ## Coined names
@@ -22,17 +22,17 @@
 | Groomer | トリマー | Peluquero |
 | Vendor | あきんど | Vendedor |
 | Geologist | ちしつがくしゃ | Geólogo |
-| Trader | こうかんや | Intercambiador |
-| Hyper Trainer | ハイパートレーナー | Superentrenador |
+| Trader | こうかんや | Comerciante |
+| Hyper Trainer | すごいとっくんの コーチ | Entrenador Extremo |
 | Medicine Stall, Vitamin Stall, Incense Stall | くすりの やたい, ビタミンの やたい, おこうの やたい | Puesto de Medicinas, Vitaminas, Inciensos |
 | Battle Item Stall, Ball Stall, Machine Stall | バトルアイテムの やたい, ボールの やたい, わざマシンの やたい | Puesto de Objetos de Combate, Poké Balls, Máquinas |
 
-Renames after the second-reading pass: ja トレーダー to こうかんや (one kana from トレーナー); ja まつ to マツ (also "to wait"); ja はな to はなばな (also the nose); es Comerciante to Intercambiador (it described the vendor too); es Cañas to Juncos (beers in Spain). The other names are the games' own (see the terms file).
+Renames after the second-reading pass: ja トレーダー to こうかんや (one kana from トレーナー); ja まつ to マツ (also "to wait"); ja はな to はなばな (also the nose); es Cañas to Juncos (beers in Spain). User decisions after the review: Hyper Trainer is named for the official feature (ja ハイパートレーナー to すごいとっくんの コーチ, es Superentrenador to Entrenador Extremo); es Trader is Comerciante (the Intercambiador rename was undone); ja Tree scenery is じゅもく instead of き; es Groomer stays Peluquero. The other names are the games' own (see the terms file).
 
 ## Stubs left
 
-- The trader's line fills in the rarity band as it is written in the active language. `spawn-rarities.yaml` has no ja or es file yet (another node of the batch), so that word reads in English inside the ja and es sentence until it is translated.
-- Spanish for the Fossil Scientist is feminine in the name (la Científica, as the term list has it) while the English lines say "he"; the Spanish lines avoid a pronoun for her.
+- The trader's line fills in `{band}` from `SPAWN_RARITY_NAMES`, which has no ja or es file until `i18n-places`; that word reads in English inside the ja and es sentence until then. The files are not added here.
+- The Fossil Scientist is masculine in Spanish (Científico de Fósiles), as the English lines say "he"; the item-bag help line that said la Científica now says el Científico.
 - Where the English NPC name is the same word as a trainer class (Breeder, Chef, Trainer), ja and es use the class's official word; `i18n-people-trainers` should read the same word in the class list.
 
 ## Gotchas

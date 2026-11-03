@@ -195,23 +195,103 @@ const FEMININE_TITLES = new Set(['Ciudad', 'Aldea', 'Parada']);
 /** The Spanish titles that are plural */
 const PLURAL_TITLES = new Set(['Molinos']);
 
-/** The marks that are adjectives, by the stem they inflect from */
-const ADJECTIVE_MARKS = new Map([
-  ['Nuevo', 'Nuev'],
-  ['Viejo', 'Viej'],
-  ['Alto', 'Alt'],
-  ['Bajo', 'Baj'],
-  ['Pequeño', 'Pequeñ'],
+/**
+ * The words of the Spanish lists that are adjectives, in the masculine
+ * singular: they take the title's gender and number ("Ciudad Nueva",
+ * "Molinos Ardientes"). The rest are nouns and stay as written
+ */
+const ADJECTIVES = new Set([
+  'Nuevo',
+  'Viejo',
+  'Alto',
+  'Bajo',
+  'Pequeño',
+  'Bravío',
+  'Varado',
+  'Zancudo',
+  'Enmarañado',
+  'Cenagoso',
+  'Apuntalado',
+  'Vadeable',
+  'Anudado',
+  'Sombrío',
+  'Crepuscular',
+  'Ranero',
+  'Febril',
+  'Vaporoso',
+  'Hondo',
+  'Descortezado',
+  'Lluvioso',
+  'Rugiente',
+  'Pajizo',
+  'Ardiente',
+  'Leonado',
+  'Abrasador',
+  'Espejeante',
+  'Polvoriento',
+  'Caldeado',
+  'Espigado',
+  'Naciente',
+  'Silencioso',
+  'Húmedo',
+  'Amargo',
+  'Alcalino',
+  'Erosionado',
+  'Pálido',
+  'Resinoso',
+  'Helado',
+  'Deshelado',
+  'Desolado',
+  'Nevado',
+  'Tormentoso',
+  'Escarpado',
+  'Aterido',
+  'Alpino',
+  'Enrarecido',
+  'Nuboso',
+  'Plateado',
+  'Escarchado',
+  'Blanco',
+  'Quieto',
+  'Desprendido',
+  'Salpicado',
+  'Espeso',
+  'Ventoso',
+  'Ancho',
+  'Errante',
+  'Barrido',
+  'Neblinoso',
+  'Maderero',
+  'Zigzagueante',
+  'Humeante',
+  'Ceniciento',
+  'Oxidado',
+  'Rociado',
+  'Hundido',
+  'Fatuo',
+  'Salobre',
+  'Emplumado',
+  'Caballar',
 ]);
 
-/** A Spanish mark made to agree with the title it follows ("Ciudad Nueva", "Molinos Nuevos") */
-function agreeSpanish(mark: string, title: string): string {
-  const stem = ADJECTIVE_MARKS.get(mark);
-
-  if (stem == null) {
-    return mark;
+/** A Spanish word made to agree with the title it follows ("Ciudad Nueva", "Molinos Ardientes") */
+function agreeSpanish(word: string, title: string): string {
+  if (!ADJECTIVES.has(word)) {
+    return word;
   }
-  return `${stem}${FEMININE_TITLES.has(title) ? 'a' : 'o'}${PLURAL_TITLES.has(title) ? 's' : ''}`;
+
+  const feminine = FEMININE_TITLES.has(title);
+  const plural = PLURAL_TITLES.has(title);
+  let agreed = word;
+
+  // -o becomes -a and -or takes -a, while -e and the rest do not change
+  if (feminine && /(?:o|or)$/u.test(agreed)) {
+    agreed = agreed.endsWith('o') ? `${agreed.slice(0, -1)}a` : `${agreed}a`;
+  }
+  if (!plural) {
+    return agreed;
+  }
+  return /[aeiou]$/u.test(agreed) ? `${agreed}s` : `${agreed}es`;
 }
 
 /**
@@ -223,17 +303,15 @@ function agreeSpanish(mark: string, title: string): string {
 export const TOWN_JOINERS: Record<string, (parts: TownParts) => string> = {
   [baseLocale]: ({ mark, head, tail, title, county }) =>
     `${mark == null ? '' : `${mark} `}${head}${tail} ${title}, ${county}`,
-  // Like "さざなみぐんの しんかいがらやまタウン": the county first and set off
-  // by ぐんの, as an address runs from the largest place down, then the name
-  // in one word (mark, head, tail), then the title. タウン and シティ weld on
-  // as in the games; the other titles are words of their own and stand apart
-  ja: ({ mark, head, tail, title, county }) =>
-    `${county}ぐんの ${mark ?? ''}${head}${tail}${/^\p{Script=Katakana}/u.test(title) ? '' : ' '}${title}`,
+  // Like "ナミハタケシティ（コガネザカイ）", the way the games write a town: one
+  // katakana word (mark, head, tail) with the title welded on, then the
+  // county in full-width brackets
+  ja: ({ mark, head, tail, title, county }) => `${mark ?? ''}${head}${tail}${title}（${county}）`,
   // Title first, then the mark, as in "Ciudad Nueva Concha del Risco, Marca
   // Ceniza". The mark agrees with the title like "Ciudad Real" and "Pueblo
   // Nuevo" do, and the tail is a phrase of its own ("del Risco")
   es: ({ mark, head, tail, title, county }) =>
-    `${title} ${mark == null ? '' : `${agreeSpanish(mark, title)} `}${head} ${tail}, ${county}`,
+    `${title} ${mark == null ? '' : `${agreeSpanish(mark, title)} `}${agreeSpanish(head, title)} ${tail}, ${county}`,
 };
 
 /** The head lists of each locale's words by biome id, read once */

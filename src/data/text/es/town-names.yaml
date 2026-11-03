@@ -1,33 +1,34 @@
 # Las palabras con que se forma el nombre de un pueblo. El orden y la
 # cantidad son los del inglés, así que un pueblo es el mismo en todos los
-# idiomas y solo cambian las palabras. Se unen como «Pueblo Nuevo Concha
-# del Risco, Marca Ceniza»: título, marca, cabeza, cola y comarca
+# idiomas y solo cambian las palabras. Se unen como «Ciudad Nueva Concha
+# del Risco, Marca Ceniza»: título, marca, cabeza, cola y comarca; los adjetivos
+# concuerdan con el título
 
 heads:
-  Beach: [Concha, Duna, Rompiente, Deriva, Guijarro, Marea, Berberecho, Espuma]
-  Mangrove: [Zanca, Maraña, Légamo, Salobre, Puntal, Vadeo, Garza, Nudo]
-  Swamp: [Fangal, Carrizo, Negrura, Turba, Juncia, Crepúsculo, Croar, Sumidero]
-  TropicalRainforest: [Bejuco, Orquídea, Fiebre, Esmeralda, Liana, Tucán, Vapor, Hondura]
-  TropicalSeasonalForest: [Teca, Monzón, Ébano, Cigarra, Bambú, Savia, Cáscara, Aguacero]
-  Savanna: [Acacia, Ámbar, Leonado, Ocre, Manada, Veld, Baobab, Incendio]
-  Desert: [Abrasador, Espejismo, Cuarzo, Cuenca, Cactus, Siroco, Polvo, Horno]
+  Beach: [Concha, Duna, Bravío, Varado, Guijarro, Marea, Berberecho, Espuma]
+  Mangrove: [Zancudo, Enmarañado, Cenagoso, Salobre, Apuntalado, Vadeable, Garza, Anudado]
+  Swamp: [Fangal, Carrizo, Sombrío, Turba, Juncia, Crepuscular, Ranero, Sumidero]
+  TropicalRainforest: [Bejuco, Orquídea, Febril, Esmeralda, Liana, Tucán, Vaporoso, Hondo]
+  TropicalSeasonalForest: [Teca, Monzón, Ébano, Cigarra, Bambú, Savia, Descortezado, Lluvioso]
+  Savanna: [Acacia, Ámbar, Leonado, Ocre, Rugiente, Pajizo, Baobab, Ardiente]
+  Desert: [Abrasador, Espejeante, Cuarzo, Cuenca, Cactus, Siroco, Polvoriento, Caldeado]
   Shrubland: [Brezal, Aulaga, Retama, Salvia, Zarza, Maleza, Enebro, Mirto]
-  Grassland: [Prado, Trébol, Cebada, Alondra, Mies, Heno, Golondrina, Amanecer]
+  Grassland: [Prado, Trébol, Cebada, Alondra, Espigado, Henar, Golondrina, Naciente]
   TemperateForest: [Roble, Haya, Bellota, Avellano, Abedul, Cervato, Saúco, Arce]
-  TemperateRainforest: [Musgo, Liquen, Cedro, Rocío, Acedera, Silencio, Laurel, Orvallo]
-  ColdDesert: [Pedernal, Yeso, Amargor, Tiza, Arenilla, Álcali, Erosión, Palidez]
-  Taiga: [Pino, Abeto, Resina, Aguja, Cebellina, Búho, Alerce, Piña]
-  Tundra: [Helada, Deshielo, Algodón, Sauce, Liebre, Desolación, Nevada, Permafrost]
-  Mountain: [Peña, Granito, Águila, Pizarra, Tormenta, Hierro, Estribación, Cumbre]
-  AlpineTundra: [Cencellada, Circo, Marmota, Alpino, Enrarecido, Nube, Pedregal, Plata]
-  Glacier: [Escarcha, Témpano, Cristal, Serac, Morrena, Blanco, Quietud, Desprendimiento]
-  Woodland: [Bosquete, Claro, Serbal, Espesura, Tejón, Acebo, Salpicado, Nuez]
-  Steppe: [Caballo, Pluma, Saiga, Vendaval, Anchura, Milano, Vagabundeo, Barrido]
-  MontaneForest: [Pinabete, Cicuta, Oso, Canchal, Niebla, Lince, Madera, Zigzag]
-  Volcano: [Ascua, Escoria, Basalto, Azufre, Pómez, Humareda, Magma, Cenizas]
-  Badlands: [Barranquera, Chimenea, Óxido, Otero, Buitre, Hueso, Rambla, Rocarroja]
-  RockyCoast: [Acantilado, Gaviota, Salpicadura, Farallón, Faro, Charrán, Percebe, Socaire]
-  Bog: [Tremedal, Arándano, Macolla, Aguazal, Avetoro, Hundimiento, Fatuo, Aguanegra]
+  TemperateRainforest: [Musgo, Liquen, Cedro, Rocío, Acedera, Silencioso, Laurel, Húmedo]
+  ColdDesert: [Pedernal, Yeso, Amargo, Tiza, Arenilla, Alcalino, Erosionado, Pálido]
+  Taiga: [Pino, Abeto, Resinoso, Aguja, Cebellina, Búho, Alerce, Piña]
+  Tundra: [Helado, Deshelado, Algodón, Sauce, Liebre, Desolado, Nevado, Permafrost]
+  Mountain: [Peña, Granito, Águila, Pizarra, Tormentoso, Hierro, Escarpado, Cumbre]
+  AlpineTundra: [Aterido, Circo, Marmota, Alpino, Enrarecido, Nuboso, Pedregal, Plateado]
+  Glacier: [Escarchado, Témpano, Cristal, Serac, Morrena, Blanco, Quieto, Desprendido]
+  Woodland: [Bosquete, Claro, Serbal, Espeso, Tejón, Acebo, Salpicado, Nuez]
+  Steppe: [Caballar, Emplumado, Saiga, Ventoso, Ancho, Milano, Errante, Barrido]
+  MontaneForest: [Pinabete, Cicuta, Oso, Canchal, Neblinoso, Lince, Maderero, Zigzagueante]
+  Volcano: [Ascua, Escoria, Basalto, Azufre, Pómez, Humeante, Magma, Ceniciento]
+  Badlands: [Barranquera, Chimenea, Oxidado, Otero, Buitre, Hueso, Rambla, Rocarroja]
+  RockyCoast: [Acantilado, Gaviota, Rociado, Farallón, Faro, Charrán, Percebe, Socaire]
+  Bog: [Tremedal, Arándano, Macolla, Aguazal, Avetoro, Hundido, Fatuo, Aguanegra]
 
 tails:
   - del Risco
@@ -55,7 +56,7 @@ tails:
   - del Mojón
   - de la Alquería
   - del Túmulo
-  - de la Aguja
+  - del Chapitel
   - del Regato
   - de la Sombra
   - de la Meseta

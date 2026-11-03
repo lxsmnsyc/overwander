@@ -286,3 +286,311 @@ The recurring patterns of the ability descriptions (`text/<locale>/abilities/`),
 | a primal sky                    | おおあめ, おおひでり, らんきりゅう                                       | lluvia torrencial, sol abrasador, vientos fuertes                | Teraform Zero names the three primal weathers rather than a coined word                                                      |
 | Shadow pokemon                  | ダークポケモン                                                           | Pokémon Oscuro                                                   | Purified                                                                                                                     |
 | Boss, Totem, Alpha, Noble       | ボス, ぬし, オヤブン, キング                                             | jefe, dominante, alfa, señorial                                  | As the boss terms above. A Noble's Frenzy is あらぶり, frenesí, and its stagger よろめき, aturdido                           |
+
+## Signature ability names
+
+The names of the signature abilities (`text/<locale>/abilities/signature/`) are coined, since the games name none of them. A name reads like an official ability name of its language: short kana in Japanese, title case in the style of the Spanish games. A legendary group, a starter trio or a counterpart pair keeps its shared theme in the translated names. No name repeats an official ability, move, item or species name, or another signature name. Kanto to Sinnoh were settled with batch 8; the later regions add their own below.
+
+Shared themes:
+
+| Group                                                                                                                                                        | Theme in ja                                                       | Theme in es                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------- | ----------------------------------------------------- |
+| Kanto starters (Verdant, Ember, Deluge Field)                                                                                                                | みどりの, ほのおの, おおみずの + ば (a field)                     | Campo + Verde, Ardiente, Diluvio                      |
+| Kanto birds, Kantonian and Galarian (Frostwing and Glarewing, Stormwing and Strikewing, Emberwing and Wrathwing)                                             | 〜の はばたき (a wingbeat)                                        | Aleteo + an adjective                                 |
+| Johto starters (Sapmark, Embermark, Jawmark)                                                                                                                 | 〜の しるし (a mark)                                              | Marca de + noun                                       |
+| Johto beasts (Risen Thunder, Flame, Tide)                                                                                                                    | よみがえる + いかずち, ほのお, なみ                               | Rayo, Llama, Marea + Renacido/a                       |
+| Hoenn starters (Sap, Ember, Silt Surge)                                                                                                                      | 〜の うねり (a surge)                                             | Oleada de + noun                                      |
+| Hoenn counterpart pairs (Shadow Tax and Jaw Claim, Cheer On and Jeer At, Tail Light and Lure Scent, Feud Claws and Deepening Venom, Moon Pull and Sun Glare) | ちょうしゅう and せいきゅう, おうえん and やじ, あかり and かおり | Tributo and Reclamo, Ánimo and Abucheo, Luz and Aroma |
+| Regis (Stone, Frost, Iron Seal)                                                                                                                              | いわの, こおりの, てつの + ふういん                               | Sello de + Roca, Hielo, Hierro                        |
+| Eon duo (Eon Shield, Eon Lance)                                                                                                                              | えいえんの + たて, やり                                           | Escudo and Lanza + Eón                                |
+| Weather trio (Primal Sea, Land, Sky)                                                                                                                         | ゲンシの + うみ, だいち, そら                                     | Mar, Tierra, Cielo + Primigenio/a                     |
+| Sinnoh starters (Bark, Cinder, Crest Brace)                                                                                                                  | 〜の みがまえ (a guard)                                           | Postura de + noun                                     |
+| Lake guardians (Mindgift, Heartgift, Willgift)                                                                                                               | ちえの, こころの, いしの + おくりもの                             | Don de + Mente, Corazón, Voluntad                     |
+| Creation trio (Time Drag, Space Drift, Void Weight)                                                                                                          | ときの ひきずり, くうかんの ながれ, きょむの おもみ               | Arrastre Temporal, Deriva Espacial, Peso del Vacío    |
+| Moon pair (Waning Light, Waxing Dark)                                                                                                                        | かけゆく ひかり, みちゆく やみ                                    | Luz Menguante, Oscuridad Creciente                    |
+
+### Kanto
+
+| English          | ja                         | es                      |
+| ---------------- | -------------------------- | ----------------------- |
+| Verdant Field    | みどりのば                 | Campo Verde             |
+| Ember Field      | ほのおのば                 | Campo Ardiente          |
+| Deluge Field     | おおみずのば               | Campo Diluvio           |
+| Powder Burst     | こなまき                   | Polvo Expansivo         |
+| Twin Stinger     | ふたつのはり               | Doble Aguijón           |
+| Slipstream       | スリップストリーム         | Estela                  |
+| Nibble           | かじり                     | Mordisquito             |
+| Relentless       | しつこさ                   | Implacable              |
+| Squeeze          | しめあげ                   | Apretón                 |
+| Chain Lightning  | れんさでんげき             | Cadena Voltaica         |
+| Curl Up          | まるまり                   | Enrollarse              |
+| Queen's Court    | じょおうのま               | Corte de la Reina       |
+| King's Court     | おうさまのま               | Corte del Rey           |
+| Wishing Well     | ねがいのいど               | Pozo de los Deseos      |
+| Nine Tails       | きゅうび                   | Nueve Colas             |
+| Lullaby          | こもりうた                 | Nana                    |
+| Bloodthirst      | ちのかわき                 | Sed de Sangre           |
+| Deep Roots       | ふかいね                   | Raíz Profunda           |
+| Fungal Bloom     | ほうしのはな               | Floración Fúngica       |
+| Dust Storm       | ほこりあらし               | Tormenta de Polvo       |
+| Undermine        | ほりくずし                 | Socavar                 |
+| Cutpurse         | きんちゃくきり             | Cortabolsas             |
+| Headache Burst   | ずつうばくはつ             | Estallido de Jaqueca    |
+| Blind Rage       | われをわすれる             | Ira Ciega               |
+| Chase Down       | おいつめ                   | Acorralar               |
+| Hypnotic Spiral  | さいみんのうず             | Espiral Hipnótica       |
+| Teleport Guard   | テレポガード               | Teletransporte Guardián |
+| Overhead Throw   | なげおとし                 | Proyección              |
+| Digest           | しょうかりょく             | Digestión               |
+| Tentacle Grasp   | しょくしゅのにぎり         | Agarre Tentacular       |
+| Solid Core       | かたいコア                 | Núcleo Sólido           |
+| Gallop           | かけあし                   | Galope                  |
+| Delayed Reaction | はんのうおくれ             | Reacción Tardía         |
+| Repulsion Field  | はんぱつば                 | Campo Repulsor          |
+| Leek Duelist     | ねぎのけんし               | Duelista del Puerro     |
+| Second Head      | ふたつめのあたま           | Segunda Cabeza          |
+| Sleek Hide       | つるつるはだ               | Piel Lisa               |
+| Corrosive Ooze   | ふしょくのヘドロ           | Cieno Corrosivo         |
+| Spike Shell      | とげのから                 | Concha Espinosa         |
+| Night Terror     | よるのおそれ               | Terror Nocturno         |
+| Living Tunnel    | いきたトンネル             | Túnel Viviente          |
+| Dream Feast      | ゆめのうたげ               | Festín Onírico          |
+| Heavy Pincer     | おもいハサミ               | Pinza Pesada            |
+| Overload         | オーバーロード             | Sobrecarga              |
+| Psyseed          | サイコのタネ               | Psisemilla              |
+| Mourning Bone    | とむらいのほね             | Hueso del Duelo         |
+| Second Wind      | にどめのいぶき             | Segundo Aliento         |
+| Taste Everything | なんでもあじみ             | Probarlo Todo           |
+| Smog Screen      | スモッグのまく             | Cortina de Smog         |
+| Corkscrew        | きりもみ                   | Tirabuzón               |
+| Cushioned        | クッション                 | Acolchado               |
+| Vine Web         | つるのあみ                 | Red de Lianas           |
+| Mother's Shield  | ははのたて                 | Escudo Maternal         |
+| Whirl Current    | うずまくながれ             | Corriente Remolino      |
+| Upstream         | さかのぼり                 | Contracorriente         |
+| Core Reset       | コアリセット               | Reinicio del Núcleo     |
+| Mimed Barrier    | マイムのかべ               | Barrera Mímica          |
+| Clean Cut        | ひとなぎ                   | Corte Limpio            |
+| Icy Charm        | こおりのみりょく           | Encanto Helado          |
+| Static Field     | せいでんば                 | Campo Estático          |
+| Blast Furnace    | ようこうろ                 | Alto Horno              |
+| Snapjaw          | がぶりつき                 | Mandíbula Trampa        |
+| Bullheaded       | ごうじょう                 | Testarudo               |
+| Late Bloomer     | おそざき                   | Floración Tardía        |
+| Safe Passage     | あんぜんつうろ             | Paso Seguro             |
+| Formless         | かたちなし                 | Sin Forma               |
+| Latent Potential | ひめたるちから             | Potencial Latente       |
+| Rollback         | まきもどし                 | Retroceso               |
+| Helix Shell      | らせんのから               | Concha Espiral          |
+| Dome Blade       | こうらのやいば             | Cuchilla Cúpula         |
+| Predator's Dive  | ほしょくしゃのきゅうこうか | Picado del Depredador   |
+| Full Belly       | ふくふくばら               | Panza Llena             |
+| Frostwing        | こおりのはばたき           | Aleteo Helado           |
+| Stormwing        | かみなりのはばたき         | Aleteo Tormenta         |
+| Emberwing        | ほのおのはばたき           | Aleteo Ascua            |
+| Serene Storm     | しずかなあらし             | Tormenta Serena         |
+| Genetic Apex     | いでんしのちょうてん       | Cumbre Genética         |
+| Ancestral Memory | そせんのきおく             | Memoria Ancestral       |
+| Rich Diet        | ぜいたくしょく             | Dieta Rica              |
+| Frostforged      | こおりぎたえ               | Forjado en Hielo        |
+| Aurora Crown     | オーロラのかんむり         | Corona de Aurora        |
+| Wire Snare       | はりがねのわな             | Lazo de Alambre         |
+| Taunting Gaze    | ちょうはつのまなざし       | Mirada Burlona          |
+| Magnet Float     | じりょくふゆう             | Flotación Magnética     |
+| Crystal Toxin    | けっしょうのどく           | Toxina Cristalina       |
+| War Spoils       | せんりひん                 | Botín de Guerra         |
+| Mending Horn     | いやしのつの               | Cuerno Sanador          |
+| Slow Venom       | おそいどく                 | Veneno Lento            |
+| Leek Shield      | ねぎのたて                 | Escudo de Puerro        |
+| Glarewing        | にらみのはばたき           | Aleteo Fulminante       |
+| Strikewing       | けりのはばたき             | Aleteo Golpeador        |
+| Wrathwing        | いかりのはばたき           | Aleteo Furioso          |
+| Watchfire        | かがりび                   | Fuego de Vigía          |
+| Husk Burst       | からばくはつ               | Estallido de Cáscara    |
+
+### Johto
+
+| English            | ja                 | es                   |
+| ------------------ | ------------------ | -------------------- |
+| Sapmark            | じゅえきのしるし   | Marca de Savia       |
+| Embermark          | ひだねのしるし     | Marca de Brasa       |
+| Jawmark            | かみつきのしるし   | Marca de Mandíbula   |
+| Sentry             | みはり             | Centinela            |
+| Watchful Roost     | ねぐらのばん       | Percha Vigilante     |
+| Relay              | ひきつぎ           | Traspaso             |
+| Silk Snare         | いとのわな         | Trampa de Seda       |
+| Lantern Lure       | ちょうちんのさそい | Señuelo Farolillo    |
+| Fair Share         | こうへいなわけまえ | Reparto Justo        |
+| Prophecy           | よげん             | Augurio              |
+| Live Wire          | いきでんせん       | Cable Pelado         |
+| Spillover          | あふれだし         | Desbordamiento       |
+| False Wood         | にせのき           | Madera Falsa         |
+| Updraft            | のぼりきりゅう     | Corriente Ascendente |
+| Tailthrow          | しっぽなげ         | Lanzacola            |
+| Sunlit Charge      | ひだまりチャージ   | Carga Soleada        |
+| Resonance          | きょうめい         | Resonancia           |
+| Contagious Yawn    | うつるあくび       | Bostezo Contagioso   |
+| Magpie             | ぬすみぐせ         | Urraca               |
+| Shared Misery      | わかちあうくるしみ | Miseria Compartida   |
+| Ruinous Script     | わざわいのもじ     | Escritura Ruinosa    |
+| Backlash           | ためておかえし     | Contragolpe          |
+| Ambidextrous       | りょうきき         | Ambidiestro          |
+| Shrapnel           | はへんまき         | Metralla             |
+| Hidden Den         | かくれが           | Guarida Oculta       |
+| Sand Rider         | すなのり           | Jinete de Arena      |
+| Bully              | いじめっこ         | Abusón               |
+| Last Barb          | さいごのはり       | Última Púa           |
+| Fermenter          | はっこうおけ       | Fermentador          |
+| Heave              | ほうりなげ         | Volteo               |
+| Sharp Claw         | きりさきづめ       | Garra Cortante       |
+| Sweet Paw          | あまいにくきゅう   | Zarpa Dulce          |
+| Magma Trail        | マグマのあと       | Rastro de Magma      |
+| Icebreaker         | こおりわり         | Rompehielos          |
+| Coral Bloom        | サンゴのはな       | Flor de Coral        |
+| Ricochet           | それだま           | Rebote               |
+| Delivery           | おとどけ           | Entrega              |
+| Escort             | ごえい             | Escolta              |
+| Steelmolt          | はがねのだっぴ     | Muda de Acero        |
+| Pack Howl          | むれのとおぼえ     | Aullido de Manada    |
+| Momentum           | いきおい           | Ímpetu               |
+| Mind Fog           | こころのきり       | Niebla Mental        |
+| Palette            | パレット           | Paleta               |
+| Cowbell            | カウベル           | Cencerro             |
+| Risen Thunder      | よみがえるいかずち | Rayo Renacido        |
+| Risen Flame        | よみがえるほのお   | Llama Renacida       |
+| Risen Tide         | よみがえるなみ     | Marea Renacida       |
+| Tyrant             | ぼうくん           | Tirano               |
+| Silver Aegis       | ぎんのイージス     | Égida de Plata       |
+| Rainbow Rekindling | にじのともしび     | Reavivar Arcoíris    |
+| Timeline Split     | ときのわかれみち   | Bifurcación Temporal |
+| Coral Husk         | サンゴのぬけがら   | Cáscara de Coral     |
+| Venom Feast        | どくのうたげ       | Festín Venenoso      |
+| Nerve Venom        | しんけいどく       | Veneno Nervioso      |
+
+### Hoenn
+
+| English         | ja                 | es                   |
+| --------------- | ------------------ | -------------------- |
+| Sap Surge       | じゅえきのうねり   | Oleada de Savia      |
+| Ember Surge     | ほのおのうねり     | Oleada de Brasa      |
+| Silt Surge      | どろのうねり       | Oleada de Limo       |
+| Pack Hunt       | むれがり           | Caza en Manada       |
+| Crooked Run     | まがりばしり       | Carrera Torcida      |
+| Cocoon          | まゆごもり         | Capullo              |
+| Water Bloom     | みずのはな         | Flor de Agua         |
+| Sun Root        | たいようのね       | Raíz Solar           |
+| Migrant's Wind  | わたりどりのかぜ   | Viento Migratorio    |
+| Gull's Greed    | かもめのよくぼう   | Codicia de Gaviota   |
+| Empath          | きょうかん         | Empatía              |
+| Surface Walk    | すいめんあるき     | Paso en el Agua      |
+| Mycelium        | きんしのあみ       | Micelio              |
+| Wide Swing      | おおぶり           | Barrido Amplio       |
+| Vanishing Act   | すがたけし         | Desaparición         |
+| Echo Chamber    | こだまのへや       | Cámara de Eco        |
+| Shove           | つきとばし         | Empellón             |
+| Magnetize       | ひきよせ           | Magnetizar           |
+| Kitten Pace     | こねこのあしどり   | Paso de Gatito       |
+| Shadow Tax      | かげのちょうしゅう | Tributo de Sombra    |
+| Jaw Claim       | あごのせいきゅう   | Reclamo de Mandíbula |
+| Ore Hunger      | こうせきぐい       | Hambre de Mineral    |
+| Mind Over Body  | こころがまさる     | Mente sobre Cuerpo   |
+| Jolt Start      | ビリビリスタート   | Arranque Eléctrico   |
+| Cheer On        | おうえん           | Ánimo                |
+| Jeer At         | やじ               | Abucheo              |
+| Tail Light      | おしりのあかり     | Luz Trasera          |
+| Lure Scent      | さそいのかおり     | Aroma Cebo           |
+| Perennial       | くりかえしざき     | Perenne              |
+| Bottomless      | そこなし           | Sin Fondo            |
+| Feeding Frenzy  | むさぼりのうず     | Frenesí Alimenticio  |
+| Spout           | ふんすい           | Surtidor             |
+| Magma Vent      | ふんかこう         | Chimenea de Magma    |
+| Body Heat       | たいおん           | Calor Corporal       |
+| Stored Bounce   | ためこむはずみ     | Rebote Acumulado     |
+| Unique Spots    | ひとつだけのぶち   | Manchas Únicas       |
+| Antlion Pit     | すりばちのわな     | Foso Hormigaleón     |
+| Patient Stalk   | まちかまえ         | Acecho Paciente      |
+| Cloud Step      | くもがくれ         | Paso Nuboso          |
+| Feud Claws      | いがみあうつめ     | Garras Rivales       |
+| Deepening Venom | ふかまるどく       | Veneno Creciente     |
+| Moon Pull       | つきのいんりょく   | Tirón Lunar          |
+| Sun Glare       | たいようのまぶしさ | Resplandor Solar     |
+| Silt Bed        | どろのとこ         | Lecho de Limo        |
+| Dirty Fighter   | きたないたたかい   | Pelea Sucia          |
+| Spin Balance    | こまのつりあい     | Equilibrio Giratorio |
+| Root Hold       | ねのつかみ         | Agarre de Raíz       |
+| Claw Rush       | つめとっしん       | Embestida de Garra   |
+| Scarred Beauty  | きずあとのびじん   | Belleza Cicatrizada  |
+| Weather Worn    | てんきぎたえ       | Curtido por el Clima |
+| Blend In        | とけこみ           | Pasar Desapercibido  |
+| Malice Pool     | あくいのたまり     | Charco de Malicia    |
+| Soul Harvest    | たましいがり       | Cosecha de Almas     |
+| Fruit Crop      | きのみのみのり     | Cosecha de Frutos    |
+| Ringing Head    | あたまのひびき     | Cabeza Resonante     |
+| Doom Mark       | ほろびのしるし     | Marca de Perdición   |
+| Cold Snap       | かんぱ             | Ola de Frío          |
+| Applause        | はくしゅ           | Aplauso              |
+| Pearl Guard     | しんじゅのまもり   | Guardia de Perla     |
+| Unchanged       | かわらぬすがた     | Inalterado           |
+| Shared Heart    | わけあうハート     | Corazón Compartido   |
+| Skull Charge    | ずがいとっしん     | Embestida Craneal    |
+| Hive Mind       | しゅうごうちせい   | Mente Colmena        |
+| Stone Seal      | いわのふういん     | Sello de Roca        |
+| Frost Seal      | こおりのふういん   | Sello de Hielo       |
+| Iron Seal       | てつのふういん     | Sello de Hierro      |
+| Eon Shield      | えいえんのたて     | Escudo Eón           |
+| Eon Lance       | えいえんのやり     | Lanza Eón            |
+| Primal Sea      | ゲンシのうみ       | Mar Primigenio       |
+| Primal Land     | ゲンシのだいち     | Tierra Primigenia    |
+| Primal Sky      | ゲンシのそら       | Cielo Primigenio     |
+| Seven Wishes    | ななつのねがい     | Siete Deseos         |
+| Form Drift      | すがたのうつろい   | Deriva de Forma      |
+| Blockade        | バリケード         | Barricada            |
+
+### Sinnoh
+
+| English      | ja                 | es                    |
+| ------------ | ------------------ | --------------------- |
+| Bark Brace   | きかわのみがまえ   | Postura de Corteza    |
+| Cinder Brace | ひのこのみがまえ   | Postura de Ceniza     |
+| Crest Brace  | かんむりのみがまえ | Postura de Cresta     |
+| Murmuration  | むれどり           | Bandada               |
+| Lodgework    | すづくり           | Obra de Madriguera    |
+| Chorus       | がっしょう         | Coro                  |
+| Gleam Eyes   | ひかるひとみ       | Ojos Brillantes       |
+| Ramrod       | つらぬき           | Perforación           |
+| Bulwark      | ぼうへき           | Baluarte              |
+| Patchwork    | つぎはぎ           | Retazos               |
+| Two Seas     | ふたつのうみ       | Dos Mares             |
+| Pollen Dole  | かふんのほどこし   | Reparto de Polen      |
+| Float Sac    | うきぶくろ         | Saco Flotador         |
+| Second Bloom | にどざき           | Segunda Floración     |
+| Carry Off    | つれさり           | Rapto                 |
+| Springheel   | ばねあし           | Pie de Resorte        |
+| Velvet Claws | ビロードのつめ     | Garras de Terciopelo  |
+| Rank Air     | くさいくうき       | Tufo                  |
+| Deep Toll    | おもいかねのね     | Tañido Profundo       |
+| Skyhunt      | そらがり           | Caza Aérea            |
+| Aura Match   | オーラくらべ       | Duelo de Auras        |
+| Dust Bath    | すなあび           | Baño de Arena         |
+| Ambush       | まちぶせ           | Emboscada             |
+| Finisher     | とどめ             | Remate                |
+| False Eyes   | にせのひとみ       | Ojos Falsos           |
+| Evergreen    | ときわぎ           | Siempreverde          |
+| Sparkfur     | ひばなのけ         | Pelaje Chispeante     |
+| Birdsong     | さえずり           | Gorjeo                |
+| Soulwell     | たましいのいずみ   | Fuente de Almas       |
+| Snapvine     | つるしばり         | Liana Atadora         |
+| Appliance    | かでん             | Electrodoméstico      |
+| Mindgift     | ちえのおくりもの   | Don de Mente          |
+| Heartgift    | こころのおくりもの | Don de Corazón        |
+| Willgift     | いしのおくりもの   | Don de Voluntad       |
+| Lavadome     | ようがんドーム     | Cúpula de Lava        |
+| Titan Seal   | タイタンのふういん | Sello de Titán        |
+| Time Drag    | ときのひきずり     | Arrastre Temporal     |
+| Space Drift  | くうかんのながれ   | Deriva Espacial       |
+| Void Weight  | きょむのおもみ     | Peso del Vacío        |
+| Waning Light | かけゆくひかり     | Luz Menguante         |
+| Waxing Dark  | みちゆくやみ       | Oscuridad Creciente   |
+| Heartcurrent | こころのかいりゅう | Corriente del Corazón |
+| Firstlight   | はじまりのひかり   | Primera Luz           |
+| Purebloom    | けがれなきはな     | Flor Pura             |

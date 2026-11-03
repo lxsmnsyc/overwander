@@ -52,12 +52,13 @@ import type {
   MoveState,
   MoveTarget,
   ProgressData,
+  UnitAction,
   UnitAttackEvent,
   UnitDamageEvent,
   UnitTerrainEvent,
   UnitWeatherEvent,
 } from './events';
-import { BattleEvents, EffectType } from './events';
+import { BattleEvents, EffectType, UnitActionKind } from './events';
 import type Team from './team';
 
 export default class Unit {
@@ -314,7 +315,16 @@ export default class Unit {
     });
   }
 
-  casting?: CastingData;
+  /**
+   * The move this unit is casting or channelling, absent while idle.
+   * Only the casting and channelling mechanics write it
+   */
+  action?: UnitAction;
+
+  /** The wind-up under way, if the unit is casting */
+  get casting(): CastingData | undefined {
+    return this.action?.kind === UnitActionKind.Casting ? this.action.data : undefined;
+  }
 
   moves: { [key in Moves]?: MoveState } = {};
 
@@ -456,7 +466,10 @@ export default class Unit {
     });
   }
 
-  channeling?: ChannelingData;
+  /** The steps still to come, if the unit is channelling */
+  get channeling(): ChannelingData | undefined {
+    return this.action?.kind === UnitActionKind.Channeling ? this.action.data : undefined;
+  }
 
   checkCanChannel(move: Moves, target: MoveTarget, steps: number): boolean {
     const event: CheckUnitCanChannelEvent = {

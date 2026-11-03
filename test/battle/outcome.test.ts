@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import Alliance from '../../src/battle/alliance';
 import { BattleModes } from '../../src/battle/battle';
-import { EffectType, MoveTargetType } from '../../src/battle/events';
+import { EffectType, MoveTargetType, UnitActionKind } from '../../src/battle/events';
 import setupOutcomeMechanics from '../../src/battle/mechanics/outcome';
 import createRaidBattle from '../../src/battle/setup';
 import Team from '../../src/battle/team';
@@ -104,10 +104,13 @@ describe('outcome mechanics', () => {
     const victim = createUnit(battle, teamB);
 
     victim.faint(winner);
-    winner.casting = {
-      move: Moves.Tackle,
-      target: { type: MoveTargetType.Unit, unit: victim },
-      time: { progress: 0, duration: 1000 },
+    winner.action = {
+      kind: UnitActionKind.Casting,
+      data: {
+        move: Moves.Tackle,
+        target: { type: MoveTargetType.Unit, unit: victim },
+        time: { progress: 0, duration: 1000 },
+      },
     };
 
     battle.tick(GRACE);

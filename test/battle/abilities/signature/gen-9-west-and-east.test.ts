@@ -127,7 +127,7 @@ describe('Windswept', () => {
 
     // Spent on the cast it speeds up
     act(battle, weed);
-    weed.casting = undefined;
+    weed.action = undefined;
 
     expect(weed.checkMoveCastTime(Moves.Tackle, NONE_TARGET)).toBe(plain);
   });

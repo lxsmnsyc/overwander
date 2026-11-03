@@ -70,3 +70,20 @@ export interface MoveState {
 export interface ChannelingData extends CastingData {
   steps: number;
 }
+
+/** Which phase of a move a unit is in, when it is in one */
+export const enum UnitActionKind {
+  /** Winding the move up, before its first step lands */
+  Casting = 0,
+  /** Between the steps of a move that spends more than one */
+  Channeling = 1,
+}
+
+/**
+ * What a unit is doing with a move. A unit is casting, channelling or
+ * idle (no action at all), never two of them at once, so the one field
+ * holds whichever it is
+ */
+export type UnitAction =
+  | { kind: UnitActionKind.Casting; data: CastingData }
+  | { kind: UnitActionKind.Channeling; data: ChannelingData };

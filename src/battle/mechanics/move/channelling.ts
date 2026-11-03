@@ -1,6 +1,6 @@
 import { EventPriority } from '../../../core/event-emitter';
 import type Battle from '../../battle';
-import { BattleEvents, MoveTargetType } from '../../events';
+import { BattleEvents, MoveTargetType, UnitActionKind } from '../../events';
 import type Unit from '../../unit';
 import { getCastTime } from './timing';
 
@@ -69,14 +69,17 @@ export default function setupChannelingMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitChannel, EventPriority.Exact, (event) => {
     const castTime = event.source.checkMoveChannelTime(event.move, event.target);
 
-    event.source.channeling = {
-      target: event.target,
-      time: {
-        progress: 0,
-        duration: castTime,
+    event.source.action = {
+      kind: UnitActionKind.Channeling,
+      data: {
+        target: event.target,
+        time: {
+          progress: 0,
+          duration: castTime,
+        },
+        move: event.move,
+        steps: event.steps,
       },
-      move: event.move,
-      steps: event.steps,
     };
 
     // Add new entry for the tick updates
@@ -88,20 +91,21 @@ export default function setupChannelingMechanics(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitUpdateChannel, EventPriority.Exact, (event) => {
-    if (event.source.channeling) {
-      event.source.channeling = {
-        ...event.source.channeling,
-        ...event.data,
-      };
+    const channeling = event.source.channeling;
+    if (channeling) {
+      const data = { ...channeling, ...event.data };
+      event.source.action = { kind: UnitActionKind.Channeling, data };
 
-      if (event.source.channeling.time.progress >= event.source.channeling.time.duration) {
+      if (data.time.progress >= data.time.duration) {
         event.source.finishChannel();
       }
     }
   });
 
   battle.on(BattleEvents.UnitStopChannel, EventPriority.Exact, (event) => {
-    event.source.channeling = undefined;
+    if (event.source.action?.kind === UnitActionKind.Channeling) {
+      event.source.action = undefined;
+    }
     queue.delete(event.source);
 
     if (queue.size === 0) {

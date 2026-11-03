@@ -5,7 +5,7 @@
  */
 
 export { default as BattleEvents } from './names';
-export { EffectType, MoveTargetType } from './shapes';
+export { EffectType, MoveTargetType, UnitActionKind } from './shapes';
 export type {
   CastingData,
   ChannelingData,
@@ -14,6 +14,7 @@ export type {
   MoveTarget,
   ProgressData,
   TriggerMoveData,
+  UnitAction,
 } from './shapes';
 export type {
   CheckUnitWeatherDurationEvent,

@@ -55,7 +55,7 @@ DustHaze:
   description: Polvo suspendido en un aire quieto.
 Heatwave:
   name: Ola de calor
-  description: Calor sin nada más detrás.
+  description: Calor y nada más.
 FallingAsh:
   name: Ceniza volcánica
   description: Ceniza que cae desde algún lugar.
@@ -79,4 +79,4 @@ DarkDay:
   description: Un mediodía vuelto noche. Favorece a todos los tipos, y 1 de cada 4 de los que entrega es un Pokémon Oscuro.
 Fogbow:
   name: Arco de niebla
-  description: Un arcoíris sin color. 1 de cada 4 con los que se topa tiene hueco para un 5.º movimiento, y 1 de cada 16 para un 6.º.
+  description: Un arcoíris sin color. 1 de cada 4 de los Pokémon que se encuentran tiene hueco para un 5.º movimiento, y 1 de cada 16 para un 6.º.

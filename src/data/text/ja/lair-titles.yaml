@@ -1,4 +1,4 @@
 # レイドの ばしょの なまえ。 {biome} と {place} は そのまま いれる
 
 ground: '{biome}の すあな'
-shadow: 'ダーク{place}'
+shadow: 'ダーク {place}'

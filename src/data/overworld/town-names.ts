@@ -202,6 +202,7 @@ const PLURAL_TITLES = new Set(['Molinos']);
  */
 const ADJECTIVES = new Set([
   'Nuevo',
+  'Grande',
   'Viejo',
   'Alto',
   'Bajo',

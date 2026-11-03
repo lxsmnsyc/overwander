@@ -24,7 +24,7 @@ heads:
   Glacier: [Escarchado, Témpano, Cristal, Serac, Morrena, Blanco, Quieto, Desprendido]
   Woodland: [Bosquete, Claro, Serbal, Espeso, Tejón, Acebo, Salpicado, Nuez]
   Steppe: [Caballar, Emplumado, Saiga, Ventoso, Ancho, Milano, Errante, Barrido]
-  MontaneForest: [Pinabete, Cicuta, Oso, Canchal, Neblinoso, Lince, Maderero, Zigzagueante]
+  MontaneForest: [Pinabete, Tsuga, Oso, Canchal, Neblinoso, Lince, Maderero, Zigzagueante]
   Volcano: [Ascua, Escoria, Basalto, Azufre, Pómez, Humeante, Magma, Ceniciento]
   Badlands: [Barranquera, Chimenea, Oxidado, Otero, Buitre, Hueso, Rambla, Rocarroja]
   RockyCoast: [Acantilado, Gaviota, Rociado, Farallón, Faro, Charrán, Percebe, Socaire]
@@ -50,22 +50,22 @@ tails:
   - del Soto
   - de la Cañada
   - de la Charca
-  - del Peñón
+  - del Tajo
   - de la Fuente
   - de la Hoz
-  - del Mojón
+  - del Hito
   - de la Alquería
   - del Túmulo
   - del Chapitel
   - del Regato
-  - de la Sombra
+  - de la Umbría
   - de la Meseta
   - de la Cuesta
   - de la Orilla
   - del Barranco
   - del Campo
   - de la Atalaya
-  - del Robledal
+  - del Monte
   - del Castillo
   - de la Huerta
   - del Corral
@@ -95,10 +95,10 @@ marks:
   - Sur
   - Este
   - Oeste
-  - Gran
+  - Grande
   - Pequeño
   - Puerto
-  - Fuerte
+  - Fortín
 
 counties:
   - Marca Ceniza
@@ -129,7 +129,7 @@ counties:
   - Cardal
   - Camino Pello
   - Rastrojal
-  - Colmado
+  - Rebosadero
   - Caldera
   - Ortigal
   - Marca de Hierro
@@ -147,7 +147,7 @@ counties:
   - Páramo Pagano
   - Hiedral
   - Enebral
-  - Cernícalo
+  - Primillar
   - Marca Baja
   - Musgal
   - Ciénaga del Norte
@@ -161,7 +161,7 @@ counties:
   - Marca de la Cripta
   - Lobera
   - Milenrama
-  - Cenicero
+  - Cenizal
   - Marca de la Campana
   - Marca Peñascosa
   - Vega del Cenagal

@@ -12,7 +12,7 @@ Overcast:
   description: チャンクに ふたを した ような、 ひらたい はいいろの くも。
 Breezy:
   name: そよかぜ
-  description: チャンクを ふきぬける、 ほどよい かぜ。
+  description: チャンクを ふきぬける、 たえまない かぜ。
 Drizzle:
   name: こさめ
   description: かるい あめ。
@@ -30,7 +30,7 @@ Mist:
   description: とおくまで みとおせない くうき。
 Fog:
   name: きり
-  description: じめんから わき たつ、 こい きり。
+  description: じめんから わきたつ、 こい きり。
 Haze:
   name: かすみ
   description: あつく よどんだ くうき。
@@ -60,10 +60,10 @@ FallingAsh:
   description: どこからか ふって くる はい。
 Aurora:
   name: オーロラ
-  description: きたの はてに かがやく ひかり。 とくに めずらしい そらの ひとつ。
+  description: きたの はてに かがやく ひかり。 もっとも めずらしい そらの ひとつ。
 Rainbow:
   name: にじ
-  description: ひろい みずうみや うみに かかる アーチ。 とくに めずらしい そらの ひとつ。
+  description: ひろい みずうみや うみに かかる アーチ。 もっとも めずらしい そらの ひとつ。
 PollenDrift:
   name: かふん
   description: きぎの あいだを ながれる かふん。
@@ -78,4 +78,4 @@ DarkDay:
   description: しょうごが やみに つつまれる。 すべての タイプが ゆうりに なり、 わたされる ポケモンの 4ひきに 1ぴきは ダークポケモン。
 Fogbow:
   name: しろにじ
-  description: いろの ぬけた にじ。 であう ポケモンの 4ひきに 1ぴきは 5つめの わざ、 16ひきに 1ぴきは 6つめの わざの あきが ある。
+  description: いろの ぬけた にじ。 であう ポケモンの 4ひきに 1ぴきは 5つめの わざの あきが あり、 16ひきに 1ぴきは 6つめの わざの あきが ある。

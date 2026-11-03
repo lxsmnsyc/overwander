@@ -298,8 +298,11 @@ describe('town names by locale', () => {
     expect(TOWN_JOINERS.es({ ...parts, title: 'Molinos' })).toBe(
       'Molinos Nuevos Concha del Risco, X',
     );
-    expect(TOWN_JOINERS.es({ ...parts, mark: 'Gran', title: 'Ciudad' })).toBe(
-      'Ciudad Gran Concha del Risco, X',
+    expect(TOWN_JOINERS.es({ ...parts, mark: 'Grande', title: 'Molinos' })).toBe(
+      'Molinos Grandes Concha del Risco, X',
+    );
+    expect(TOWN_JOINERS.es({ ...parts, mark: 'Grande', title: 'Ciudad' })).toBe(
+      'Ciudad Grande Concha del Risco, X',
     );
     expect(TOWN_JOINERS.es({ ...parts, mark: null })).toBe('Pueblo Concha del Risco, X');
     // A head that is an adjective agrees too, in gender and number
@@ -760,14 +763,14 @@ describe('town names in ja and es', () => {
       Biome.Grassland,
       -6,
       57,
-      'イーストオオムギタニアイジュウジロ（シオヌマ）',
+      'イーストオオムギタニアイクロス（シオヌマ）',
       'Cruce Este Cebada de la Hoz, Salobral',
     ],
     [
       Biome.Mountain,
       -143,
       60,
-      'ウエストチョウジョウタニシュクバ（クロガネ）',
+      'ウエストチョウジョウタニシュクバ（カジヤ）',
       'Parada Oeste Cumbre del Valle, Ferrería',
     ],
   ];

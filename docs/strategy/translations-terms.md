@@ -276,6 +276,160 @@ The names in `text/<locale>/trainers/*.yaml`. A class the games name uses the ga
 | Rising Star | ホープトレーナー | Entrenador promesa | WikiDex infobox (ja) |
 | Preschooler | えんじ | Preescolar | WikiDex infobox (ja) |
 
+## Gym leaders, Elite Four, champions, Frontier Brains, legends and executives
+
+The names in `text/<locale>/{gym-leaders,elite,champions,legends,executives,frontier}.yaml`. All are the games' own names. Spanish is the Spain form where WikiDex gives both (Valeria, Lysson, Melia, Xero, Corelia, Amaro). Source for every name in both columns: the WikiDex page of the character (the infobox prints the Japanese name), fetched in this batch. Entries after the first of a name that repeats (Koga, Bruno, Lance, Caitlin) are the same person.
+
+| English | ja | es | Where |
+| --- | --- | --- | --- |
+| Brock | タケシ | Brock | Gym leader |
+| Misty | カスミ | Misty | Gym leader |
+| Lt. Surge | マチス | Teniente Surge | Gym leader |
+| Erika | エリカ | Erika | Gym leader |
+| Koga | キョウ | Koga | Gym leader |
+| Sabrina | ナツメ | Sabrina | Gym leader |
+| Blaine | カツラ | Blaine | Gym leader |
+| Giovanni | サカキ | Giovanni | Gym leader |
+| Falkner | ハヤト | Pegaso | Gym leader |
+| Bugsy | ツクシ | Antón | Gym leader |
+| Whitney | アカネ | Blanca | Gym leader |
+| Morty | マツバ | Morti | Gym leader |
+| Chuck | シジマ | Aníbal | Gym leader |
+| Jasmine | ミカン | Yasmina | Gym leader |
+| Pryce | ヤナギ | Fredo | Gym leader |
+| Clair | イブキ | Débora | Gym leader |
+| Roxanne | ツツジ | Petra | Gym leader |
+| Brawly | トウキ | Marcial | Gym leader |
+| Wattson | テッセン | Erico | Gym leader |
+| Flannery | アスナ | Candela | Gym leader |
+| Norman | センリ | Norman | Gym leader |
+| Winona | ナギ | Alana | Gym leader |
+| Tate | フウ | Vito | Gym leader |
+| Liza | ラン | Leti | Gym leader |
+| Juan | アダン | Galano | Gym leader |
+| Roark | ヒョウタ | Roco | Gym leader |
+| Gardenia | ナタネ | Gardenia | Gym leader |
+| Maylene | スモモ | Brega | Gym leader |
+| Crasher Wake | マキシマムかめん | Mananti | Gym leader |
+| Fantina | メリッサ | Fantina | Gym leader |
+| Byron | トウガン | Acerón | Gym leader |
+| Candice | スズナ | Inverna | Gym leader |
+| Volkner | デンジ | Lectro | Gym leader |
+| Cilan | デント | Millo | Gym leader |
+| Chili | ポッド | Zeo | Gym leader |
+| Cress | コーン | Maíz | Gym leader |
+| Lenora | アロエ | Aloe | Gym leader |
+| Burgh | アーティ | Camus | Gym leader |
+| Elesa | カミツレ | Camila | Gym leader |
+| Clay | ヤーコン | Yakón | Gym leader |
+| Skyla | フウロ | Gerania | Gym leader |
+| Brycen | ハチク | Junco | Gym leader |
+| Drayden | シャガ | Lirio | Gym leader |
+| Cheren | チェレン | Cheren | Gym leader |
+| Roxie | ホミカ | Hiedra | Gym leader |
+| Marlon | シズイ | Ciprián | Gym leader |
+| Viola | ビオラ | Violeta | Gym leader |
+| Grant | ザクロ | Lino | Gym leader |
+| Korrina | コルニ | Corelia | Gym leader |
+| Ramos | フクジ | Amaro | Gym leader |
+| Clemont | シトロン | Lem | Gym leader |
+| Valerie | マーシュ | Valeria | Gym leader |
+| Olympia | ゴジカ | Ástrid | Gym leader |
+| Wulfric | ウルップ | Édel | Gym leader |
+| Lorelei | カンナ | Lorelei | Elite Four |
+| Bruno | シバ | Bruno | Elite Four |
+| Agatha | キクコ | Agatha | Elite Four |
+| Lance | ワタル | Lance | Elite Four |
+| Will | イツキ | Mento | Elite Four |
+| Koga | キョウ | Koga | Elite Four |
+| Karen | カリン | Karen | Elite Four |
+| Bruno | シバ | Bruno | Elite Four |
+| Sidney | カゲツ | Sixto | Elite Four |
+| Phoebe | フヨウ | Fátima | Elite Four |
+| Glacia | プリム | Nívea | Elite Four |
+| Drake | ゲンジ | Dracón | Elite Four |
+| Aaron | リョウ | Alecrán | Elite Four |
+| Bertha | キクノ | Gaia | Elite Four |
+| Flint | オーバ | Fausto | Elite Four |
+| Lucian | ゴヨウ | Delos | Elite Four |
+| Shauntal | シキミ | Anís | Elite Four |
+| Marshal | レンブ | Lotto | Elite Four |
+| Grimsley | ギーマ | Aza | Elite Four |
+| Caitlin | カトレア | Catleya | Elite Four |
+| Malva | パキラ | Malva | Elite Four |
+| Siebold | ズミ | Narciso | Elite Four |
+| Wikstrom | ガンピ | Tileo | Elite Four |
+| Drasna | ドラセナ | Drácena | Elite Four |
+| Blue | グリーン | Azul | Champion |
+| Lance | ワタル | Lance | Champion |
+| Wallace | ミクリ | Plubio | Champion |
+| Cynthia | シロナ | Cintia | Champion |
+| Iris | アイリス | Iris | Champion |
+| Diantha | カルネ | Dianta | Champion |
+| Red | レッド | Rojo | Legend |
+| Steven | ダイゴ | Máximo | Legend |
+| N | N | N | Legend |
+| Alder | アデク | Mirto | Legend |
+| AZ | AZ | A. Z. | Legend |
+| Archer | アポロ | Atlas | Executive |
+| Ariana | アテナ | Atenea | Executive |
+| Proton | ランス | Protón | Executive |
+| Petrel | ラムダ | Petrel | Executive |
+| Tabitha | ホムラ | Tatiano | Executive |
+| Courtney | カガリ | Carola | Executive |
+| Matt | ウシオ | Matías | Executive |
+| Shelly | イズミ | Silvina | Executive |
+| Mars | マーズ | Venus | Executive |
+| Jupiter | ジュピター | Ceres | Executive |
+| Saturn | サターン | Saturno | Executive |
+| Colress | アクロマ | Acromo | Executive |
+| Zinzolin | ヴィオ | Menek | Executive |
+| Xerosic | クセロシキ | Xero | Executive |
+| Aliana | アケビ | Amapola | Executive |
+| Bryony | バラ | Begonia | Executive |
+| Celosia | コレア | Caléndula | Executive |
+| Mable | モミジ | Melia | Executive |
+| Brandon | ジンダイ | Valente | Frontier Brain |
+| Greta | コゴミ | Coro | Frontier Brain |
+| Lucy | アザミ | Fortunia | Frontier Brain |
+| Noland | ダツラ | Sabino | Frontier Brain |
+| Anabel | リラ | Destra | Frontier Brain |
+| Spenser | ウコン | Aniceto | Frontier Brain |
+| Tucker | ヒース | Tactio | Frontier Brain |
+| Palmer | クロツグ | Jericor | Frontier Brain |
+| Thorton | ネジキ | Espinal | Frontier Brain |
+| Dahlia | ダリア | Delila | Frontier Brain |
+| Darach | コクラン | Kokuran | Frontier Brain |
+| Caitlin | カトレア | Catleya | Frontier Brain |
+| Argenta | ケイト | Argenta | Frontier Brain |
+
+Team and facility names:
+
+| English | ja | es | Source |
+| --- | --- | --- | --- |
+| Team Rocket | ロケットだん | Team Rocket | Official |
+| Team Magma | マグマだん | Equipo Magma | WikiDex (Team Magma in Spain for the anime; to confirm for the games) |
+| Team Aqua | アクアだん | Equipo Aqua | As Magma |
+| Team Galactic | ギンガだん | Equipo Galaxia | WikiDex (Spain) |
+| Team Plasma | プラズマだん | Equipo Plasma | WikiDex |
+| Team Flare | フレアだん | Team Flare | WikiDex (Spain) |
+| grunt | したっぱ | Recluta | WikiDex (es); ja official term |
+| Boss, Leader | ボス, リーダー | Líder (Flare: Jefe) | WikiDex (es) |
+| Sage (Plasma) | けんじん | Sabio | es WikiDex; ja to confirm |
+| Admin, Commander, Executive | かんぶ | Comandante (Magma, Aqua, Galactic), Ejecutivo/a (Rocket, Plasma) | es WikiDex; ja かんぶ to confirm |
+| Scientist (Flare) | かがくしゃ | Científico/a | Engine title; to confirm |
+| Battle Pyramid | バトルピラミッド | Pirámide Batalla | WikiDex |
+| Battle Arena | バトルアリーナ | Dojo Batalla | WikiDex |
+| Battle Pike | バトルチューブ | Sierpe Batalla | WikiDex |
+| Battle Factory | バトルファクトリー | Fábrica Batalla | WikiDex |
+| Battle Tower | バトルタワー | Torre Batalla | WikiDex |
+| Battle Palace | バトルパレス | Palacio Batalla | WikiDex |
+| Battle Dome | バトルドーム | Cúpula Batalla | WikiDex |
+| Battle Arcade | バトルルーレット | Ruleta Batalla | WikiDex |
+| Battle Castle | バトルキャッスル | Castillo Batalla | WikiDex |
+| Battle Hall | バトルホール | Sala Batalla | es WikiDex; ja from memory, the WikiDex page prints バトルファクトリー, to confirm |
+| Mt. Pyre | おくりびやま | Monte Pírico | WikiDex |
+
 ## Status conditions
 
 The names a status shows on a card or a catch, in `src/data/text/<locale>/statuses.yaml`. A condition the games name (poison, sleep, confusion, flinching) uses the games' word. A status a move leaves (Taunted, Encored, Rooted) uses that move's official name, as the move registry writes it. A status this engine invented is translated once:

@@ -111,3 +111,10 @@ Spawn rarities: ja nouns read before の, es lower-case masculine singular read 
 ## Size
 
 - Estimated L, actual L.
+
+## Caller's checks
+
+- `pnpm test` (2 workers): 281 files, 5819 tests pass, including the world generation tests that timed out under load earlier. `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review verified the lair names against WikiDex's list of every location in every language (53 corrected), generated and read 150 town names per locale, scanned every ja town combination for rude words and official names, and read every line; all of its fixes are applied.
+- Town name style (katakana with the county in brackets in ja, place-style adjectives in es) was decided with the maintainer; the wording itself was settled by the review.
+- No screenshots: dropped for batch 9 at the maintainer's call.

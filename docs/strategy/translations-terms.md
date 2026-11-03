@@ -1259,7 +1259,7 @@ This engine's own names; the games name no biome. Coined.
 
 ### Skies
 
-Sky names. Where the games name a weather (Rain, Fog, Hail, Sandstorm, Snow, Heavy rain, Volcanic ash) the games' word is used; the rest is coined.
+Sky names. Where the games name a weather (Rain, Fog, Hail, Sandstorm, Snow, Heavy rain, Volcanic ash) the games' word is used; the rest is coined. The ja words are from memory.
 
 | English | ja | es | Source |
 | --- | --- | --- | --- |
@@ -1335,13 +1335,13 @@ Where the games name the thing, the official term.
 | Elite Four | してんのう | Alto Mando | term list |
 | Champion | チャンピオン | Campeón | official |
 | Market | マーケット | Mercado | coined |
-| Gym Seat | ジムシート | Puesto de Gimnasio | term list |
+| Gym Seat | ジムシート | Puesto de gimnasio | term list (es lower-case gimnasio, review) |
 | Auction Board | オークションの けいじばん | Tablón de subastas | coined |
 | Apricorn Tree | ぼんぐりの き | Árbol de bonguris | coined |
-| Frontier Brain | フロンティアブレーン | As de la Frontera | coined |
+| Frontier Brain | フロンティアブレーン | As del Frente Batalla | review: es As del Frente Batalla |
 | Pokémon Center | ポケモンセンター | Centro Pokémon | WikiDex |
 | Cave | ほらあな | Cueva | coined |
-| Honey Tree | ミツの き | Árbol de Miel | term list |
+| Honey Tree | あまい かおりの する き | Árbol de miel | ja coined (review), es Árbol de miel |
 | Max Raid | マックスレイド | Incursión Dinamax | term list / WikiDex |
 | Totem | ぬし | Dominante | term list |
 | Alpha | オヤブン | Alfa | term list |
@@ -1354,7 +1354,7 @@ Where the games name the thing, the official term.
 
 | English | ja | es | Source |
 | --- | --- | --- | --- |
-| Hidden Grotto | かくしあな | Claro Oculto | term list |
+| Hidden Grotto | かくしあな | Claro oculto | term list (es lower-case oculto, review) |
 | Dust Cloud | すなけむり | Nube de polvo | coined |
 | Rippling Water | さざなみ | Agua rizada | coined |
 | Flying Shadow | とぶ かげ | Sombra voladora | coined |
@@ -1363,12 +1363,12 @@ Where the games name the thing, the official term.
 
 | English | ja | es |
 | --- | --- | --- |
-| {biome} Lair | {biome}の すあな | Guarida de {biome} |
-| Shadow {place} | ダーク{place} | {place} (Oscuro) |
+| {biome} Lair | {biome}の すあな | {biome} (guarida) |
+| Shadow {place} | ダーク {place} | Incursión oscura: {place} |
 
 ### Lairs
 
-The names the mainline gave these places, in `text/{ja,es}/lairs.yaml`. Read on WikiDex or PokeAPI: Seafoam Islands, Mt. Ember, Cerulean Cave, Burned Tower, Whirl Islands, Bell Tower, Ilex Forest, the Hoenn ruins, Southern Island, Marine Cave, Sky Pillar, Birth Island, the three lakes, Spear Pillar, Turnback Cave, Stark Mountain, Snowpoint Temple, Flower Paradise, Navel Rock, Embedded Tower, Winding Woods, Frost Cavern, Terminus Cave, Aether Paradise, the Alola ruins and altars, Ten Carat Hill, Poni Grove. The rest are written from memory or translated literally, and are listed under "To confirm" in the node's outcome.
+The names the mainline gave these places, in `text/{ja,es}/lairs.yaml`. Source: WikiDex "Lista de localizaciones en todos los idiomas" (the Spain column for es, the Japanese column for ja, written in kana), PokeAPI's `location_names` for the Alola places and the rest of the older ones. Not in that list and left as the coined translation: Fula Forest (ja フラのもり, es Bosque Fula).
 
 ### Town words
 
@@ -1377,8 +1377,8 @@ The names the mainline gave these places, in `text/{ja,es}/lairs.yaml`. Read on 
 | | ja | es |
 | --- | --- | --- |
 | Shape | `{mark}{head}{tail}{title}（{county}）`, one katakana word | `{title} {mark} {head} {tail}, {county}` |
-| Titles | タウン, シティ and native words in katakana (ムラ, サト, チク, トリデ, ワタシバ, ジュウジロ, コナヒキ, イコイ, ガイ, シュクバ), welded | Pueblo, Ciudad, Aldea, Caserío, Municipio, Puesto, Embarcadero, Cruce, Molinos, Descanso, Barrio, Parada |
+| Titles | タウン, シティ and native words in katakana (ムラ, サト, チク, トリデ, ハトバ, クロス, ミル, イコイ, ガイ, シュクバ), welded | Pueblo, Ciudad, Aldea, Caserío, Municipio, Puesto, Embarcadero, Cruce, Molinos, Descanso, Barrio, Parada |
 | Tail | a place noun welded to the head (ヤマ, ミナト, モリ) | a phrase (del Risco, de la Atalaya), not a suffix |
-| Mark | a loanword prefix (ニュー, オールド, ポート, フォート) | a word that agrees with the title where it is an adjective (Nuevo, Viejo, Gran, Puerto, Fuerte) |
+| Mark | a loanword prefix (ニュー, オールド, ポート, フォート) | a word that agrees with the title where it is an adjective (Nuevo, Viejo, Grande, Puerto, Fortín) |
 | Head | a noun or adjective stem in katakana | a place or material noun (Granito, Hueso) or an adjective that agrees with the title (Ardiente, Espumoso) |
 | County | a katakana word, in full-width brackets | a Spanish comarca name |

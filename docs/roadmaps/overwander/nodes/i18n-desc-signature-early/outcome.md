@@ -33,7 +33,9 @@
 - `pnpm typecheck` exit 0, `rtk proxy pnpm exec oxlint src test` exit 0, `pnpm exec oxfmt` on the changed TypeScript and markdown clean.
 - `pnpm exec vitest run test/data test/i18n test/overworld/world/buddy-copy.test.ts`: 38 files, 580 tests pass.
 - `pnpm official-names` rerun: no diff.
-- Not run here: `pnpm test`, the review agent and the screenshots (the caller).
+- `pnpm test` (2 workers, after a crash of the device on the first run): 278 files, 5781 tests pass.
+- Review: one fresh agent read every line; its fixes and a reread of the names for ambiguity are applied (see the log).
+- Screenshots: skipped at the maintainer's call.
 
 ## Size
 

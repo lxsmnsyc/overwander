@@ -21,7 +21,7 @@ Aqua:
   boss-title: Líder
   executive-title: Comandante
   boss-quote: Todo empezó en el agua. Yo solo lo devuelvo a casa.
-  grunt-quote: La marea sube te muevas o no.
+  grunt-quote: La marea sube, te muevas o no.
 Galactic:
   name: Equipo Galaxia
   boss: Helio
@@ -39,7 +39,7 @@ Plasma:
 Flare:
   name: Team Flare
   boss: Lysson
-  boss-title: Jefe
+  boss-title: Líder
   executive-title: Científico/a
   boss-quote: El mundo está demasiado lleno de gente que toma. Tus Pokémon serán lo último que tomes.
   grunt-quote: Solo la gente con estilo tiene futuro. Lo siento, tú no cumples.

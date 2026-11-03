@@ -2,13 +2,13 @@
 
 Red:
   name: Rojo
-  greeting: Rojo no dice nada. Lleva la mano a una Ball.
+  greeting: Rojo no dice nada. Lleva la mano a una Poké Ball.
 Steven:
   name: Máximo
   greeting: Máximo da vueltas a una piedra en la mano. «Esperaba un combate de verdad.»
 N:
   name: 'N'
-  greeting: N ladea la cabeza. «Enséñame qué sois tú y tus Pokémon el uno para el otro.»
+  greeting: N ladea la cabeza. «Enséñame qué sois tus Pokémon y tú los unos para los otros.»
 Alder:
   name: Mirto
   greeting: Mirto ríe y estira los hombros. «Disfrutemos de este combate, ¿te parece?»

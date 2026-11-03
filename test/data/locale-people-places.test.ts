@@ -278,10 +278,8 @@ describe('town names by locale', () => {
 
     expect(TOWN_JOINERS.en(parts)).toBe('New Shellfell Town, Ashmarch');
     expect(TOWN_JOINERS.en({ ...parts, mark: null })).toBe('Shellfell Town, Ashmarch');
-    expect(TOWN_JOINERS.ja(parts)).toBe('Ashmarchぐんの NewShellfell Town');
-    expect(TOWN_JOINERS.ja({ ...parts, title: 'タウン', mark: null })).toBe(
-      'Ashmarchぐんの Shellfellタウン',
-    );
+    expect(TOWN_JOINERS.ja(parts)).toBe('NewShellfellTown（Ashmarch）');
+    expect(TOWN_JOINERS.ja({ ...parts, mark: null })).toBe('ShellfellTown（Ashmarch）');
     expect(TOWN_JOINERS.es(parts)).toBe('Town New Shell fell, Ashmarch');
     expect(COUNTY_NAMES).toHaveLength(64);
   });
@@ -304,6 +302,16 @@ describe('town names by locale', () => {
       'Ciudad Gran Concha del Risco, X',
     );
     expect(TOWN_JOINERS.es({ ...parts, mark: null })).toBe('Pueblo Concha del Risco, X');
+    // A head that is an adjective agrees too, in gender and number
+    expect(TOWN_JOINERS.es({ ...parts, mark: null, head: 'Ardiente', title: 'Molinos' })).toBe(
+      'Molinos Ardientes del Risco, X',
+    );
+    expect(TOWN_JOINERS.es({ ...parts, mark: null, head: 'Abrasador', title: 'Ciudad' })).toBe(
+      'Ciudad Abrasadora del Risco, X',
+    );
+    expect(TOWN_JOINERS.es({ ...parts, mark: null, head: 'Granito', title: 'Ciudad' })).toBe(
+      'Ciudad Granito del Risco, X',
+    );
   });
 });
 
@@ -721,46 +729,46 @@ describe('the places in ja and es', () => {
 describe('town names in ja and es', () => {
   const TOWNS: [SettledBiome, number, number, string, string][] = [
     [
-      Biome.Glacier,
-      0,
-      0,
-      'カシこうやぐんの はくそうやまタウン',
-      'Pueblo Escarcha del Risco, Quejigal',
-    ],
-    [
-      Biome.Glacier,
-      100,
-      -37,
-      'かまかこいぐんの モレーンみはりシティ',
-      'Ciudad Morrena de la Atalaya, Caldera',
-    ],
-    [
       Biome.Beach,
-      61,
+      164,
+      -189,
+      'コイシミナトタウン（ヒバリヌマ）',
+      'Pueblo Guijarro del Refugio, Alondral',
+    ],
+    [
+      Biome.Mangrove,
+      44,
+      -103,
+      'ササエコウヤシティ（コハクカコイ）',
+      'Ciudad Apuntalada de la Meseta, Redil Ámbar',
+    ],
+    [
+      Biome.Swamp,
+      -126,
+      -94,
+      'ガマノハラムラ（コガネザカイ）',
+      'Aldea Ranera de la Landa, Marca Dorada',
+    ],
+    [
+      Biome.TropicalRainforest,
+      -25,
+      -12,
+      'オールドランザカイサト（クワヌマ）',
+      'Caserío Viejo Orquídea de la Frontera, Rastrojal',
+    ],
+    [
+      Biome.Grassland,
+      -6,
+      57,
+      'イーストオオムギタニアイジュウジロ（シオヌマ）',
+      'Cruce Este Cebada de la Hoz, Salobral',
+    ],
+    [
+      Biome.Mountain,
+      -143,
       60,
-      'カシこうやぐんの フォートあわたに しゅくば',
-      'Parada Fuerte Espuma del Valle, Quejigal',
-    ],
-    [
-      Biome.Desert,
-      3,
-      -2,
-      'なみなみぐんの しんきろうはやし こなひき',
-      'Molinos Espejismo del Soto, Colmado',
-    ],
-    [
-      Biome.Volcano,
-      17,
-      250,
-      'はいかこいぐんの いおうしろ さと',
-      'Caserío Azufre del Castillo, Cenicero',
-    ],
-    [
-      Biome.Bog,
-      -200,
-      199,
-      'ウンバーぬまぐんの ぬかるみたにあいタウン',
-      'Pueblo Tremedal de la Hoz, Ciénaga Parda',
+      'ウエストチョウジョウタニシュクバ（クロガネ）',
+      'Parada Oeste Cumbre del Valle, Ferrería',
     ],
   ];
 
@@ -776,6 +784,13 @@ describe('town names in ja and es', () => {
   it('keeps the English names', () => {
     active.locale = 'en';
     expect(nameTown(0, 0, Biome.Glacier)).toBe('Hoarfell Town, Oakenwold');
+  });
+
+  it('writes the Japanese town words in katakana, as the games write a town', () => {
+    const file = readFileSync(join(TEXT, 'ja', 'town-names.yaml'), 'utf8');
+    const words = file.split('\n').filter((line) => !line.startsWith('#'));
+
+    expect(words.join('\n')).not.toMatch(/[\p{Script=Hiragana}\p{Script=Han}]/u);
   });
 
   it('writes words that are distinct inside every list', () => {

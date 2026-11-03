@@ -26,7 +26,7 @@ import {
 import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
-import RaidLobby from './RaidLobby';
+import RaidLobby, { type RaidLobbyReport } from './RaidLobby';
 import watchLive from '../app/watch';
 import { Button, LIST_PAGE, List, ListRow, Meta, Note, Panel, createPager } from '../styled';
 import { getSpeciesData } from '../../data/species';
@@ -40,17 +40,11 @@ import { m } from '../../i18n/paraglide/messages.js';
 export interface RaidsTabProps {
   user: PlayerIdentity;
   /**
-   * What the panel should be called: the lair, while the player is
-   * standing in a lobby, and nothing while they are looking at the
-   * list of them
+   * The lobby the player is standing in, so the dialog around the tab
+   * is named for the lair and refuses to be dismissed out from under a
+   * host; null while they are looking at the list
    */
-  onTitle?: (title: string | null) => void;
-  /**
-   * Whether the lobby the player is standing in is their own, so the
-   * dialog around the tab can refuse to be dismissed out from under a
-   * host
-   */
-  onHosting?: (hosting: boolean) => void;
+  onLobby?: (lobby: RaidLobbyReport | null) => void;
 }
 
 /**
@@ -289,14 +283,7 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
           </Show>
         }
       >
-        {(id) => (
-          <RaidLobby
-            user={props.user}
-            raidId={id()}
-            onTitle={props.onTitle}
-            onHosting={props.onHosting}
-          />
-        )}
+        {(id) => <RaidLobby user={props.user} raidId={id()} onLobby={props.onLobby} />}
       </Show>
     </Panel>
   );
@@ -326,13 +313,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
         </Panel>
       }
     >
-      <RaidList
-        user={props.user}
-        onTitle={props.onTitle}
-        onHosting={props.onHosting}
-        window={window}
-        zone={zone}
-      />
+      <RaidList user={props.user} onLobby={props.onLobby} window={window} zone={zone} />
     </Suspense>
   );
 }

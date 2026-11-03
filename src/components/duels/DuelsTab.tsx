@@ -11,7 +11,7 @@ import {
 } from '../../auth/duels';
 import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
-import DuelLobby from './DuelLobby';
+import DuelLobby, { type DuelLobbyReport } from './DuelLobby';
 import { Button, DialogSection, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
 import { useGame } from '../app/game-context';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -52,12 +52,11 @@ function InvitedRow(props: {
 export interface DuelsTabProps {
   user: PlayerIdentity;
   /**
-   * What the panel is called: the lobby, while the player is standing
-   * in one, and nothing while they are looking at the list
+   * The lobby the player is standing in, so the panel is named for it
+   * and closes only by Leave while they hold a seat; null while they
+   * are looking at the list
    */
-  onTitle?: (title: string | null) => void;
-  /** Whether this player holds a seat in the open lobby */
-  onSeated?: (seated: boolean) => void;
+  onLobby?: (lobby: DuelLobbyReport | null) => void;
 }
 
 /**
@@ -189,14 +188,7 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
           </>
         }
       >
-        {(id) => (
-          <DuelLobby
-            user={props.user}
-            duelId={id()}
-            onTitle={props.onTitle}
-            onSeated={props.onSeated}
-          />
-        )}
+        {(id) => <DuelLobby user={props.user} duelId={id()} onLobby={props.onLobby} />}
       </Show>
     </Panel>
   );

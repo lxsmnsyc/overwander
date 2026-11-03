@@ -22,6 +22,7 @@ import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
 import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
+import type { DuelLobbyReport } from '../components/duels/DuelLobby';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexTab from '../components/dex/PokedexTab';
 import ProfileDialog from '../components/profile/ProfileDialog';
@@ -29,6 +30,7 @@ import ProfileTab from '../components/profile/ProfileTab';
 import QuestsTab from '../components/quests/quests-tab';
 import SettingsTab from '../components/settings/SettingsTab';
 import RaidsTab from '../components/raids/RaidsTab';
+import type { RaidLobbyReport } from '../components/raids/RaidLobby';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
@@ -126,22 +128,17 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
    */
   const [selling, setSelling] = createSignal(false);
   /**
-   * What the raids panel is called. A lobby is a lair, and the lair is
-   * what a player travelled to — so while they are standing in one, it
-   * names the panel rather than the word "Raids"
+   * The raid lobby the player is standing in, or null on the list. A
+   * lobby is a lair, and the lair is what a player travelled to, so it
+   * names the panel rather than the word "Raids". A host who dismisses
+   * the panel leaves a lobby standing with their name on it and nobody
+   * in it, and for a mythical the relic that opened it is already
+   * spent, so while hosting the overlay and Escape are refused and the
+   * way out is the button that actually walks them out
    */
-  const [lobby, setLobby] = createSignal<string | null>(null);
-  /**
-   * Whether that lobby is the player's own. A host who dismisses the
-   * panel leaves a lobby standing with their name on it and nobody in
-   * it, and for a mythical the relic that opened it is already spent,
-   * so the overlay and Escape are refused and the way out is the
-   * button that actually walks them out
-   */
-  const [hosting, setHosting] = createSignal(false);
+  const [raidLobby, setRaidLobby] = createSignal<RaidLobbyReport | null>(null);
   /** The same, for the battle lobby a player is standing in */
-  const [duelling, setDuelling] = createSignal<string | null>(null);
-  const [seated, setSeated] = createSignal(false);
+  const [duelLobby, setDuelLobby] = createSignal<DuelLobbyReport | null>(null);
   const close = (): void => {
     // Wherever the profile was sent to open is spent once it closes:
     // the next player to open it from the menu wants it as they left
@@ -316,9 +313,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
-            insistent={hosting()}
+            insistent={raidLobby()?.hosting === true}
             // Broad in a lobby, for the boss beside the trainer list
-            width={lobby() == null ? 'wide' : 'broad'}
+            width={raidLobby() == null ? 'wide' : 'broad'}
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
             //
@@ -329,19 +326,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // opened from the *world* rather than from that button
             // arrives with no word about where it came from
             terse
-            title={lobby() ?? TITLES[GameDialog.Raids]()}
+            title={raidLobby()?.title ?? TITLES[GameDialog.Raids]()}
             description={DESCRIPTIONS[GameDialog.Raids]()}
           >
             <RaidsTab
               user={props.user}
-              onTitle={(named) => {
-                setLobby(named);
-              }}
-              onHosting={(own) => {
-                setHosting(own);
+              onLobby={(standing) => {
+                setRaidLobby(standing);
               }}
             />
-            <Show when={lobby() == null}>
+            <Show when={raidLobby() == null}>
               <DialogActions>
                 <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
@@ -355,22 +349,19 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             isOpen={showing(GameDialog.Battles)}
             onClose={close}
             // A seated player leaves by Leave, which takes their party out
-            insistent={seated()}
+            insistent={duelLobby()?.seated === true}
             width="wide"
             terse
-            title={duelling() ?? TITLES[GameDialog.Battles]()}
+            title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
             description={DESCRIPTIONS[GameDialog.Battles]()}
           >
             <DuelsTab
               user={props.user}
-              onTitle={(named) => {
-                setDuelling(named);
-              }}
-              onSeated={(held) => {
-                setSeated(held);
+              onLobby={(standing) => {
+                setDuelLobby(standing);
               }}
             />
-            <Show when={duelling() == null}>
+            <Show when={duelLobby() == null}>
               <DialogActions>
                 <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>

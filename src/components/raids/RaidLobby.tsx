@@ -67,21 +67,30 @@ import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 
+/** The lobby the player is standing in, as the panel around it needs it */
+export interface RaidLobbyReport {
+  /**
+   * What the lobby is called. The name belongs at the top of the panel
+   * the lobby fills, which is the dialog's own heading rather than
+   * anything this can draw
+   */
+  title: string;
+  /**
+   * Whether the player is hosting it: a host's lobby is not dismissed
+   * by a stray press on the overlay
+   */
+  hosting: boolean;
+}
+
 export interface RaidLobbyProps {
   user: PlayerIdentity;
   raidId: string;
   /**
-   * What the lobby is called, reported upwards as soon as it is known.
-   * The name belongs at the top of the panel the lobby fills, which is
-   * the dialog's own heading rather than anything this can draw
+   * The lobby, reported upwards as soon as it is known, and null while
+   * it loads and on the way out. Title and hold travel together, so the
+   * panel never holds for a lobby it no longer names
    */
-  onTitle?: (title: string | null) => void;
-  /**
-   * Whether the player is hosting what they are standing in, reported
-   * upwards for the panel around it: a host's lobby is not dismissed
-   * by a stray press on the overlay
-   */
-  onHosting?: (hosting: boolean) => void;
+  onLobby?: (lobby: RaidLobbyReport | null) => void;
 }
 
 /** The combined multipliers the boss card lists, strongest first */
@@ -277,22 +286,16 @@ function LobbyRows(
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
-  // The lair names the panel it is in. It is cleared on the way out so
-  // the list of lobbies gets its own name back
+  // The lair names the panel it is in, and whether it is theirs decides
+  // whether the overlay may close it. Cleared on the way out so the
+  // list of lobbies gets its own name back
   createEffect(() => {
     const record = raid();
 
-    props.onTitle?.(record == null ? null : getRaidTitle(record));
-  });
-
-  // And whether it is theirs, for the same reason: the panel around
-  // this is what the overlay closes. Cleared only on the way out, since
-  // clearing it per lobby update flickered the panel's hold on every join
-  createEffect(() => {
-    props.onHosting?.(isHost());
+    props.onLobby?.(record == null ? null : { title: getRaidTitle(record), hosting: isHost() });
   });
   onCleanup(() => {
-    props.onHosting?.(false);
+    props.onLobby?.(null);
   });
 
   /**
@@ -317,10 +320,6 @@ function LobbyRows(
     if (arrived) {
       game.setRaid(null);
     }
-  });
-
-  onCleanup(() => {
-    props.onTitle?.(null);
   });
 
   /**

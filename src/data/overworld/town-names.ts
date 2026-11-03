@@ -189,6 +189,112 @@ export interface TownParts {
   county: string;
 }
 
+/** The Spanish titles that take a feminine adjective */
+const FEMININE_TITLES = new Set(['Ciudad', 'Aldea', 'Parada']);
+
+/** The Spanish titles that are plural */
+const PLURAL_TITLES = new Set(['Molinos']);
+
+/**
+ * The words of the Spanish lists that are adjectives, in the masculine
+ * singular: they take the title's gender and number ("Ciudad Nueva",
+ * "Molinos Ardientes"). The rest are nouns and stay as written
+ */
+const ADJECTIVES = new Set([
+  'Nuevo',
+  'Grande',
+  'Viejo',
+  'Alto',
+  'Bajo',
+  'Pequeño',
+  'Bravío',
+  'Varado',
+  'Zancudo',
+  'Enmarañado',
+  'Cenagoso',
+  'Apuntalado',
+  'Vadeable',
+  'Anudado',
+  'Sombrío',
+  'Crepuscular',
+  'Ranero',
+  'Febril',
+  'Vaporoso',
+  'Hondo',
+  'Descortezado',
+  'Lluvioso',
+  'Rugiente',
+  'Pajizo',
+  'Ardiente',
+  'Leonado',
+  'Abrasador',
+  'Espejeante',
+  'Polvoriento',
+  'Caldeado',
+  'Espigado',
+  'Naciente',
+  'Silencioso',
+  'Húmedo',
+  'Amargo',
+  'Alcalino',
+  'Erosionado',
+  'Pálido',
+  'Resinoso',
+  'Helado',
+  'Deshelado',
+  'Desolado',
+  'Nevado',
+  'Tormentoso',
+  'Escarpado',
+  'Aterido',
+  'Alpino',
+  'Enrarecido',
+  'Nuboso',
+  'Plateado',
+  'Escarchado',
+  'Blanco',
+  'Quieto',
+  'Desprendido',
+  'Salpicado',
+  'Espeso',
+  'Ventoso',
+  'Ancho',
+  'Errante',
+  'Barrido',
+  'Neblinoso',
+  'Maderero',
+  'Zigzagueante',
+  'Humeante',
+  'Ceniciento',
+  'Oxidado',
+  'Rociado',
+  'Hundido',
+  'Fatuo',
+  'Salobre',
+  'Emplumado',
+  'Caballar',
+]);
+
+/** A Spanish word made to agree with the title it follows ("Ciudad Nueva", "Molinos Ardientes") */
+function agreeSpanish(word: string, title: string): string {
+  if (!ADJECTIVES.has(word)) {
+    return word;
+  }
+
+  const feminine = FEMININE_TITLES.has(title);
+  const plural = PLURAL_TITLES.has(title);
+  let agreed = word;
+
+  // -o becomes -a and -or takes -a, while -e and the rest do not change
+  if (feminine && /(?:o|or)$/u.test(agreed)) {
+    agreed = agreed.endsWith('o') ? `${agreed.slice(0, -1)}a` : `${agreed}a`;
+  }
+  if (!plural) {
+    return agreed;
+  }
+  return /[aeiou]$/u.test(agreed) ? `${agreed}s` : `${agreed}es`;
+}
+
 /**
  * How a locale puts a name together, for a locale that writes its own
  * word lists. English welds the tail onto the head, sets the title
@@ -198,11 +304,15 @@ export interface TownParts {
 export const TOWN_JOINERS: Record<string, (parts: TownParts) => string> = {
   [baseLocale]: ({ mark, head, tail, title, county }) =>
     `${mark == null ? '' : `${mark} `}${head}${tail} ${title}, ${county}`,
-  // Largest first, with no spaces: the county, the mark, the name, the title
-  ja: ({ mark, head, tail, title, county }) => `${county}${mark ?? ''}${head}${tail}${title}`,
-  // The title comes first, then the mark, as in "Pueblo Nuevo Concha, Ashmarch"
+  // Like "ナミハタケシティ（コガネザカイ）", the way the games write a town: one
+  // katakana word (mark, head, tail) with the title welded on, then the
+  // county in full-width brackets
+  ja: ({ mark, head, tail, title, county }) => `${mark ?? ''}${head}${tail}${title}（${county}）`,
+  // Title first, then the mark, as in "Ciudad Nueva Concha del Risco, Marca
+  // Ceniza". The mark agrees with the title like "Ciudad Real" and "Pueblo
+  // Nuevo" do, and the tail is a phrase of its own ("del Risco")
   es: ({ mark, head, tail, title, county }) =>
-    `${title} ${mark == null ? '' : `${mark} `}${head}${tail}, ${county}`,
+    `${title} ${mark == null ? '' : `${agreeSpanish(mark, title)} `}${agreeSpanish(head, title)} ${tail}, ${county}`,
 };
 
 /** The head lists of each locale's words by biome id, read once */

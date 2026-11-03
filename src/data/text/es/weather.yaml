@@ -1,0 +1,82 @@
+# Cómo se llama cada cielo, y una línea que solo dice lo que una imagen no
+# puede decir. Lo que favorece se dibuja como sus tipos, y el suelo es el
+# mismo bajo cualquier cielo que potencia, así que no se escribe aquí
+
+Clear:
+  name: Despejado
+  description: Un cielo normal, el único bajo el que no se potencia nada.
+Cloudy:
+  name: Nublado
+  description: Nubes, y un día normal debajo.
+Overcast:
+  name: Cubierto
+  description: Una tapa gris y plana sobre el sector.
+Breezy:
+  name: Brisa
+  description: Un viento constante sobre el sector.
+Drizzle:
+  name: Llovizna
+  description: Lluvia ligera.
+Rain:
+  name: Lluvia
+  description: Lluvia constante.
+Downpour:
+  name: Diluvio
+  description: Lluvia que cae con fuerza.
+Thunderstorm:
+  name: Tormenta eléctrica
+  description: Lluvia con truenos.
+Mist:
+  name: Neblina
+  description: Aire a través del cual no se ve lejos.
+Fog:
+  name: Niebla
+  description: Niebla espesa a ras de suelo.
+Haze:
+  name: Calima
+  description: Aire caliente que no se mueve.
+Frost:
+  name: Escarcha
+  description: Un frío capaz de posarse sobre todo.
+Snow:
+  name: Nieve
+  description: Nieve cayendo sobre el sector.
+Blizzard:
+  name: Ventisca
+  description: Nieve arrastrada de lado. Desgasta a quien no está hecho para ella.
+Hail:
+  name: Granizo
+  description: Hielo que cae con fuerza suficiente para hacer daño. Desgasta a quien no está hecho para él.
+Sandstorm:
+  name: Tormenta de arena
+  description: Arena llevada por el viento. Desgasta a quien no está hecho para ella.
+DustHaze:
+  name: Bruma de polvo
+  description: Polvo suspendido en un aire quieto.
+Heatwave:
+  name: Ola de calor
+  description: Calor y nada más.
+FallingAsh:
+  name: Ceniza volcánica
+  description: Ceniza que cae desde algún lugar.
+Aurora:
+  name: Aurora
+  description: Luz sobre el extremo norte, y uno de los cielos más raros que existen.
+Rainbow:
+  name: Arcoíris
+  description: Un arco sobre aguas abiertas, y uno de los cielos más raros que existen.
+PollenDrift:
+  name: Polen
+  description: Polen llevado entre los árboles.
+MeteorShower:
+  name: Lluvia de meteoros
+  description: El cielo más raro que existe. Favorece a todos los tipos y hace 8 veces más probable que un Pokémon sea variocolor.
+FataMorgana:
+  name: Fata Morgana
+  description: Un espejismo. Favorece a todos los tipos. 1 de cada 8 conserva una habilidad oculta, y 1 de cada 64 una distintiva.
+DarkDay:
+  name: Día oscuro
+  description: Un mediodía vuelto noche. Favorece a todos los tipos, y 1 de cada 4 de los que entrega es un Pokémon Oscuro.
+Fogbow:
+  name: Arco de niebla
+  description: Un arcoíris sin color. 1 de cada 4 de los Pokémon que se encuentran tiene hueco para un 5.º movimiento, y 1 de cada 16 para un 6.º.

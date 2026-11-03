@@ -1,0 +1,167 @@
+# Las palabras con que se forma el nombre de un pueblo. El orden y la
+# cantidad son los del inglés, así que un pueblo es el mismo en todos los
+# idiomas y solo cambian las palabras. Se unen como «Ciudad Nueva Concha
+# del Risco, Marca Ceniza»: título, marca, cabeza, cola y comarca; los adjetivos
+# concuerdan con el título
+
+heads:
+  Beach: [Concha, Duna, Bravío, Varado, Guijarro, Marea, Berberecho, Espuma]
+  Mangrove: [Zancudo, Enmarañado, Cenagoso, Salobre, Apuntalado, Vadeable, Garza, Anudado]
+  Swamp: [Fangal, Carrizo, Sombrío, Turba, Juncia, Crepuscular, Ranero, Sumidero]
+  TropicalRainforest: [Bejuco, Orquídea, Febril, Esmeralda, Liana, Tucán, Vaporoso, Hondo]
+  TropicalSeasonalForest: [Teca, Monzón, Ébano, Cigarra, Bambú, Savia, Descortezado, Lluvioso]
+  Savanna: [Acacia, Ámbar, Leonado, Ocre, Rugiente, Pajizo, Baobab, Ardiente]
+  Desert: [Abrasador, Espejeante, Cuarzo, Cuenca, Cactus, Siroco, Polvoriento, Caldeado]
+  Shrubland: [Brezal, Aulaga, Retama, Salvia, Zarza, Maleza, Enebro, Mirto]
+  Grassland: [Prado, Trébol, Cebada, Alondra, Espigado, Henar, Golondrina, Naciente]
+  TemperateForest: [Roble, Haya, Bellota, Avellano, Abedul, Cervato, Saúco, Arce]
+  TemperateRainforest: [Musgo, Liquen, Cedro, Rocío, Acedera, Silencioso, Laurel, Húmedo]
+  ColdDesert: [Pedernal, Yeso, Amargo, Tiza, Arenilla, Alcalino, Erosionado, Pálido]
+  Taiga: [Pino, Abeto, Resinoso, Aguja, Cebellina, Búho, Alerce, Piña]
+  Tundra: [Helado, Deshelado, Algodón, Sauce, Liebre, Desolado, Nevado, Permafrost]
+  Mountain: [Peña, Granito, Águila, Pizarra, Tormentoso, Hierro, Escarpado, Cumbre]
+  AlpineTundra: [Aterido, Circo, Marmota, Alpino, Enrarecido, Nuboso, Pedregal, Plateado]
+  Glacier: [Escarchado, Témpano, Cristal, Serac, Morrena, Blanco, Quieto, Desprendido]
+  Woodland: [Bosquete, Claro, Serbal, Espeso, Tejón, Acebo, Salpicado, Nuez]
+  Steppe: [Caballar, Emplumado, Saiga, Ventoso, Ancho, Milano, Errante, Barrido]
+  MontaneForest: [Pinabete, Tsuga, Oso, Canchal, Neblinoso, Lince, Maderero, Zigzagueante]
+  Volcano: [Ascua, Escoria, Basalto, Azufre, Pómez, Humeante, Magma, Ceniciento]
+  Badlands: [Barranquera, Chimenea, Oxidado, Otero, Buitre, Hueso, Rambla, Rocarroja]
+  RockyCoast: [Acantilado, Gaviota, Rociado, Farallón, Faro, Charrán, Percebe, Socaire]
+  Bog: [Tremedal, Arándano, Macolla, Aguazal, Avetoro, Hundido, Fatuo, Aguanegra]
+
+tails:
+  - del Risco
+  - de la Laguna
+  - de la Loma
+  - de la Vaguada
+  - del Arroyo
+  - de la Ribera
+  - de la Frontera
+  - de la Cresta
+  - de la Puerta
+  - del Refugio
+  - de la Landa
+  - del Valle
+  - del Vado
+  - de la Ensenada
+  - del Manantial
+  - del Cortijo
+  - del Soto
+  - de la Cañada
+  - de la Charca
+  - del Tajo
+  - de la Fuente
+  - de la Hoz
+  - del Hito
+  - de la Alquería
+  - del Túmulo
+  - del Chapitel
+  - del Regato
+  - de la Umbría
+  - de la Meseta
+  - de la Cuesta
+  - de la Orilla
+  - del Barranco
+  - del Campo
+  - de la Atalaya
+  - del Monte
+  - del Castillo
+  - de la Huerta
+  - del Corral
+  - de la Boca
+  - de la Fronda
+
+titles:
+  - Pueblo
+  - Ciudad
+  - Aldea
+  - Caserío
+  - Municipio
+  - Puesto
+  - Embarcadero
+  - Cruce
+  - Molinos
+  - Descanso
+  - Barrio
+  - Parada
+
+marks:
+  - Nuevo
+  - Viejo
+  - Alto
+  - Bajo
+  - Norte
+  - Sur
+  - Este
+  - Oeste
+  - Grande
+  - Pequeño
+  - Puerto
+  - Fortín
+
+counties:
+  - Marca Ceniza
+  - Páramo Kelven
+  - Hondonada Parda
+  - Helechal
+  - Meseta Espinosa
+  - Ciénaga Gris
+  - Marca Alta
+  - Poniente
+  - Pedregal
+  - Saucal
+  - Redil del Fango
+  - Marca Escoria
+  - Gleba Fría
+  - Meseta Cebellina
+  - Alondral
+  - Páramo Orren
+  - Vísperas
+  - Tuétano
+  - Marca Dorada
+  - Oquedal
+  - Redil Ámbar
+  - Páramo del Cuervo
+  - Ciénaga Plateada
+  - Invernal
+  - Marca del Ocaso
+  - Cardal
+  - Camino Pello
+  - Rastrojal
+  - Rebosadero
+  - Caldera
+  - Ortigal
+  - Marca de Hierro
+  - Hondonada del Viento
+  - Ferrería
+  - Marca del Cauce
+  - Salobral
+  - Quejigal
+  - Marca del Viento
+  - Hoya
+  - Zarzal
+  - Brasero
+  - Barbecho
+  - Marca Lúgubre
+  - Páramo Pagano
+  - Hiedral
+  - Enebral
+  - Primillar
+  - Marca Baja
+  - Musgal
+  - Ciénaga del Norte
+  - Vergel
+  - Turbal
+  - Cantera
+  - Cañaveral
+  - Juncal
+  - Yesquero
+  - Ciénaga Parda
+  - Marca de la Cripta
+  - Lobera
+  - Milenrama
+  - Cenizal
+  - Marca de la Campana
+  - Marca Peñascosa
+  - Vega del Cenagal

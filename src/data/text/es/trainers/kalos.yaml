@@ -76,13 +76,13 @@ KalosMaid:
   quote: El château debe estar impecable. Empezaré por quitarte de en medio.
 KalosTwins:
   name: Gemelas
-  quote: "¡Terminamos los combates la una de la otra! ¡Tú no terminarás el nuestro!"
+  quote: '¡Terminamos los combates la una de la otra! ¡Tú no terminarás el nuestro!'
 KalosVeteran:
   name: Veterano
   quote: Recorrí la Calle Victoria antes de que nacieras. Veamos qué ha cambiado.
 KalosSchoolKid:
   name: Escolar
-  quote: "¡En la Escuela de Entrenadores nos enseñaron las ventajas de tipos! ¡Ponme a prueba!"
+  quote: '¡En la Escuela de Entrenadores nos enseñaron las ventajas de tipos! ¡Ponme a prueba!'
 KalosPreschooler:
   name: Preescolar
   quote: ¡Mamá dice que hoy puedo combatir con un mayor! ¡Contigo!

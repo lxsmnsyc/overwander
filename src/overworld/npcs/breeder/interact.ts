@@ -4,6 +4,7 @@ import { BREEDING_FEE } from '../../../data/overworld/npc';
 import { canBreed, canLayEggs } from '../../breeding';
 import playEffect, { Effect } from '../../../components/app/sound';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { asParent, goldHeld } from '../shared';
 import type { NpcScript } from '../create';
@@ -40,7 +41,7 @@ const breeder: NpcScript = async (visit) => {
   playEffect(Effect.EggGet);
   visit.notify({
     title: m.npc_breeder_toast_title(),
-    message: m.npc_breeder_toast({ fee: BREEDING_FEE }),
+    message: m.npc_breeder_toast({ fee: formatNumber(BREEDING_FEE) }),
     tone: 'leaf',
   });
   visit.changed();

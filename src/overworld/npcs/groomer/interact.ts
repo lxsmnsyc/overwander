@@ -5,6 +5,7 @@ import { groomedFriendship } from '../../../data/constants/friendship';
 import { GROOMING_FEE } from '../../../data/overworld/npc';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
 import { sayFriendship } from '../../../components/catches/catch-summary';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
@@ -48,7 +49,12 @@ const groomer: NpcScript = async (visit) => {
     return;
   }
   visit.changed();
-  await visit.say(m.npc_groomer_done({ mood: sayFriendship(friendship), fee: GROOMING_FEE }));
+  await visit.say(
+    m.npc_groomer_done({
+      mood: sayFriendship(friendship),
+      fee: formatNumber(GROOMING_FEE),
+    }),
+  );
 };
 
 export default groomer;

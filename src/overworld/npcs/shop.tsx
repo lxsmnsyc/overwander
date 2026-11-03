@@ -8,6 +8,7 @@ import type { PickItemInput } from '../../components/forms/pick-item';
 import { ShopForm, type ShopPick } from '../../components/forms/shop';
 import ItemSprite from '../../components/items/ItemSprite';
 import { Detail, Meta } from '../../components/styled';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 import { goldHeld, priceOf } from './shared';
 import type { NpcScript, NpcVisit } from './create';
@@ -52,10 +53,10 @@ function tray(
     blocked: (entry) =>
       buying && priceOf(entry.item, true) > gold ? m.npc_more_than_held() : null,
     carried: (entry) => countIn(bag, entry.item),
-    note: (entry) => m.npc_price_note({ price: priceOf(entry.item, buying) }),
+    note: (entry) => m.npc_price_note({ price: formatNumber(priceOf(entry.item, buying)) }),
     card: (entry) => (
       <Detail label={buying ? m.npc_costs() : m.npc_he_pays()}>
-        {m.ui_gold({ amount: priceOf(entry.item, buying) })}
+        {m.ui_gold({ amount: formatNumber(priceOf(entry.item, buying)) })}
       </Detail>
     ),
     // The purse decides a purchase and the bag a sale, both under the trade limit
@@ -68,8 +69,8 @@ function tray(
         : Math.min(VENDOR_TRADE_LIMIT, entry.amount),
     sum: (item, amount) => (
       <Meta>
-        {m.npc_sum_gold({ amount, price: priceOf(item, buying) })}{' '}
-        <strong>{m.ui_gold({ amount: priceOf(item, buying) * amount })}</strong>
+        {m.npc_sum_gold({ amount, price: formatNumber(priceOf(item, buying)) })}{' '}
+        <strong>{m.ui_gold({ amount: formatNumber(priceOf(item, buying) * amount) })}</strong>
       </Meta>
     ),
     refuse: (item, amount) =>
@@ -133,7 +134,7 @@ const shop: NpcScript = async (visit) => {
       title:
         amount > 1 ? m.npc_name_times({ name: describeItem(item), amount }) : describeItem(item),
       message: (buying ? m.npc_gold_spent : m.npc_gold_gained)({
-        amount: priceOf(item, buying) * amount,
+        amount: formatNumber(priceOf(item, buying) * amount),
       }),
       art: () => <ItemSprite item={item} size={24} label="" />,
       tone: 'leaf',

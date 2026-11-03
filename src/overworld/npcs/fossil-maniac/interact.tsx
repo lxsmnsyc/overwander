@@ -5,6 +5,7 @@ import { describeItem } from '../../../components/details';
 import { PickItemForm } from '../../../components/forms/pick-item';
 import ItemSprite from '../../../components/items/ItemSprite';
 import { Detail } from '../../../components/styled';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
@@ -31,10 +32,12 @@ const maniac: NpcScript = async (visit) => {
     none: m.npc_maniac_none(),
     have: goldHeld(gold),
     counts: false,
-    note: (entry) => m.ui_gold({ amount: getFossilPrice(entry.item) }),
+    note: (entry) => m.ui_gold({ amount: formatNumber(getFossilPrice(entry.item)) }),
     blocked: (entry) => (getFossilPrice(entry.item) > gold ? m.npc_more_than_held() : null),
     card: (entry) => (
-      <Detail label={m.npc_costs()}>{m.ui_gold({ amount: getFossilPrice(entry.item) })}</Detail>
+      <Detail label={m.npc_costs()}>
+        {m.ui_gold({ amount: formatNumber(getFossilPrice(entry.item)) })}
+      </Detail>
     ),
   });
 
@@ -51,7 +54,7 @@ const maniac: NpcScript = async (visit) => {
   playEffect(Effect.ShopBuy);
   visit.notify({
     title: describeItem(item),
-    message: m.npc_gold_spent({ amount: getFossilPrice(item) }),
+    message: m.npc_gold_spent({ amount: formatNumber(getFossilPrice(item)) }),
     art: () => <ItemSprite item={item} size={24} label="" />,
     tone: 'leaf',
   });

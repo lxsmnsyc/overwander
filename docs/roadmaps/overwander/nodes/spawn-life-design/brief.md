@@ -1,7 +1,7 @@
 ---
 id: spawn-life-design
 title: Design spawn radius, caps and roaming
-status: active
+status: done
 priority: should
 type: spike
 outline: false

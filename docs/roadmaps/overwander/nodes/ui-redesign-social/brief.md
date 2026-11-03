@@ -2,10 +2,10 @@
 id: ui-redesign-social
 title: Redesign trades, auctions, raids and friends
 status: todo
-priority: should
+priority: must
 type: feature
 outline: true
-milestone: next
+milestone: now
 size: L
 added: 2026-11-03
 owns:

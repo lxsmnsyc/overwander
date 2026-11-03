@@ -21,6 +21,8 @@ import Weather, {
 } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import Biome from '../../data/ids/biome';
+import { BIOME_IDS, WEATHER_IDS } from '../../data/ids/names';
+import { findIdName, idOf } from '../../data/yaml';
 import QuadBatch from '../../canvas/gl/quad-batch';
 import type { QuadPoint } from '../../canvas/gl/quad-batch';
 import paintSky, { type Lamp, type SkyCamera, batchSky, batchWash } from '../../canvas/sky';
@@ -555,36 +557,33 @@ export default function WeatherDemo(): JSX.Element {
   const skies = (): { value: Weather; label: string }[] => optionsOf(WEATHER_NAMES);
 
   /**
-   * Which one is being looked at. It comes out of the address by name
-   * rather than by number, so a link says what it shows
+   * Which one is being looked at. It comes out of the address by the
+   * enum's own key rather than by its shown name, so a link says what it
+   * shows and loads in any language
    */
   const chosen = (): Weather => {
-    for (const entry of skies()) {
-      if (entry.label === params.sky) {
-        return entry.value;
-      }
+    if (params.sky != null && Object.hasOwn(WEATHER_IDS, params.sky)) {
+      return idOf<Weather>(WEATHER_IDS, params.sky, 'sky');
     }
     return DEFAULT_SKY;
   };
 
   const show = (sky: Weather): void => {
-    setParams({ sky: WEATHER_NAMES[sky] });
+    setParams({ sky: findIdName(WEATHER_IDS, sky) });
   };
 
   /** The country under it, in the address for the same reason the sky is */
   const grounds = (): { value: Biome; label: string }[] => optionsOf(BIOME_NAMES);
 
   const ground = (): Biome => {
-    for (const entry of grounds()) {
-      if (entry.label === params.ground) {
-        return entry.value;
-      }
+    if (params.ground != null && Object.hasOwn(BIOME_IDS, params.ground)) {
+      return idOf<Biome>(BIOME_IDS, params.ground, 'ground');
     }
     return DEFAULT_GROUND;
   };
 
   const stand = (biome: Biome): void => {
-    setParams({ ground: BIOME_NAMES[biome] });
+    setParams({ ground: findIdName(BIOME_IDS, biome) });
   };
 
   /** The next or previous sky, for sweeping the whole list */

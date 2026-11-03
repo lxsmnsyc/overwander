@@ -289,7 +289,7 @@ export function extendRecord<T extends object, C extends Partial<T>>(base: T, ch
 }
 
 /** The one English file of a text file's glob across the locale folders */
-function englishFileOf(byLocale: LocaleFiles, where: string): unknown {
+function findEnglishFile(byLocale: LocaleFiles, where: string): unknown {
   const englishFiles = Object.values(byLocale.english);
 
   if (englishFiles.length !== 1) {
@@ -299,7 +299,7 @@ function englishFileOf(byLocale: LocaleFiles, where: string): unknown {
 }
 
 /** The part of a file a table is read from, the whole file when no section is named */
-function sectionOf(file: unknown, section: string | undefined, where: string): unknown {
+function pickSection(file: unknown, section: string | undefined, where: string): unknown {
   if (section == null) {
     return file;
   }
@@ -359,7 +359,7 @@ export function readLocaleText(
 ): LocaleText {
   const byLocale = splitLocales(files);
   const english = readLines(
-    sectionOf(englishFileOf(byLocale, where), section, where),
+    pickSection(findEnglishFile(byLocale, where), section, where),
     field,
     where,
     true,
@@ -368,7 +368,7 @@ export function readLocaleText(
 
   for (const [locale, placed] of byLocale.overlays) {
     for (const [path, file] of Object.entries(placed)) {
-      for (const [key, said] of readLines(sectionOf(file, section, path), field, path, false)) {
+      for (const [key, said] of readLines(pickSection(file, section, path), field, path, false)) {
         let names = translated.get(key);
 
         if (names == null) {
@@ -420,7 +420,7 @@ export function addLocaleText<T extends number>(
   }
 }
 
-function tableOf<T extends number>(
+function buildTable<T extends number>(
   ids: Readonly<Record<string, T>>,
   text: LocaleText,
   where: string,
@@ -463,7 +463,7 @@ export function localeStringTable<T extends number>(
       }
     }
   }
-  return tableOf(ids, text, where);
+  return buildTable(ids, text, where);
 }
 
 /**
@@ -478,7 +478,7 @@ export function localeFieldTable<T extends number>(
   field: string,
   section?: string,
 ): Record<number, string> {
-  return tableOf(ids, readLocaleText(files, where, field, section), where);
+  return buildTable(ids, readLocaleText(files, where, field, section), where);
 }
 
 /**
@@ -542,7 +542,7 @@ export function localeFile<T>(
   check?: (written: T, english: T, where: string) => void,
 ): LocaleFile<T> {
   const byLocale = splitLocales(files);
-  const english = v.parse(schema, englishFileOf(byLocale, where));
+  const english = v.parse(schema, findEnglishFile(byLocale, where));
   const written = new Map<Locale, T>();
 
   for (const [locale, placed] of byLocale.overlays) {

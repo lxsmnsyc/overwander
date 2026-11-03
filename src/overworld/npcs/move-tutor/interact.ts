@@ -1,5 +1,6 @@
 import { tutorMove } from '../../../auth/npcs';
 import { TUTOR_FEE, getTutorableMoves, tutorRefuses } from '../../../data/overworld/npc';
+import { m } from '../../../i18n/paraglide/messages.js';
 import type { NpcScript } from '../create';
 import giveLesson from '../lessons';
 
@@ -7,16 +8,16 @@ import giveLesson from '../lessons';
 const tutor: NpcScript = async (visit) =>
   giveLesson(visit, {
     fee: TUTOR_FEE,
-    verb: 'Teach',
-    empty: 'You have nothing he could teach.',
-    heading: 'What he could teach it',
-    counted: 'to learn',
+    verb: m.npc_tutor_action(),
+    empty: m.npc_tutor_empty(),
+    heading: m.npc_tutor_heading(),
+    counted: (count) => m.npc_tutor_count({ count }),
     movesOf: (option) => getTutorableMoves(option.caught.species, option.caught.moves),
     refuses: (option, move) =>
-      tutorRefuses(move, option.caught.friendship) ? 'Needs max friendship' : null,
+      tutorRefuses(move, option.caught.friendship) ? m.npc_tutor_friendship() : null,
     teach: async (catchId, move, replaces) =>
       tutorMove(visit.snapshot, visit.cell, catchId, move, replaces),
-    done: 'One lesson, well spent. (−1 Heart Scale)',
+    done: m.npc_tutor_done(),
   });
 
 export default tutor;

@@ -4,6 +4,7 @@ import { needsCare } from '../../../model/health';
 import { visitNurse } from '../../../auth/npcs';
 import playEffect, { Effect } from '../../../components/app/sound';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { m } from '../../../i18n/paraglide/messages.js';
 import type { NpcScript } from '../create';
 
 /** Nurse Joy: nothing asked for, and a party handed back whole */
@@ -16,11 +17,11 @@ const nurse: NpcScript = async (visit) => {
       PickCatchForm,
       {
         player: visit.player,
-        action: 'Heal',
-        verb: 'Heal',
-        step: 'Choose who to heal',
+        action: m.npc_nurse_action(),
+        verb: m.npc_nurse_action(),
+        step: m.npc_nurse_step(),
         max: Number.POSITIVE_INFINITY,
-        empty: 'You have nothing for her to look at.',
+        empty: m.npc_nurse_empty(),
         // A shadow is the Purifying Gem's business, not something swept up in a heal
         filter: (option) =>
           !isEgg(option.caught) &&
@@ -42,12 +43,12 @@ const nurse: NpcScript = async (visit) => {
       ids.push(option.id);
     }
     if ((await visitNurse(visit.snapshot, visit.cell, ids)) == null) {
-      line = 'These are all fine already. Nothing for me to do.';
+      line = m.npc_nurse_refused();
       continue;
     }
     playEffect(Effect.NurseHeal);
     visit.changed();
-    line = 'There we are. Right as rain, every one of them.';
+    line = m.npc_nurse_done();
   }
 };
 

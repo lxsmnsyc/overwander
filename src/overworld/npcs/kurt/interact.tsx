@@ -6,6 +6,7 @@ import { describeItem } from '../../../components/details';
 import { PickItemForm } from '../../../components/forms/pick-item';
 import ItemSprite from '../../../components/items/ItemSprite';
 import { Detail, Meta } from '../../../components/styled';
+import { m } from '../../../i18n/paraglide/messages.js';
 import type { NpcScript } from '../create';
 
 /** What an apricorn becomes */
@@ -34,21 +35,19 @@ const kurt: NpcScript = async (visit) => {
 
     const pick = await visit.form(PickItemForm, {
       player: visit.player,
-      verb: 'Carve',
+      verb: m.npc_kurt_action(),
       entries: apricorns,
-      none: 'You are carrying nothing he can carve.',
-      step: 'Choose an apricorn',
-      have: { amount: carrying, short: carrying === 0, unit: 'apricorns' },
+      none: m.npc_kurt_none(),
+      step: m.npc_kurt_step(),
+      have: { amount: carrying, short: carrying === 0, unit: m.npc_unit_apricorns() },
       counts: true,
       note: (entry) => ballName(entry.item),
-      card: (entry) => <Detail label="Becomes">{ballName(entry.item)}</Detail>,
+      card: (entry) => <Detail label={m.npc_kurt_becomes()}>{ballName(entry.item)}</Detail>,
       most: (entry) => entry.amount,
       sum: (item, amount) => (
         <Meta>
-          {amount} × {describeItem(item)} ={' '}
-          <strong>
-            {amount} {ballName(item)}
-          </strong>
+          {m.npc_kurt_sum({ amount, item: describeItem(item) })}{' '}
+          <strong>{m.npc_kurt_sum_result({ amount, ball: ballName(item) })}</strong>
         </Meta>
       ),
     });
@@ -61,17 +60,20 @@ const kurt: NpcScript = async (visit) => {
     const done = await carveApricorns(visit.snapshot, visit.cell, item, amount);
 
     if (done == null) {
-      await visit.say('Hm. These are not in your basket any more.');
+      await visit.say(m.npc_kurt_refused());
       continue;
     }
     visit.notify({
-      title: `${getItemData(done.ball).name}${done.amount > 1 ? ` ×${done.amount}` : ''}`,
-      message: `−${amount} ${describeItem(item)}`,
+      title:
+        done.amount > 1
+          ? m.npc_name_times({ name: getItemData(done.ball).name, amount: done.amount })
+          : getItemData(done.ball).name,
+      message: m.npc_kurt_toast({ amount, item: describeItem(item) }),
       art: () => <ItemSprite item={done.ball} size={24} label="" />,
       tone: 'leaf',
     });
     visit.changed();
-    await visit.say('There you are. Good, honest balls, every one.');
+    await visit.say(m.npc_kurt_done());
   }
 };
 

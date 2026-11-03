@@ -8,6 +8,7 @@ import type { PickItemInput } from '../../components/forms/pick-item';
 import { ShopForm, type ShopPick } from '../../components/forms/shop';
 import ItemSprite from '../../components/items/ItemSprite';
 import { Detail, Meta } from '../../components/styled';
+import { m } from '../../i18n/paraglide/messages.js';
 import { goldHeld, priceOf } from './shared';
 import type { NpcScript, NpcVisit } from './create';
 
@@ -41,18 +42,21 @@ function tray(
         searched.sell = typed;
       }
     },
-    verb: buying ? 'Buy' : 'Sell',
+    verb: buying ? m.npc_buy() : m.npc_sell(),
     entries: buying ? crate : bag,
     have: goldHeld(gold),
     counts: !buying,
-    empty: buying ? 'His crate is empty.' : 'Nothing in your bag is worth anything to him.',
+    empty: buying ? m.npc_crate_empty() : m.npc_bag_empty(),
     filter: (entry) => buying || priceOf(entry.item, false) > 0,
     // Greyed rather than left out: the crate is the same whatever the purse holds
-    blocked: (entry) => (buying && priceOf(entry.item, true) > gold ? 'More than you hold' : null),
+    blocked: (entry) =>
+      buying && priceOf(entry.item, true) > gold ? m.npc_more_than_held() : null,
     carried: (entry) => countIn(bag, entry.item),
-    note: (entry) => `${priceOf(entry.item, buying)}g`,
+    note: (entry) => m.npc_price_note({ price: priceOf(entry.item, buying) }),
     card: (entry) => (
-      <Detail label={buying ? 'Costs' : 'He pays'}>{priceOf(entry.item, buying)} gold</Detail>
+      <Detail label={buying ? m.npc_costs() : m.npc_he_pays()}>
+        {m.ui_gold({ amount: priceOf(entry.item, buying) })}
+      </Detail>
     ),
     // The purse decides a purchase and the bag a sale, both under the trade limit
     most: (entry) =>
@@ -64,12 +68,12 @@ function tray(
         : Math.min(VENDOR_TRADE_LIMIT, entry.amount),
     sum: (item, amount) => (
       <Meta>
-        {amount} × {priceOf(item, buying)} gold ={' '}
-        <strong>{priceOf(item, buying) * amount} gold</strong>
+        {m.npc_sum_gold({ amount, price: priceOf(item, buying) })}{' '}
+        <strong>{m.ui_gold({ amount: priceOf(item, buying) * amount })}</strong>
       </Meta>
     ),
     refuse: (item, amount) =>
-      buying && priceOf(item, true) * amount > gold ? 'More than you hold.' : null,
+      buying && priceOf(item, true) * amount > gold ? m.npc_more_than_held_stop() : null,
   };
 }
 
@@ -121,20 +125,21 @@ const shop: NpcScript = async (visit) => {
     );
 
     if (done == null) {
-      line = buying
-        ? 'Cannot let it go for that. Check your purse.'
-        : 'I will not take that. Is it still in your bag?';
+      line = buying ? m.npc_shop_declined_buy() : m.npc_shop_declined_sell();
       continue;
     }
     playEffect(buying ? Effect.ShopBuy : Effect.ShopSell);
     visit.notify({
-      title: `${describeItem(item)}${amount > 1 ? ` ×${amount}` : ''}`,
-      message: `${buying ? '−' : '+'}${priceOf(item, buying) * amount} gold`,
+      title:
+        amount > 1 ? m.npc_name_times({ name: describeItem(item), amount }) : describeItem(item),
+      message: (buying ? m.npc_gold_spent : m.npc_gold_gained)({
+        amount: priceOf(item, buying) * amount,
+      }),
       art: () => <ItemSprite item={item} size={24} label="" />,
       tone: 'leaf',
     });
     visit.changed();
-    line = 'Anything else?';
+    line = m.npc_shop_more();
   }
 };
 

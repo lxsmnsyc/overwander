@@ -4,6 +4,7 @@ import { Species } from '../../../data/ids/species';
 import { DAYCARE_FEE } from '../../../data/overworld/npc';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
 import AnimatedSprite from '../../../components/sprites/AnimatedSprite';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
 
@@ -12,16 +13,17 @@ const daycare: NpcScript = async (visit) => {
   const gold = await visit.gold();
   const picked = await visit.form(PickCatchForm, {
     player: visit.player,
-    action: 'Warm',
-    verb: 'Warm',
+    action: m.npc_daycare_action(),
+    verb: m.npc_daycare_action(),
     cost: { gold: DAYCARE_FEE },
     have: goldHeld(gold, DAYCARE_FEE),
-    empty: 'You have no egg for her.',
+    empty: m.npc_daycare_empty(),
     filter: (option) =>
       isEgg(option.caught) && !option.fighting && stepsRemaining(option.caught) > 0,
     // Half of a long walk is further than half of a short one
-    note: (option) => `${option.caught.steps} → ${boostedSteps(option.caught)}`,
-    detail: (option) => `Steps ${option.caught.steps} → ${boostedSteps(option.caught)}`,
+    note: (option) => m.npc_change({ from: option.caught.steps, to: boostedSteps(option.caught) }),
+    detail: (option) =>
+      m.npc_daycare_detail({ from: option.caught.steps, to: boostedSteps(option.caught) }),
   });
 
   if (picked == null) {
@@ -31,14 +33,12 @@ const daycare: NpcScript = async (visit) => {
   const steps = await boostEgg(visit.snapshot, visit.cell, picked[0].id);
 
   if (steps == null) {
-    await visit.say(
-      'I cannot take this one, dear. It may be ready, or I have warmed your one already.',
-    );
+    await visit.say(m.npc_daycare_refused());
     return;
   }
   visit.notify({
-    title: 'Egg',
-    message: `Warmed along to ${steps} steps. −${DAYCARE_FEE} gold`,
+    title: m.npc_daycare_toast_title(),
+    message: m.npc_daycare_toast({ steps, fee: DAYCARE_FEE }),
     art: () => (
       <span class="flex size-8 items-center justify-center">
         <AnimatedSprite species={Species.Egg} direction="DownLeft" fill still label="" />
@@ -47,7 +47,7 @@ const daycare: NpcScript = async (visit) => {
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say('There, nice and warm. It will not be long now.');
+  await visit.say(m.npc_daycare_done());
 };
 
 export default daycare;

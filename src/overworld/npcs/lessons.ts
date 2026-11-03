@@ -8,6 +8,7 @@ import type { Choice } from '../../components/forms/choice';
 import { pickCatchThenForm } from '../../components/forms/pick-catch-then';
 import { getMoveData } from '../../data/moves';
 import { TeachMoveForm } from '../../components/forms/teach-move';
+import { m } from '../../i18n/paraglide/messages.js';
 import { scalesHeld } from './shared';
 import type { NpcVisit } from './create';
 
@@ -23,7 +24,7 @@ export interface Lesson {
   /** The label over the moves on offer */
   heading: string;
   /** What the count of moves on offer is, on each square */
-  counted: string;
+  counted: (count: number) => string;
   movesOf: (option: CatchOption) => Moves[];
   /** Why a move on offer cannot be taught to this one yet, or null */
   refuses?: (option: CatchOption, move: Moves) => string | null;
@@ -76,7 +77,7 @@ async function teachOnce(
       filter: (option) =>
         !isEgg(option.caught) && !option.fighting && lesson.movesOf(option).length > 0,
       reason: (option) => (isGuarded(option.caught) ? 'locked' : null),
-      note: (option) => `${lesson.movesOf(option).length} ${lesson.counted}`,
+      note: (option) => lesson.counted(lesson.movesOf(option).length),
       step: lesson.heading,
       move: (move) => move,
       choices: (option) => {
@@ -104,7 +105,7 @@ async function teachOnce(
   const taught = await visit.form(TeachMoveForm, {
     catchId: option.id,
     move,
-    cost: 'The Heart Scale',
+    cost: m.npc_the_heart_scale(),
     price: lesson.fee,
     teach: lesson.teach,
   });

@@ -5,6 +5,7 @@ import { Slots, mostSlots } from '../../../data/constants/slots';
 import { DOJO_MASTER_FEE } from '../../../data/overworld/npc';
 import playEffect, { Effect } from '../../../components/app/sound';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { scalesHeld } from '../shared';
 import type { NpcScript } from '../create';
 
@@ -18,19 +19,25 @@ const dojo: NpcScript = async (visit) => {
       PickCatchForm,
       {
         player: visit.player,
-        action: 'Train',
-        verb: 'Train',
+        action: m.npc_dojo_action(),
+        verb: m.npc_dojo_action(),
         cost: { item: DOJO_MASTER_FEE },
         have: scalesHeld(scales),
-        empty: 'You have nothing he can train further.',
+        empty: m.npc_dojo_empty(),
         filter: (option) =>
           !isEgg(option.caught) &&
           !option.fighting &&
           getCatchSlots(option.caught, Slots.Move) < mostSlots(Slots.Move),
         note: (option) =>
-          `${getCatchSlots(option.caught, Slots.Move)} → ${getCatchSlots(option.caught, Slots.Move) + 1} moves`,
+          m.npc_dojo_note({
+            from: getCatchSlots(option.caught, Slots.Move),
+            to: getCatchSlots(option.caught, Slots.Move) + 1,
+          }),
         detail: (option) =>
-          `Move slots ${getCatchSlots(option.caught, Slots.Move)} → ${getCatchSlots(option.caught, Slots.Move) + 1}`,
+          m.npc_dojo_detail({
+            from: getCatchSlots(option.caught, Slots.Move),
+            to: getCatchSlots(option.caught, Slots.Move) + 1,
+          }),
       },
       { line },
     );
@@ -42,12 +49,12 @@ const dojo: NpcScript = async (visit) => {
     const slots = await trainMoveSlot(visit.snapshot, visit.cell, picked[0].id);
 
     if (slots == null) {
-      line = 'Not this one. No scale, or it cannot be trained further.';
+      line = m.npc_dojo_refused();
       continue;
     }
     playEffect(Effect.ItemSlot);
     visit.changed();
-    line = `Hah! Room for ${slots} moves now. (−1 Heart Scale)`;
+    line = m.npc_dojo_done({ slots });
   }
 };
 

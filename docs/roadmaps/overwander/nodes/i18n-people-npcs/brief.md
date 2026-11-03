@@ -1,7 +1,7 @@
 ---
 id: i18n-people-npcs
 title: Translate the NPCs
-status: active
+status: done
 priority: should
 type: feature
 outline: false

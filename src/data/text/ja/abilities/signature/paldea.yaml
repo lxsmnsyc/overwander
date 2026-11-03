@@ -4,7 +4,7 @@ PetalScatter:
   name: はなびらちらし
   description: くさタイプの わざが きゅうしょに あたると、 その ダメージの 1/4を ほかの あいて ぜんいんにも あたえる。
 SpreadingFlame:
-  name: ひうつり
+  name: もえうつり
   description: ほのおタイプの わざで あいてを やけどに すると、 もう 1ぴきの HPが いちばん すくない あいても やけどに する。
 Wake:
   name: ひきなみ
@@ -46,13 +46,13 @@ Windswept:
   name: かぜまかせ
   description: だれかに かぜの わざが あたると、 つぎに だす わざの じゅんびが 50% はやく おわる。
 MyceliumMat:
-  name: きんしのしきもの
+  name: きのこのじゅうたん
   description: いる あいだ、 グラスフィールドで みかたが かいふくする たびに、 その みかたの おもな じょうたいいじょうを 1つ なおす。
 HeatTolerance:
   name: あつさしらず
   description: やけどを すると、 HPが へる かわりに こうどうする たびに HPが 1/8 かいふくし、 こうげきも はんぶんに ならない。
 BallToss:
-  name: たまわたし
+  name: てわたし
   description: もちものが ない みかたの HPが 1/3 みまんに なると、 じぶんの もちものを わたす。 バトルに つき 1かいだけ。
 StareDown:
   name: にらみあい

@@ -130,7 +130,7 @@ TidePool:
   name: しおだまり
   description: いる あいだ、 じぶんを ふくむ てもちの かいふくの りょうが 1.3ばいに なる。
 SwapField:
-  name: いれかえのば
+  name: あべこべのば
   description: フィールドに でると、 ワンダールームを つかう。
 Hexlight:
   name: まじょのあかり
@@ -208,7 +208,7 @@ Landfall:
   name: だいちのめぐみ
   description: いる あいだ、 てもち ぜんいんの じめんタイプの わざの いりょくが 1.3ばいに なる。
 WinnersShare:
-  name: かったもののとりぶん
+  name: しょうしゃのとりぶん
   description: あいてが ひんしに なる たびに、 てもち ぜんいんの こうげきと とくこうが 1だん ずつ あがる。
 Countertune:
   name: かえうた
@@ -226,7 +226,7 @@ DeepHold:
   name: ふんばり
   description: HPが 1/2 みまんに なる こうげきを うけても、 はじめの 1かいは HP 1/2で とどまり、 ぼうぎょが 2だん あがる。
 Featherstone:
-  name: はねいし
+  name: いやしのはね
   description: はじめて HPが 1/2 みまんに なると、 HPが 1/4 かいふくする。 バトルに つき 1かいだけ。
 ShellThief:
   name: かいがらどろぼう

@@ -13,10 +13,10 @@ Stoop:
   name: とびかかり
   description: じゅんびちゅうか ためている あいてへの ひこうタイプの わざの いりょくが 1.3ばいに なる。
 Wingscale:
-  name: はねのりんぷん
+  name: まどわしのはね
   description: あてた わざごとに、 その あいての めいちゅうが 1だん さがる。 この りんぷんで さがるのは 2だんまで。
 Hothouse:
-  name: おんしつ
+  name: ガラスのおんしつ
   description: みかたは とくしゅわざを うける とき、 じぶんの とくぼうが ひくければ、 この ポケモンの とくぼうで うける。
 SaddleBurden:
   name: くらのにもつ

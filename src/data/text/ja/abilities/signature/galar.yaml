@@ -25,7 +25,7 @@ CottonCradle:
   name: わたのゆりかご
   description: いる あいだ、 てもちが やどりぎのタネ、 ねをはる、 グラスフィールドで かいふくする りょうが 1.5ばいに なる。
 Shorn:
-  name: やけたけなみ
+  name: こげたようもう
   description: はじめて うける ほのおタイプの わざで けが やけおちて、 やけどが なおり、 こうそくいどうを つかう。
 ShellSnap:
   name: こうらわり
@@ -85,7 +85,7 @@ HangrySpark:
   name: はらぺこのひばな
   description: あいてが きのみを たべる たびに、 その あいてに ほっぺすりすりを つかう。
 Overhang:
-  name: はりだし
+  name: かばいだて
   description: あいてが てもちの ポケモンに まとめて あたる わざを だしても、 この ポケモン 1ぴきだけに あたる。
 DreepyLaunch:
   name: ドラメシヤのはっしゃ

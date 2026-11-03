@@ -28,7 +28,7 @@ HoneyShare:
   name: はちみつのおすそわけ
   description: いる あいだ、 みかたが たべた きのみの かいふくりょうが 1.5ばいに なり、 のうりょくが あがる きのみは あがる ランクが 1だん ふえる。
 Provoke:
-  name: いどみかけ
+  name: かかってこい
   description: あてた あいては、 つぎの たんたいの わざを この ポケモンに むけなければ ならない。
 Regroup:
   name: さいしゅうけつ
@@ -133,13 +133,13 @@ GaleWard:
   name: はやてよけ
   description: ひこうタイプの わざは、 こうかばつぐんに ならず ふつうの ダメージに なる。
 Unearthed:
-  name: ほりおこし
+  name: つちよけ
   description: じめんタイプの わざは、 こうかばつぐんに ならず ふつうの ダメージに なる。
 HeatShield:
   name: ねつよけ
   description: ほのおタイプの わざは、 こうかばつぐんに ならず ふつうの ダメージに なる。
 Fireproof:
-  name: たいかせい
+  name: ほのおなれ
   description: ほのおタイプの わざは、 こうかばつぐんに ならず ふつうの ダメージに なる。
 Unenchanted:
   name: まほうしらず
@@ -163,5 +163,5 @@ IonField:
   name: イオンのば
   description: いる あいだ、 あいての ノーマルタイプの わざが でんきタイプに なる。
 MetalEater:
-  name: てつくい
+  name: メタルイーター
   description: はがねタイプの わざを うけると ダメージを うけず、 さいだいHPの 1/4 かいふくする。

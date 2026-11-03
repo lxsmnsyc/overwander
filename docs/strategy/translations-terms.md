@@ -657,7 +657,7 @@ Shared themes:
 | Swan Dance     | はくちょうのおどり   | Danza del Cisne         |
 | Flash Freeze   | しゅんかんれいとう   | Congelación Instantánea |
 | Tide Pool      | しおだまり           | Poza de Marea           |
-| Swap Field     | いれかえのば         | Campo Trastocado        |
+| Swap Field     | あべこべのば         | Campo Trastocado        |
 | Hexlight       | まじょのあかり       | Luz Embrujada           |
 | Broken Seal    | やぶれたふういん     | Sello Roto              |
 | Scoring        | ひっかききず         | Rayadura                |
@@ -683,13 +683,13 @@ Shared themes:
 | Windfall       | かぜのめぐみ         | Dádiva del Viento       |
 | Stormfall      | かみなりのめぐみ     | Dádiva de la Tormenta   |
 | Landfall       | だいちのめぐみ       | Dádiva de la Tierra     |
-| Winner's Share | かったもののとりぶん | Parte del Vencedor      |
+| Winner's Share | しょうしゃのとりぶん | Parte del Vencedor      |
 | Countertune    | かえうた             | Cambio de Tono          |
 | Overclock      | オーバークロック     | Frecuencia Forzada      |
 | Turning        | ころもがえ           | Cambio de Estación      |
 | Glidewake      | かっくうのあと       | Rastro de Planeo        |
 | Deep Hold      | ふんばり             | Pie Firme               |
-| Featherstone   | はねいし             | Piedra Pluma            |
+| Featherstone   | いやしのはね             | Piedra Pluma            |
 | Shell Thief    | かいがらどろぼう     | Ladrón de Caparazón     |
 | Barehide       | むきだしのかわ       | Piel Desnuda            |
 | Sporeburst     | ほうしのばくはつ     | Explosión de Esporas    |
@@ -709,8 +709,8 @@ Shared themes:
 | Ember Bond     | ひだねのきずな         | Vínculo de Brasa       |
 | Loosened Earth | ほぐれたつち           | Tierra Suelta          |
 | Stoop          | とびかかり             | Descenso Veloz         |
-| Wingscale      | はねのりんぷん         | Polvo de Escamas       |
-| Hothouse       | おんしつ               | Invernadero            |
+| Wingscale      | まどわしのはね         | Polvo de Escamas       |
+| Hothouse       | ガラスのおんしつ               | Invernadero            |
 | Saddle Burden  | くらのにもつ           | Carga de Montura       |
 | Pedigree Coat  | けっとうのけなみ       | Pelaje de Pedigrí      |
 | Restraint      | おあずけ               | Contención             |
@@ -756,7 +756,7 @@ Shared themes:
 | Rebound Punch   | はねかえりのこぶし   | Rebote de Puño           |
 | Dizzy Twirl     | ふらつきのまい       | Giro Mareado             |
 | Honey Share     | はちみつのおすそわけ | Miel Compartida          |
-| Provoke         | いどみかけ           | Provocación              |
+| Provoke         | かかってこい           | Provocación              |
 | Regroup         | さいしゅうけつ       | Reagrupamiento           |
 | Heavy Hooves    | おもいひづめ         | Cascos Pesados           |
 | Bubble Ward     | あわのまく           | Burbuja Protectora       |
@@ -791,9 +791,9 @@ Shared themes:
 | Earthless       | つちなし             | Sin Suelo                |
 | Windbreak       | ぼうふうりん         | Cortavientos             |
 | Gale Ward       | はやてよけ           | Guarda del Vendaval      |
-| Unearthed       | ほりおこし           | Desenterrado             |
+| Unearthed       | つちよけ           | Desenterrado             |
 | Heat Shield     | ねつよけ             | Escudo Térmico           |
-| Fireproof       | たいかせい           | A Prueba de Fuego        |
+| Fireproof       | ほのおなれ           | A Prueba de Fuego        |
 | Unenchanted     | まほうしらず         | Sin Hechizo              |
 | Closed Mind     | とじたこころ         | Mente Cerrada            |
 | Deep Footing    | ふかいあしば         | Cimiento Hondo           |
@@ -801,7 +801,7 @@ Shared themes:
 | Soul Relay      | たましいのうけつぎ   | Herencia de Almas        |
 | Umbral Strike   | かげのいちげき       | Estocada Sombría         |
 | Ion Field       | イオンのば           | Campo Iónico             |
-| Metal Eater     | てつくい             | Comemetales              |
+| Metal Eater     | メタルイーター             | Comemetales              |
 
 ### Galar
 
@@ -815,7 +815,7 @@ Shared themes:
 | Early Warning  | はやめのけいほう     | Aviso Temprano          |
 | Fence          | ぬすみのうけわたし   | Perista                 |
 | Cotton Cradle  | わたのゆりかご       | Cuna de Algodón         |
-| Shorn          | やけたけなみ         | Esquilado               |
+| Shorn          | こげたようもう         | Esquilado               |
 | Shell Snap     | こうらわり           | Chasquido de Concha     |
 | Zoomies        | かけまわり           | Carrera Loca            |
 | Shared Harvest | みのりのわかちあい   | Cosecha Compartida      |
@@ -835,7 +835,7 @@ Shared themes:
 | Rank and File  | へいたいのつとめ     | Soldado Raso            |
 | Attendant      | おせわがかり         | Asistente               |
 | Hangry Spark   | はらぺこのひばな     | Chispa Hambrienta       |
-| Overhang       | はりだし             | Voladizo                |
+| Overhang       | かばいだて             | Voladizo                |
 | Dreepy Launch  | ドラメシヤのはっしゃ | Lanzamiento de Dreepy   |
 | Solstice       | ソルスティス         | Solsticio               |
 | Boltdrake      | いかずちのりゅう     | Voltaje Dracónico       |
@@ -863,7 +863,7 @@ Shared themes:
 | English          | ja                 | es                    |
 | ---------------- | ------------------ | --------------------- |
 | Petal Scatter    | はなびらちらし     | Dispersión de Pétalos |
-| Spreading Flame  | ひうつり           | Llama Contagiosa      |
+| Spreading Flame  | もえうつり           | Llama Contagiosa      |
 | Wake             | ひきなみ           | Oleaje de Popa        |
 | Pig Out          | やけぐい           | Atracón               |
 | Tripwire         | しかけいと         | Cable Trampa          |
@@ -877,9 +877,9 @@ Shared themes:
 | Bubble Shock     | あわのかんでん     | Choque de Burbujas    |
 | Lightning Dive   | かみなりおとし     | Picado Relámpago      |
 | Windswept        | かぜまかせ         | Llevado por el Viento |
-| Mycelium Mat     | きんしのしきもの   | Alfombra de Micelio   |
+| Mycelium Mat     | きのこのじゅうたん   | Alfombra de Micelio   |
 | Heat Tolerance   | あつさしらず       | Tolerancia al Calor   |
-| Ball Toss        | たまわたし         | Lanzamiento de Pelota |
+| Ball Toss        | てわたし         | Lanzamiento de Pelota |
 | Stare Down       | にらみあい         | Duelo de Miradas      |
 | Tinker           | つくろい           | Apaño                 |
 | Sand Duck        | すなもぐり         | Esquiva en la Arena   |

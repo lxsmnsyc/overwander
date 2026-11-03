@@ -1,0 +1,83 @@
+# What each of the people is called, what they are for in a line, what
+# they open with when walked up to, and, for those who serve once a
+# window, what they say once that visit is spent
+
+Breeder:
+  name: Criapokémon
+  description: Cría un huevo con dos Pokémon compatibles, a cambio de dinero.
+  quote: Dos que se lleven bien, eso es todo lo que pido. Yo los emparejo, tú caminas.
+  spent: Esa pareja ya ha hecho lo suyo. Tráeme otra la próxima vez que pase por aquí.
+DaycareLady:
+  name: Cuidadora de la Guardería
+  description: Calienta un huevo y reduce a la mitad los pasos que le quedan, a cambio de dinero.
+  quote: Déjame el huevo un ratito, cariño. La mitad de lo que le queda, desaparecida así.
+  spent: Ya te he calentado uno, cariño. Vuelve cuando yo pase de nuevo por aquí.
+NurseJoy:
+  name: Enfermera Joy
+  description: Cura al equipo gratis, tantas veces como se pida.
+  quote: Anda, dámelos todos. Gratis. El mostrador siempre está abierto.
+Groomer:
+  name: Peluquero
+  description: Cepilla a un Pokémon para que quiera más a su Entrenador, a cambio de dinero.
+  quote: Un buen cepillado y te adorará. ¿Pokémon Oscuros? Eso se me escapa de las manos.
+  spent: Un cepillado por visita, es mi norma. Búscame la próxima vez.
+Vendor:
+  name: Vendedor
+  description: Vende desde una caja de mercado y compra casi de todo.
+  quote: Acércate, acércate. Vendo lo que hay en la caja y compro casi de todo, mientras te llegue el dinero.
+MoveReminder:
+  name: Recordador de Movimientos
+  description: Devuelve un movimiento de subida de nivel olvidado, a cambio de una Escama Corazón.
+  quote: ¿Olvidado? Ja. Nada se olvida nunca. Una Escama Corazón y te lo demuestro.
+RocketGrunt:
+  name: Recluta del Team Rocket
+  description: Corta el paso con Pokémon Oscuros y paga un premio en dinero si lo derrotan.
+  quote: Camino equivocado, chaval. Tres de los míos lo dicen.
+FossilManiac:
+  name: Maníaco de los Fósiles
+  description: Vende uno de los dos fósiles que lleva.
+  quote: ¡Los desenterré yo mismo! Dos preciosidades, y me separo de una. Solo de una, ojo.
+  spent: Esa era la única que podía soltar. La próxima vez habré desenterrado más.
+FossilScientist:
+  name: Científico de Fósiles
+  description: Revive fósiles convirtiéndolos en Pokémon, gratis.
+  quote: ¿Un fósil? ¡Maravilloso! Tráelo. Ha esperado ahí dentro más que suficiente.
+MoveTutor:
+  name: Tutor de Movimientos
+  description: Enseña un movimiento que un Pokémon nunca aprende subiendo de nivel, a cambio de una Escama Corazón.
+  quote: Hay movimientos que se enseñan y no se aprenden con el nivel. Una Escama Corazón paga la lección.
+Trainer:
+  name: Entrenador
+  description: Ofrece un combate limpio, con un premio en dinero para el ganador.
+  quote: Tienes pinta de fuerte. Demuéstralo. Tres de los mejores de la zona, premio en dinero para el ganador.
+Chef:
+  name: Cocinero
+  description: Vende bebidas y golosinas, y compra casi de todo.
+  quote: Recién salido del fogón y de la nevera. Si tu Pokémon lo lleva, come bien.
+Channeler:
+  name: Médium
+  description: Invoca una habilidad más en un Pokémon, a cambio de una Escama Corazón.
+  quote: Hay más en él de lo que sabe. Una Escama Corazón y lo invocaré. Lo que responda no me corresponde elegirlo.
+  spent: He invocado lo que podía. El resto esperará hasta que vuelva a pasar por aquí.
+Kurt:
+  name: Kurt
+  description: Talla Bonguris para convertirlos en Balls, gratis.
+  quote: ¿Bonguris, eh? Dámelos. Una Ball por cada uno, y el color decide cuál. Gratis, la recolección la hiciste tú.
+Geologist:
+  name: Geólogo
+  description: Vende piedras y gemas, y compra casi de todo.
+  quote: Todo esto salió de una ladera con mi propio pico. Piedras, gemas, de todo. Elige lo que quieras.
+DojoMaster:
+  name: Maestro del Dojo
+  description: Entrena a un Pokémon para que pueda tener un movimiento más, a cambio de una Escama Corazón.
+  quote: Un Pokémon puede cargar con más de lo que cree. Una Escama Corazón y haré sitio para otro movimiento.
+Trader:
+  name: Comerciante
+  description: Cambia uno de seis Pokémon de tierras lejanas por otro de la misma rareza.
+  quote: Los he traído desde muy lejos. Cualquiera por uno tuyo, siempre que sea de la misma rareza.
+  spent: Un intercambio por parada. La próxima vez traeré caras nuevas.
+HyperTrainer:
+  name: Entrenador Extremo
+  description: Entrena un IV de un Pokémon hasta el máximo, a cambio de dinero por punto.
+  quote: Bueno no es lo mismo que lo mejor. Enséñame uno y elige el IV, y lo llevaré hasta lo más alto. Te costará.
+  spent: Uno por visita. Tráeme el siguiente cuando vuelva.

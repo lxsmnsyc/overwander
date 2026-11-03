@@ -9,6 +9,7 @@ import { pickCatchThenForm } from '../../../components/forms/pick-catch-then';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
 import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 /** The pokemon and the value, asked on one screen */
 const TrainForm = pickCatchThenForm<Stats>();
@@ -21,12 +22,12 @@ const hyper: NpcScript = async (visit) => {
   const gold = await visit.gold();
   const picked = await visit.form(TrainForm, {
     player: visit.player,
-    verb: 'Pick',
-    action: 'Train',
+    verb: m.npc_hyper_verb(),
+    action: m.npc_hyper_action(),
     have: goldHeld(gold),
-    empty: 'You have nothing to train.',
+    empty: m.npc_hyper_empty(),
     filter: (option) => !isEgg(option.caught) && !option.fighting && !isGuarded(option.caught),
-    step: 'Choose a value',
+    step: m.npc_hyper_step(),
     choices: (option) => {
       const values: Choice<Stats>[] = [];
 
@@ -36,14 +37,14 @@ const hyper: NpcScript = async (visit) => {
         let refused: string | null = null;
 
         if (iv >= MAX_IV) {
-          refused = 'At the top';
+          refused = m.npc_hyper_top();
         } else if (cost > gold) {
-          refused = `${formatNumber(cost)} gold`;
+          refused = m.ui_gold({ amount: formatNumber(cost) });
         }
         values.push({
-          label: `${STAT_NAMES[stat]}  ${iv} → ${MAX_IV}`,
+          label: m.npc_hyper_stat({ stat: STAT_NAMES[stat], value: iv, max: MAX_IV }),
           value: stat,
-          detail: `${formatNumber(cost)} gold`,
+          detail: m.ui_gold({ amount: formatNumber(cost) }),
           refused,
           cost: { gold: cost },
         });
@@ -60,17 +61,17 @@ const hyper: NpcScript = async (visit) => {
   const cost = hyperTrainingCost(getIV(option.caught.ivs, stat));
 
   if ((await hyperTrain(visit.snapshot, visit.cell, option.id, stat)) == null) {
-    await visit.say('Not this one. The purse is short, or it is not yours to train.');
+    await visit.say(m.npc_hyper_refused());
     return;
   }
   playEffect(Effect.LevelUp);
   visit.notify({
     title: STAT_NAMES[stat],
-    message: `Trained to ${MAX_IV}. −${formatNumber(cost)} gold`,
+    message: m.npc_hyper_toast({ max: MAX_IV, cost: formatNumber(cost) }),
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say('All the way to the top. That is the best it will ever be.');
+  await visit.say(m.npc_hyper_done());
 };
 
 export default hyper;

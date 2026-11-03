@@ -7,6 +7,7 @@ import { CHANNELER_FEE, getAwakenableAbilities } from '../../../data/overworld/n
 import playEffect, { Effect } from '../../../components/app/sound';
 import type { CatchOption } from '../../../components/catches/catch-picker';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { scalesHeld } from '../shared';
 import type { NpcScript } from '../create';
 
@@ -24,17 +25,24 @@ const channeler: NpcScript = async (visit) => {
   const scales = await visit.carrying(CHANNELER_FEE);
   const picked = await visit.form(PickCatchForm, {
     player: visit.player,
-    action: 'Call up',
-    verb: 'Call up',
+    action: m.npc_channeler_action(),
+    verb: m.npc_channeler_action(),
     cost: { item: CHANNELER_FEE },
     have: scalesHeld(scales),
-    empty: 'You have nothing she can reach.',
+    empty: m.npc_channeler_empty(),
     // What comes out is the line's, so a line with nothing left is left out
     filter: (option) =>
       !isEgg(option.caught) && !option.fighting && hasSomethingLeft(option.caught),
-    note: (option) => `${option.caught.abilities.length} → ${option.caught.abilities.length + 1}`,
+    note: (option) =>
+      m.npc_change({
+        from: option.caught.abilities.length,
+        to: option.caught.abilities.length + 1,
+      }),
     detail: (option) =>
-      `Abilities ${option.caught.abilities.length} → ${option.caught.abilities.length + 1}`,
+      m.npc_channeler_detail({
+        from: option.caught.abilities.length,
+        to: option.caught.abilities.length + 1,
+      }),
   });
 
   if (picked == null) {
@@ -44,19 +52,17 @@ const channeler: NpcScript = async (visit) => {
   const drawn = await channelAbility(visit.snapshot, visit.cell, picked[0].id);
 
   if (drawn == null) {
-    await visit.say(
-      'Nothing answered. No scale, or one I cannot reach, or I have seen you this while.',
-    );
+    await visit.say(m.npc_channeler_refused());
     return;
   }
   playEffect(Effect.AbilityLearned);
   visit.notify({
     title: getAbilityData(drawn.ability).name,
-    message: 'Called up, and room for it. (−1 Heart Scale)',
+    message: m.npc_channeler_toast(),
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say(`${getAbilityData(drawn.ability).name}. That is what answered.`);
+  await visit.say(m.npc_channeler_done({ ability: getAbilityData(drawn.ability).name }));
 };
 
 export default channeler;

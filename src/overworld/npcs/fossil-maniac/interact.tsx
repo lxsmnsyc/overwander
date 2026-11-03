@@ -5,6 +5,8 @@ import { describeItem } from '../../../components/details';
 import { PickItemForm } from '../../../components/forms/pick-item';
 import ItemSprite from '../../../components/items/ItemSprite';
 import { Detail } from '../../../components/styled';
+import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { goldHeld } from '../shared';
 import type { NpcScript } from '../create';
 
@@ -24,15 +26,19 @@ const maniac: NpcScript = async (visit) => {
   // He sells the dig, not the pokemon, so nothing says what is inside
   const pick = await visit.form(PickItemForm, {
     player: visit.player,
-    verb: 'Buy',
+    verb: m.npc_buy(),
     entries,
-    step: 'Choose a rock',
-    none: 'He has nothing on him just now.',
+    step: m.npc_maniac_step(),
+    none: m.npc_maniac_none(),
     have: goldHeld(gold),
     counts: false,
-    note: (entry) => `${getFossilPrice(entry.item)} gold`,
-    blocked: (entry) => (getFossilPrice(entry.item) > gold ? 'More than you hold' : null),
-    card: (entry) => <Detail label="Costs">{getFossilPrice(entry.item)} gold</Detail>,
+    note: (entry) => m.ui_gold({ amount: formatNumber(getFossilPrice(entry.item)) }),
+    blocked: (entry) => (getFossilPrice(entry.item) > gold ? m.npc_more_than_held() : null),
+    card: (entry) => (
+      <Detail label={m.npc_costs()}>
+        {m.ui_gold({ amount: formatNumber(getFossilPrice(entry.item)) })}
+      </Detail>
+    ),
   });
 
   if (pick == null) {
@@ -42,18 +48,18 @@ const maniac: NpcScript = async (visit) => {
   const [item] = pick;
 
   if ((await buyFossil(visit.snapshot, visit.cell, item)) == null) {
-    await visit.say('I will keep it. A short purse, or you have had my one this while.');
+    await visit.say(m.npc_maniac_refused());
     return;
   }
   playEffect(Effect.ShopBuy);
   visit.notify({
     title: describeItem(item),
-    message: `−${getFossilPrice(item)} gold`,
+    message: m.npc_gold_spent({ amount: formatNumber(getFossilPrice(item)) }),
     art: () => <ItemSprite item={item} size={24} label="" />,
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say('A beauty. Take good care of it!');
+  await visit.say(m.npc_maniac_done());
 };
 
 export default maniac;

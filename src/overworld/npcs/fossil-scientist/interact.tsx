@@ -16,6 +16,7 @@ import { describeItem } from '../../../components/details';
 import { PickItemForm } from '../../../components/forms/pick-item';
 import AnimatedSprite from '../../../components/sprites/AnimatedSprite';
 import { Detail } from '../../../components/styled';
+import { m } from '../../../i18n/paraglide/messages.js';
 import type { NpcScript } from '../create';
 
 /** What is inside a rock, which is the whole of what a player is choosing */
@@ -64,24 +65,28 @@ const scientist: NpcScript = async (visit) => {
 
     const pick = await visit.form(PickItemForm, {
       player: visit.player,
-      verb: 'Revive',
+      verb: m.npc_scientist_action(),
       entries: fossils,
-      none: 'You are carrying nothing he can open.',
+      none: m.npc_scientist_none(),
       // What comes out is the rock's business, but a party planned around it wants the level
-      intro: `Whatever is in there comes out at level ${FOSSIL_REVIVE_LEVEL}.`,
-      step: 'Choose a fossil',
+      intro: m.npc_scientist_intro({ level: FOSSIL_REVIVE_LEVEL }),
+      step: m.npc_scientist_step(),
       counts: true,
       blocked: (entry) => {
         if (!isFossilHalf(entry.item) || mostPartners(entry.item, fossils) > 0) {
           return null;
         }
-        return isFossilTop(entry.item) ? 'Needs a bottom half' : 'Needs a top half';
+        return isFossilTop(entry.item)
+          ? m.npc_scientist_needs_bottom()
+          : m.npc_scientist_needs_top();
       },
       card: (entry) =>
         isFossilHalf(entry.item) ? (
-          <Detail label="Half">{isFossilTop(entry.item) ? 'The top' : 'The bottom'}</Detail>
+          <Detail label={m.npc_scientist_half()}>
+            {isFossilTop(entry.item) ? m.npc_scientist_top() : m.npc_scientist_bottom()}
+          </Detail>
         ) : (
-          <Detail label="Inside">{inside(entry.item)}</Detail>
+          <Detail label={m.npc_scientist_inside()}>{inside(entry.item)}</Detail>
         ),
       // A half's count is how many pairs, so it is capped by its partners too
       most: (entry) =>
@@ -109,14 +114,18 @@ const scientist: NpcScript = async (visit) => {
 
       const other = await visit.form(PickItemForm, {
         player: visit.player,
-        verb: 'Pair with',
+        verb: m.npc_scientist_pair(),
         entries: others,
-        none: 'You are carrying nothing that fits it.',
-        intro: `${describeItem(item)} needs its other half.`,
-        step: isFossilTop(item) ? 'Choose a bottom half' : 'Choose a top half',
+        none: m.npc_scientist_pair_none(),
+        intro: m.npc_scientist_pair_intro({ item: describeItem(item) }),
+        step: isFossilTop(item)
+          ? m.npc_scientist_pair_step_bottom()
+          : m.npc_scientist_pair_step_top(),
         counts: true,
-        blocked: (entry) => (entry.amount < amount ? `Fewer than ${amount}` : null),
-        card: (entry) => <Detail label="Inside">{insidePair(item, entry.item)}</Detail>,
+        blocked: (entry) => (entry.amount < amount ? m.npc_scientist_fewer({ amount }) : null),
+        card: (entry) => (
+          <Detail label={m.npc_scientist_inside()}>{insidePair(item, entry.item)}</Detail>
+        ),
       });
 
       // Walking away from the second half goes back to the bench
@@ -129,19 +138,24 @@ const scientist: NpcScript = async (visit) => {
     const revived = await reviveFossil(visit.snapshot, visit.cell, item, pair, amount);
 
     if (revived == null || revived.length === 0) {
-      await visit.say('Nothing came of it. Those rocks are not in your bag any more.');
+      await visit.say(m.npc_scientist_refused());
       continue;
     }
 
     const from =
-      pair == null ? describeItem(item) : `${describeItem(item)} and ${describeItem(pair)}`;
+      pair == null
+        ? describeItem(item)
+        : m.npc_scientist_two({ first: describeItem(item), second: describeItem(pair) });
 
     // One sound for the handover, however many rocks were on the bench
     playEffect(Effect.FossilRevive);
     for (const one of revived) {
       visit.notify({
         title: getSpeciesData(one.species).name,
-        message: `Level ${one.level}, out of ${from}.${one.shiny ? ' It sparkles.' : ''}`,
+        message: (one.shiny ? m.npc_scientist_revived_shiny : m.npc_scientist_revived)({
+          level: one.level,
+          from,
+        }),
         art: () => (
           <span class="flex size-8 items-center justify-center">
             <AnimatedSprite
@@ -158,7 +172,7 @@ const scientist: NpcScript = async (visit) => {
       });
     }
     visit.changed();
-    await visit.say('Marvelous! Alive and well after all that time.');
+    await visit.say(m.npc_scientist_done());
   }
 };
 

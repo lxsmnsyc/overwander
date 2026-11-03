@@ -10,6 +10,7 @@ import playEffect, { Effect } from '../../../components/app/sound';
 import type { BoxEntry } from '../../../components/catches/CatchBox';
 import { PickBoxForm } from '../../../components/forms/pick-box';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { m } from '../../../i18n/paraglide/messages.js';
 import type { NpcScript } from '../create';
 
 /**
@@ -33,14 +34,14 @@ const trader: NpcScript = async (visit) => {
       egg: false,
       progress: 0,
       fainted: false,
-      label: `${getSpeciesData(one.species).name}, level ${one.level}`,
+      label: m.npc_trader_label({ name: getSpeciesData(one.species).name, level: one.level }),
     });
   }
 
   const chosen = await visit.form(PickBoxForm, {
     entries,
-    step: 'Choose one of his',
-    action: 'Next',
+    step: m.npc_trader_step(),
+    action: m.npc_trader_next(),
   });
 
   if (chosen == null) {
@@ -54,9 +55,9 @@ const trader: NpcScript = async (visit) => {
     PickCatchForm,
     {
       player: visit.player,
-      action: 'Trade',
-      verb: 'Give',
-      empty: 'You have nothing of that sort to give.',
+      action: m.npc_trader_action(),
+      verb: m.npc_trader_verb(),
+      empty: m.npc_trader_empty(),
       filter: (option) =>
         !isEgg(option.caught) &&
         !option.fighting &&
@@ -65,7 +66,11 @@ const trader: NpcScript = async (visit) => {
         paysForOffer(option.caught.species, offer.species),
     },
     {
-      line: `${getSpeciesData(offer.species).name}, level ${offer.level}. I will take any of yours that is ${band}.`,
+      line: m.npc_trader_line({
+        name: getSpeciesData(offer.species).name,
+        level: offer.level,
+        band,
+      }),
     },
   );
 
@@ -73,17 +78,17 @@ const trader: NpcScript = async (visit) => {
     return;
   }
   if ((await tradeWithTrader(visit.snapshot, visit.cell, at, giving[0].id)) == null) {
-    await visit.say('Not that one. Your buddy, or one you cannot part with.');
+    await visit.say(m.npc_trader_refused());
     return;
   }
   playEffect(Effect.ItemSlot);
   visit.notify({
     title: getSpeciesData(offer.species).name,
-    message: 'Traded. It arrives ready for anything a trade brings on.',
+    message: m.npc_trader_toast(),
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say('A fair trade. Look after it for me.');
+  await visit.say(m.npc_trader_done());
 };
 
 export default trader;

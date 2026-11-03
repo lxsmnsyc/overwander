@@ -4,6 +4,8 @@ import { BREEDING_FEE } from '../../../data/overworld/npc';
 import { canBreed, canLayEggs } from '../../breeding';
 import playEffect, { Effect } from '../../../components/app/sound';
 import { PickCatchForm } from '../../../components/forms/pick-catch';
+import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 import { asParent, goldHeld } from '../shared';
 import type { NpcScript } from '../create';
 
@@ -12,38 +14,38 @@ const breeder: NpcScript = async (visit) => {
   const gold = await visit.gold();
   const pair = await visit.form(PickCatchForm, {
     player: visit.player,
-    action: 'Breed',
-    verb: 'Breed',
-    step: 'Choose a pair',
+    action: m.npc_breeder_action(),
+    verb: m.npc_breeder_action(),
+    step: m.npc_breeder_step(),
     min: 2,
     max: 2,
     cost: { gold: BREEDING_FEE },
     have: goldHeld(gold, BREEDING_FEE),
-    empty: 'You have nothing to breed.',
+    empty: m.npc_breeder_empty(),
     // A legendary is unbreedable whatever it stands beside, so it is left out
     filter: (option) =>
       !isEgg(option.caught) && !option.fighting && canLayEggs(option.caught.species),
     check: ([first, second]) =>
       canBreed(asParent(first.caught), asParent(second.caught))
         ? null
-        : 'Those two will have nothing to do with each other.',
+        : m.npc_breeder_incompatible(),
   });
 
   if (pair == null) {
     return;
   }
   if ((await breed(visit.snapshot, visit.cell, [pair[0].id, pair[1].id])) == null) {
-    await visit.say('No luck. Wrong pair, a short purse, or you have bred with me this while.');
+    await visit.say(m.npc_breeder_refused());
     return;
   }
   playEffect(Effect.EggGet);
   visit.notify({
-    title: 'An egg',
-    message: `Carry it as your buddy and walk. −${BREEDING_FEE} gold`,
+    title: m.npc_breeder_toast_title(),
+    message: m.npc_breeder_toast({ fee: formatNumber(BREEDING_FEE) }),
     tone: 'leaf',
   });
   visit.changed();
-  await visit.say('An egg, and a fine one. Keep it close and keep walking.');
+  await visit.say(m.npc_breeder_done());
 };
 
 export default breeder;

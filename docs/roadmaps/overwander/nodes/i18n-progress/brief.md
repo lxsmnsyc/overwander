@@ -1,7 +1,7 @@
 ---
 id: i18n-progress
 title: Translate quests, awards and titles, and close batch 9
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

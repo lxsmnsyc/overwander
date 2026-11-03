@@ -1,7 +1,7 @@
 ---
 id: i18n-places
 title: Translate biomes, weather and towns
-status: active
+status: done
 priority: should
 type: feature
 outline: false

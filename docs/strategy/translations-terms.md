@@ -172,6 +172,110 @@ The names in `text/<locale>/npcs.yaml`, `vendor-stalls.yaml` and `decorations.ya
 
 NPC lines name a Heart Scale as ハートのウロコ and Escama Corazón (plural Escamas Corazón), an apricorn as ぼんぐり and Bonguri, and money as おかね and de dinero. A trader's line fills in the rarity band in whatever language the band is written in.
 
+## Trainer classes
+
+The names in `text/<locale>/trainers/*.yaml`. A class the games name uses the games' word. Where several regions share a class it is one name for all (the screen adds the region). Sheet-only names (Crush Girl, Picnicker, Cowgirl, Idol, Cameraman, Monsieur, Madame, Schoolboy, Schoolgirl, Waitress) are in `trainer-sheets.yaml`.
+
+| English | ja | es | Notes |
+| --- | --- | --- | --- |
+| Ace Trainer | エリートトレーナー | Entrenador guay | Official |
+| Lass | ミニスカート | Chica | Official |
+| Black Belt | からておう | Karateka | Official |
+| Bird Keeper | とりつかい | Ornitólogo | Official |
+| Biker | ぼうそうぞく | Motorista | Official |
+| Hiker | やまおとこ | Montañero | Official |
+| Poké Maniac | マニア | Pokémaníaco | Official (ja to confirm) |
+| Bug Catcher | むしとりしょうねん | Cazabichos | Official |
+| Channeler | きとうし | Exorcista | Official. The NPC of the same name is Médium in es |
+| Burglar | どろぼう | Ladrón | Official |
+| Swimmer | かいパンやろう | Nadador | Official |
+| Rocker | ロッカー | Rockero | ja to confirm |
+| Psychic | サイキッカー | Médium | Official |
+| Beauty | おねえさん | Bella | Official. Modelo in the later games; one name for every region |
+| Fisherman | つりびと | Pescador | Official |
+| Sailor | ふなのり | Marinero | Official |
+| Gentleman | ジェントルマン | Caballero | Official. Duque and Aristócrata in the later games; one name for every region |
+| Super Nerd | りかけいのおとこ | Súper necio | Official |
+| Juggler | ジャグラー | Malabarista | ja to confirm |
+| Tamer | ケモノつかい | Domador | ja to confirm |
+| Engineer | エンジニア | Mecánico | Official |
+| Gambler | ギャンブラー | Jugador | Official |
+| Sage | おぼうさん | Pensador | ja to confirm |
+| Skier | スキーヤー | Esquiador | Official |
+| Scientist | けんきゅういん | Científico | Official |
+| Firebreather | ひふきげいにん | Comefuego | ja to confirm |
+| Medium | ミディアム | Mentalista | ja to confirm |
+| Teacher | せんせい | Profesora | Official |
+| School Kid | じゅくがえり | Escolar | Official. Colegial in Gold and Silver; one name for every region |
+| Youngster | たんパンこぞう | Joven | Official |
+| Camper | キャンプボーイ | Campista | Official |
+| Boarder | スノーボーダー | Snow-boarder | Official |
+| Ninja Boy | にんじゃごっこ | Chico ninja | Official |
+| Tuber | うきわボーイ | Playero | Official |
+| Poké Fan | ポケモンファン | Pokéfan | Official |
+| Kindler | ほのおつかい | Fogonero | ja to confirm |
+| Battle Girl | バトルガール | Luchadora | Official |
+| Expert | たつじん | Pokéabu | Official |
+| Ruin Maniac | いせきマニア | Ruinamaníaco | Official |
+| Street Thug | ちんぴら | Macarra | es official (Kalos); ja to confirm |
+| Dragon Tamer | ドラゴンつかい | Domadragón | Official |
+| Aroma Lady | アロマなおねえさん | Señorita aroma | Official |
+| Young Couple | ラブラブカップル | Pareja joven | Official |
+| Pokémon Breeder | ポケモンブリーダー | Criapokémon | Official; the same words as the Breeder NPC |
+| Pokémon Ranger | ポケモンレンジャー | Pokéguarda | Official |
+| Collector | コレクター | Pokécolector | Official |
+| Reporter | レポーター | Reportera | Official |
+| Rich Boy | おぼっちゃま | Niño bien | Official |
+| Parasol Lady | パラソルおねえさん | Dama parasol | Official |
+| Triathlete | トライアスリート | Triatleta | Official |
+| Worker | さぎょういん | Operario | Official. Obrero in Diamond and Pearl; one name for every region |
+| Rancher | ぼくじょうぬし | Ranchero | ja to confirm |
+| Cyclist | サイクリング | Ciclista | Official |
+| Poké Kid | ポケモンキッズ | Pokéchica | ja to confirm |
+| Artist | アーティスト | Artista | Official |
+| Waiter | ウェイター | Camarero | Official |
+| Twins | ふたごちゃん | Gemelas | Official |
+| Policeman | おまわりさん | Policía | Official |
+| Jogger | ジョギング | Corredor | ja to confirm |
+| Roughneck | スキンヘッズ | Calvo | Official |
+| Clown | ピエロ | Payaso | Official |
+| Guitarist | ギタリスト | Guitarrista | Official |
+| Veteran | ベテラントレーナー | Veterano | Official |
+| Backpacker | バックパッカー | Mochilero | Official |
+| Baker | パティシエール | Pastelera | Official |
+| Clerk | ビジネスマン | Oficinista | Official |
+| Dancer | ブレイクダンサー | Breakdancer | Official |
+| Depot Agent | えきいん | Ferroviario | ja to confirm |
+| Doctor | ドクター | Enfermero | es official |
+| Harlequin | ハーレクイン | Arlequín | ja to confirm |
+| Hoopster | バスケせんしゅ | Pívot | ja to confirm |
+| Infielder | やきゅうせんしゅ | Pitcher | ja to confirm |
+| Janitor | そうじや | Limpiador | ja to confirm |
+| Lady | おじょうさま | Damisela | Official |
+| Linebacker | アメフトせんしゅ | Quarterback | ja to confirm |
+| Maid | メイド | Criada | Official |
+| Musician | ミュージシャン | Cantautor | Official |
+| Nursery Aide | ほいくし | Seño | ja to confirm |
+| Pilot | パイロット | Piloto | Official |
+| Smasher | テニスプレーヤー | Tenista | Official |
+| Socialite | セレブ | Marquesa | Official |
+| Striker | サッカーせんしゅ | Delantero | Official |
+| Suit Actor | スーツアクター | Actor de disfraz | Coined in es, ja to confirm |
+| Backers | おうえんだん | Hinchas | ja to confirm; es is Animadoras or Hinchas |
+| Hex Maniac | オカルトマニア | Bruja | Official |
+| Garçon (Waiter in Kalos) | ギャルソン | Garçon | Official |
+| Roller Skater | ローラースケーター | Patinadora | ja to confirm |
+| Punk Guy, Punk Girl | パンクボーイ, パンクガール | Chico malo, Chica mala | ja to confirm |
+| Chef | コック | Cocinero | Official; the Chef NPC's word |
+| Gardener | ガーデナー | Jardinero | ja to confirm |
+| Sky Trainer | スカイトレーナー | Entrenador aéreo | Official |
+| Fairy Tale Girl | メルヘンおとめ | Niña soñadora | ja to confirm |
+| Furisode Girl | ふりそでガール | Jovencita con kimono | ja to confirm |
+| Butler | しつじ | Mayordomo leal | ja to confirm |
+| Tourist | かんこうきゃく | Turista | ja to confirm |
+| Rising Star | ホープ | Entrenador promesa | ja to confirm |
+| Preschooler | ようちえんじ | Preescolar | Official |
+
 ## Status conditions
 
 The names a status shows on a card or a catch, in `src/data/text/<locale>/statuses.yaml`. A condition the games name (poison, sleep, confusion, flinching) uses the games' word. A status a move leaves (Taunted, Encored, Rooted) uses that move's official name, as the move registry writes it. A status this engine invented is translated once:

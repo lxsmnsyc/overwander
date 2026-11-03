@@ -4,7 +4,7 @@
 
 - `src/data/text/{ja,es}/` files for `biomes` (30), `weather` (26 skies, name and line), `times-of-day` (4), `landmarks` (25), `lairs` (97), `phenomena` (4), `spawn-rarities` (8), `lair-titles` (`ground`, `shadow`) and `town-names` (23 biomes x 8 heads, 40 tails, 12 titles, 12 marks, 64 counties): every key English has.
 - `TOWN_JOINERS.ja` and `.es` rewritten in `src/data/overworld/town-names.ts` with a Spanish mark that agrees with its title. English joiner and every English name unchanged.
-- `test/data/locale-people-places.test.ts`: every entry written, sky lines end in a stop, lair-title parameters, no kanji in ja names, distinct names, lower-case es rarities, six pinned ja and es town names, distinct town words, the new joiners.
+- `test/data/locale-people-places.test.ts`: every entry written, sky lines end in a stop, lair-title parameters, no kanji in ja names, distinct names, lower-case es rarities, six pinned ja and es town names, katakana-only ja town words, distinct town words, the new joiners.
 - `docs/strategy/translations-terms.md`: the "Places, weather and towns" section.
 - Changeset `.changeset/i18n-places.md`, `patch`.
 
@@ -12,63 +12,81 @@
 
 Official terms (WikiDex): Centro Pokémon and ポケモンセンター, Incursión Dinamax and マックスレイド, teraincursión and テラレイド, Teracristal, the Spanish skies (Despejado, Nublado, Lluvia, Diluvio, Tormenta de arena, Granizo, Niebla, Nieve, Ventisca, Ceniza volcánica, Lluvia de meteoros), the lair names the log marks as read. Everything else is coined or from the term list; the full tables are in the term list.
 
+Town decisions (second pass, at the maintainer's call): ja towns are katakana with the county in brackets; es head words that read as bare nouns became place-style adjectives (Incendio to Ardiente, Rompiente to Bravío, Espejismo to Espejeante, Vendaval to Ventoso and so on, about 70 of 184).
+
 Renames: ja Thunderstorm `かみなり` to `らいう` (Thunder move), ja Meteor Shower `りゅうせいぐん` to `ながれぼしの あめ` (Draco Meteor move), ja Frost head `しもばしら` to `はつしも` (read as `かみしも` after a mark), ja Mire head `どろぬま` to `どろうみ` (repeated ぬま before the tail ぬま).
 
 Spawn rarities: ja nouns read before の, es lower-case masculine singular read after "que sea".
 
 ## Town joiners
 
-- ja: `{county}ぐんの {mark}{head}{tail}{title}`; タウン and シティ weld on, any other title follows a space. The county is a kana word plus ぐん, set off by の like an address (`カシこうやぐんの かいがらやまタウン`).
-- es: `{title} {mark} {head} {tail}, {county}`, the tail a phrase of its own and the mark agreeing with the title (`Ciudad Nueva Concha del Risco, Marca Ceniza`).
+- ja: `{mark}{head}{tail}{title}（{county}）`, like the games' towns: one katakana word, the title welded on (タウン, シティ and the rest, all katakana, native words kept as katakana: ムラ, サト, チク, トリデ, ワタシバ, ジュウジロ, コナヒキ, イコイ, ガイ, シュクバ), and the county after it in full-width brackets. Marks are loanwords (ニュー, オールド, アッパー, ロワー, ノース, サウス, イースト, ウエスト, グレート, リトル, ポート, フォート); native ones made words by accident (コ + ナミ is Konami). Every word of the file is katakana (a test holds it).
+- es: `{title} {mark} {head} {tail}, {county}`, the tail a phrase of its own. Marks and the head words that are adjectives take the title's gender and number (`agreeSpanish`): `Ciudad Nueva Concha del Risco`, `Molinos Ardientes del Chapitel`.
 
-### Samples (44 towns, with and without marks)
+### Samples (60 towns per locale, with and without marks, across 19 biomes and all 12 titles)
 
 | English | ja | es |
 | --- | --- | --- |
-| Surfcroft City, Gildenmarch | こがねざかいぐんの なみはたけシティ | Ciudad Rompiente de la Huerta, Marca Dorada |
-| Tangleshade Rest, Harrowfen | くわぬまぐんの もつれかげ いこい | Descanso Maraña de la Sombra, Rastrojal |
-| Miretarn Town, Saltenfen | しおぬまぐんの どろうみぬまタウン | Pueblo Fangal de la Charca, Salobral |
-| Wildfiregate Mills, Oakenwold | カシこうやぐんの のびもん こなひき | Molinos Incendio de la Puerta, Quejigal |
-| Dustshaw Landing, Amberfold | こはくかこいぐんの ちりこだち わたしば | Embarcadero Polvo de la Fronda, Redil Ámbar |
-| Haymouth City, Calderfold | かまかこいぐんの ほしくさぐちシティ | Ciudad Heno de la Boca, Caldera |
-| Birchmoor City, Glenmarch | たにざかいぐんの シラカバのはらシティ | Ciudad Abedul de la Landa, Marca del Cauce |
-| Needlemere Rest, Heathenfen | ヒースぬまぐんの はりみずうみ いこい | Descanso Aguja de la Laguna, Páramo Pagano |
-| Upper Frostfell Town, Amberfold | こはくかこいぐんの かみはつしもやまタウン | Pueblo Alto Helada del Risco, Redil Ámbar |
-| Granitegorge Village, Brimshire | なみなみぐんの かこうがんはざま むら | Aldea Granito del Barranco, Colmado |
-| Hoarcairn Quarter, Windermarch | ひろざかいぐんの はくそうつか がい | Barrio Escarcha del Mojón, Marca del Viento |
-| Sweepwatch Rest, Grimmarch | ぶきみざかいぐんの ひとなぎみはり いこい | Descanso Barrido de la Atalaya, Marca Lúgubre |
-| Magmafell Town, Harrowfen | くわぬまぐんの マグマやまタウン | Pueblo Magma del Risco, Rastrojal |
-| Bonethorpe Hamlet, Harrowfen | くわぬまぐんの ほねはた さと | Caserío Hueso de la Alquería, Rastrojal |
-| Beaconburn Waypoint, Oakenwold | カシこうやぐんの とうだいわきみず しゅくば | Parada Faro del Manantial, Quejigal |
-| Fenwick Landing, Junipermoor | ネズはらぐんの ていたんちうら わたしば | Embarcadero Aguazal de la Ensenada, Enebral |
-| Surfbrook Outpost, Calderfold | かまかこいぐんの なみせせらぎ とりで | Puesto Rompiente del Arroyo, Caldera |
-| Tanglebarrow Mills, Saltenfen | しおぬまぐんの もつれづか こなひき | Molinos Maraña del Túmulo, Salobral |
-| Great Sedgebarrow Town, Saltenfen | しおぬまぐんの おおスゲづかタウン | Pueblo Gran Juncia del Túmulo, Salobral |
-| Wildfirewick Village, Amberfold | こはくかこいぐんの のびうら むら | Aldea Incendio de la Ensenada, Redil Ámbar |
-| Dustcroft Outpost, Brimshire | なみなみぐんの ちりはたけ とりで | Puesto Polvo de la Huerta, Colmado |
-| Haybury Town, Windermarch | ひろざかいぐんの ほしくさしろタウン | Pueblo Heno del Castillo, Marca del Viento |
-| Birchcrest Town, Grimmarch | ぶきみざかいぐんの シラカバいただきタウン | Pueblo Abedul de la Cresta, Marca Lúgubre |
-| Needlemarch Hamlet, Hollowshire | うつろぐんの はりさかい さと | Caserío Aguja de la Frontera, Oquedal |
-| Cottonrise Landing, Harrowfen | くわぬまぐんの ワタスゲさか わたしば | Embarcadero Algodón de la Cuesta, Rastrojal |
-| Granitewold City, Oakenwold | カシこうやぐんの かこうがんこうやシティ | Ciudad Granito de la Meseta, Quejigal |
-| Hoarscar Rest, Junipermoor | ネズはらぐんの はくそうがけ いこい | Descanso Escarcha del Peñón, Enebral |
-| Sweephaven Mills, Ravenmoor | カラスはらぐんの ひとなぎみなと こなひき | Molinos Barrido del Refugio, Páramo del Cuervo |
-| Magmarise Waypoint, Harrowfen | くわぬまぐんの マグマさか しゅくば | Parada Magma de la Cuesta, Rastrojal |
-| Bonebourne Village, Saltenfen | しおぬまぐんの ほねいずみ むら | Aldea Hueso de la Fuente, Salobral |
-| Beacondale Quarter, Ivywold | ツタこうやぐんの とうだいたに がい | Barrio Faro del Valle, Hiedral |
-| Fenridge Rest, Brimshire | なみなみぐんの ていたんちおね いこい | Descanso Aguazal de la Loma, Colmado |
-| Old Foamdale Waypoint, Calderfold | かまかこいぐんの ふるあわたに しゅくば | Parada Vieja Espuma del Valle, Caldera |
-| Tanglewick Hamlet, Glenmarch | たにざかいぐんの もつれうら さと | Caserío Maraña de la Ensenada, Marca del Cauce |
-| Mireford Landing, Hollowshire | うつろぐんの どろうみあさせ わたしば | Embarcadero Fangal del Vado, Oquedal |
-| Wildfiremoor City, Brimshire | なみなみぐんの のびのはらシティ | Ciudad Incendio de la Landa, Colmado |
-| Dustwatch Borough, Oakenwold | カシこうやぐんの ちりみはり ちく | Municipio Polvo de la Atalaya, Quejigal |
-| South Meadowtarn Village, Windermarch | ひろざかいぐんの みなみまきばぬま むら | Aldea Sur Prado de la Charca, Marca del Viento |
-| Birchbrook Crossing, Gildenmarch | こがねざかいぐんの シラカバせせらぎ つじ | Cruce Abedul del Arroyo, Marca Dorada |
-| Needlehollow Village, Harrowfen | くわぬまぐんの はりくぼ むら | Aldea Aguja de la Vaguada, Rastrojal |
-| Cottonrun Outpost, Saltenfen | しおぬまぐんの ワタスゲひろば とりで | Puesto Algodón del Regato, Salobral |
-| Granitespire Town, Ivywold | ツタこうやぐんの かこうがんとうタウン | Pueblo Granito de la Aguja, Hiedral |
-| Hoarbarrow Hamlet, Ravenmoor | カラスはらぐんの はくそうづか さと | Caserío Escarcha del Túmulo, Páramo del Cuervo |
-| Sweepmarch Crossing, Calderfold | かまかこいぐんの ひとなぎさかい つじ | Cruce Barrido de la Frontera, Caldera |
+| Pebblehaven Town, Larkenfen | コイシミナトタウン（ヒバリヌマ） | Pueblo Guijarro del Refugio, Alondral |
+| Propwold City, Amberfold | ササエコウヤシティ（コハクカコイ） | Ciudad Apuntalada de la Meseta, Redil Ámbar |
+| Croakmoor Village, Gildenmarch | ガマノハラムラ（コガネザカイ） | Aldea Ranera de la Landa, Marca Dorada |
+| Old Orchidmarch Hamlet, Harrowfen | オールドランザカイサト（クワヌマ） | Caserío Viejo Orquídea de la Frontera, Rastrojal |
+| Ochrebourne Borough, Junipermoor | オーカーイズミチク（ネズハラ） | Municipio Ocre de la Fuente, Enebral |
+| Cactushollow Outpost, Heathenfen | サボテンクボトリデ（ヒースヌマ） | Puesto Cactus de la Vaguada, Páramo Pagano |
+| Bramblecairn Landing, Northfen | イバラケルンワタシバ（キタヌマ） | Embarcadero Zarza del Mojón, Ciénaga del Norte |
+| East Barleyglen Crossing, Saltenfen | イーストオオムギタニアイジュウジロ（シオヌマ） | Cruce Este Cebada de la Hoz, Salobral |
+| Acornford Mills, Mirefold | ドングリアサセコナヒキ（ドロカコイ） | Molinos Bellota del Vado, Redil del Fango |
+| Needlespire Rest, Ravenmoor | ハリトウイコイ（カラスハラ） | Descanso Aguja del Chapitel, Páramo del Cuervo |
+| Snowburn Quarter, Brimshire | ユキゲシキワキミズガイ（ナミナミ） | Barrio Nevado del Manantial, Colmado |
+| West Summitdale Waypoint, Ferrowshire | ウエストチョウジョウタニシュクバ（クロガネ） | Parada Oeste Cumbre del Valle, Ferrería |
+| Calvingburn Town, Junipermoor | ブンリワキミズタウン（ネズハラ） | Pueblo Desprendido del Manantial, Enebral |
+| Hollyshade City, Grimmarch | ヒイラギヒカゲシティ（ブキミザカイ） | Ciudad Acebo de la Sombra, Marca Lúgubre |
+| Horsecombe Village, Northfen | ウマヤトムラ（キタヌマ） | Aldea Caballar de la Cañada, Ciénaga del Norte |
+| Fort Cindermarch Hamlet, Sablewold | フォートモエガラザカイサト（クロコウヤ） | Caserío Fuerte Escoria de la Frontera, Meseta Cebellina |
+| Washmarch Borough, Mirefold | カレガワザカイチク（ドロカコイ） | Municipio Rambla de la Frontera, Redil del Fango |
+| Kittiwakerun Outpost, Nettlemoor | ミツユビカモメヒロバトリデ（イラクサハラ） | Puesto Gaviota del Regato, Ortigal |
+| Tussockhaven Landing, Brimshire | カブミナトワタシバ（ナミナミ） | Embarcadero Macolla del Refugio, Colmado |
+| Little Surfglen Crossing, Windermarch | リトルナミタニアイジュウジロ（ヒロザカイ） | Cruce Pequeño Bravío de la Hoz, Marca del Viento |
+| Herondale Mills, Tarnhollow | サギタニコナヒキ（ヌマクボ） | Molinos Garza del Valle, Hoya |
+| Reedmere Rest, Reedfold | アシミズウミイコイ（アシカコイ） | Descanso Carrizo de la Laguna, Cañaveral |
+| Emeraldcrest Quarter, Mirefold | エメラルドテッペンガイ（ドロカコイ） | Barrio Esmeralda de la Cresta, Redil del Fango |
+| West Ochrecroft Waypoint, Junipermoor | ウエストオーカーハタケシュクバ（ネズハラ） | Parada Oeste Ocre de la Huerta, Enebral |
+| Quartzmere Town, Gildenmarch | セキエイミズウミタウン（コガネザカイ） | Pueblo Cuarzo de la Laguna, Marca Dorada |
+| Scrubbourne City, Nettlemoor | カンボクイズミシティ（イラクサハラ） | Ciudad Maleza de la Fuente, Ortigal |
+| Larkwatch Village, Harrowfen | ヒバリミハリムラ（クワヌマ） | Aldea Alondra de la Atalaya, Rastrojal |
+| Fort Beechmarch Hamlet, Saltenfen | フォートブナザカイサト（シオヌマ） | Caserío Fuerte Haya de la Frontera, Salobral |
+| Spruceford Borough, Northfen | トウヒアサセチク（キタヌマ） | Municipio Abeto del Vado, Ciénaga del Norte |
+| Cottonspire Outpost, Quarryhold | ワタスゲトウトリデ（イシキリトリデ） | Puesto Algodón del Chapitel, Cantera |
+| Summitmere Landing, Mirefold | チョウジョウミズウミワタシバ（ドロカコイ） | Embarcadero Cumbre de la Laguna, Redil del Fango |
+| West Glassglen Crossing, Coldharrow | ウエストガラスタニアイジュウジロ（サムグワ） | Cruce Oeste Cristal de la Hoz, Gleba Fría |
+| Thicketbrook Mills, Amberfold | ヤブセセラギコナヒキ（コハクカコイ） | Molinos Espesos del Arroyo, Redil Ámbar |
+| Feathercombe Rest, Thistlewold | ハネヤトイコイ（アザミコウヤ） | Descanso Emplumado de la Cañada, Cardal |
+| Ashfallmarch Quarter, Tarnhollow | ハイフリザカイガイ（ヌマクボ） | Barrio Ceniciento de la Frontera, Hoya |
+| Lower Redrockdale Waypoint, Harrowfen | ロワーアカイワタニシュクバ（クワヌマ） | Parada Baja Rocarroja del Valle, Rastrojal |
+| Ternmarch Town, Northfen | アジサシザカイタウン（キタヌマ） | Pueblo Charrán de la Frontera, Ciénaga del Norte |
+| Blackwatermoor City, Sablewold | クロミズノハラシティ（クロコウヤ） | Ciudad Aguanegra de la Landa, Meseta Cebellina |
+| Shellrun Village, Elderfen | カイガラヒロバムラ（ニワトコヌマ） | Aldea Concha del Regato, Saucal |
+| Upper Tanglemarch Hamlet, Pelloway | アッパーモツレザカイサト（ペロウェイ） | Caserío Alto Enmarañado de la Frontera, Camino Pello |
+| Sedgewold Borough, Harrowfen | スゲコウヤチク（クワヌマ） | Municipio Juncia de la Meseta, Rastrojal |
+| Deepcombe Outpost, Glenmarch | フカミヤトトリデ（タニザカイ） | Puesto Hondo de la Cañada, Marca del Cauce |
+| Ochremere Landing, Tarnhollow | オーカーミズウミワタシバ（ヌマクボ） | Embarcadero Ocre de la Laguna, Hoya |
+| Little Quartzglen Crossing, Elderfen | リトルセキエイタニアイジュウジロ（ニワトコヌマ） | Cruce Pequeño Cuarzo de la Hoz, Saucal |
+| Gorsewatch Mills, Northfen | ハリエニシダミハリコナヒキ（キタヌマ） | Molinos Aulaga de la Atalaya, Ciénaga del Norte |
+| Clovermoor Rest, Sablewold | クローバーノハライコイ（クロコウヤ） | Descanso Trébol de la Landa, Meseta Cebellina |
+| Maplecairn Quarter, Mirefold | カエデケルンガイ（ドロカコイ） | Barrio Arce del Mojón, Redil del Fango |
+| West Needlecroft Waypoint, Marrowfen | ウエストハリハタケシュクバ（ホネヌマ） | Parada Oeste Aguja de la Huerta, Tuétano |
+| Frostthorpe Town, Harrowfen | ハツシモハタタウン（クワヌマ） | Pueblo Helado de la Alquería, Rastrojal |
+| Slateford City, Glenmarch | スレートアサセシティ（タニザカイ） | Ciudad Pizarra del Vado, Marca del Cauce |
+| Stillmere Village, Fallowshire | シズケサミズウミムラ（ヤスミチ） | Aldea Quieta de la Laguna, Barbecho |
+| South Glademarch Hamlet, Sedgemoor | サウスヒロバザカイサト（スゲハラ） | Caserío Sur Claro de la Frontera, Juncal |
+| Saigabrook Borough, Peatmarch | サイガセセラギチク（デイタンザカイ） | Municipio Saiga del Arroyo, Turbal |
+| Fumebrook Outpost, Sablewold | ケムリセセラギトリデ（クロコウヤ） | Puesto Humeante del Arroyo, Meseta Cebellina |
+| Hoodoocairn Landing, Amberfold | フードゥーケルンワタシバ（コハクカコイ） | Embarcadero Chimenea del Mojón, Redil Ámbar |
+| Port Sprayglen Crossing, Oakenwold | ポートシブキタニアイジュウジロ（カシコウヤ） | Cruce Puerto Rociado de la Hoz, Quejigal |
+| Sinkbarrow Mills, Tarnhollow | オチコミコフンコナヒキ（ヌマクボ） | Molinos Hundidos del Túmulo, Hoya |
+| Foammouth Rest, Glenmarch | アワグチイコイ（タニザカイ） | Descanso Espuma de la Boca, Marca del Cauce |
+| Siltwold Quarter, Fallowshire | ドロコウヤガイ（ヤスミチ） | Barrio Cenagoso de la Meseta, Barbecho |
+| Great Peatcroft Waypoint, Ivywold | グレートデイタンハタケシュクバ（ツタコウヤ） | Parada Gran Turba de la Huerta, Hiedral |
 
 ## Stubs left
 

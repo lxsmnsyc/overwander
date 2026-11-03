@@ -1376,8 +1376,9 @@ The names the mainline gave these places, in `text/{ja,es}/lairs.yaml`. Read on 
 
 | | ja | es |
 | --- | --- | --- |
-| Shape | `{county}ぐんの {mark}{head}{tail} {title}` | `{title} {mark} {head} {tail}, {county}` |
-| Titles | タウン, シティ welded on; むら, さと, ちく and the rest after a space | Pueblo, Ciudad, Aldea, Caserío, Municipio, Puesto, Embarcadero, Cruce, Molinos, Descanso, Barrio, Parada |
-| Tail | a place noun welded to the head (やま, みなと, もり) | a phrase (del Risco, de la Atalaya), not a suffix |
-| Mark | a prefix (しん, ふる, ポート, フォート) | a masculine word needing no agreement (Nuevo, Viejo, Gran, Puerto, Fuerte) |
-| County | a kana word + ぐん | a Spanish comarca name |
+| Shape | `{mark}{head}{tail}{title}（{county}）`, one katakana word | `{title} {mark} {head} {tail}, {county}` |
+| Titles | タウン, シティ and native words in katakana (ムラ, サト, チク, トリデ, ワタシバ, ジュウジロ, コナヒキ, イコイ, ガイ, シュクバ), welded | Pueblo, Ciudad, Aldea, Caserío, Municipio, Puesto, Embarcadero, Cruce, Molinos, Descanso, Barrio, Parada |
+| Tail | a place noun welded to the head (ヤマ, ミナト, モリ) | a phrase (del Risco, de la Atalaya), not a suffix |
+| Mark | a loanword prefix (ニュー, オールド, ポート, フォート) | a word that agrees with the title where it is an adjective (Nuevo, Viejo, Gran, Puerto, Fuerte) |
+| Head | a noun or adjective stem in katakana | a place or material noun (Granito, Hueso) or an adjective that agrees with the title (Ardiente, Espumoso) |
+| County | a katakana word, in full-width brackets | a Spanish comarca name |

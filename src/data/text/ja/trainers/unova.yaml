@@ -1,0 +1,147 @@
+# イッシュの トレーナーの クラスの なまえと、 しょうぶを いどまれた ときの せりふ。
+# ふたつの ちほうに いる クラスは おなじ なまえで、 がめんが ちほうを つけたす。
+
+Backpacker:
+  name: バックパッカー
+  quote: きみより ずっと とおくまで あるいたよ。 すわって、 ひろった ものを みせてあげる。
+Baker:
+  name: パティシエール
+  quote: オーブンは あつくて、 わたしも あつい。 いつでも どうぞ。
+Clerk:
+  name: ビジネスマン
+  quote: なげられる ものは ぜんぶ せいりした。 それでも やってみなさい。
+Dancer:
+  name: ブレイクダンサー
+  quote: ステップは ぜんぶ れんしゅうずみだ。 ついてこれるなら きなよ。
+DepotAgent:
+  name: えきいん
+  quote: れっしゃは じこくどおりに でる。 きみは まにあわない。
+Doctor:
+  name: ドクター
+  quote: いちにち じゅう トレーナーの てあてを している。 むしろ てあてが いる げんいんに なりたいね。
+Harlequin:
+  name: ハーレクイン
+  quote: まじめな かおを しているね。 なおして あげよう。
+Hoopster:
+  name: バスケせんしゅ
+  quote: ここからでも はずさない。 みてなよ。
+Infielder:
+  name: やきゅうせんしゅ
+  quote: どこへ うっても いいぜ。 おれが したに はいる。
+Janitor:
+  name: そうじや
+  quote: ごみばこに なにが すてられてるか しんじられないよ。 たたかうやつも いる。
+Lady:
+  name: おじょうさま
+  quote: わたくしの おにわは あなたの たびぜんぶより ねだんが たかいの。 この こたちも よ。
+Linebacker:
+  name: アメフトせんしゅ
+  quote: この ラインは だれも とおさない。 ためしてみろ。
+Maid:
+  name: メイド
+  quote: おやしきは ぴかぴかで、 ごごは わたくしの ものです。 バトルを しましょう。
+Musician:
+  name: ミュージシャン
+  quote: ひとうた、 ひとバトル、 おなじこと。 わたしも まぜて。
+NurseryAide:
+  name: ほいくし
+  quote: 20にんを いっぺんに みているの。 あなたひとりなんて なんでもないわ。
+Pilot:
+  name: パイロット
+  quote: そらを とぶのが しごとだ。 ちじょうでも まけないぞ。
+Smasher:
+  name: テニスプレーヤー
+  quote: サーブ、 リターン、 おしまい。 こうなるのさ。
+Socialite:
+  name: セレブ
+  quote: 1じかんあとに よていが あるの。 これは 1じかんも かからないわ。
+Striker:
+  name: サッカーせんしゅ
+  quote: ものを けるのが しごとだ。 つぎに なにが おこるか わかるだろ。
+SuitActor:
+  name: スーツアクター
+  quote: きぐるみの なかが だれかなんて わからない。 あいてにも わからない。
+Veteran:
+  name: ベテラントレーナー
+  quote: きみが うまれる まえから やっている。 ながびかせないで おこう。
+Backers:
+  name: おうえんだん
+  quote: いちにち じゅう おうえんして、 それでも きみより げんきよ。 さあ、 きて。
+UnovaAceTrainer:
+  name: エリートトレーナー
+  quote: イッシュは トレーナーを まじめに うけとめる。 わたしは その あらわれよ。
+UnovaArtist:
+  name: アーティスト
+  quote: たたかった あいてを えがくの。 じっと してて。
+UnovaBattleGirl:
+  name: バトルガール
+  quote: まいあさ タワーで きたえているの。 これは いちにちの らくな ところよ。
+UnovaBeauty:
+  name: おねえさん
+  quote: ふくそうに だまされないで。 これでも まけたことは ないの。
+UnovaBiker:
+  name: ぼうそうぞく
+  quote: この みち ぜんぶ、 よるは おれたちの もんだ。 いまは よるだ。
+UnovaBlackBelt:
+  name: からておう
+  quote: ちからだけが どこまでも ついてくる。 きみの ちからを みせてみろ。
+UnovaBreeder:
+  name: ポケモンブリーダー
+  quote: この こたちは ぜんぶ タマゴから そだてたの。 わたしの のぞみを わかっているわ。
+UnovaCyclist:
+  name: サイクリング
+  quote: あの おかを スピードを だして くだってきて、 まだ とまってない。
+UnovaFisherman:
+  name: つりびと
+  quote: あさから この きしに いる。 やっと なにかが かかったぞ。
+UnovaGentleman:
+  name: ジェントルマン
+  quote: かけを しよう。 たいしたものでは ない。 きみが もっている すべてだ。
+UnovaGuitarist:
+  name: ギタリスト
+  quote: つないで、 あげて、 たおす。 この じゅんばんで。
+UnovaHiker:
+  name: やまおとこ
+  quote: この みちの いしは ぜんぶ なまえで しっている。 むこうも おれを しっている。
+UnovaLass:
+  name: ミニスカート
+  quote: あさから ずっと だれか とおらないか まっていたの！
+UnovaParasolLady:
+  name: パラソルおねえさん
+  quote: あめでも はれでも じゅんびは ばんたん。 あなたは？
+UnovaPokeFan:
+  name: ポケモンファン
+  quote: この こたちの しゃしんは ぜんぶ もってるよ。 きみも うつってみる？
+UnovaPoliceman:
+  name: おまわりさん
+  quote: ていきの けんさです。 てもちを ぜんぶ だしてください。
+UnovaPsychic:
+  name: サイキッカー
+  quote: きみが かどを まがる まえに この バトルを みた。 きみには ひどい けっかだった。
+UnovaRanger:
+  name: ポケモンレンジャー
+  quote: この あたりは わたしが まもっている。 きみを まもるのも ふくまれる。
+UnovaRichBoy:
+  name: おぼっちゃま
+  quote: ぼくの もちものは ぜんぶ かったもの。 この こたちの わざは ぜんぶ みがいたもの。
+UnovaRoughneck:
+  name: スキンヘッズ
+  quote: そりこみ、 わるい たいど、 いい ポケモン。 3つの うち 2つで じゅうぶん こわいだろう。
+UnovaSchoolKid:
+  name: じゅくがえり
+  quote: よみものは ぜんぶ おわらせた。 つぎは じっせんだ。
+UnovaScientist:
+  name: けんきゅういん
+  quote: ある じっけんを している。 きみが たいしょうぐんだ。
+UnovaSwimmer:
+  name: かいパンやろう
+  quote: みずは みかけより あたたかいよ。 はいりなよ。
+UnovaWaiter:
+  name: ウェイター
+  quote: おせきの ごよういが できました。 ぼくの チームも です。
+UnovaWorker:
+  name: さぎょういん
+  quote: この トンネルは てで ほった。 きみは いま その なかに いる。
+UnovaYoungster:
+  name: たんパンこぞう
+  quote: ここで すごい ものを ほりだしたんだ。 ふりまわす ところを みたい？

@@ -1,0 +1,22 @@
+# Cómo se llama un entrenador que está en una de estas hojas, donde la
+# serie principal distingue la hoja de su clase: un Karateka que sale en la
+# hoja de la Crush Girl es una Crush Girl.
+
+characters/frlg/crush-girl: Karateka
+characters/lgpe/picnicker: Dominguera
+characters/oras/picnicker: Dominguera
+characters/dppt/picnicker: Dominguera
+characters/dppt/cowgirl: Vaquera
+characters/oras/lady: Damisela
+characters/dppt/lady: Damisela
+characters/dppt/waitress: Camarera
+characters/dppt/idol: Famosa
+characters/dppt/socialite: Marquesa
+characters/dppt/battle-girl: Luchadora
+characters/oras/cameraman: Cámara
+characters/dppt/cameraman: Cámara
+characters/xy/monsieur: Aristócrata
+characters/xy/madame: Aristócrata (mujer)
+characters/xy/waitress: Camarera
+characters/xy/school-boy: Estudiante
+characters/xy/school-girl: Estudiante

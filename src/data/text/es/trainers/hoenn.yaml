@@ -1,0 +1,100 @@
+# Cómo se llaman las clases de entrenador de Hoenn y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+NinjaBoy:
+  name: Chico ninja
+  quote: Has pasado junto a mí dos veces. Mis Pokémon no se han movido ninguna de las dos.
+Tuber:
+  name: Playero
+  quote: No pienso salir del agua. ¡Combate conmigo desde la orilla!
+PokeFan:
+  name: Pokéfan
+  quote: Tengo una foto de cada uno de estos. ¿Quieres salir en una?
+HoennAceTrainer:
+  name: Entrenador guay
+  quote: He cruzado esta región a pie. Nada del camino me ha sorprendido aún.
+HoennLass:
+  name: Chica
+  quote: Mamá me dijo que no hablara con desconocidos. No dijo nada de combatir con ellos.
+HoennBirdKeeper:
+  name: Ornitólogo
+  quote: Los míos montan el viento del mar. Los tuyos solo conocen el del camino.
+HoennBugCatcher:
+  name: Cazabichos
+  quote: El bosque de aquí está lleno. Me quedé con los tres mejores.
+HoennSwimmer:
+  name: Nadador
+  quote: La corriente de aquí hace la mitad del trabajo. La otra mitad es mía.
+HoennYoungster:
+  name: Joven
+  quote: Saqué este de debajo de la ceniza. Seguro que nunca has visto uno.
+HoennSchoolKid:
+  name: Escolar
+  quote: Hoy probamos la conductividad. El experimento eres tú.
+HoennCamper:
+  name: Campista
+  quote: Tres noches en esta roca y lo único que he echado de menos es un combate.
+HoennBeauty:
+  name: Bella
+  quote: La brisa del mar los mantiene brillantes. No te dejes engañar por eso.
+HoennFisherman:
+  name: Pescador
+  quote: Llevo lanzando la caña desde el alba y no he pescado nada. Tú servirás.
+HoennSailor:
+  name: Marinero
+  quote: He cruzado a Ciudad Portual con peor tiempo que este. Atrévete.
+HoennGentleman:
+  name: Caballero
+  quote: Tengo una casa en la costa y mal genio en el camino.
+HoennScientist:
+  name: Científico
+  quote: La Corporación Devon paga este trabajo de campo. Considérate un dato.
+Guitarist:
+  name: Guitarrista
+  quote: Enchufa y échate atrás. Este suena fuerte.
+Kindler:
+  name: Fogonero
+  quote: La montaña ya está bastante caliente. Mis Pokémon la ponen peor.
+BattleGirl:
+  name: Luchadora
+  quote: Entreno bajo la cascada de la isla. Ahora lo vas a notar.
+Expert:
+  name: Pokéabu
+  quote: Vi cómo acababa esto antes de que hablaras. Aun así, ven.
+RuinManiac:
+  name: Ruinamaníaco
+  quote: Excavé yo mismo estos túneles. Mira lo que dormía en uno.
+StreetThug:
+  name: Macarra
+  quote: Este camino es nuestro de noche. El peaje se paga en victorias.
+DragonTamer:
+  name: Domadragón
+  quote: Lo crié desde el huevo en la arena. Me escucha a mí y a nadie más.
+AromaLady:
+  name: Señorita aroma
+  quote: Respira hondo. Mis Pokémon crecieron con esto y son más fuertes por ello.
+Couple:
+  name: Pareja joven
+  quote: Combatimos juntos o no combatimos. Estás invitado a probar con los dos.
+HoennBreeder:
+  name: Criapokémon
+  quote: En el camino de bicicletas los huevos eclosionan antes. Estos tres lo hicieron esta mañana.
+HoennRanger:
+  name: Pokéguarda
+  quote: Esta ruta es mía. Nada la cruza sin pasar por mí.
+HoennCollector:
+  name: Pokécolector
+  quote: He desenterrado todas las rarezas de esta costa. Tú completarías la estantería.
+HoennReporter:
+  name: Reportera
+  quote: Estamos grabando un reportaje sobre combates en el camino. Di algo para la cámara.
+HoennRichBoy:
+  name: Niño bien
+  quote: Mi padre tiene un yate en Ciudad Calagua. Yo tengo un equipo que vale bastante más.
+HoennParasolLady:
+  name: Dama parasol
+  quote: Aquí llueve seis días de cada siete. Yo nunca me he mojado.
+Triathlete:
+  name: Triatleta
+  quote: Hoy he corrido, pedaleado y nadado hasta aquí. Un combate no me va a frenar.

@@ -1,0 +1,148 @@
+# Cómo se llaman las clases de entrenador de Teselia y qué dice cada una al
+# plantar el duelo. Dos regiones que comparten un oficio comparten nombre
+# y la pantalla añade la región donde coinciden.
+
+Backpacker:
+  name: Mochilero
+  quote: He caminado más lejos que tú. Siéntate, te enseño lo que he recogido.
+Baker:
+  name: Pastelera
+  quote: Los hornos están calientes y yo también. Cuando quieras.
+Clerk:
+  name: Oficinista
+  quote: He archivado todo lo que puedas lanzarme. Inténtalo igualmente.
+Dancer:
+  name: Breakdancer
+  quote: Cada paso está ensayado. Sigue el ritmo si puedes.
+DepotAgent:
+  name: Ferroviario
+  quote: El tren sale puntual. Tú no llegarás.
+Doctor:
+  name: Enfermero
+  quote: Remiendo entrenadores todo el día. Preferiría ser el motivo de que uno lo necesite.
+Harlequin:
+  name: Arlequín
+  quote: Pareces serio. Vamos a arreglarlo.
+Hoopster:
+  name: Pívot
+  quote: Desde aquí no fallo. Mira.
+Infielder:
+  name: Pitcher
+  quote: Batea donde quieras. Yo estaré debajo.
+Janitor:
+  name: Limpiador
+  quote: No creerías lo que se tira a la basura. Parte de ello pelea.
+Lady:
+  name: Damisela
+  quote: Mi jardín costó más que todo tu viaje. Estos también.
+Linebacker:
+  name: Quarterback
+  quote: Nada pasa de esta línea. Ven a comprobarlo.
+Maid:
+  name: Criada
+  quote: La casa está impecable y la tarde es mía. Combatamos.
+Musician:
+  name: Cantautor
+  quote: Una canción, un combate, lo mismo. Cuenta conmigo.
+NurseryAide:
+  name: Seño
+  quote: Cuido a veinte a la vez. Uno solo como tú no es nada.
+Pilot:
+  name: Piloto
+  quote: Vuelo para ganarme la vida. Aquí abajo tampoco pierdo.
+Smasher:
+  name: Tenista
+  quote: Saque, resto, y fin. Así va esto.
+Socialite:
+  name: Marquesa
+  quote: Me esperan en otro sitio dentro de una hora. Esto no llevará una.
+Striker:
+  name: Delantero
+  quote: Me gano la vida dando patadas. Adivina qué viene ahora.
+SuitActor:
+  name: Actor de disfraz
+  quote: Nunca sabes quién va de verdad dentro del disfraz. Ellos tampoco.
+Veteran:
+  name: Veterano
+  quote: Llevo en esto desde antes de que nacieras. No lo alarguemos.
+Backers:
+  name: Hinchas
+  quote: Animamos todo el día y aun así tenemos más energía que tú. Vamos.
+UnovaAceTrainer:
+  name: Entrenador guay
+  quote: Teselia se toma en serio a sus entrenadores. Yo soy lo que eso parece.
+UnovaArtist:
+  name: Artista
+  quote: Pinto lo que combato. Quieto.
+UnovaBattleGirl:
+  name: Luchadora
+  quote: Entreno en la torre cada mañana. Esto es lo fácil de mi día.
+UnovaBeauty:
+  name: Bella
+  quote: No te dejes engañar por el modelito. Tampoco ha perdido nunca.
+UnovaBiker:
+  name: Motorista
+  quote: Toda esta carretera es nuestra de noche. Es de noche.
+UnovaBlackBelt:
+  name: Karateka
+  quote: La fuerza es lo único que se lleva uno consigo. Enséñame la tuya.
+UnovaBreeder:
+  name: Criapokémon
+  quote: Crié a todos estos desde el huevo. Saben lo que quiero.
+UnovaCyclist:
+  name: Ciclista
+  quote: Bajé esa cuesta a toda velocidad y no he parado.
+UnovaFisherman:
+  name: Pescador
+  quote: Llevo en esta orilla desde el alba. Por fin pica algo.
+UnovaGentleman:
+  name: Caballero
+  quote: Una apuesta, entonces. Nada grande. Solo todo lo que llevas encima.
+UnovaGuitarist:
+  name: Guitarrista
+  quote: Enchufa, sube y derriba. En ese orden.
+UnovaHiker:
+  name: Montañero
+  quote: Conozco por su nombre cada piedra de esta ruta. Ellas también me conocen.
+UnovaLass:
+  name: Chica
+  quote: ¡Llevo toda la mañana esperando a que pase alguien!
+UnovaParasolLady:
+  name: Dama parasol
+  quote: Llueva o haga sol, estoy preparada. ¿Y tú?
+UnovaPokeFan:
+  name: Pokéfan
+  quote: Tengo fotos de cada uno de estos. ¿Quieres salir en una?
+UnovaPoliceman:
+  name: Policía
+  quote: Control rutinario. Vacíe su equipo, por favor.
+UnovaPsychic:
+  name: Médium
+  quote: Vi este combate antes de que doblaras la esquina. Te fue mal.
+UnovaRanger:
+  name: Pokéguarda
+  quote: Este tramo me toca cuidarlo a mí. Eso te incluye a ti.
+UnovaRichBoy:
+  name: Niño bien
+  quote: Todo lo que tengo lo compré. Todo lo que saben hacer mis Pokémon se lo ganaron.
+UnovaRoughneck:
+  name: Calvo
+  quote: Cabeza rapada, mala actitud, buenos Pokémon. Dos de tres deberían preocuparte.
+UnovaSchoolKid:
+  name: Escolar
+  quote: He hecho las lecturas. Ahora quiero la práctica.
+UnovaScientist:
+  name: Científico
+  quote: Estoy probando una cosa. Tú eres el control.
+UnovaSwimmer:
+  name: Nadador
+  quote: El agua está más caliente de lo que parece. Métete.
+UnovaWaiter:
+  name: Camarero
+  quote: Su mesa está lista. Mi equipo también.
+UnovaWorker:
+  name: Operario
+  quote: Cavamos este túnel a mano. Estás dentro.
+UnovaYoungster:
+  name: Joven
+  quote: He desenterrado algo genial por aquí. ¿Quieres verlo en acción?

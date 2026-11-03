@@ -1,0 +1,4 @@
+# Una clase de entrenador que más de una región pone en el camino se
+# distingue por su región
+
+region: '{name} ({region})'

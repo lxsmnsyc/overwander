@@ -43,3 +43,10 @@ Crasher Wake マキシマムかめん (infobox マキシマム仮面), Cintia an
 ## Size
 
 - Estimated L, actual L.
+
+## Caller's checks
+
+- `pnpm test` (2 workers): 281 files, 5809 tests pass. `pnpm typecheck` and `rtk proxy pnpm exec oxlint src test` exit 0.
+- A fresh review re-verified the names on WikiDex and read every quote; its fixes are in cb3a2db66.
+- No screenshots: dropped for batch 9 at the maintainer's call.
+- Also on this branch: `src/data/text/ja/trainers/kalos.yaml` from the trainer node formatted the way `pnpm official-names` leaves it (two quote characters).

@@ -296,11 +296,18 @@ describe('families and Megas named from species', () => {
       const english = getSpeciesData(mega).name;
 
       active.locale = 'es';
-      if (getSpeciesData(mega).name !== english.replace('Mega ', 'Mega-')) {
+      if (
+        !english.includes('Tatsugiri ') &&
+        getSpeciesData(mega).name !== english.replace('Mega ', 'Mega-')
+      ) {
         odd.push(`es ${english}`);
       }
       active.locale = 'ja';
-      if (!getSpeciesData(mega).name.startsWith('メガ')) {
+      if (
+        !/^メガ[\p{Script=Katakana}ー]+[XYZ]?(（[\p{Script=Hiragana}]+）)?$/u.test(
+          getSpeciesData(mega).name,
+        )
+      ) {
         odd.push(`ja ${english}`);
       }
       active.locale = 'en';
@@ -309,6 +316,30 @@ describe('families and Megas named from species', () => {
       }
     }
     expect(odd).toEqual([]);
+  });
+
+  it('names the Tatsugiri Megas for their forms, in one script', () => {
+    const found: string[] = [];
+
+    for (const mega of listMegas()) {
+      const english = getSpeciesData(mega).name;
+
+      if (english.includes('Tatsugiri')) {
+        active.locale = 'ja';
+        found.push(getSpeciesData(mega).name);
+        active.locale = 'es';
+        found.push(getSpeciesData(mega).name);
+        active.locale = 'en';
+      }
+    }
+    expect(found).toEqual([
+      'メガシャリタツ',
+      'Mega-Tatsugiri',
+      'メガシャリタツ（のびたすがた）',
+      'Mega-Tatsugiri (Forma Recta)',
+      'メガシャリタツ（たれたすがた）',
+      'Mega-Tatsugiri (Forma Lánguida)',
+    ]);
   });
 
   it('names a Mega from the official name of its pokemon in ja and es', () => {

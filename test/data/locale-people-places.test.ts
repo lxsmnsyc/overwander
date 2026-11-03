@@ -4,10 +4,16 @@ import { parse } from 'yaml';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type * as LocaleModule from '../../src/i18n/locale';
 import registerGameData from '../../src/data/index';
+import Biome from '../../src/data/ids/biome';
+import type { SettledBiome } from '../../src/data/ids/biome';
 import { FAMILY_NAMES } from '../../src/data/ids/text';
 import { FAMILY_IDS } from '../../src/data/ids/names';
 import { getMegaBase, getSpeciesData, listMegas } from '../../src/data/species';
-import { COUNTY_NAMES, TOWN_JOINERS, checkTownWords } from '../../src/data/overworld/town-names';
+import nameTown, {
+  COUNTY_NAMES,
+  TOWN_JOINERS,
+  checkTownWords,
+} from '../../src/data/overworld/town-names';
 import { localeFieldTable, localeFile, localeLines, localePhrases } from '../../src/data/yaml';
 import * as v from 'valibot';
 
@@ -272,9 +278,32 @@ describe('town names by locale', () => {
 
     expect(TOWN_JOINERS.en(parts)).toBe('New Shellfell Town, Ashmarch');
     expect(TOWN_JOINERS.en({ ...parts, mark: null })).toBe('Shellfell Town, Ashmarch');
-    expect(TOWN_JOINERS.ja(parts)).toBe('AshmarchNewShellfellTown');
-    expect(TOWN_JOINERS.es(parts)).toBe('Town New Shellfell, Ashmarch');
+    expect(TOWN_JOINERS.ja(parts)).toBe('Ashmarchぐんの NewShellfell Town');
+    expect(TOWN_JOINERS.ja({ ...parts, title: 'タウン', mark: null })).toBe(
+      'Ashmarchぐんの Shellfellタウン',
+    );
+    expect(TOWN_JOINERS.es(parts)).toBe('Town New Shell fell, Ashmarch');
     expect(COUNTY_NAMES).toHaveLength(64);
+  });
+
+  it('makes a Spanish mark agree with its title, and leaves the others as they are', () => {
+    const parts = {
+      mark: 'Nuevo',
+      head: 'Concha',
+      tail: 'del Risco',
+      title: 'Pueblo',
+      county: 'X',
+    };
+
+    expect(TOWN_JOINERS.es(parts)).toBe('Pueblo Nuevo Concha del Risco, X');
+    expect(TOWN_JOINERS.es({ ...parts, title: 'Ciudad' })).toBe('Ciudad Nueva Concha del Risco, X');
+    expect(TOWN_JOINERS.es({ ...parts, title: 'Molinos' })).toBe(
+      'Molinos Nuevos Concha del Risco, X',
+    );
+    expect(TOWN_JOINERS.es({ ...parts, mark: 'Gran', title: 'Ciudad' })).toBe(
+      'Ciudad Gran Concha del Risco, X',
+    );
+    expect(TOWN_JOINERS.es({ ...parts, mark: null })).toBe('Pueblo Concha del Risco, X');
   });
 });
 
@@ -608,6 +637,165 @@ describe('the gym leaders, Elite Four and other experts in ja and es', () => {
         expect(parameters(titles[key]).toSorted(), `${locale} ${key}`).toEqual(
           parameters(english[key]).toSorted(),
         );
+      }
+    }
+  });
+});
+
+describe('the places in ja and es', () => {
+  const LINES = v.record(v.string(), v.string());
+  const FIELDS = v.record(v.string(), v.record(v.string(), v.string()));
+  const STOP = { ja: '。', es: '.' } as const;
+
+  /** The flat files of the batch, keyed like English, which every key of must be written */
+  const FLAT = ['biomes', 'times-of-day', 'landmarks', 'lairs', 'phenomena', 'spawn-rarities'];
+
+  it('write a name for every biome, hour, landmark, lair, phenomenon and rarity', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      for (const file of FLAT) {
+        const written = v.parse(LINES, read(locale, file));
+
+        for (const key of Object.keys(v.parse(LINES, read('en', file)))) {
+          if (!written[key]) {
+            missing.push(`${locale} ${file} ${key}`);
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('write a name and a sentence for every sky, the sentence closing on a full stop', () => {
+    const found: string[] = [];
+
+    for (const locale of ['ja', 'es'] as const) {
+      const written = v.parse(FIELDS, read(locale, 'weather'));
+
+      for (const key of Object.keys(v.parse(FIELDS, read('en', 'weather')))) {
+        if (!written[key]?.name) {
+          found.push(`${locale} weather ${key}.name`);
+        }
+        if (!written[key]?.description?.endsWith(STOP[locale])) {
+          found.push(`${locale} weather ${key}.description`);
+        }
+      }
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('write both lair title phrases with the parameters English uses', () => {
+    for (const locale of ['ja', 'es']) {
+      const titles = v.parse(LINES, read(locale, 'lair-titles'));
+      const english = v.parse(LINES, read('en', 'lair-titles'));
+
+      for (const key of Object.keys(english)) {
+        expect(parameters(titles[key]).toSorted(), `${locale} ${key}`).toEqual(
+          parameters(english[key]).toSorted(),
+        );
+      }
+    }
+  });
+
+  it('keep every ja place name free of kanji and every name in one locale distinct', () => {
+    for (const locale of ['ja', 'es']) {
+      for (const file of ['biomes', 'landmarks', 'lairs', 'spawn-rarities']) {
+        const names = Object.values(v.parse(LINES, read(locale, file)));
+
+        expect(new Set(names).size, `${locale} ${file}`).toBe(names.length);
+        if (locale === 'ja') {
+          expect(names.join(''), file).not.toMatch(/\p{Script=Han}/u);
+        }
+      }
+    }
+  });
+
+  it('give the rarities the case their sentence needs: lower case in es', () => {
+    for (const name of Object.values(v.parse(LINES, read('es', 'spawn-rarities')))) {
+      expect(name, name).toBe(name.toLowerCase());
+    }
+  });
+});
+
+describe('town names in ja and es', () => {
+  const TOWNS: [SettledBiome, number, number, string, string][] = [
+    [
+      Biome.Glacier,
+      0,
+      0,
+      'カシこうやぐんの はくそうやまタウン',
+      'Pueblo Escarcha del Risco, Quejigal',
+    ],
+    [
+      Biome.Glacier,
+      100,
+      -37,
+      'かまかこいぐんの モレーンみはりシティ',
+      'Ciudad Morrena de la Atalaya, Caldera',
+    ],
+    [
+      Biome.Beach,
+      61,
+      60,
+      'カシこうやぐんの フォートあわたに しゅくば',
+      'Parada Fuerte Espuma del Valle, Quejigal',
+    ],
+    [
+      Biome.Desert,
+      3,
+      -2,
+      'なみなみぐんの しんきろうはやし こなひき',
+      'Molinos Espejismo del Soto, Colmado',
+    ],
+    [
+      Biome.Volcano,
+      17,
+      250,
+      'はいかこいぐんの いおうしろ さと',
+      'Caserío Azufre del Castillo, Cenicero',
+    ],
+    [
+      Biome.Bog,
+      -200,
+      199,
+      'ウンバーぬまぐんの ぬかるみたにあいタウン',
+      'Pueblo Tremedal de la Hoz, Ciénaga Parda',
+    ],
+  ];
+
+  it('names the same town in every locale, from the words at its place in each list', () => {
+    for (const [biome, x, y, ja, es] of TOWNS) {
+      active.locale = 'ja';
+      expect(nameTown(x, y, biome)).toBe(ja);
+      active.locale = 'es';
+      expect(nameTown(x, y, biome)).toBe(es);
+    }
+  });
+
+  it('keeps the English names', () => {
+    active.locale = 'en';
+    expect(nameTown(0, 0, Biome.Glacier)).toBe('Hoarfell Town, Oakenwold');
+  });
+
+  it('writes words that are distinct inside every list', () => {
+    for (const locale of ['ja', 'es']) {
+      const words = v.parse(
+        v.object({
+          heads: v.record(v.string(), v.array(v.string())),
+          tails: v.array(v.string()),
+          titles: v.array(v.string()),
+          marks: v.array(v.string()),
+          counties: v.array(v.string()),
+        }),
+        read(locale, 'town-names'),
+      );
+      const heads = Object.values(words.heads).flat();
+
+      // No two biomes share a head, so a name never has to carry its biome
+      expect(new Set(heads).size, `${locale} heads`).toBe(heads.length);
+      for (const list of [words.tails, words.titles, words.marks, words.counties]) {
+        expect(new Set(list).size, locale).toBe(list.length);
       }
     }
   });

@@ -10,6 +10,8 @@ size: L
 spike: false
 gate: false
 owns:
+  - src/data/text/ja/lair-titles.yaml
+  - src/data/text/es/lair-titles.yaml
   - src/data/text/ja/biomes.yaml
   - src/data/text/es/biomes.yaml
   - src/data/text/ja/weather.yaml
@@ -51,6 +53,7 @@ Translations batch 9, part 5 of 6: the places of the world, in ja and es: biomes
 - Every coined name is checked against the official ability, move, item and species names of its locale and against the coined names in the term list, then reread on its own pass for a second reading or a second meaning (the lesson of the signature ability nodes).
 - Weather and phenomena the games name use the official term (にほんばれ is a move; the weather itself is ひざしが つよい). Biomes and landmarks are this engine's own.
 - Town names: the user chose localized word lists. Each locale's lists keep the same length and order as English, so a town is the same town in every language (`world-generation` skill: a word moved or added renames every town already known). Write ja words in kana and es words as Spanish place-name parts, using the joining rules `i18n-people-places` built, and screenshot several towns in each biome.
+- `i18n-people-places` moved the names this batch built in code into phrase templates: translate `text/en/lair-titles.yaml` too, keeping every `{param}` (read that node's outcome).
 
 ## Acceptance
 

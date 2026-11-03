@@ -10,6 +10,14 @@ size: M
 spike: false
 gate: false
 owns:
+  - src/data/text/ja/regions.yaml
+  - src/data/text/es/regions.yaml
+  - src/data/text/ja/title-forms.yaml
+  - src/data/text/es/title-forms.yaml
+  - src/data/text/ja/dex-chain.yaml
+  - src/data/text/es/dex-chain.yaml
+  - src/data/text/ja/quest-rotations.yaml
+  - src/data/text/es/quest-rotations.yaml
   - src/data/text/ja/quests.yaml
   - src/data/text/es/quests.yaml
   - src/data/text/ja/awards.yaml
@@ -48,8 +56,10 @@ Translations batch 9, part 6 of 6, the last of the plan: quests, awards (badges 
 - Japanese is kana with spaces between phrases, like the Gen 1 to 5 games; a sentence ends with 。. Spanish is the games' Spanish as Spain uses it.
 - Terms the games already name use the official term in that locale. Everything this engine invented is translated once and recorded in `docs/strategy/translations-terms.md`; reuse what is there.
 - Every coined name is checked against the official ability, move, item and species names of its locale and against the coined names in the term list, then reread on its own pass for a second reading or a second meaning (the lesson of the signature ability nodes).
+- Region names have official names (カントー / Kanto); titles such as Professor use the games' own words where they exist (はかせ / Profesor).
 - Badges and egg groups have official names (グレーバッジ / Medalla Roca, かいじゅう / Monstruo). Titles, quests and achievements are this engine's own.
 - This node closes the translation plan: when it merges, `docs/strategy/translations.md` is deleted (GOAL.md: a strategy plan is deleted once its last node merges) and the term list stays.
+- `i18n-people-places` moved the names this batch built in code into phrase templates: translate `text/en/regions.yaml`, `text/en/title-forms.yaml`, `text/en/dex-chain.yaml`, `text/en/quest-rotations.yaml` too, keeping every `{param}` (read that node's outcome).
 
 ## Acceptance
 

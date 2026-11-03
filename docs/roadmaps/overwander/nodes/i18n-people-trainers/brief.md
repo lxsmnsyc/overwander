@@ -10,6 +10,8 @@ size: L
 spike: false
 gate: false
 owns:
+  - src/data/text/ja/trainer-names.yaml
+  - src/data/text/es/trainer-names.yaml
   - src/data/text/ja/trainers/**
   - src/data/text/es/trainers/**
   - src/data/text/ja/trainer-sheets.yaml
@@ -39,6 +41,7 @@ Translations batch 9, part 3 of 6: the trainer classes of every region (`text/en
 - Every coined name is checked against the official ability, move, item and species names of its locale and against the coined names in the term list, then reread on its own pass for a second reading or a second meaning (the lesson of the signature ability nodes).
 - Trainer classes are named in the mainline games (たんパンこぞう / Joven, ミニスカート / Chica). Use the official class name of the locale where the class exists; a class this engine invented gets a coined name in the same style.
 - Two regions' worth of one trade share a name and the screen adds the region; keep that sharing in each locale.
+- `i18n-people-places` moved the names this batch built in code into phrase templates: translate `text/en/trainer-names.yaml` too, keeping every `{param}` (read that node's outcome).
 
 ## Acceptance
 

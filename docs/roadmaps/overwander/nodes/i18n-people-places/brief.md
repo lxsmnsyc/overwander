@@ -1,7 +1,7 @@
 ---
 id: i18n-people-places
 title: Make people and places text translatable
-status: active
+status: done
 priority: should
 type: feature
 outline: false

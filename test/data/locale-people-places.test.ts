@@ -367,3 +367,61 @@ describe('families and Megas named from species', () => {
     ]);
   });
 });
+
+describe('the NPCs, their stalls and their scenery in ja and es', () => {
+  const NPC_FIELDS = ['name', 'description', 'quote', 'spent'] as const;
+
+  it('write every person, stall and kind of scenery, with the fields English writes', () => {
+    const missing: string[] = [];
+
+    for (const locale of ['ja', 'es']) {
+      const english = read('en', 'npcs') as Record<string, Record<string, string>>;
+      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
+
+      for (const [key, person] of Object.entries(english)) {
+        for (const field of NPC_FIELDS) {
+          if (person[field] != null && !written[key]?.[field]) {
+            missing.push(`${locale} ${key}.${field}`);
+          }
+        }
+      }
+      for (const file of ['vendor-stalls', 'decorations']) {
+        const lines = read(locale, file) as Record<string, string>;
+
+        for (const key of Object.keys(read('en', file) as object)) {
+          if (!lines[key]) {
+            missing.push(`${locale} ${file} ${key}`);
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
+  });
+
+  it('end every description on a full stop, 。 in Japanese', () => {
+    const open: string[] = [];
+
+    for (const [locale, stop] of [
+      ['ja', '。'],
+      ['es', '.'],
+    ]) {
+      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
+
+      for (const [key, person] of Object.entries(written)) {
+        if (!person.description.endsWith(stop)) {
+          open.push(`${locale} ${key}`);
+        }
+      }
+    }
+    expect(open).toEqual([]);
+  });
+
+  it('say no two people by the same name in one locale', () => {
+    for (const locale of ['ja', 'es']) {
+      const written = read(locale, 'npcs') as Record<string, Record<string, string>>;
+      const names = Object.values(written).map((person) => person.name);
+
+      expect(new Set(names).size, locale).toBe(names.length);
+    }
+  });
+});

@@ -1,0 +1,9 @@
+# What each vendor's counter is called on the board: the stall's name from
+# across the chunk, so it says the shelf rather than the trade
+
+Medicine: Puesto de Medicinas
+Vitamins: Puesto de Vitaminas
+Incenses: Puesto de Inciensos
+BattleItems: Puesto de Objetos de Combate
+Balls: Puesto de Poké Balls
+Moves: Puesto de Máquinas

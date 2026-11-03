@@ -1,0 +1,9 @@
+# What each vendor's counter is called on the board: the stall's name from
+# across the chunk, so it says the shelf rather than the trade
+
+Medicine: くすりの やたい
+Vitamins: ビタミンの やたい
+Incenses: おこうの やたい
+BattleItems: バトルアイテムの やたい
+Balls: ボールの やたい
+Moves: わざマシンの やたい

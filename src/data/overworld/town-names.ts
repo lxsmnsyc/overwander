@@ -2,8 +2,8 @@ import * as v from 'valibot';
 import type Biome from '../ids/biome';
 import type { SettledBiome } from '../ids/biome';
 import { BIOME_IDS } from '../ids/names';
-import townNamesFile from '../text/en/town-names.yaml';
-import { idOf } from '../yaml';
+import { type Locale, baseLocale, currentLocale } from '../../i18n/locale';
+import { idOf, localeFile } from '../yaml';
 
 /**
  * What a town is called.
@@ -29,8 +29,14 @@ import { idOf } from '../yaml';
  * without one would be 262,144 regions against 49,920 names, five
  * times more world than words. See `COUNTY_NAMES`.
  *
- * The words are `text/en/town-names.yaml`; how they are put together
- * is here
+ * The words are `text/<locale>/town-names.yaml`; how they are put
+ * together is here.
+ *
+ * Each locale brings word lists of its own, the same lengths in the same
+ * order as English, so a town is the same town in every language: it
+ * keeps its place in each list and only the words change. A locale that
+ * writes no file reads English. A locale that writes one writes all of
+ * it, and joins the parts its own way (see `TOWN_JOINERS`)
  */
 
 const WORDS = v.strictObject({
@@ -41,7 +47,50 @@ const WORDS = v.strictObject({
   counties: v.array(v.string()),
 });
 
-const words = v.parse(WORDS, townNamesFile);
+type Words = v.InferOutput<typeof WORDS>;
+
+/** The head lists by biome id, once their names are read */
+function readHeads(heads: Words['heads'], where: string): Record<number, string[]> {
+  const read: Record<number, string[]> = {};
+
+  for (const [name, list] of Object.entries(heads)) {
+    const at = `${where}: ${name}`;
+
+    // The arithmetic below reads eight to a biome, and one short or over
+    // would rename every town of it
+    if (list.length !== 8) {
+      throw new Error(`${at}: needs exactly 8 heads`);
+    }
+    read[idOf<Biome>(BIOME_IDS, name, at)] = list;
+  }
+  return read;
+}
+
+/** A locale's lists hold the places English's do, so a town keeps its name's place in all of them */
+export function checkTownWords(written: Words, english: Words, where: string): void {
+  for (const list of ['tails', 'titles', 'marks', 'counties'] as const) {
+    if (written[list].length !== english[list].length) {
+      throw new Error(
+        `${where}: ${list} has ${written[list].length} words, English has ${english[list].length}`,
+      );
+    }
+  }
+  for (const name of Object.keys(english.heads)) {
+    if (!Object.hasOwn(written.heads, name)) {
+      throw new Error(`${where}: heads has no ${name}`);
+    }
+  }
+  readHeads(written.heads, where);
+}
+
+const TOWN_WORDS = localeFile(
+  import.meta.glob('../text/*/town-names.yaml', { eager: true, import: 'default' }),
+  'text/<locale>/town-names.yaml',
+  WORDS,
+  checkTownWords,
+);
+
+const words = TOWN_WORDS.english;
 
 /**
  * The head of a name, by the biome the town stands on. One entry per
@@ -51,18 +100,10 @@ const words = v.parse(WORDS, townNamesFile);
  * built on until it has been given words. Public so a test can hold
  * it to that
  */
-export const TOWN_HEADS: Record<number, string[]> = {};
-
-for (const [name, heads] of Object.entries(words.heads)) {
-  const where = `text/en/town-names.yaml: ${name}`;
-
-  // The arithmetic below reads eight to a biome, and one short or over
-  // would rename every town of it
-  if (heads.length !== 8) {
-    throw new Error(`${where}: needs exactly 8 heads`);
-  }
-  TOWN_HEADS[idOf<Biome>(BIOME_IDS, name, where)] = heads;
-}
+export const TOWN_HEADS: Record<number, string[]> = readHeads(
+  words.heads,
+  'text/en/town-names.yaml',
+);
 
 /**
  * What is welded onto the head, which is what makes the name one word
@@ -102,7 +143,7 @@ const MARKS: string[] = words.marks;
  * existing town in the county it was already in, under the name it
  * already had. It only wants more counties at the edges
  */
-const COUNTY_NAMES: string[] = words.counties;
+export const COUNTY_NAMES: string[] = words.counties;
 
 /** How many regions to a county, on each axis */
 export const COUNTY_REGIONS = 64;
@@ -136,6 +177,56 @@ const SPIN = 2_731;
  * bunched at its front
  */
 const STEP = 1_009;
+
+/** The parts of a name, before a locale puts them together */
+export interface TownParts {
+  /** The word in front, or null for the towns that carry none */
+  mark: string | null;
+  head: string;
+  /** What is welded onto the head in English, one word with it */
+  tail: string;
+  title: string;
+  county: string;
+}
+
+/**
+ * How a locale puts a name together, for a locale that writes its own
+ * word lists. English welds the tail onto the head, sets the title
+ * after and the county last. A locale with no joiner of its own joins
+ * the English way
+ */
+export const TOWN_JOINERS: Record<string, (parts: TownParts) => string> = {
+  [baseLocale]: ({ mark, head, tail, title, county }) =>
+    `${mark == null ? '' : `${mark} `}${head}${tail} ${title}, ${county}`,
+  // Largest first, with no spaces: the county, the mark, the name, the title
+  ja: ({ mark, head, tail, title, county }) => `${county}${mark ?? ''}${head}${tail}${title}`,
+  // The title comes first, then the mark, as in "Pueblo Nuevo Concha, Ashmarch"
+  es: ({ mark, head, tail, title, county }) =>
+    `${title} ${mark == null ? '' : `${mark} `}${head}${tail}, ${county}`,
+};
+
+/** The head lists of each locale's words by biome id, read once */
+const HEADS_BY_WORDS = new WeakMap<object, Record<number, string[]>>();
+
+/** The words this locale builds names from, and the joiner that goes with them */
+function townWordsFor(locale: Locale): {
+  words: Words;
+  heads: Record<number, string[]>;
+  join: (parts: TownParts) => string;
+} {
+  const here = TOWN_WORDS.read();
+  let heads = HEADS_BY_WORDS.get(here);
+
+  if (heads == null) {
+    heads = readHeads(here.heads, `text/${locale}/town-names.yaml`);
+    HEADS_BY_WORDS.set(here, heads);
+  }
+  // English words keep English's joiner, whatever the locale: a locale
+  // that has written no lists reads English names, not half translated ones
+  const join = here === words ? TOWN_JOINERS[baseLocale] : TOWN_JOINERS[locale];
+
+  return { words: here, heads, join: join ?? TOWN_JOINERS[baseLocale] };
+}
 
 /** Where a region sits inside its own county, on one axis */
 function withinCounty(region: number): number {
@@ -183,10 +274,14 @@ export default function nameTown(regionX: number, regionY: number, biome: Settle
   const marked = spun >= PLAIN_NAMES;
   const over = spun - PLAIN_NAMES;
   const plain = marked ? (Math.floor(over / MARKS.length) * STEP) % PLAIN_NAMES : spun;
-  const head = TOWN_HEADS[biome][plain % HEADS_PER_BIOME];
-  const tail = TAILS[Math.floor(plain / HEADS_PER_BIOME) % TAILS.length];
-  const title = TITLES[Math.floor(plain / (HEADS_PER_BIOME * TAILS.length))];
-  const mark = marked ? `${MARKS[over % MARKS.length]} ` : '';
+  const here = townWordsFor(currentLocale());
 
-  return `${mark}${head}${tail} ${title}, ${COUNTY_NAMES[county]}`;
+  // Each part is picked by its place in the list, so every locale names the same town
+  return here.join({
+    mark: marked ? here.words.marks[over % MARKS.length] : null,
+    head: here.heads[biome][plain % HEADS_PER_BIOME],
+    tail: here.words.tails[Math.floor(plain / HEADS_PER_BIOME) % TAILS.length],
+    title: here.words.titles[Math.floor(plain / (HEADS_PER_BIOME * TAILS.length))],
+    county: here.words.counties[county],
+  });
 }

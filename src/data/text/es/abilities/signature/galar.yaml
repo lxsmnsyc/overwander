@@ -11,7 +11,7 @@ ScopeCue:
   description: Cada movimiento de tipo Agua que acierta usa Foco sobre ese objetivo, y los movimientos de un solo objetivo de su equipo se dirigen allí, como mucho una vez cada 8 segundos.
 PantryRaid:
   name: Asalto a la Despensa
-  description: Mientras está en el campo, cualquier baya que un rival fuera a comer va a sus mofletes, y le cura como lo haría la baya.
+  description: Mientras está en el campo, cualquier baya que un rival fuera a comer va a sus mofletes, y le restaura PS o le cura el estado como lo haría la baya.
 SteelEscort:
   name: Escolta de Acero
   description: Cuando un rival empieza a preparar un movimiento que golpea a todo su bando, usa Vasta Guardia, como mucho una vez cada 10 segundos.
@@ -35,7 +35,7 @@ Zoomies:
   description: Cada vez que le sube la Velocidad, usa Carga sobre sí mismo.
 SharedHarvest:
   name: Cosecha Compartida
-  description: Cuando come una baya, su aliado más herido recibe también la curación, la cura o la mejora de esa baya.
+  description: Cuando come una baya, su aliado más herido recibe también la recuperación de PS, la cura de estado o la mejora de estadística de esa baya.
 CoilBurrow:
   name: Madriguera Enroscada
   description: Con tormenta de arena, sus movimientos de tipo Tierra golpean a todos los rivales en lugar de a uno.

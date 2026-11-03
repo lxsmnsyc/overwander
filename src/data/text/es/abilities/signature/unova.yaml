@@ -143,7 +143,7 @@ Scoring:
   description: Todo movimiento físico que acierta baja 1 nivel la Defensa del objetivo.
 Sunwarmed:
   name: Baño de Sol
-  description: Con sol, preparar sus movimientos lleva x0,75 del tiempo.
+  description: Con sol, su tiempo de preparación es un 25 % más corto.
 ThreeHeads:
   name: Tres Cabezas
   description: Todo movimiento que acierta también muerde a otro rival por 1/3 del daño.
@@ -239,7 +239,7 @@ Sporeburst:
   description: Al debilitarse, usa Paralizador sobre todos los rivales del campo.
 StillWater:
   name: Aguas Quietas
-  description: Mientras está en el campo, cada rival tarda x1,2 en prepararse. Las recargas no cambian.
+  description: Mientras está en el campo, cada rival tiene un tiempo de preparación un 20 % más largo. Las recargas no cambian.
 Shockmud:
   name: Lodo Chispeante
   description: Sus movimientos de tipo Tierra tienen x1,2 de potencia y un 20 % de probabilidad de paralizar.

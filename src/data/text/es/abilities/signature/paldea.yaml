@@ -89,10 +89,10 @@ FilletThrift:
   description: Los movimientos que cuestan PS (Deslome, Sustituto, Tambor, Autotomía) le cuestan la mitad.
 Mouthful:
   name: Bocado
-  description: 'Cuando un aliado baja de 1/3 de PS, se lo traga: no se le puede apuntar durante 4 segundos y restaura 1/4 de sus PS, una vez por aliado y combate.'
+  description: 'Cuando un aliado baja de 1/3 de PS, se lo traga: durante 4 segundos nadie puede apuntarle y el aliado restaura 1/4 de sus PS, una vez por aliado y combate.'
 BackSeatOrders:
   name: Órdenes desde Atrás
-  description: Mientras está tras un Sustituto o bajo su propio Protección, cada movimiento que acierta un aliado tiene x1,2 de potencia.
+  description: Mientras está tras un Sustituto o bajo su propia Protección, cada movimiento que acierta un aliado tiene x1,2 de potencia.
 GlaiveGuard:
   name: Guardia de Guja
   description: Tras un movimiento que lo deja expuesto (Asalto Espadón, Enfado, una recarga), su Defensa y su Defensa Esp. valen +2 hasta que vuelva a actuar.

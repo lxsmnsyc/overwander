@@ -47,7 +47,7 @@ JawSnap:
   description: Un movimiento que acierta cancela lo que el objetivo estaba lanzando o cargando, una vez cada 8 segundos por objetivo.
 Frostbound:
   name: Grillete de Hielo
-  description: Un objetivo al que hace daño tarda un 30 % más en preparar y cargar durante los siguientes 6 segundos.
+  description: Un objetivo al que hace daño tiene un tiempo de preparación y de carga un 30 % más largo durante los siguientes 6 segundos.
 Overturn:
   name: Vuelco
   description: Un movimiento que acierta invierte todos los niveles de estadística del objetivo, una vez cada 10 segundos por objetivo.
@@ -110,4 +110,4 @@ CalmingScent:
   description: Cuando gasta su propio objeto, el bando rival pierde 1 nivel de Velocidad.
 ShadeBond:
   name: Vínculo de Sombra
-  description: Mientras está en el campo, su equipo, él incluido, tarda x0,85 en prepararse y en cargar. Las recargas no cambian.
+  description: Mientras está en el campo, el tiempo de preparación y de carga de su equipo es un 15 % más corto, el suyo incluido. Las recargas no cambian.

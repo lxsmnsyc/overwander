@@ -12,7 +12,6 @@ import { Depth } from '../../overworld/depth';
 import {
   type CellFacts,
   type FieldMove,
-  type Travel,
   canEnter,
   canLand,
   canUseFieldMove,
@@ -94,6 +93,16 @@ export interface WalkDeps {
  * server told. The board is a window that follows them, so the world
  * cell they stand on is the one position the game keeps
  */
+/**
+ * How the player is getting about. Surfing carries whether the last
+ * step was on water, since the first step ashore after one ends the
+ * surf, and that is only a question while surfing
+ */
+export type Ride = { travel: 'walk' } | { travel: 'surf'; afloat: boolean } | { travel: 'fly' };
+
+const WALKING: Ride = { travel: 'walk' };
+const FLYING: Ride = { travel: 'fly' };
+
 export interface BoardWalk<View extends WalkGround> {
   /** Hand the walk the board it walks; until then it stands still */
   attach: (board: WalkBoard<View>) => void;
@@ -107,7 +116,7 @@ export interface BoardWalk<View extends WalkGround> {
   facing: Store<[number, number]>;
   /** Where a pressed walk is heading, re-planned at every step */
   journey: WritableStore<Journey | null>;
-  travel: Store<Travel>;
+  ride: Store<Ride>;
   /** The egg walking with the player, as of the last report */
   carried: Store<EggWalk | null>;
   /** The other players in sight, and this one as they see them */
@@ -168,7 +177,7 @@ export default function createBoardWalk<View extends WalkGround>(
   const placed = createStore(false);
   const facing = createStore<[number, number]>([0, 1]);
   const journey = createStore<Journey | null>(null);
-  const travel = createStore<Travel>('walk');
+  const ride = createStore<Ride>(WALKING);
   const warping = createStore(false);
   const carried = createStore<EggWalk | null>(null);
   const sight = createStore<Sight | null>(null);
@@ -202,7 +211,8 @@ export default function createBoardWalk<View extends WalkGround>(
   /**
    * Paces walked but not yet reported, and whether a report is in
    * flight. A walk reports in batches of `STEP_REPORT_SIZE`; `force`
-   * is for the moments a walk stops, where the last few are kept
+   * is for the moments a walk stops, where the last few are kept.
+   * Only `sendSteps` sets or clears `reporting`
    */
   let pending = 0;
   let reporting = false;
@@ -218,6 +228,20 @@ export default function createBoardWalk<View extends WalkGround>(
     }
   };
 
+  /**
+   * Send paces through a write that carries them. One report is out at
+   * a time, and the paces are taken off `pending` as it leaves
+   */
+  async function sendSteps<T>(steps: number, write: () => Promise<T>): Promise<T> {
+    pending -= steps;
+    reporting = true;
+    try {
+      return await write();
+    } finally {
+      reporting = false;
+    }
+  }
+
   const reportSteps = (force = false): void => {
     if (reporting || pending === 0 || (!force && pending < STEP_REPORT_SIZE)) {
       return;
@@ -231,15 +255,10 @@ export default function createBoardWalk<View extends WalkGround>(
     // Past the cap the server would drop them, so the rest wait for the next report
     const steps = Math.min(pending, MAX_STEP_REPORT);
 
-    pending -= steps;
-    reporting = true;
-    reportWalk(steps)
+    sendSteps(steps, async () => reportWalk(steps))
       .then(takeReport)
       .catch(() => {
         // A dropped report is a few paces; the next one carries on
-      })
-      .finally(() => {
-        reporting = false;
       });
   };
 
@@ -258,10 +277,6 @@ export default function createBoardWalk<View extends WalkGround>(
     // The paces ride the save, unless a report is already out with them
     const steps = reporting ? 0 : pending;
 
-    if (steps > 0) {
-      pending = 0;
-      reporting = true;
-    }
     // So the world map looks at the chunk the player is in, and a
     // remount picks the walk up rather than the record
     deps.setPosition({
@@ -273,8 +288,11 @@ export default function createBoardWalk<View extends WalkGround>(
       depth: depth.get(),
       movedAt: Date.now(),
     });
-    deps
-      .settleWalk(chunk, row, cx, cy, depth.get(), steps)
+    const write = async (): ReturnType<WalkDeps['settleWalk']> =>
+      deps.settleWalk(chunk, row, cx, cy, depth.get(), steps);
+
+    // A save with paces on it is the report out until it lands
+    (steps > 0 ? sendSteps(steps, write) : write())
       .then((report) => {
         if (steps > 0) {
           takeReport(report);
@@ -282,11 +300,6 @@ export default function createBoardWalk<View extends WalkGround>(
       })
       .catch(() => {
         // A position that did not save is a walk that will save it
-      })
-      .finally(() => {
-        if (steps > 0) {
-          reporting = false;
-        }
       });
   };
 
@@ -389,7 +402,7 @@ export default function createBoardWalk<View extends WalkGround>(
 
   /** Whether a step onto a cell is allowed, however the player is getting about */
   const standable = (loaded: View, index: number): boolean =>
-    canEnter(travel.get(), factsAt(loaded, PLAYER_CELL), factsAt(loaded, index));
+    canEnter(ride.get().travel, factsAt(loaded, PLAYER_CELL), factsAt(loaded, index));
 
   /*
    * Pressed walks
@@ -595,27 +608,24 @@ export default function createBoardWalk<View extends WalkGround>(
     return false;
   };
 
-  /** Whether the last step was taken on water, so the first one ashore ends a surf */
-  let afloat = false;
-
   const surfOffered = (loaded: View): boolean => {
     if (!knows(Moves.Surf)) {
       return false;
     }
-    if (travel.get() === 'surf') {
+    if (ride.get().travel === 'surf') {
       return !factsAt(loaded, PLAYER_CELL).water;
     }
-    return travel.get() === 'walk' && besideWater(loaded);
+    return ride.get().travel === 'walk' && besideWater(loaded);
   };
 
   const flyOffered = (loaded: View): boolean => {
     if (!knows(Moves.Fly)) {
       return false;
     }
-    if (travel.get() === 'fly') {
+    if (ride.get().travel === 'fly') {
       return canLand(factsAt(loaded, PLAYER_CELL));
     }
-    return travel.get() === 'walk' && !loaded.underground;
+    return ride.get().travel === 'walk' && !loaded.underground;
   };
 
   const toggleSurf = (): void => {
@@ -624,13 +634,12 @@ export default function createBoardWalk<View extends WalkGround>(
     if (loaded == null) {
       return;
     }
-    if (travel.get() === 'surf') {
+    if (ride.get().travel === 'surf') {
       if (!factsAt(loaded, PLAYER_CELL).water) {
-        travel.set('walk');
+        ride.set(WALKING);
       }
     } else if (knows(Moves.Surf) && besideWater(loaded)) {
-      afloat = false;
-      travel.set('surf');
+      ride.set({ travel: 'surf', afloat: false });
     }
     refresh();
   };
@@ -641,12 +650,12 @@ export default function createBoardWalk<View extends WalkGround>(
     if (loaded == null) {
       return;
     }
-    if (travel.get() === 'fly') {
+    if (ride.get().travel === 'fly') {
       if (canLand(factsAt(loaded, PLAYER_CELL))) {
-        travel.set('walk');
+        ride.set(WALKING);
       }
     } else if (knows(Moves.Fly) && !loaded.underground) {
-      travel.set('fly');
+      ride.set(FLYING);
     }
     refresh();
   };
@@ -667,7 +676,7 @@ export default function createBoardWalk<View extends WalkGround>(
           return;
         }
         journey.set(null);
-        travel.set('walk');
+        ride.set(WALKING);
         deps.standHere(at);
         refresh();
       })
@@ -682,22 +691,24 @@ export default function createBoardWalk<View extends WalkGround>(
   function refresh(): void {
     const loaded = deps.view();
 
-    if (loaded != null && travel.get() !== 'walk') {
-      const mode = travel.get();
+    const current = ride.get();
 
+    if (loaded != null && current.travel !== 'walk') {
       // A buddy put away takes the ride with it, and nothing flies underground
       if (
-        !knows(mode === 'surf' ? Moves.Surf : Moves.Fly) ||
-        (mode === 'fly' && loaded.underground)
+        !knows(current.travel === 'surf' ? Moves.Surf : Moves.Fly) ||
+        (current.travel === 'fly' && loaded.underground)
       ) {
-        travel.set('walk');
-      } else if (mode === 'surf') {
+        ride.set(WALKING);
+      } else if (current.travel === 'surf') {
+        // The first step ashore after one on water ends the surf
         const wet = factsAt(loaded, PLAYER_CELL).water;
 
-        if (afloat && !wet) {
-          travel.set('walk');
+        if (current.afloat && !wet) {
+          ride.set(WALKING);
+        } else if (current.afloat !== wet) {
+          ride.set({ travel: 'surf', afloat: wet });
         }
-        afloat = wet;
       }
     }
 
@@ -707,7 +718,7 @@ export default function createBoardWalk<View extends WalkGround>(
       if (surfOffered(loaded)) {
         offers.push({
           name: describeMove(Moves.Surf),
-          active: travel.get() === 'surf',
+          active: ride.get().travel === 'surf',
           busy: false,
           use: toggleSurf,
         });
@@ -715,7 +726,7 @@ export default function createBoardWalk<View extends WalkGround>(
       if (flyOffered(loaded)) {
         offers.push({
           name: describeMove(Moves.Fly),
-          active: travel.get() === 'fly',
+          active: ride.get().travel === 'fly',
           busy: false,
           use: toggleFly,
         });
@@ -808,7 +819,7 @@ export default function createBoardWalk<View extends WalkGround>(
     placed,
     facing,
     journey,
-    travel,
+    ride,
     carried,
     sight,
     place: (at) => {

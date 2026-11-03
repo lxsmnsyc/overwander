@@ -423,7 +423,8 @@ export default function OverworldBoard(props: {
 
     return open == null ? null : [open.spot.cell, open.standing];
   };
-  const eggOpen = (): Extract<Opened, { kind: Opening.Egg }> | null => getOpened(opened(), Opening.Egg);
+  const eggOpen = (): Extract<Opened, { kind: Opening.Egg }> | null =>
+    getOpened(opened(), Opening.Egg);
   const engaged = acts.engaged;
   const showing = acts.showing;
   const holdsSomething = acts.holdsSomething;
@@ -824,13 +825,13 @@ export default function OverworldBoard(props: {
   const ahead = walk.ahead;
 
   const journey = createStoreSignal(walk.journey);
-  const travel = createStoreSignal(walk.travel);
+  const ride = createStoreSignal(walk.ride);
 
   /** The buddy as the player is drawn riding it */
   const mount = (): RiddenCoat | null => {
     const riding = buddy();
 
-    return travel() === 'walk' || riding == null
+    return ride().travel === 'walk' || riding == null
       ? null
       : {
           species: riding.species,

@@ -31,8 +31,7 @@ UrsalunaZenith:
   forms:
     UrsalunaBloodmoonZenith:
       base: UrsalunaBloodmoon
-      stats:
-        { HP: 113, Attack: 70, Defense: 140, SpecialAttack: 175, SpecialDefense: 95, Speed: 62 }
+      stats: { HP: 113, Attack: 70, Defense: 140, SpecialAttack: 175, SpecialDefense: 95, Speed: 62 }
 
 # It carries the souls of its fallen school, and each fallen teammate adds to its blows
 BasculegionZenith:
@@ -44,8 +43,7 @@ BasculegionZenith:
   forms:
     BasculegionFemaleZenith:
       base: BasculegionFemale
-      stats:
-        { HP: 120, Attack: 102, Defense: 80, SpecialAttack: 130, SpecialDefense: 90, Speed: 108 }
+      stats: { HP: 120, Attack: 102, Defense: 80, SpecialAttack: 130, SpecialDefense: 90, Speed: 108 }
 
 # The hooked claws it climbs cliffs with tear into whatever they touch
 SneaslerZenith:

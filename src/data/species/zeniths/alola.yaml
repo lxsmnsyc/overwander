@@ -104,8 +104,7 @@ WishiwashiZenith:
   forms:
     WishiwashiSchoolZenith:
       base: WishiwashiSchool
-      stats:
-        { HP: 45, Attack: 170, Defense: 130, SpecialAttack: 170, SpecialDefense: 135, Speed: 70 }
+      stats: { HP: 45, Attack: 170, Defense: 130, SpecialAttack: 170, SpecialDefense: 135, Speed: 70 }
 
 # Its crown sheds poison spikes when struck
 ToxapexZenith:
@@ -221,32 +220,25 @@ MiniorZenith:
   forms:
     MiniorRedZenith:
       base: MiniorRed
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorOrangeZenith:
       base: MiniorOrange
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorYellowZenith:
       base: MiniorYellow
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorGreenZenith:
       base: MiniorGreen
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorBlueZenith:
       base: MiniorBlue
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorIndigoZenith:
       base: MiniorIndigo
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
     MiniorVioletZenith:
       base: MiniorViolet
-      stats:
-        { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
+      stats: { HP: 60, Attack: 130, Defense: 60, SpecialAttack: 130, SpecialDefense: 60, Speed: 160 }
 
 # Its soft fur takes the edge off any blow
 KomalaZenith:
@@ -282,8 +274,7 @@ MimikyuZenith:
   forms:
     MimikyuBustedZenith:
       base: MimikyuBusted
-      stats:
-        { HP: 55, Attack: 135, Defense: 95, SpecialAttack: 50, SpecialDefense: 115, Speed: 126 }
+      stats: { HP: 55, Attack: 135, Defense: 95, SpecialAttack: 50, SpecialDefense: 115, Speed: 126 }
 
 # The noise of its grinding teeth puts foes off their food
 BruxishZenith:
@@ -423,12 +414,10 @@ NecrozmaZenith:
   forms:
     NecrozmaDuskManeZenith:
       base: NecrozmaDuskMane
-      stats:
-        { HP: 97, Attack: 182, Defense: 132, SpecialAttack: 138, SpecialDefense: 114, Speed: 117 }
+      stats: { HP: 97, Attack: 182, Defense: 132, SpecialAttack: 138, SpecialDefense: 114, Speed: 117 }
     NecrozmaDawnWingsZenith:
       base: NecrozmaDawnWings
-      stats:
-        { HP: 97, Attack: 138, Defense: 114, SpecialAttack: 182, SpecialDefense: 132, Speed: 117 }
+      stats: { HP: 97, Attack: 138, Defense: 114, SpecialAttack: 182, SpecialDefense: 132, Speed: 117 }
 
 # It holds its foe by the shadow
 MarshadowZenith:

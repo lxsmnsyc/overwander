@@ -127,12 +127,10 @@ CramorantZenith:
   forms:
     CramorantGulpingZenith:
       base: CramorantGulping
-      stats:
-        { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
+      stats: { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
     CramorantGorgingZenith:
       base: CramorantGorging
-      stats:
-        { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
+      stats: { HP: 70, Attack: 85, Defense: 95, SpecialAttack: 100, SpecialDefense: 120, Speed: 105 }
 
 # The hunter swells with every catch it spears
 BarraskewdaZenith:
@@ -180,8 +178,7 @@ PolteageistZenith:
   forms:
     PolteageistAntiqueZenith:
       base: PolteageistAntique
-      stats:
-        { HP: 60, Attack: 65, Defense: 85, SpecialAttack: 154, SpecialDefense: 134, Speed: 110 }
+      stats: { HP: 60, Attack: 65, Defense: 85, SpecialAttack: 154, SpecialDefense: 134, Speed: 110 }
       types: [Ghost, Grass]
 
 # The forest witch walks in a mist of her own
@@ -250,28 +247,22 @@ AlcremieZenith:
   forms:
     AlcremieBerryZenith:
       base: AlcremieBerry
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
     AlcremieLoveZenith:
       base: AlcremieLove
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
     AlcremieStarZenith:
       base: AlcremieStar
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
     AlcremieCloverZenith:
       base: AlcremieClover
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
     AlcremieFlowerZenith:
       base: AlcremieFlower
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
     AlcremieRibbonZenith:
       base: AlcremieRibbon
-      stats:
-        { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
+      stats: { HP: 65, Attack: 60, Defense: 110, SpecialAttack: 125, SpecialDefense: 141, Speed: 94 }
 
 # A sea urchin in a hard spined shell survives any one blow
 PincurchinZenith:
@@ -319,8 +310,7 @@ IndeedeeZenith:
   forms:
     IndeedeeFemaleZenith:
       base: IndeedeeFemale
-      stats:
-        { HP: 70, Attack: 55, Defense: 95, SpecialAttack: 115, SpecialDefense: 130, Speed: 110 }
+      stats: { HP: 70, Attack: 55, Defense: 95, SpecialAttack: 115, SpecialDefense: 130, Speed: 110 }
 
 # A hamster that gnaws on everything in reach
 MorpekoZenith:
@@ -392,8 +382,7 @@ UrshifuZenith:
   forms:
     UrshifuRapidStrikeZenith:
       base: UrshifuRapidStrike
-      stats:
-        { HP: 100, Attack: 160, Defense: 110, SpecialAttack: 63, SpecialDefense: 80, Speed: 137 }
+      stats: { HP: 100, Attack: 160, Defense: 110, SpecialAttack: 63, SpecialDefense: 80, Speed: 137 }
 
 # A body of pure current hovers off the ground
 RegielekiZenith:
@@ -437,12 +426,10 @@ CalyrexZenith:
   forms:
     CalyrexIceZenith:
       base: CalyrexIce
-      stats:
-        { HP: 100, Attack: 195, Defense: 175, SpecialAttack: 85, SpecialDefense: 175, Speed: 50 }
+      stats: { HP: 100, Attack: 195, Defense: 175, SpecialAttack: 85, SpecialDefense: 175, Speed: 50 }
     CalyrexShadowZenith:
       base: CalyrexShadow
-      stats:
-        { HP: 100, Attack: 85, Defense: 100, SpecialAttack: 195, SpecialDefense: 125, Speed: 175 }
+      stats: { HP: 100, Attack: 85, Defense: 100, SpecialAttack: 195, SpecialDefense: 125, Speed: 175 }
 
 # The unicorn's magic turns its body blows to Fairy
 RapidashGalarZenith:
@@ -510,5 +497,4 @@ DarmanitanGalarZenith:
   forms:
     DarmanitanGalarZenZenith:
       base: DarmanitanGalarZen
-      stats:
-        { HP: 105, Attack: 190, Defense: 85, SpecialAttack: 30, SpecialDefense: 75, Speed: 155 }
+      stats: { HP: 105, Attack: 190, Defense: 85, SpecialAttack: 30, SpecialDefense: 75, Speed: 155 }

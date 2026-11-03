@@ -416,12 +416,10 @@ DeoxysZenith:
   forms:
     DeoxysAttackZenith:
       base: DeoxysAttack
-      stats:
-        { HP: 50, Attack: 203, Defense: 42, SpecialAttack: 202, SpecialDefense: 42, Speed: 161 }
+      stats: { HP: 50, Attack: 203, Defense: 42, SpecialAttack: 202, SpecialDefense: 42, Speed: 161 }
     DeoxysDefenseZenith:
       base: DeoxysDefense
       stats: { HP: 50, Attack: 84, Defense: 201, SpecialAttack: 84, SpecialDefense: 201, Speed: 80 }
     DeoxysSpeedZenith:
       base: DeoxysSpeed
-      stats:
-        { HP: 50, Attack: 108, Defense: 115, SpecialAttack: 107, SpecialDefense: 115, Speed: 205 }
+      stats: { HP: 50, Attack: 108, Defense: 115, SpecialAttack: 107, SpecialDefense: 115, Speed: 205 }

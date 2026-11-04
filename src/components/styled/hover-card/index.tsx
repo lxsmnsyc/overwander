@@ -15,7 +15,7 @@ import { autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui'
 import { Transition } from 'terracotta';
 import closeWhenGone from '../gone';
 import { DetailRowsProvider, TooltipLayer } from '../tooltip';
-import { SHEER } from '../transition';
+import { RISE } from '../transition';
 import { type HoverCardPlacement, type Point, apart, holds, within } from './placing';
 import { CLOSE_DELAY, OPEN_DELAY } from '../hover-delay';
 import createLongPress from '../long-press';
@@ -46,7 +46,7 @@ const WIDTHS: Record<HoverCardWidth, string> = {
 };
 
 const CARD =
-  'pointer-events-auto overflow-hidden rounded-xl border-2 border-line bg-paper text-left' +
+  'pointer-events-auto overflow-hidden rounded-card border-2 border-line bg-paper text-left' +
   ' shadow-float';
 
 /** How far the card stands from its trigger and keeps from the window's edges */
@@ -542,7 +542,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
           >
             <Transition
               show={open()}
-              {...SHEER}
+              {...RISE}
               afterLeave={() => {
                 setPresent(false);
               }}

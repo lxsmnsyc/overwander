@@ -7,7 +7,7 @@ export default function StatTile(props: { label: string; children: JSX.Element }
       <span class="text-[9.5px] font-extrabold tracking-wide text-muted uppercase">
         {props.label}
       </span>
-      <span class="text-sm font-extrabold text-ink tabular-nums">{props.children}</span>
+      <span class="font-display text-sm font-semibold text-ink tabular-nums">{props.children}</span>
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { Transition } from 'terracotta';
 import type { QuerySuggestion } from '../../../core/query';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { usePortalHost } from '../portal-host';
-import { SHEER } from '../transition';
+import { DROP } from '../transition';
 
 /**
  * What the box is offering to finish the word with.
@@ -72,8 +72,8 @@ export default function Suggestions(props: SuggestionsProps): JSX.Element {
     <Portal mount={host()}>
       <Transition
         show={props.open && props.suggestions.length > 0}
-        {...SHEER}
-        class="fixed z-40"
+        {...DROP}
+        class={`fixed z-40 ${props.at?.flip === true ? 'origin-bottom-left' : 'origin-top-left'}`}
         style={{
           left: `${props.at?.x ?? 0}px`,
           top: `${props.at?.y ?? 0}px`,

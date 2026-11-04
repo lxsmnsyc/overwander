@@ -62,7 +62,7 @@ export function abilityKind(species: Species, ability: Abilities): AbilityKind {
 export const ABILITY_PILLS: Record<AbilityKind, string> = {
   regular: 'border-line-soft bg-tide-soft text-tide-dark',
   hidden: 'border-arcane/40 bg-arcane/15 text-arcane',
-  signature: 'border-gold/50 bg-gold-soft text-gold',
+  signature: 'border-gold/50 bg-gold-soft text-gold-dark',
 };
 
 export function describeMove(move: Moves): string {

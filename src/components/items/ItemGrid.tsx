@@ -326,7 +326,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         {(note) => (
           <span
             class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate rounded-full
-              border border-gold bg-gold-soft px-1 text-[10px] leading-tight font-bold text-gold"
+              border border-gold bg-gold-soft px-1 text-[10px] leading-tight font-bold text-gold-dark"
           >
             {note}
           </span>

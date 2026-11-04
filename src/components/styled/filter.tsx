@@ -8,7 +8,7 @@ import {
   ListboxOptions,
   Transition,
 } from 'terracotta';
-import { SHEER } from './transition';
+import { DROP, dropOrigin } from './transition';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
@@ -150,7 +150,11 @@ export default function Filter<V>(props: {
             visibility: floating.isPositioned ? 'visible' : 'hidden',
           }}
         >
-          <Transition show={open()} {...SHEER} class="flex w-max min-w-full">
+          <Transition
+            show={open()}
+            {...DROP}
+            class={`flex w-max min-w-full ${dropOrigin(floating.placement)}`}
+          >
             <ListboxOptions
               // Kept mounted, since the fade needs something to fade
               unmount={false}

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Battle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.field{position:absolute;inset:0;background:linear-gradient(180deg,#9FD0F5 0 42%,#8FCB72 42% 100%)}
+.pad{position:absolute;width:150px;height:44px;border-radius:50%;background:#79B562;box-shadow:inset 0 -6px 0 0 #5F9A4E}
+.unit{position:absolute;width:72px;height:72px;border-radius:18px;border:0;padding:0;animation:breathe 1400ms steps(2,end) infinite;cursor:pointer}
+.unit.sel{outline:4px solid #fff;outline-offset:4px}
+@keyframes breathe{50%{transform:translateY(-4px)}}
+.glass{background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.2),0 18px 30px -18px rgba(20,32,58,.6)}
+.side{position:absolute;top:14px;width:360px;border-radius:20px;padding:10px 14px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px}
+.track{position:relative;height:14px;border-radius:7px;background:#E7EEF8;overflow:hidden}
+.track .ghost{position:absolute;inset:0 auto 0 0;background:#F2B33D;animation:ghost 3000ms cubic-bezier(.2,.8,.2,1) infinite}
+.track .fill{position:absolute;inset:0 auto 0 0;animation:fill 3000ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes fill{0%,44%{width:74%}48%,100%{width:58%}}
+@keyframes ghost{0%,52%{width:74%}84%,100%{width:58%}}
+@keyframes wu{0%{width:0}100%{width:100%}}
+.pip{width:14px;height:14px;border-radius:7px;background:#fff;box-shadow:inset 0 -6px 0 0 #D6372A;border:2px solid #14203A;box-sizing:border-box}
+.pip.out{background:#C3D2E8;box-shadow:none;border-color:#9AA8C0}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.btn.on{background:#2360C8;color:#fff;border-color:#163F86}
+.insp{position:absolute;right:14px;top:110px;bottom:70px;width:290px;border-radius:22px;padding:14px;box-sizing:border-box;display:flex;flex-direction:column;gap:10px;animation:dock 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes dock{from{transform:translateX(320px)}}
+.mv{position:relative;height:30px;border-radius:9px;background:#F4F7FC;overflow:hidden;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font-size:12px;font-weight:800}
+.mv i{position:absolute;left:0;top:0;bottom:0;background:#E3F3EA;font-style:normal}
+.mv b,.mv em{position:relative;font-style:normal}
+.mv em{font-weight:700;color:#52627F}
+.pill{display:inline-flex;height:24px;align-items:center;padding:0 9px;border-radius:999px;font-size:11px;font-weight:800}
+.count{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:150px;height:150px;border-radius:75px;border:6px solid #2360C8;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-family:Fredoka,sans-serif;font-weight:700;font-size:72px;color:#2360C8;box-shadow:0 6px 0 0 #102E63}
+.n{animation:num 700ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes num{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}30%{transform:translate(-50%,-50%) scale(1);opacity:1}85%{opacity:1}100%{opacity:0}}
+.results{position:absolute;inset:0;background:rgba(11,18,34,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;animation:fade 240ms both}
+@keyframes fade{from{opacity:0}}
+.word{font-family:Fredoka,sans-serif;font-weight:700;font-size:64px;color:#fff;letter-spacing:.02em;animation:word 560ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes word{from{transform:scale(.5);opacity:0}}
+.team{width:300px;border-radius:20px;background:#fff;border:2px solid #C3D2E8;padding:12px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;animation:in 420ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes in{from{transform:translateY(30px);opacity:0}}
+.r{display:grid;grid-template-columns:44px 1fr 90px;gap:6px;align-items:center;font-size:12px}
+.mini{height:6px;border-radius:3px;background:#E7EEF8;overflow:hidden}
+.mini span{display:block;height:100%;background:#1E8F52}
+.reward{animation:popin 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes popin{from{transform:scale(.4);opacity:0}}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="field"></div>
+<div class="pad" style="left: 250px; top: 430px"></div><div class="pad" style="left: 790px; top: 330px"></div><div class="pad" style="left: 150px; top: 530px"></div><div class="pad" style="left: 890px; top: 430px"></div>
+<button class="unit" style="left: 289px; top: 372px; background: #F0584A" onClick="{{ pickBlaze }}" aria-label="Blaze"></button><button class="unit" style="left: 189px; top: 472px; background: #4A8BF0; animation-delay: 300ms" aria-label="Squirt"></button>
+<button class="{{ gengarCls }}" style="left: 829px; top: 272px; background: #9C7BF0" onClick="{{ pickGengar }}" aria-label="Gengar"></button><button class="unit" style="left: 929px; top: 372px; background: #36B26F; animation-delay: 500ms" aria-label="Bulbasaur"></button>
+
+<div class="glass side" style="left: 14px"><div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">You</span><span style="display: flex; gap: 4px"><span class="pip"></span><span class="pip"></span></span></div><div class="track"><span class="fill" style="animation: none; width: 82%; background: #1E8F52"></span></div></div>
+<div class="glass side" style="right: 14px"><div style="display: flex; justify-content: space-between; align-items: center"><span style="display: flex; gap: 4px"><span class="pip"></span><span class="pip"></span></span><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">Foe</span></div><div class="track" style="transform: scaleX(-1)"><span class="ghost"></span><span class="fill" style="background: #D6372A"></span></div></div>
+<div style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px">
+<span style="height: 40px; padding: 0 18px; border-radius: 999px; background: #2360C8; color: #fff; display: flex; align-items: center; gap: 8px; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 17px; box-shadow: 0 3px 0 0 #102E63">{{ title }}<sc-if value="{{ replay }}" hint-placeholder-val="{{ false }}"><span style="font-family: Nunito, sans-serif; font-size: 10px; font-weight: 800; background: rgba(255,255,255,.2); border-radius: 999px; padding: 2px 8px">Awards nothing</span></sc-if></span>
+<sc-if value="{{ replay }}" hint-placeholder-val="{{ false }}"><div class="glass" role="group" aria-label="Replay speed" style="display: flex; border-radius: 12px; padding: 3px; gap: 3px"><button class="btn on" style="height: 30px; padding: 0 10px">1x</button><button class="btn" style="height: 30px; padding: 0 10px">2x</button><button class="btn" style="height: 30px; padding: 0 10px">3x</button></div></sc-if>
+</div>
+
+<sc-if value="{{ inspecting }}" hint-placeholder-val="{{ true }}">
+<div class="glass insp" role="region" aria-label="Gengar">
+<div style="display: flex; justify-content: space-between; align-items: center"><span><span style="color: #52627F; font-size: 12px; font-weight: 800">Lv. 44</span> <span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 20px">Gengar</span></span><button onClick="{{ unpick }}" aria-label="Close" style="width: 32px; height: 32px; border-radius: 10px; border: 2px solid #C3D2E8; background: #fff; cursor: pointer">×</button></div>
+<div style="display: flex; flex-direction: column; gap: 3px"><div class="track" style="height: 10px"><span class="ghost"></span><span class="fill" style="background: #1E8F52"></span></div><div class="track" style="height: 6px"><span class="fill" style="animation: wu 2400ms linear infinite; background: #F2B33D"></span></div><div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800"><span style="color: #8A5E00">Casting Shadow Ball</span><span style="font-family: Fredoka, sans-serif; color: #52627F">96/156</span></div></div>
+<div style="font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #52627F">Moves</div>
+<div style="display: flex; flex-direction: column; gap: 4px"><div class="mv"><i style="width: 100%"></i><b>Shadow Ball</b><em>ready</em></div><div class="mv"><i style="width: 40%"></i><b>Hypnosis</b><em>4s</em></div><div class="mv"><i style="width: 100%"></i><b>Lick</b><em>ready</em></div><div class="mv"><i style="width: 70%"></i><b>Curse</b><em>2s</em></div></div>
+<div style="font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #52627F">Abilities and items</div>
+<div style="display: flex; flex-wrap: wrap; gap: 4px"><span class="pill" style="background: #E3EEFB; color: #163F86">Cursed Body</span><span class="pill" style="background: #EFE8FB; color: #4E2F9E">Haunt</span><span class="pill" style="background: #FFF3D6; color: #7A5300">Spell Tag</span></div>
+<div style="display: flex; gap: 4px; align-items: center; font-size: 12px; font-weight: 800"><span style="width: 14px; height: 14px; border-radius: 4px; background: #9C7BF0"></span>Confused</div>
+<span style="flex-grow: 1"></span>
+<button class="btn" style="align-self: stretch">Open sheet</button>
+</div>
+</sc-if>
+
+<div style="position: absolute; left: 14px; bottom: 14px; display: flex; gap: 8px">
+<button class="btn" onClick="{{ intro }}">Replay countdown</button>
+<button class="btn" onClick="{{ toggleReplay }}">{{ replayLabel }}</button>
+<button class="btn go" onClick="{{ toggleVerdict }}">Show results</button>
+</div>
+<button class="btn" style="position: absolute; right: 14px; bottom: 14px">Leave</button>
+
+<sc-if value="{{ is3 }}" hint-placeholder-val="{{ false }}"><div class="count n" role="status">3</div></sc-if>
+<sc-if value="{{ is2 }}" hint-placeholder-val="{{ false }}"><div class="count n" role="status">2</div></sc-if>
+<sc-if value="{{ is1 }}" hint-placeholder-val="{{ false }}"><div class="count n" role="status">1</div></sc-if>
+
+<sc-if value="{{ showVerdict }}" hint-placeholder-val="{{ false }}">
+<div class="results" role="dialog" aria-label="Victory">
+<span class="word">Victory</span>
+<span style="color: #DCE6F7; font-size: 15px">Mika is beaten. They keep their party, and the purse is yours.</span>
+<div style="display: flex; gap: 8px"><span class="reward pill" style="animation-delay: 300ms; height: 32px; font-size: 13px; background: #FFF3D6; color: #7A5300">1,240 gold</span><span class="reward pill" style="animation-delay: 360ms; height: 32px; font-size: 13px; background: #E3F3EA; color: #156B3D">3 Charmander candy</span></div>
+<div style="display: flex; align-items: flex-end; gap: 16px">
+<div class="team" style="animation-delay: 420ms; border-color: #A9DCC0"><div style="display: flex; justify-content: space-between"><span style="font-weight: 800">You</span><span class="pill" style="background: #E3F3EA; color: #156B3D">Won</span></div><span style="font-size: 12px; color: #52627F">412 damage · 59%</span><div class="r"><span style="color: #52627F">Lv. 41</span><span style="font-weight: 800">Blaze</span><div class="mini"><span style="width: 76%"></span></div></div><div class="r"><span style="color: #52627F">Lv. 38</span><span style="font-weight: 800">Squirt</span><div class="mini"><span style="width: 40%"></span></div></div></div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; animation: in 420ms 520ms cubic-bezier(.34,1.56,.64,1) both"><span style="width: 72px; height: 72px; border-radius: 18px; background: #F0584A"></span><div style="width: 140px; height: 70px; border-radius: 14px 14px 0 0; background: #F2B33D; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #4A3200"><span style="font-weight: 800; font-size: 12px">★ Best</span><span style="font-family: Fredoka, sans-serif; font-weight: 600">Blaze · 268</span></div></div>
+<div class="team" style="animation-delay: 480ms"><div style="display: flex; justify-content: space-between"><span style="font-weight: 800">Mika</span><span class="pill" style="background: #F4F7FC; color: #52627F">Lost</span></div><span style="font-size: 12px; color: #52627F">288 damage · 41%</span><div class="r"><span style="color: #52627F">Lv. 44</span><span style="font-weight: 800">Gengar</span><span style="font-size: 11px; color: #52627F">Fainted</span></div><div class="r"><span style="color: #52627F">Lv. 40</span><span style="font-weight: 800">Bulbasaur</span><span style="font-size: 11px; color: #52627F">Fainted</span></div></div>
+</div>
+<div style="display: flex; gap: 10px; animation: in 420ms 600ms both"><button class="btn" onClick="{{ toggleVerdict }}">Stay and look</button><button class="btn go">Leave battle</button></div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { verdict: false, intro: 0, replay: false, pick: 'gengar' }; this.timers = []; }
+  componentWillUnmount() { for (const t of this.timers) clearTimeout(t); }
+  runIntro() {
+    for (const t of this.timers) clearTimeout(t);
+    this.timers = [];
+    for (const [i, n] of [3, 2, 1].entries()) this.timers.push(setTimeout(() => this.setState({ intro: n }), i * 700));
+    this.timers.push(setTimeout(() => this.setState({ intro: 0 }), 2100));
+  }
+  renderVals() {
+    return {
+      title: this.state.replay ? 'Replay' : 'Battle',
+      replay: this.state.replay,
+      replayLabel: this.state.replay ? 'Live view' : 'Replay view',
+      toggleReplay: () => this.setState({ replay: !this.state.replay }),
+      inspecting: this.state.pick === 'gengar',
+      gengarCls: this.state.pick === 'gengar' ? 'unit sel' : 'unit',
+      pickGengar: () => this.setState({ pick: 'gengar' }),
+      pickBlaze: () => this.setState({ pick: 'gengar' }),
+      unpick: () => this.setState({ pick: null }),
+      is3: this.state.intro === 3, is2: this.state.intro === 2, is1: this.state.intro === 1,
+      showVerdict: this.state.verdict,
+      intro: () => this.runIntro(),
+      toggleVerdict: () => this.setState({ verdict: !this.state.verdict }),
+    };
+  }
+}
+</script>
+</body>
+</html>

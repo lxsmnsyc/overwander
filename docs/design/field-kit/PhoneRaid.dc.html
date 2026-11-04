@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone: raid battle</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.field{position:absolute;inset:0;background:linear-gradient(180deg,#6C7FB8 0 46%,#7E9A6E 46% 100%)}
+.glass{background:rgba(255,255,255,.95);backdrop-filter:blur(8px)}
+.boss{position:absolute;left:115px;top:260px;width:160px;height:160px;border-radius:38px;animation:breathe 1600ms steps(2,end) infinite}
+@keyframes breathe{50%{transform:translateY(-5px)}}
+.unit{position:absolute;width:48px;height:48px;border-radius:12px;animation:breathe 1400ms steps(2,end) infinite}
+.meter{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800}
+.track{position:relative;flex-grow:1;height:12px;border-radius:6px;background:#E7EEF8;border:1px solid #C3D2E8;overflow:hidden}
+.track .ghost{position:absolute;inset:0 auto 0 0;background:#F2B33D;animation:ghost 3000ms cubic-bezier(.2,.8,.2,1) infinite}
+.track .fill{position:absolute;inset:0 auto 0 0;animation:fill 3000ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes fill{0%,40%{width:57%}44%,100%{width:49%}}
+@keyframes ghost{0%,48%{width:57%}80%,100%{width:49%}}
+.tick{position:absolute;top:0;bottom:0;width:3px;margin-left:-1px;background:#14203A}
+.tick.passed{background:#fff}
+.burst{position:absolute;left:75px;top:220px;width:240px;height:240px;border-radius:120px;border:6px solid #F0584A;box-sizing:border-box;animation:burst 1800ms cubic-bezier(.5,0,.75,0) infinite}
+@keyframes burst{from{transform:scale(1.6);opacity:0}20%{opacity:1}to{transform:scale(.7);opacity:1}}
+.mark{position:absolute;width:16px;height:16px;border-radius:4px;background:#F0584A;transform:rotate(45deg);animation:blink 450ms steps(2,end) infinite}
+@keyframes blink{50%{opacity:0}}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:44px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.pill{height:36px;padding:0 12px;border-radius:999px;border:2px solid #C3D2E8;background:#fff;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer}
+.pill.on{background:#2360C8;color:#fff;border-color:#163F86}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="field"></div>
+<div class="boss" style="background: {{ bossColor }}"></div>
+<sc-if value="{{ isNoble }}" hint-placeholder-val="{{ false }}"><div class="burst"></div><span class="mark" style="left: 76px; top: 510px"></span><span class="mark" style="left: 186px; top: 550px"></span></sc-if>
+<div class="unit" style="left: 60px; top: 520px; background: #F0584A"></div><div class="unit" style="left: 170px; top: 560px; background: #4A8BF0; animation-delay: 200ms"></div><div class="unit" style="left: 280px; top: 520px; background: #36B26F; animation-delay: 400ms"></div>
+
+<div class="glass" style="position: absolute; top: 48px; left: 8px; right: 8px; border: 2px solid #2360C8; border-radius: 18px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 3px 0 0 rgba(16,46,99,.3)">
+<div style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 800; font-size: 14px; flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{ title }}</span><button class="btn go">Leave</button></div>
+<div class="meter"><span style="white-space: nowrap">{{ bossLabel }}</span><div class="track"><span class="ghost"></span><span class="fill" style="background: #D6372A"></span><sc-if value="{{ proposals }}" hint-placeholder-val="{{ false }}"><span class="tick" style="left: 75%"></span><span class="tick passed" style="left: 50%"></span><span class="tick" style="left: 25%"></span></sc-if></div><span style="color: #52627F; font-family: Fredoka, sans-serif">1/1</span></div>
+<div class="meter"><span>You</span><div class="track"><span class="fill" style="animation: none; width: 70%; background: #1E8F52"></span></div><span style="color: #52627F; font-family: Fredoka, sans-serif">22/24</span></div>
+</div>
+
+<div class="glass" style="position: absolute; left: 8px; right: 8px; bottom: 24px; border: 2px solid #C3D2E8; border-radius: 18px; padding: 6px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center">
+<sc-for list="{{ kinds }}" as="k" hint-placeholder-count="5"><button class="{{ k.cls }}" onClick="{{ k.pick }}">{{ k.label }}</button></sc-for>
+<button class="{{ propCls }}" onClick="{{ toggleProps }}">Proposals</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { kind: 'legendary', props: false }; }
+  renderVals() {
+    const kinds = {
+      legendary: { label: 'Legendary', title: 'Raid Battle: Spear Pillar', bossLabel: 'Dialga', bossColor: '#7F8FD0' },
+      tera: { label: 'Tera', title: 'Raid Battle: Tera crystal', bossLabel: 'Garchomp', bossColor: '#7FB8F0' },
+      noble: { label: 'Noble', title: 'Raid Battle: Noble Arena', bossLabel: "Kleavor's Frenzy", bossColor: '#B9A27A' },
+      alpha: { label: 'Alpha', title: 'Raid Battle: Alpha', bossLabel: 'Ursaring', bossColor: '#A07A54' },
+    };
+    const k = kinds[this.state.kind];
+    return {
+      ...k,
+      isNoble: this.state.kind === 'noble',
+      proposals: this.state.props,
+      propCls: this.state.props ? 'pill on' : 'pill',
+      toggleProps: () => this.setState({ props: !this.state.props }),
+      kinds: Object.keys(kinds).map((id) => ({ label: kinds[id].label, cls: id === this.state.kind ? 'pill on' : 'pill', pick: () => this.setState({ kind: id }) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

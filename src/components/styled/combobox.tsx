@@ -10,7 +10,7 @@ import {
   Transition,
 } from 'terracotta';
 import { m } from '../../i18n/paraglide/messages.js';
-import { SHEER } from './transition';
+import { DROP, dropOrigin } from './transition';
 import { Badge, BadgeDismiss } from './feedback';
 import { FieldFrame } from './form';
 import dismissOutside from './dismiss';
@@ -184,7 +184,11 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
                 visibility: floating.isPositioned ? 'visible' : 'hidden',
               }}
             >
-              <Transition show={disclosure.isOpen()} {...SHEER} class="flex w-full">
+              <Transition
+                show={disclosure.isOpen()}
+                {...DROP}
+                class={`flex w-full ${dropOrigin(floating.placement)}`}
+              >
                 <ComboboxOptions
                   unmount={false}
                   class="flex max-h-[min(16rem,var(--drop-room,16rem))] w-full list-none flex-col

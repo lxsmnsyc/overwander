@@ -72,7 +72,9 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
   return (
     <div class="flex flex-wrap gap-1.5">
       <Show when={props.cost}>
-        {(cost) => <span class={`${TERM_CHIP} bg-gold-soft text-gold`}>{costChip(cost())}</span>}
+        {(cost) => (
+          <span class={`${TERM_CHIP} bg-gold-soft text-gold-dark`}>{costChip(cost())}</span>
+        )}
       </Show>
       <Show when={props.have}>
         {(have) => (

@@ -196,7 +196,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               <span
                 class={`text-right tabular-nums ${
                   getIV(props.caught.ivs, stat) === MAX_IV
-                    ? 'font-semibold text-gold'
+                    ? 'font-semibold text-gold-dark'
                     : 'text-muted'
                 }`}
               >

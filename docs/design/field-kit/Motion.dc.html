@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Motion: transitions and micro-interactions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.tile{position:relative;border-radius:20px;background:#fff;border:2px solid #C3D2E8;overflow:hidden;display:flex;flex-direction:column}
+.stage{position:relative;flex-grow:1;background:#F4F7FC;overflow:hidden}
+.cap{padding:12px 16px;display:flex;flex-direction:column;gap:2px;border-top:2px solid #E7EEF8}
+.cap b{font-family:Fredoka,sans-serif;font-weight:600;font-size:17px}
+.cap span{font-size:12px;color:#52627F;line-height:17px}
+/* 1 launch from source */
+.src{position:absolute;left:50%;bottom:22px;width:52px;height:52px;margin-left:-26px;border-radius:14px;background:#2360C8;box-shadow:0 3px 0 0 #102E63;animation:srcpress 3200ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes srcpress{0%,8%{transform:none}11%{transform:translateY(3px) scale(.92,.86)}16%,100%{transform:none}}
+.sheet1{position:absolute;left:50%;bottom:92px;width:260px;height:150px;margin-left:-130px;border-radius:20px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.25);transform-origin:50% 140%;animation:launch 3200ms infinite}
+@keyframes launch{0%,12%{transform:translateY(40px) scale(.15);opacity:0;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}24%,70%{transform:none;opacity:1;animation-timing-function:cubic-bezier(.5,0,.75,0)}78%,100%{transform:translateY(40px) scale(.15);opacity:0}}
+.plate1{position:absolute;left:14px;top:-14px;height:28px;width:110px;border-radius:999px;background:#2360C8;box-shadow:0 2px 0 0 #102E63;animation:plate1 3200ms infinite}
+@keyframes plate1{0%,18%{transform:translateX(-14px);opacity:0}26%,70%{transform:none;opacity:1}74%,100%{opacity:0}}
+.r1{position:absolute;left:16px;right:16px;height:22px;border-radius:8px;background:#E7EEF8;animation:r1 3200ms infinite}
+@keyframes r1{0%,22%{transform:translateY(8px);opacity:0}30%,70%{transform:none;opacity:1}74%,100%{opacity:0}}
+/* 2 shutter */
+.world2{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.06) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.06) 2px,transparent 2px);background-size:24px 24px}
+.battle2{position:absolute;inset:0;background:linear-gradient(180deg,#9FD0F5 0 45%,#8FCB72 45%);animation:b2 3600ms steps(1,end) infinite}
+@keyframes b2{0%,45%{opacity:0}46%,100%{opacity:1}}
+.top2,.bot2{position:absolute;left:0;right:0;height:50%}
+.top2{top:0;background:#D6372A;animation:t2 3600ms infinite}
+.bot2{bottom:0;background:#fff;animation:d2 3600ms infinite}
+@keyframes t2{0%,20%{transform:translateY(-100%);animation-timing-function:cubic-bezier(.5,0,.75,0)}38%,52%{transform:none;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}72%,100%{transform:translateY(-100%)}}
+@keyframes d2{0%,20%{transform:translateY(100%);animation-timing-function:cubic-bezier(.5,0,.75,0)}38%,52%{transform:none;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}72%,100%{transform:translateY(100%)}}
+.band2{position:absolute;left:0;right:0;top:50%;height:12px;margin-top:-6px;background:#14203A;animation:band 3600ms infinite}
+@keyframes band{0%,30%{transform:scaleX(0)}38%,52%{transform:scaleX(1)}60%,100%{transform:scaleX(0)}}
+.knob2{position:absolute;left:50%;top:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:22px;background:#fff;border:6px solid #14203A;box-sizing:border-box;animation:knob 3600ms infinite}
+@keyframes knob{0%,34%{transform:scale(0)}40%{transform:scale(1.2)}44%,52%{transform:scale(1)}58%,100%{transform:scale(0)}}
+/* 3 toast */
+.toast3{position:absolute;left:50%;top:16px;width:240px;margin-left:-120px;border-radius:14px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18);overflow:hidden;animation:toast 3400ms infinite}
+@keyframes toast{0%{transform:translateY(-140%);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}12%,82%{transform:none;animation-timing-function:cubic-bezier(.5,0,.75,0)}92%,100%{transform:translateY(-140%)}}
+.life3{height:4px;background:#2360C8;transform-origin:left;animation:life 3400ms linear infinite}
+@keyframes life{0%,12%{transform:scaleX(1)}82%,100%{transform:scaleX(0)}}
+/* 4 hover card */
+.sq4{position:absolute;left:60px;top:120px;width:56px;height:56px;border-radius:14px;background:#fff;border:2px solid #C3D2E8;animation:sq 3000ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes sq{0%,10%{transform:none;border-color:#C3D2E8}16%,76%{transform:translateY(-4px);border-color:#2360C8}84%,100%{transform:none;border-color:#C3D2E8}}
+.card4{position:absolute;left:132px;top:70px;width:200px;height:130px;border-radius:16px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18),0 14px 24px -14px rgba(20,32,58,.5);transform-origin:0 50%;animation:card 3000ms infinite}
+@keyframes card{0%,24%{opacity:0;transform:translateX(-8px) scale(.96);animation-timing-function:cubic-bezier(.2,.8,.2,1)}30%,74%{opacity:1;transform:none;animation-timing-function:cubic-bezier(.5,0,.75,0)}80%,100%{opacity:0;transform:translateX(-4px)}}
+.cursor4{position:absolute;width:14px;height:14px;border-left:3px solid #14203A;border-top:3px solid #14203A;transform:rotate(-15deg);animation:cur 3000ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes cur{0%{left:30px;top:250px}12%,76%{left:96px;top:156px}90%,100%{left:30px;top:250px}}
+/* 5 catch */
+.ball5{position:absolute;left:50%;top:120px;width:56px;height:56px;margin-left:-28px;border-radius:28px;background:#fff;border:4px solid #14203A;box-sizing:border-box;box-shadow:inset 0 -24px 0 0 #fff,inset 0 24px 0 0 #D6372A;animation:shake5 3600ms infinite}
+@keyframes shake5{0%{transform:translateY(160px) scale(.4);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}12%{transform:none}18%{transform:rotate(-18deg)}24%{transform:rotate(16deg)}28%,32%{transform:none}38%{transform:rotate(-18deg)}44%{transform:rotate(16deg)}48%,52%{transform:none}58%{transform:rotate(-18deg)}64%{transform:rotate(16deg)}68%,100%{transform:none}}
+.star5{position:absolute;left:50%;top:148px;width:12px;height:12px;background:#F2B33D;transform:rotate(45deg);opacity:0;animation:star 3600ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes star{0%,70%{opacity:0;translate:0 0}74%{opacity:1}92%,100%{opacity:0;translate:var(--dx) var(--dy)}}
+.label5{position:absolute;left:0;right:0;top:206px;text-align:center;font-family:Fredoka,sans-serif;font-weight:600;font-size:20px;color:#1E8F52;animation:lab 3600ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes lab{0%,72%{opacity:0;transform:scale(.6)}78%,94%{opacity:1;transform:none}100%{opacity:0}}
+/* 6 dex square */
+.grid6{position:absolute;left:24px;top:30px;display:grid;grid-template-columns:repeat(5,52px);gap:8px}
+.cell6{height:52px;border-radius:12px;background:#fff;border:2px solid #C3D2E8;box-sizing:border-box}
+.cell6.dark{background:#E7EEF8}
+.cell6.new{animation:stamp 3000ms infinite}
+@keyframes stamp{0%,30%{background:#E7EEF8;transform:none}36%{transform:scale(1.18);background:#fff;border-color:#1E8F52;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}44%,86%{transform:none;background:#fff;border-color:#1E8F52}100%{border-color:#C3D2E8}}
+.cnt6{position:absolute;left:24px;top:200px;font-family:Fredoka,sans-serif;font-weight:600;font-size:22px}
+.roll6{display:inline-block;animation:roll 3000ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes roll{0%,36%{transform:none}42%{transform:translateY(-8px)}48%,100%{transform:none}}
+.bar6{position:absolute;left:24px;right:24px;top:240px;height:10px;border-radius:5px;background:#E7EEF8;overflow:hidden}
+.bar6 span{display:block;height:100%;background:#1E8F52;animation:fill6 3000ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes fill6{0%,36%{width:61%}48%,100%{width:64%}}
+</style>
+</helmet>
+<div style="width: 1280px; height: 900px; box-sizing: border-box; padding: 36px 40px; background: #EEF4FC; font-family: Nunito, sans-serif; color: #14203A; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div><div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Field Kit · motion</div><h2 style="margin: 4px 0 0; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 34px">Every move says where it came from</h2></div>
+<span style="font-size: 13px; color: #52627F; max-width: 420px; line-height: 19px">Each tile loops one rule. With reduce motion on, all of them become a 120ms crossfade and the battle shutter becomes a fade to the field.</span>
+</div>
+<div style="flex-grow: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 20px">
+
+<div class="tile"><div class="stage"><div class="sheet1"><div class="plate1"></div><div class="r1" style="top: 34px"></div><div class="r1" style="top: 64px; animation-delay: 60ms"></div><div class="r1" style="top: 94px; animation-delay: 120ms"></div></div><div class="src"></div></div>
+<div class="cap"><b>Launch from source</b><span>A panel grows out of the button that opened it (spring, 360ms), its nameplate slides in 120ms later, rows stagger 30ms. Closing shrinks it back (exit, 250ms).</span></div></div>
+
+<div class="tile"><div class="stage"><div class="world2"></div><div class="battle2"></div><div class="top2"></div><div class="bot2"></div><div class="band2"></div><div class="knob2"></div></div>
+<div class="cap"><b>Battle shutter</b><span>Entering a battle, two halves close over the world like a ball snapping shut, hold for a beat on the button, then open on the field. 560ms each way.</span></div></div>
+
+<div class="tile"><div class="stage"><div class="toast3"><div style="display: flex; gap: 10px; padding: 10px 12px; align-items: center"><span style="width: 30px; height: 30px; border-radius: 8px; background: #F2B33D"></span><div style="display: flex; flex-direction: column"><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 14px">Egg is ready to hatch</span><span style="font-size: 11px; color: #52627F">Open your box</span></div></div><div class="life3"></div></div></div>
+<div class="cap"><b>Toast with a lifetime</b><span>Drops in on a spring; a bar shows how long it stays and pauses while hovered. Leaves faster than it came.</span></div></div>
+
+<div class="tile"><div class="stage"><div class="sq4"></div><div class="card4"><div style="height: 30px; border-bottom: 2px solid #E7EEF8; display: flex; align-items: center; padding: 0 10px; gap: 8px"><span style="width: 70px; height: 10px; border-radius: 5px; background: #14203A"></span><span style="width: 40px; height: 14px; border-radius: 7px; background: #E3EEFB"></span></div><div style="padding: 10px; display: flex; flex-direction: column; gap: 8px"><span style="height: 8px; border-radius: 4px; background: #E7EEF8"></span><span style="height: 8px; width: 70%; border-radius: 4px; background: #E7EEF8"></span><span style="height: 26px; width: 80px; border-radius: 8px; background: #1E8F52"></span></div></div><div class="cursor4"></div></div>
+<div class="cap"><b>Hover card lift</b><span>The square rises 4px at once; the card follows after 300ms (was 400), sliding out from the square it describes, and fades on leave.</span></div></div>
+
+<div class="tile"><div class="stage"><div class="ball5"></div><span class="star5" style="--dx: -60px; --dy: -40px"></span><span class="star5" style="--dx: 60px; --dy: -40px"></span><span class="star5" style="--dx: -70px; --dy: 20px"></span><span class="star5" style="--dx: 70px; --dy: 20px"></span><span class="star5" style="--dx: 0px; --dy: -64px"></span><div class="label5">Gotcha!</div></div>
+<div class="cap"><b>Catch</b><span>The throw lands on a spring, three shakes with a still beat between, then a burst of stars and the name. A miss opens the ball instead.</span></div></div>
+
+<div class="tile"><div class="stage"><div class="grid6"><div class="cell6"></div><div class="cell6"></div><div class="cell6 dark"></div><div class="cell6"></div><div class="cell6 dark"></div><div class="cell6 dark"></div><div class="cell6 new"></div><div class="cell6"></div><div class="cell6"></div><div class="cell6 dark"></div></div><div class="cnt6">Caught <span class="roll6">412</span> / 649</div><div class="bar6"><span></span></div></div>
+<div class="cap"><b>New in the dex</b><span>A first catch stamps its square with a pop, the count hops, and the region bar springs to its new share.</span></div></div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

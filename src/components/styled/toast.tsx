@@ -53,12 +53,11 @@ const STACK = 3;
 const WIDTH = 'w-[min(88vw,20rem)]';
 
 /**
- * How long the arrival and the departure take. The departure is waited
- * out before the card is dropped, so a toast that goes on its own goes
- * the same way as one that is pressed
+ * How long the departure takes: `--motion-base-exit`, 70% of the
+ * arrival. It is waited out before the card is dropped, so a toast that
+ * goes on its own goes the same way as one that is pressed
  */
-const ARRIVING = 200;
-const LEAVING = 180;
+const LEAVING = 168;
 
 export type ToastTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'arcane';
 
@@ -68,6 +67,15 @@ const TONES: Record<ToastTone, string> = {
   ember: 'border-ember bg-ember-soft',
   gold: 'border-gold bg-gold-soft',
   arcane: 'border-arcane bg-arcane-soft',
+};
+
+/** The lifetime bar, in the toast's own colour */
+const LIFE_TONES: Record<ToastTone, string> = {
+  neutral: 'bg-tide',
+  leaf: 'bg-leaf',
+  ember: 'bg-ember',
+  gold: 'bg-gold',
+  arcane: 'bg-arcane',
 };
 
 export interface ToastRequest {
@@ -128,7 +136,18 @@ export function useToast(): ToastState {
   return state;
 }
 
-function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
+interface ToastCardProps {
+  toast: Toast;
+  /** Whether the pointer is resting on it, which stops its clock */
+  paused: boolean;
+  onClose: () => void;
+  onPause: () => void;
+  onResume: () => void;
+}
+
+function ToastCard(props: ToastCardProps): JSX.Element {
+  const life = (): number => props.toast.duration ?? LIFETIME;
+
   return (
     <li
       // Announced rather than read out on arrival: a toast is
@@ -137,13 +156,21 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       // One line, read left to right: what it is, what it says, and
       // the way to be rid of it. A cache paying three kinds of thing
       // is three of these rather than one card with a gallery in it
-      class={`pointer-events-auto flex ${WIDTH} shrink-0 items-center gap-2 rounded-panel border-2
-        px-2 py-1.5 text-left shadow-pop ${TONES[props.toast.tone ?? 'neutral']}`}
+      class={`motion-crossfade pointer-events-auto relative flex ${WIDTH} shrink-0 items-center
+        gap-2 overflow-hidden rounded-card border-2 px-2 pt-1.5 pb-2.5 text-left shadow-float
+        ${TONES[props.toast.tone ?? 'neutral']}`}
+      // It drops in on a spring and goes back up on the exit curve
       style={{
         animation:
           props.toast.leaving === true
-            ? `toast-out ${LEAVING}ms ease-in both`
-            : `toast-in ${ARRIVING}ms ease-out both`,
+            ? 'toast-out var(--motion-base-exit) var(--ease-exit) both'
+            : 'toast-in var(--motion-base) var(--ease-spring) both',
+      }}
+      onPointerEnter={() => {
+        props.onPause();
+      }}
+      onPointerLeave={() => {
+        props.onResume();
       }}
     >
       <Show when={props.toast.art != null}>
@@ -151,7 +178,9 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       </Show>
       <div class="flex min-w-0 grow flex-col">
         <Show when={props.toast.title}>
-          {(title) => <strong class="truncate text-sm">{title()}</strong>}
+          {(title) => (
+            <strong class="truncate font-display text-sm font-semibold">{title()}</strong>
+          )}
         </Show>
         <Show when={props.toast.message}>{(said) => <span class="text-sm">{said()}</span>}</Show>
       </div>
@@ -166,6 +195,18 @@ function ToastCard(props: { toast: Toast; onClose: () => void }): JSX.Element {
       >
         ×
       </button>
+      {/* How long it has left, emptying as it goes and holding while the
+          pointer rests on the card */}
+      <span
+        aria-hidden="true"
+        class={`motion-timer absolute inset-x-0 bottom-0 h-1 origin-left
+          ${LIFE_TONES[props.toast.tone ?? 'neutral']}`}
+        style={{
+          '--motion-timer': `${life()}ms`,
+          animation: `toast-life ${life()}ms linear both`,
+          'animation-play-state': props.paused ? 'paused' : 'running',
+        }}
+      />
     </li>
   );
 }
@@ -187,6 +228,12 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
    * leave one running and a provider going away takes them all with it
    */
   const timers = new Map<number, ReturnType<typeof setTimeout>>();
+  /** When each running timer fires, so a pause knows how long was left */
+  const due = new Map<number, number>();
+  /** How long each paused toast had left when the pointer arrived */
+  const left = new Map<number, number>();
+  /** The toasts the pointer is resting on */
+  const [paused, setPaused] = createSignal<ReadonlySet<number>>(new Set());
   let next = 0;
 
   /** Off the screen for good, timers and all */
@@ -197,6 +244,17 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
       clearTimeout(timer);
       timers.delete(id);
     }
+    due.delete(id);
+    left.delete(id);
+    setPaused((now) => {
+      if (!now.has(id)) {
+        return now;
+      }
+      const kept = new Set(now);
+
+      kept.delete(id);
+      return kept;
+    });
     setToasts((shown) => {
       const kept: typeof shown = [];
 
@@ -234,6 +292,9 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     if (timer != null) {
       clearTimeout(timer);
     }
+    // A paused toast pressed shut has no clock to stop, only its pause
+    due.delete(id);
+    left.delete(id);
     setToasts((shown) => {
       const marked: typeof shown = [];
 
@@ -248,6 +309,49 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
         drop(id);
       }, LEAVING),
     );
+  };
+
+  /** Send it on its way in `wait` milliseconds */
+  const schedule = (id: number, wait: number): void => {
+    timers.set(
+      id,
+      setTimeout(() => {
+        dismiss(id);
+      }, wait),
+    );
+    due.set(id, Date.now() + wait);
+  };
+
+  /** Stop its clock while the pointer rests on it */
+  const pause = (id: number): void => {
+    const when = due.get(id);
+    const timer = timers.get(id);
+
+    if (when == null || timer == null) {
+      return;
+    }
+    clearTimeout(timer);
+    timers.delete(id);
+    due.delete(id);
+    left.set(id, Math.max(0, when - Date.now()));
+    setPaused((now) => new Set(now).add(id));
+  };
+
+  /** And start it again with what it had left */
+  const resume = (id: number): void => {
+    const wait = left.get(id);
+
+    if (wait == null) {
+      return;
+    }
+    left.delete(id);
+    setPaused((now) => {
+      const kept = new Set(now);
+
+      kept.delete(id);
+      return kept;
+    });
+    schedule(id, wait);
   };
 
   const push = (toast: ToastRequest): number => {
@@ -268,12 +372,7 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     for (const older of staying.slice(0, -STACK)) {
       dismiss(older.id);
     }
-    timers.set(
-      id,
-      setTimeout(() => {
-        dismiss(id);
-      }, toast.duration ?? LIFETIME),
-    );
+    schedule(id, toast.duration ?? LIFETIME);
     return id;
   };
 
@@ -314,8 +413,17 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
                 {(toast) => (
                   <ToastCard
                     toast={toast}
+                    paused={paused().has(toast.id)}
                     onClose={() => {
                       dismiss(toast.id);
+                    }}
+                    onPause={() => {
+                      if (toast.leaving !== true) {
+                        pause(toast.id);
+                      }
+                    }}
+                    onResume={() => {
+                      resume(toast.id);
                     }}
                   />
                 )}

@@ -495,7 +495,7 @@ export default function GameMenu(): JSX.Element {
               <div class="flex items-center justify-between gap-3">
                 <span class="min-w-0 truncate font-bold text-ink">{place()}</span>
                 {/* On the bar itself from a screen wide enough to hold it */}
-                <span class="shrink-0 font-bold whitespace-nowrap text-gold sm:hidden">
+                <span class="shrink-0 font-bold whitespace-nowrap text-gold-dark sm:hidden">
                   {purse()}
                 </span>
               </div>
@@ -603,7 +603,7 @@ export default function GameMenu(): JSX.Element {
         <div class="hidden items-center gap-2 sm:flex">
           <Divider />
 
-          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold">{purse()}</span>
+          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold-dark">{purse()}</span>
         </div>
 
         {/* On the bar at every width: taking the screen is what a player

@@ -3,7 +3,7 @@ import { Portal } from 'solid-js/web';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
 import { FieldFrame } from './form';
 import { m } from '../../i18n/paraglide/messages.js';
-import { SHEER } from './transition';
+import { DROP, dropOrigin } from './transition';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
@@ -172,7 +172,11 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
                 visibility: floating.isPositioned ? 'visible' : 'hidden',
               }}
             >
-              <Transition show={open()} {...SHEER} class="flex w-full">
+              <Transition
+                show={open()}
+                {...DROP}
+                class={`flex w-full ${dropOrigin(floating.placement)}`}
+              >
                 <ListboxOptions
                   unmount={false}
                   class="flex max-h-[min(16rem,var(--drop-room,16rem))] w-full list-none flex-col

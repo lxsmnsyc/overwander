@@ -14,11 +14,11 @@ export type BadgeTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'tide' | 'arcane
 
 const BADGE_TONES: Record<BadgeTone, string> = {
   neutral: 'border-line bg-line-soft text-muted',
-  leaf: 'border-leaf bg-leaf-soft text-leaf-dark',
-  ember: 'border-ember bg-ember-soft text-ember-dark',
-  gold: 'border-gold bg-gold-soft text-gold',
-  tide: 'border-tide bg-tide-soft text-tide',
-  arcane: 'border-arcane bg-arcane/15 text-arcane',
+  leaf: 'border-leaf/40 bg-leaf-soft text-leaf-dark',
+  ember: 'border-ember/40 bg-ember-soft text-ember-dark',
+  gold: 'border-gold/60 bg-gold-soft text-gold-dark',
+  tide: 'border-tide/40 bg-tide-soft text-tide-dark',
+  arcane: 'border-arcane/40 bg-arcane-soft text-arcane-dark',
 };
 
 /**
@@ -52,7 +52,7 @@ export function Badge(
 ): JSX.Element {
   return (
     <span
-      class={`inline-flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-sm font-bold
+      class={`inline-flex items-center gap-1 rounded-full border-2 px-2.5 py-0.5 text-sm font-extrabold
         ${props.wrap === true ? 'break-words whitespace-normal' : 'whitespace-nowrap'} ${
           BADGE_TONES[props.tone ?? 'neutral']
         } ${props.class ?? ''}`}
@@ -81,9 +81,9 @@ const DISMISS_TONES: Record<BadgeTone, string> = {
   neutral: 'text-muted outline-line hover:bg-line hover:text-ink',
   leaf: 'text-leaf-dark outline-leaf hover:bg-leaf hover:text-on-accent',
   ember: 'text-ember-dark outline-ember hover:bg-ember hover:text-on-accent',
-  gold: 'text-gold outline-gold hover:bg-gold hover:text-on-accent',
+  gold: 'text-gold-dark outline-gold hover:bg-gold hover:text-on-gold',
   tide: 'text-tide-dark outline-tide hover:bg-tide hover:text-on-accent',
-  arcane: 'text-arcane outline-arcane hover:bg-arcane hover:text-on-accent',
+  arcane: 'text-arcane-dark outline-arcane hover:bg-arcane hover:text-on-accent',
 };
 
 /**

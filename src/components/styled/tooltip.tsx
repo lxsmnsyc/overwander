@@ -32,7 +32,7 @@ const KIND_CHIPS: Record<TooltipKind, { label: () => string; tone: string }> = {
   item: { label: m.tooltip_kind_item, tone: 'bg-leaf-soft text-leaf-dark' },
   candy: { label: m.tooltip_kind_candy, tone: 'bg-leaf-soft text-leaf-dark' },
   type: { label: m.tooltip_kind_type, tone: 'bg-ember-soft text-ember-dark' },
-  weather: { label: m.tooltip_kind_weather, tone: 'bg-gold-soft text-gold' },
+  weather: { label: m.tooltip_kind_weather, tone: 'bg-gold-soft text-gold-dark' },
   ability: { label: m.tooltip_kind_ability, tone: 'bg-tide-soft text-tide-dark' },
   status: { label: m.tooltip_kind_status, tone: 'bg-line-soft text-arcane' },
   move: { label: m.tooltip_kind_move, tone: 'bg-tide-soft text-tide-dark' },
@@ -211,8 +211,8 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
   const drawnIn = usePortalHost();
   /**
    * Whether the label is up. It comes and goes with the pointer, with
-   * no wait and no fade: a label is read at a glance, and a wait read
-   * as the game lagging
+   * no wait: a label is read at a glance, and a wait read as the game
+   * lagging. It rises into place in 140ms and goes at once
    */
   const [wanted, setWanted] = createSignal(false);
   const [notch, setNotch] = createSignal<HTMLSpanElement | null>(null);
@@ -346,7 +346,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
             class="pointer-events-none z-50"
             style={floating.floatingStyles}
           >
+            {/* No wait, but a short rise into place */}
             <Tooltip
+              class="motion-crossfade animate-rise"
               name={props.name}
               kind={props.kind}
               description={props.description}

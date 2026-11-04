@@ -24,48 +24,59 @@ export type ButtonTone =
   | 'quiet'
   | 'pressed';
 
+/**
+ * Each tone's look at rest and under the pointer. A filled tone stands
+ * on a shadow of its own darker shade and brightens on hover; an edged
+ * one lifts its edge to tide
+ */
 const TONES: Record<ButtonTone, string> = {
   primary:
-    'border-leaf-dark bg-leaf text-on-accent shadow-pop hover:bg-leaf-dark hover:text-on-accent',
-  ghost: 'border-line bg-paper text-ink shadow-pop hover:border-tide hover:text-tide-dark',
+    'border-leaf-dark bg-leaf text-on-accent shadow-[0_3px_0_0_var(--green-shade)]' +
+    ' hover:shadow-[0_4px_0_0_var(--green-shade)] hover:brightness-110 hover:text-on-accent',
+  ghost:
+    'border-line bg-paper text-ink shadow-pop hover:border-tide hover:text-tide-dark' +
+    ' hover:shadow-pop-lift',
   danger:
-    'border-ember-dark bg-ember text-on-accent shadow-pop hover:bg-ember-dark hover:text-on-accent',
+    'border-ember-dark bg-ember text-on-accent shadow-[0_3px_0_0_var(--red-shade)]' +
+    ' hover:shadow-[0_4px_0_0_var(--red-shade)] hover:brightness-110 hover:text-on-accent',
   // The blue of the screen's own furniture, for the act a screen is
   // built around where green would read as finishing it
   accent:
-    'border-tide-dark bg-tide text-on-accent shadow-pop hover:bg-tide-dark hover:text-on-accent',
+    'border-tide-dark bg-tide text-on-accent shadow-[0_3px_0_0_var(--blue-shade)]' +
+    ' hover:shadow-[0_4px_0_0_var(--blue-shade)] hover:brightness-110 hover:text-on-accent',
   // Something that cannot be undone, offered among ordinary buttons:
   // red enough to be read before it is pressed, not loud enough to be
   // the thing the eye lands on
-  caution: 'border-ember/40 bg-ember-soft text-ember-dark hover:border-ember',
+  caution: 'border-ember/40 bg-ember-soft text-ember-dark shadow-rest hover:border-ember',
   // A way to step back out, which needs no edge to be found
-  quiet: 'border-transparent bg-transparent text-muted hover:text-ink',
+  quiet: 'border-transparent bg-transparent text-muted shadow-none hover:text-ink',
   // A toggle that is on: the panel it opened is showing
-  pressed: 'border-tide bg-tide-soft text-tide-dark',
+  pressed: 'border-tide bg-tide-soft text-tide-dark shadow-none',
 };
 
 /**
  * A button that cannot be pressed says so plainly rather than wearing
  * its tone at half strength: a greyed-out green button still reads as
- * the thing to press. It is also flat on the page — nothing to press
- * means nothing standing up off it
+ * the thing to press. It is also flat on the page, with nothing to
+ * press and nothing standing up off it
  */
 const DISABLED =
   'cursor-default border-line bg-line-soft text-muted shadow-none hover:border-line' +
-  ' active:translate-y-0';
+  ' hover:translate-y-0 active:translate-y-0 active:scale-100';
 
 /**
- * The shape of every button in the game: a thick edge, a round corner
- * and a hard shadow it drops onto when it is pressed. The press is the
- * point — a menu of things to do should answer the finger before it
- * answers the network
+ * The shape of every button: a 2px keyline, a 12px corner and a hard
+ * shadow. Under the pointer it lifts a pixel; pressed, it drops onto
+ * its shadow and squashes; let go, it springs back up. The press
+ * answers in 90ms, before the network does
  */
 const BASE =
-  'inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border-2 px-3 py-1.5' +
-  ' text-sm font-bold' +
-  ' transition-[background-color,border-color,color,box-shadow,transform]' +
-  ' active:translate-y-[2px] active:shadow-none focus-visible:outline-2' +
-  ' focus-visible:outline-offset-2 focus-visible:outline-tide';
+  'inline-flex items-center gap-1.5 whitespace-nowrap rounded-button border-2 px-3 py-1.5' +
+  ' text-sm font-extrabold' +
+  ' transition-[background-color,border-color,color,box-shadow,translate,scale,filter]' +
+  ' duration-(--motion-tap) ease-spring hover:-translate-y-px active:translate-y-[3px]' +
+  ' active:scale-x-(--motion-squash-x) active:scale-y-(--motion-squash-y) active:shadow-none' +
+  ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide';
 
 export interface ButtonProps extends ParentProps {
   onClick?: () => void;

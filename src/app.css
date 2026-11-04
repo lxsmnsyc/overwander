@@ -1,49 +1,43 @@
+/* The two faces of the Field Kit. Loaded with `display=swap`, so the
+   rounded system faces below stand in until they arrive, and stay for
+   any script the two do not cover (Hiragino Maru Gothic for Japanese) */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 @import 'tailwindcss';
 
 /**
- * The game's look, in one place.
+ * The game's look, in one place: the Field Kit design system. The spec
+ * is the boards in `docs/design/field-kit/`, and `docs/design/field-kit.md`
+ * is the short version.
  *
- * Three things live here. The theme names the colours and the type the
- * game is drawn in, so a component asks for `bg-paper` or `text-muted`
- * rather than repeating a hex code that only means something to
- * whoever picked it. Those names are then given values twice — once
- * for daylight and once for night — so a screen written against them
- * is both themes at once and no component has to say `dark:` anything.
- * The base layer finally dresses plain HTML — a heading, a list, a
- * button with no classes on it — because the game is written as
- * ordinary markup and Tailwind's reset would otherwise leave all of it
- * looking like nothing at all.
+ * Three things live here.
  *
- * What it is dressed *as* is a handheld pokemon game: sky over the
- * page rather than paper, windows with a thick frame and a blue bar
- * across the top of them, and buttons that sit on a hard shadow and
- * drop onto the page when they are pressed. Nothing here is a picture
- * or a font file — it is the same six colours and two shadows used
- * consistently, which is most of what makes a screen read as one
- * thing rather than as a form.
+ * - The theme names the colours, type, radii, shadows and motion, so a
+ *   component asks for `bg-paper` or `ease-spring` rather than a value.
+ * - Those names are given values twice, once for day and once for
+ *   night, so a screen written against them is both themes at once.
+ * - The base layer dresses plain HTML (a heading, a list, a bare
+ *   button), since Tailwind's reset leaves it unstyled.
  *
- * Anything reusable beyond that is a component in
- * `src/components/styled`, not a class name invented here.
+ * The look is gear a trainer carries: panels with a 2px keyline that
+ * stand on a hard shadow, buttons that squash when pressed and land
+ * when let go, and colour that always means one thing. Anything
+ * reusable beyond that is a component in `src/components/styled`.
  */
 
 /**
  * Night is a class on the root element rather than the browser's own
- * preference, because the player is allowed to disagree with their
- * machine. Terracotta's `ColorSchemeProvider` is what puts it there —
- * see `src/components/theme.tsx` — and this teaches Tailwind's `dark:`
- * variant to look for the same class, for the rare thing that has to
- * differ by more than a colour
+ * preference, because the player may disagree with their machine.
+ * Terracotta's `ColorSchemeProvider` puts it there, and this teaches
+ * Tailwind's `dark:` variant to look for the same class
  */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /**
  * The names, pointed at whichever set of values is in force.
  *
- * `inline` is what makes the two themes possible: without it Tailwind
- * copies the value into every utility, and `bg-paper` would be the
- * daylight white wherever it was written. Pointed at a variable
- * instead, `bg-paper` is *whatever paper currently is*, and changing
- * that one variable under `.dark` redraws the whole game
+ * `inline` is what makes the two themes possible: Tailwind writes the
+ * variable into each utility instead of its value, so `bg-paper` is
+ * whatever paper currently is and `.dark` redraws the whole game
  */
 @theme inline {
   --color-parchment: var(--sky);
@@ -53,111 +47,190 @@
   --color-line: var(--edge);
   --color-line-soft: var(--edge-soft);
 
+  /* Leaf offers: go, health */
   --color-leaf: var(--green);
   --color-leaf-dark: var(--green-deep);
   --color-leaf-soft: var(--green-wash);
 
+  /* Ember cannot be undone: release, damage */
   --color-ember: var(--red);
   --color-ember-dark: var(--red-deep);
   --color-ember-soft: var(--red-wash);
 
+  /* Gold is value. The fill is too pale to write on white, so words in
+     gold use `gold-dark` and words on a gold fill use `on-gold` */
   --color-gold: var(--yellow);
+  --color-gold-dark: var(--yellow-deep);
   --color-gold-soft: var(--yellow-wash);
 
+  /* Tide frames and places: the nameplate, the tab you are on, focus */
   --color-tide: var(--blue);
   --color-tide-dark: var(--blue-deep);
   --color-tide-soft: var(--blue-wash);
 
+  /* Arcane is channelled, and rare */
   --color-arcane: var(--violet);
+  --color-arcane-dark: var(--violet-deep);
   --color-arcane-soft: var(--violet-wash);
 
   /**
-   * What is written *on* a filled colour — a green button, the blue
-   * bar over a dialog. It is white in both themes, since the fills
-   * themselves stay bright: `text-paper` would have flipped to the
-   * colour of a panel at night and put dark text on a green button
+   * What is written on a filled colour: white in both themes, since
+   * the fills stay bright at night. `text-paper` would flip to a panel's
+   * navy and put dark text on a green button
    */
   --color-on-accent: #ffffff;
 
+  /* Gold is the one fill that takes ink rather than white, in both themes */
+  --color-on-gold: #14203a;
+
   /**
-   * What is drawn *over* the page to push it back — the veil behind a
-   * dialog. Dark in both themes, like `on-accent` is white in both:
-   * `bg-ink` would have flipped to near-white at night and washed the
-   * page out instead of dimming it
+   * What is drawn over the page to push it back, such as the veil
+   * behind a dialog. Dark in both themes: `bg-ink` would flip to
+   * near-white at night and wash the page out
    */
   --color-shade: #0b1222;
 
-  /* Rounded rather than neutral. Nothing is downloaded for this: the
-     platforms that have a rounded face use it and the rest fall back
-     to what they were using before */
+  /* Nunito for everything read. The rounded system faces stand in
+     while it loads, and Hiragino Maru Gothic covers Japanese */
   --font-sans:
-    ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Nunito, Quicksand, Gordita, Roboto,
-    system-ui, 'Helvetica Neue', sans-serif;
+    Nunito, ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Quicksand, Roboto, system-ui,
+    'Helvetica Neue', sans-serif;
 
-  --radius-panel: 1rem;
+  /* Fredoka for anything that is a name or a number */
+  --font-display:
+    Fredoka, ui-rounded, 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Nunito, Roboto, system-ui,
+    sans-serif;
 
-  /* A hard offset rather than a blur: the game's controls sit slightly
-     above the page and land on it when pressed, which is the one bit
-     of movement a menu screen gets. It is heavier at night, where a
-     pale shadow would be invisible */
+  /* Radius: 8 chip, 12 button, 18 card, 24 sheet. `panel` is the card */
+  --radius-chip: 8px;
+  --radius-button: 12px;
+  --radius-card: 18px;
+  --radius-panel: 18px;
+  --radius-sheet: 24px;
+
+  /* Targets: 44px for anything pressed, 56px for a square in a grid */
+  --spacing-target: 44px;
+  --spacing-square: 56px;
+
+  /**
+   * Elevation is a hard edge plus a cast. `rest` is a control on the
+   * page, `pop` a button standing up off it (and `pop-lift` the same
+   * button under the pointer), `float` a menu or a card over the page,
+   * and `sheet` a dialog. A press drops the edge to nothing
+   */
+  --shadow-rest: 0 2px 0 0 var(--drop-rest);
+  --shadow-pop-sm: 0 2px 0 0 var(--drop-rest);
   --shadow-pop: 0 3px 0 0 var(--drop);
-  --shadow-pop-sm: 0 2px 0 0 var(--drop-soft);
+  --shadow-pop-lift: 0 4px 0 0 var(--drop);
+  --shadow-float: 0 4px 0 0 var(--drop-float), 0 14px 24px -14px var(--drop-cast);
+  --shadow-sheet: 0 6px 0 0 var(--drop-window), 0 28px 48px -18px var(--drop-cast-deep);
+  --shadow-window: 0 6px 0 0 var(--drop-window), 0 28px 48px -18px var(--drop-cast-deep);
 
-  /* And a window, which is further off the page than a button is */
-  --shadow-window: 0 6px 0 0 var(--drop-window), 0 24px 48px -16px var(--drop-cast);
+  /**
+   * Easings. `settle` for most moves, `spring` for an arrival (it
+   * overshoots and lands), `exit` for anything leaving. Stepped timing
+   * is for sprites only and is written `steps(n)` where it is used
+   */
+  --ease-settle: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-exit: cubic-bezier(0.5, 0, 0.75, 0);
 
-  /* Something floating over the page: a tooltip, a menu, a dropdown */
-  --shadow-float: 0 3px 0 0 var(--drop), 0 16px 28px -14px var(--drop-cast);
-
-  /* A dialog, which floats further off than a menu does */
-  --shadow-sheet: 0 6px 0 0 var(--drop), 0 30px 60px -22px var(--drop-cast);
+  /* A label rising into place over what it names */
+  --animate-rise: rise-in var(--motion-quick) var(--ease-settle) both;
+  /* A count that changed hops once */
+  --animate-hop: hop var(--motion-move) var(--ease-spring);
 }
 
 /**
- * Daylight: a field of sky with the game's windows standing on it
+ * Motion, in milliseconds. Read them as `duration-(--motion-base)`.
+ *
+ * | token  | ms  | for                        |
+ * | ------ | --- | -------------------------- |
+ * | tap    | 90  | a press                    |
+ * | quick  | 140 | a hover                    |
+ * | base   | 240 | a panel, a menu, a toast   |
+ * | move   | 360 | a sheet, a tab indicator   |
+ * | scene  | 560 | a battle coming in         |
+ *
+ * An exit takes 70% of its entrance, so each has an `-exit` twin. Lists
+ * stagger `--motion-stagger` a row, six rows at most.
+ *
+ * The distances a move covers are tokens too, so reduce motion can set
+ * them to nothing and leave only the fade.
+ */
+:root {
+  --motion-tap: 90ms;
+  --motion-quick: 140ms;
+  --motion-base: 240ms;
+  --motion-base-exit: 168ms;
+  --motion-move: 360ms;
+  --motion-move-exit: 252ms;
+  --motion-scene: 560ms;
+  --motion-scene-exit: 392ms;
+  --motion-stagger: 30ms;
+
+  /* How small a sheet starts: a little under its size, or a speck
+     where it grows out of the control that opened it */
+  --motion-grow: 0.9;
+  --motion-grow-origin: 0.15;
+  /* A list dropped from its button starts at this scale */
+  --motion-drop: 0.92;
+  /* How far a card or a tooltip rises, a toast falls, a nameplate slides */
+  --motion-rise: 4px;
+  --motion-fall: 140%;
+  --motion-slide: 24px;
+  /* How far a pressed button squashes */
+  --motion-squash-x: 0.98;
+  --motion-squash-y: 0.94;
+}
+
+/**
+ * Day: a pale sky with white panels standing on it
  */
 :root {
   color-scheme: light;
 
-  --sky: #e7effb;
+  --sky: #eef4fc;
   --panel: #ffffff;
-  --text: #1f2a44;
-  --text-quiet: #5e7291;
-  --edge: #aec2de;
-  --edge-soft: #e6edf8;
+  --text: #14203a;
+  --text-quiet: #52627f;
+  --edge: #c3d2e8;
+  --edge-soft: #e7eef8;
 
-  /* What the game offers you */
-  --green: #33a05a;
-  --green-deep: #237644;
-  --green-wash: #e0f3e7;
+  --green: #1e8f52;
+  --green-deep: #156b3d;
+  --green-wash: #e3f3ea;
+  --green-shade: #0f5430;
 
-  /* What cannot be taken back, in the red of the ball it is thrown in */
-  --red: #dc2e26;
-  --red-deep: #a81f1a;
-  --red-wash: #fdeceb;
+  --red: #d6372a;
+  --red-deep: #a8261c;
+  --red-wash: #fce9e7;
+  --red-shade: #7e1b13;
 
-  /* Gold, and the rest of what a lot is worth */
-  --yellow: #c08508;
+  --yellow: #f2b33d;
+  --yellow-deep: #7a5300;
   --yellow-wash: #fff3d6;
+  --yellow-shade: #c98a0a;
 
-  /* Where you are and what is happening there. It is also the game's
-     furniture — the bar over a window, the tab you are on — because
-     the series has always framed what it says to you in blue */
-  --blue: #2a75bb;
-  --blue-deep: #1d5487;
+  --blue: #2360c8;
+  --blue-deep: #163f86;
   --blue-wash: #e3eefb;
+  --blue-shade: #102e63;
 
-  /* A move being channelled, which is neither a cast nor damage */
-  --violet: #7b4fc0;
-  --violet-wash: #f1eafb;
+  --violet: #6e46c9;
+  --violet-deep: #4e2f9e;
+  --violet-wash: #efe8fb;
+  --violet-shade: #3a2378;
 
-  --drop: rgb(31 42 68 / 0.18);
-  --drop-soft: rgb(31 42 68 / 0.16);
-  --drop-window: rgb(29 84 135 / 0.35);
-  --drop-cast: rgb(31 42 68 / 0.55);
+  --drop: rgb(20 32 58 / 0.22);
+  --drop-rest: rgb(20 32 58 / 0.18);
+  --drop-float: rgb(20 32 58 / 0.2);
+  --drop-window: rgb(16 46 99 / 0.3);
+  --drop-cast: rgb(20 32 58 / 0.5);
+  --drop-cast-deep: rgb(20 32 58 / 0.6);
 
   /* The two halves of the daylight over the page */
-  --sky-high: #eef5fe;
+  --sky-high: #f4f8fe;
   --sky-glow: #ffffff;
   /* The safari's field: sky over grass, and the base the pokemon stands on */
   --field-sky: #bfe3ff;
@@ -168,55 +241,61 @@
 }
 
 /**
- * Night, which is the same game after dark rather than a second one.
+ * Night, the same game after dark.
  *
- * The fills keep their hue and gain a little light — a green button is
- * still the green button — while the ground the game is drawn on drops
- * to a deep navy and the washes behind a badge become tints of it. The
- * shadows go black, since a shadow made of navy over navy is nothing.
+ * The fills keep their hue and gain light, so a green button is still
+ * the green button. The ground drops to deep navy, the washes become
+ * tints of it, and the shadows go black, since navy over navy is
+ * nothing.
  *
- * The `-deep` half of each pair goes the other way here: it is the
- * *stronger* sibling rather than literally the darker one — the hover
- * on a filled button, the word written on a wash, the line under the
- * blue bar — and strength on a dark ground is light. Left darker they
- * were a hover that dimmed and a label that sank into the panel behind
- * it
+ * The `-deep` half of each pair is the stronger sibling rather than
+ * the darker one: the word written on a wash, the line under the blue
+ * bar. On a dark ground strength is light, so here it is the lighter
  */
 .dark {
   color-scheme: dark;
 
-  --sky: #0b1222;
-  --panel: #16203a;
+  --sky: #0b1020;
+  --panel: #141c33;
   --text: #e9f0fb;
-  --text-quiet: #9db0d0;
-  --edge: #33456b;
-  --edge-soft: #202c48;
+  --text-quiet: #9aa8c0;
+  --edge: #2e3d5e;
+  --edge-soft: #1d2742;
 
-  --green: #34a75f;
-  --green-deep: #63d391;
-  --green-wash: #143223;
+  --green: #36b26f;
+  --green-deep: #7fdda8;
+  --green-wash: #12301f;
+  --green-shade: rgb(0 0 0 / 0.55);
 
-  --red: #d93a30;
-  --red-deep: #ff8c84;
-  --red-wash: #351a18;
+  --red: #f0584a;
+  --red-deep: #ff9a90;
+  --red-wash: #3a1715;
+  --red-shade: rgb(0 0 0 / 0.55);
 
-  --yellow: #e2a71c;
-  --yellow-wash: #372a0d;
+  --yellow: #f7c969;
+  --yellow-deep: #f7c969;
+  --yellow-wash: #362a0e;
+  --yellow-shade: rgb(0 0 0 / 0.55);
 
-  --blue: #2f7dc4;
-  --blue-deep: #8ec5f2;
-  --blue-wash: #13263f;
+  --blue: #4a8bf0;
+  --blue-deep: #a9c4ea;
+  --blue-wash: #14264a;
+  --blue-shade: rgb(0 0 0 / 0.55);
 
-  --violet: #a077e6;
-  --violet-wash: #261a3d;
+  --violet: #9c7bf0;
+  --violet-deep: #c9b5fa;
+  --violet-wash: #261b44;
+  --violet-shade: rgb(0 0 0 / 0.55);
 
   --drop: rgb(0 0 0 / 0.55);
-  --drop-soft: rgb(0 0 0 / 0.45);
+  --drop-rest: rgb(0 0 0 / 0.45);
+  --drop-float: rgb(0 0 0 / 0.55);
   --drop-window: rgb(0 0 0 / 0.55);
   --drop-cast: rgb(0 0 0 / 0.7);
+  --drop-cast-deep: rgb(0 0 0 / 0.75);
 
-  --sky-high: #121c33;
-  --sky-glow: #1d2a48;
+  --sky-high: #111a30;
+  --sky-glow: #1b2747;
   --field-sky: #1b2d55;
   --field-haze: #2a3f6b;
   --field-grass: #2f5a3a;
@@ -226,43 +305,41 @@
 
 @layer base {
   body {
-    @apply bg-parchment text-ink font-sans text-[0.95rem] leading-relaxed antialiased;
+    @apply bg-parchment text-ink font-sans text-[0.9375rem] leading-relaxed antialiased;
 
     /* Daylight over the top of the page, and at night the same light
-       from the same place with almost nothing left in it. It is under
-       everything the game draws — the world fills the screen on its
-       own — and shows at the edges of dialogs and behind the shorter
-       panels */
+       with almost nothing left in it. It shows at the edges of dialogs
+       and behind the shorter panels */
     background-image:
       radial-gradient(120% 90% at 50% -20%, var(--sky-glow) 0%, transparent 60%),
       linear-gradient(180deg, var(--sky-high) 0%, var(--sky) 100%);
     background-attachment: fixed;
   }
 
+  /* Names and numbers are Fredoka */
   h1 {
-    @apply text-2xl font-extrabold tracking-tight;
+    @apply font-display text-2xl font-semibold tracking-tight;
   }
 
   h2 {
-    @apply text-xl font-extrabold tracking-tight;
+    @apply font-display text-xl font-semibold tracking-tight;
   }
 
   h3 {
-    @apply text-base font-bold;
+    @apply font-display text-base font-semibold;
   }
 
-  /* The little caption over a block of facts, set the way a game sets
-     a label on a status screen: small, spaced out and shouted quietly */
+  /* The label over a block of facts: small, spaced out, in tide */
   h4 {
-    @apply text-xs font-bold text-tide uppercase tracking-[0.12em];
+    @apply text-xs font-extrabold text-tide uppercase tracking-[0.12em];
   }
 
   a {
     @apply font-semibold text-tide underline underline-offset-2 hover:text-tide-dark;
   }
 
-  /* Lists are the game's main structure — a bag, a party, a board —
-     and most of them are a stack of rows rather than prose bullets */
+  /* Lists are the game's main structure (a bag, a party, a board), and
+     most of them are a stack of rows rather than prose bullets */
   ul,
   ol {
     @apply flex flex-col gap-1.5;
@@ -284,14 +361,17 @@
     @apply font-semibold;
   }
 
-  /* A button with nothing said about it still looks pressable, and
-     pressing it still moves it. The kit's own buttons say more, and
-     utilities beat this layer */
+  /* A button with no classes still looks pressable, and drops onto its
+     shadow when pressed. Only the kit's `Button` squashes: elsewhere a
+     row or a tab opts out of the drop with `active:translate-y-0`, and
+     a squash here would get past that. Utilities beat this layer */
   button {
-    @apply cursor-pointer rounded-xl border-2 border-line bg-paper px-3 py-1 text-sm font-bold
-      shadow-pop-sm transition-[background-color,border-color,color,box-shadow,transform]
-      hover:border-tide hover:text-tide-dark active:translate-y-[2px] active:shadow-none
-      focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide;
+    @apply cursor-pointer rounded-button border-2 border-line bg-paper px-3 py-1 text-sm
+      font-extrabold shadow-pop-sm
+      transition-[background-color,border-color,color,box-shadow,translate]
+      duration-(--motion-tap) ease-spring hover:border-tide hover:text-tide-dark
+      active:translate-y-[2px] active:shadow-none focus-visible:outline-2
+      focus-visible:outline-offset-2 focus-visible:outline-tide;
   }
 
   button:disabled {
@@ -302,13 +382,14 @@
   input,
   select,
   textarea {
-    @apply rounded-xl border-2 border-line bg-paper px-2.5 py-1 text-sm
+    @apply rounded-button border-2 border-line bg-paper px-2.5 py-1 text-sm
+      transition-[border-color,box-shadow] duration-(--motion-quick) hover:border-tide/60
       focus-visible:border-tide focus-visible:outline-2 focus-visible:outline-offset-2
       focus-visible:outline-tide;
   }
 
   input[type='number'] {
-    @apply w-24 tabular-nums;
+    @apply w-24 font-display tabular-nums;
   }
 
   label {
@@ -327,39 +408,87 @@
 }
 
 /**
- * A toast arriving and leaving: it drops in from just above where it
- * settles, and goes back the same way. The two are separate keyframes
- * rather than a transition because a toast is drawn and removed rather
- * than shown and hidden
+ * A toast arriving and leaving: it drops in from above the top edge on
+ * a spring and goes back up faster than it came. Keyframes rather than
+ * a transition, because a toast is drawn and removed rather than shown
+ * and hidden
  */
 @keyframes toast-in {
   from {
     opacity: 0;
-    transform: translateY(-0.5rem) scale(0.96);
+    transform: translateY(calc(-1 * var(--motion-fall)));
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
   }
 }
 
 @keyframes toast-out {
   from {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
   }
 
   to {
     opacity: 0;
-    transform: translateY(-0.5rem) scale(0.96);
+    transform: translateY(calc(-1 * var(--motion-fall)));
+  }
+}
+
+/* How long a toast has left, drawn as a bar that empties */
+@keyframes toast-life {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* A dialog's nameplate sliding in once the sheet has landed */
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--motion-slide)));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A label rising into place */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--motion-rise));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A count hopping once when it changes */
+@keyframes hop {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  40% {
+    transform: translateY(calc(-1.5 * var(--motion-rise)));
   }
 }
 
 /**
  * A note over a cell: it lifts off the ground it is about and fades
- * back into it. The rise is small — it is a label on a square, not a
- * number thrown out of a fight
+ * back into it. The rise is small, since it is a label on a square
  */
 @keyframes cell-note-in {
   from {
@@ -386,21 +515,58 @@
 }
 
 /**
- * The whole of the reduce-motion setting, as far as CSS goes: a class
- * on the root element, put there by `src/components/app/settings.ts`.
+ * The reduce-motion setting, as far as CSS goes: a class on the root
+ * element, put there from `src/components/app/settings.ts`.
  *
- * Durations are cut to nothing rather than to zero, because a
- * transition that takes no time at all never fires `transitionend`,
- * and the dialogs wait on it to know when to unmount. Sprites hold
- * still separately — a canvas hears nothing about a class.
+ * Every move becomes a 120ms crossfade. The distances go to nothing,
+ * so what is left of a panel's arrival is its fade, and everything that
+ * is not one of those fades is cut to 1ms. Not to zero: a transition
+ * that takes no time never fires `transitionend`, and the dialogs wait
+ * on it to unmount. Sprites hold still separately, since a canvas hears
+ * nothing about a class.
+ *
+ * An element marks itself as one of the fades with `motion-crossfade`
+ * (the presets in `src/components/styled/transition.ts` do).
  */
+.reduce-motion {
+  --motion-tap: 120ms;
+  --motion-quick: 120ms;
+  --motion-base: 120ms;
+  --motion-base-exit: 120ms;
+  --motion-move: 120ms;
+  --motion-move-exit: 120ms;
+  --motion-scene: 120ms;
+  --motion-scene-exit: 120ms;
+  --motion-stagger: 0ms;
+  --motion-grow: 1;
+  --motion-grow-origin: 1;
+  --motion-drop: 1;
+  --motion-rise: 0px;
+  --motion-fall: 0px;
+  --motion-slide: 0px;
+  --motion-squash-x: 1;
+  --motion-squash-y: 1;
+}
+
 .reduce-motion *,
 .reduce-motion *::before,
 .reduce-motion *::after {
   animation-duration: 1ms !important;
+  animation-delay: 0ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 1ms !important;
   scroll-behavior: auto !important;
+}
+
+.reduce-motion .motion-crossfade {
+  animation-duration: 120ms !important;
+  transition-duration: 120ms !important;
+}
+
+/* A timer drawn as a bar (a toast's lifetime) keeps its own length:
+   it says how long is left rather than moving anything */
+.reduce-motion .motion-timer {
+  animation-duration: var(--motion-timer) !important;
 }
 
 /**

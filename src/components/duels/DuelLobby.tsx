@@ -367,7 +367,7 @@ function LobbyRows(
                 <Show when={taken().player === duel()?.host}>
                   <span
                     class="shrink-0 rounded-full bg-gold-soft px-1.5 text-[9.5px] font-extrabold
-                      text-gold uppercase"
+                      text-gold-dark uppercase"
                   >
                     {m.duels_host_tag()}
                   </span>

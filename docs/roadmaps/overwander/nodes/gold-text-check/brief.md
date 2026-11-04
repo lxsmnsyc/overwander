@@ -1,7 +1,8 @@
 ---
 id: gold-text-check
 title: Keep words out of plain gold
-status: active
+status: done
+spent: 62903
 priority: should
 type: chore
 outline: false

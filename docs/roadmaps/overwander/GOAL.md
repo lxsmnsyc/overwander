@@ -80,6 +80,7 @@ Every eligible pokemon has its Zenith, and the whole UI is redesigned on one des
 - Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, waits for Solid 2.0 stable; @solidjs/vite-plugin replaces @solidjs/start and vite-plugin-solid).
 - Added 2026-10-27, the e2e specs gone stale while they could not load (found by deps-update) -> e2e-specs.
 - Added 2026-10-31, bringing the code written before ts-style was followed in line with it -> ts-style-sweep.
+- Added 2026-11-04, property, oracle and model-based tests from a review of the fix history -> fuzz-battle, fuzz-world, fuzz-server-model (outline).
 
 ## Open questions
 

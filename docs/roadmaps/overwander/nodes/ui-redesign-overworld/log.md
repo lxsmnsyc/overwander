@@ -87,3 +87,12 @@ New (proposal, approved with the board): the trainer's name and face in the corn
 - Phone tabs are the styled `TabGroup`, `TabBar` and `TabButton`, each with its group's total waiting count.
 - Removed `cell-note-in` and `cell-note-out` from `src/app.css`.
 - The dev db is in memory, so it was rebuilt: migrate, seed, sign in, claim, the same hand-set data. Recaptured every `after/` shot with an egg, plus the ultra-wide ones.
+
+## Fresh review fixes
+
+- The `nav` is a size container. The keypad, capsule and card caps use `cqw` of the 16:9 frame, not `vw`. The capsule reserves 31rem for the two side corners on wide screens. At 844x390 the frame is 693px and the capsule stops at 197px, clear of the trainer plate.
+- The card scrolls on a short screen (`max-h-[calc(100dvh-2.5rem)]`). Before, at 390 tall its top went off the window.
+- Phone tabs: each column is a terracotta `TabPanel` with `unmount={false}`, inside the same `TabGroup` as the bar, so `aria-controls` resolves. The bar alone is hidden from `sm` up.
+- The capsule's `Popover` box takes no presses. The capsule takes them while shown, the card while open.
+- New message `menu_period_clock` (en and es `{period}, {clock}`, ja `{period}、{clock}`). Removed the unused `menu_field_moves` from all three.
+- Recaptured `after/sideways-844x390-light-egg-*` and `after/desktop-light-egg-*`. Nothing moved at 1280x720.

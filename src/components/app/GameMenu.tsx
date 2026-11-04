@@ -9,7 +9,7 @@ import {
   onMount,
 } from 'solid-js';
 import { Dynamic } from 'solid-js/web';
-import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
+import { Popover, PopoverButton, PopoverPanel, TabPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { localNow, serverNow, syncServerClock } from '../../auth/clock';
 import type { EggWalk } from '../../auth/eggs';
@@ -461,7 +461,7 @@ export default function GameMenu(): JSX.Element {
       // a centred 16:9 frame's, so they stay beside the board picture
       // rather than out in the margins. Centred by its margins, not a
       // transform, which would hold the phone's fixed sheet
-      class="pointer-events-none fixed inset-0 z-10 mx-auto max-w-[calc(100dvh*16/9)]"
+      class="@container pointer-events-none fixed inset-0 z-10 mx-auto max-w-[calc(100dvh*16/9)]"
     >
       {/* The trainer corner. Laid out before the capsule so the keypad,
           which grows out of it, can stand over everything else */}
@@ -552,7 +552,7 @@ export default function GameMenu(): JSX.Element {
           show={open()}
           {...GROW}
           class="fixed inset-x-0 bottom-0 z-30 origin-[52px_100%] sm:absolute sm:inset-x-auto
-            sm:bottom-full sm:left-0 sm:mb-3 sm:w-130 sm:max-w-[calc(100vw-2.5rem)]
+            sm:bottom-full sm:left-0 sm:mb-3 sm:w-130 sm:max-w-[calc(100cqw-2.5rem)]
             sm:origin-[38px_calc(100%+50px)]"
         >
           <PopoverPanel
@@ -560,16 +560,17 @@ export default function GameMenu(): JSX.Element {
               bg-paper shadow-sheet sm:rounded-sheet sm:border-b-2"
           >
             {/* A phone has room for one column, so the three are tabs,
-                each with what is waiting behind it */}
+                each with what is waiting behind it. A wider screen hides
+                the bar and shows every panel side by side, so the panels
+                stay mounted rather than unmounting with their tab */}
             <TabGroup
               value={tab()}
               onChange={(picked) => {
                 setTab(picked);
               }}
               horizontal
-              class="sm:hidden"
             >
-              <TabBar class="mx-2.5 mt-2.5">
+              <TabBar class="mx-2.5 mt-2.5 sm:hidden">
                 <For each={GROUPS}>
                   {(group, index) => (
                     <TabButton value={index()} class="flex-1 gap-1.5">
@@ -581,60 +582,61 @@ export default function GameMenu(): JSX.Element {
                   )}
                 </For>
               </TabBar>
-            </TabGroup>
 
-            <div class="grid gap-1 p-2.5 sm:grid-cols-3">
-              <For each={GROUPS}>
-                {(group, index) => (
-                  <div
-                    role="group"
-                    aria-label={group.label()}
-                    class={`${tab() === index() ? 'flex' : 'hidden sm:flex'} min-w-0 flex-col`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      class="hidden px-2.5 py-1 text-[10px] font-extrabold tracking-[0.12em]
-                        text-tide uppercase sm:block"
+              <div class="grid gap-1 p-2.5 sm:grid-cols-3">
+                <For each={GROUPS}>
+                  {(group, index) => (
+                    <TabPanel
+                      value={index()}
+                      unmount={false}
+                      class={`${tab() === index() ? 'flex' : 'hidden sm:flex'} min-w-0 flex-col
+                      focus-visible:outline-2 focus-visible:outline-tide`}
                     >
-                      {group.label()}
-                    </span>
-                    <For each={group.entries}>
-                      {(entry) => (
-                        <button
-                          type="button"
-                          class={`${ROW} w-full animate-rise`}
-                          style={{
-                            'animation-delay': `calc(var(--motion-stagger) * ${ROW_ORDER.get(entry) ?? 0})`,
-                          }}
-                          disabled={entry.dialog == null}
-                          // The word alone reads as something the game can do and will not
-                          title={
-                            entry.dialog == null
-                              ? m.menu_not_yet({ label: entry.label() })
-                              : entry.label()
-                          }
-                          onClick={() => {
-                            if (entry.dialog != null) {
-                              openDialog(entry.dialog);
+                      <span
+                        aria-hidden="true"
+                        class="hidden px-2.5 py-1 text-[10px] font-extrabold tracking-[0.12em]
+                        text-tide uppercase sm:block"
+                      >
+                        {group.label()}
+                      </span>
+                      <For each={group.entries}>
+                        {(entry) => (
+                          <button
+                            type="button"
+                            class={`${ROW} w-full animate-rise`}
+                            style={{
+                              'animation-delay': `calc(var(--motion-stagger) * ${ROW_ORDER.get(entry) ?? 0})`,
+                            }}
+                            disabled={entry.dialog == null}
+                            // The word alone reads as something the game can do and will not
+                            title={
+                              entry.dialog == null
+                                ? m.menu_not_yet({ label: entry.label() })
+                                : entry.label()
                             }
-                          }}
-                        >
-                          <Dynamic
-                            component={entry.icon}
-                            class="size-5 shrink-0 text-tide"
-                            aria-hidden="true"
-                          />
-                          <span class="min-w-0 truncate">{entry.label()}</span>
-                          <Show when={countFor(entry.dialog) > 0}>
-                            <span class={`${COUNT} ml-auto`}>{countFor(entry.dialog)}</span>
-                          </Show>
-                        </button>
-                      )}
-                    </For>
-                  </div>
-                )}
-              </For>
-            </div>
+                            onClick={() => {
+                              if (entry.dialog != null) {
+                                openDialog(entry.dialog);
+                              }
+                            }}
+                          >
+                            <Dynamic
+                              component={entry.icon}
+                              class="size-5 shrink-0 text-tide"
+                              aria-hidden="true"
+                            />
+                            <span class="min-w-0 truncate">{entry.label()}</span>
+                            <Show when={countFor(entry.dialog) > 0}>
+                              <span class={`${COUNT} ml-auto`}>{countFor(entry.dialog)}</span>
+                            </Show>
+                          </button>
+                        )}
+                      </For>
+                    </TabPanel>
+                  )}
+                </For>
+              </div>
+            </TabGroup>
 
             {/* Settings and the day or night switch change how the game
                 behaves rather than where the player goes, so they sit
@@ -680,16 +682,19 @@ export default function GameMenu(): JSX.Element {
             setDetails(false);
           }
         }}
-        class="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 sm:bottom-5"
+        // Takes no presses itself: while the card is open the capsule is
+        // hidden, and the box it leaves would otherwise catch presses
+        // meant for the board
+        class="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 sm:bottom-5"
       >
         {/* Read straight rather than through a callback `Show`, which
             untracks the call and would hold the first place stood in */}
         <PopoverButton
-          class={`${GLASS} flex max-w-[calc(100vw-14rem)] sm:max-w-[min(34rem,calc(100vw-22rem))] min-w-0 cursor-pointer
+          class={`${GLASS} flex max-w-[calc(100cqw-14rem)] sm:max-w-[min(34rem,calc(100cqw-31rem))] min-w-0 cursor-pointer
             items-center gap-3 rounded-[22px] py-2 pr-4.5 pl-2 text-left transition-[translate,opacity]
             duration-(--motion-quick) ease-spring hover:-translate-y-0.5 active:translate-y-0
             focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
-            ${details() ? 'pointer-events-none opacity-0' : ''}`}
+            ${details() ? 'pointer-events-none opacity-0' : 'pointer-events-auto'}`}
         >
           {(() => {
             const sky = game.weather();
@@ -726,12 +731,14 @@ export default function GameMenu(): JSX.Element {
         <Transition
           show={details()}
           {...MORPH}
-          class="absolute bottom-0 left-1/2 z-30 -ml-[min(180px,calc(50vw-1rem))]
-            w-[min(360px,calc(100vw-2rem))] origin-bottom"
+          class="pointer-events-auto absolute bottom-0 left-1/2 z-30 -ml-[min(180px,calc(50cqw-1rem))]
+            w-[min(360px,calc(100cqw-2rem))] origin-bottom"
         >
           <PopoverPanel
-            class="flex flex-col gap-2.5 rounded-sheet border-2 border-line bg-paper p-3.5 text-sm
-              shadow-sheet"
+            // A short screen (a phone held sideways) scrolls the card
+            // rather than pushing its top off the window
+            class="flex max-h-[calc(100dvh-2.5rem)] flex-col gap-2.5 overflow-y-auto rounded-sheet
+              border-2 border-line bg-paper p-3.5 text-sm shadow-sheet"
           >
             <div class="flex items-center justify-between gap-3">
               <span class="min-w-0 font-display text-lg leading-6 font-semibold text-ink">
@@ -766,7 +773,7 @@ export default function GameMenu(): JSX.Element {
 
                     return sky == null ? '' : `${WEATHER_NAMES[sky]} · `;
                   })()}
-                  {period()}, {clock()}
+                  {m.menu_period_clock({ period: period(), clock: clock() })}
                 </span>
                 {(() => {
                   const sky = game.weather();

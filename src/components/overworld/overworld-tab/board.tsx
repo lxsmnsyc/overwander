@@ -64,7 +64,7 @@ import { createCellNotes } from '../cell-notes';
 import ItemSprite from '../../items/ItemSprite';
 import sayItems, { FIND_TONES } from '../../items/say-items';
 import RaidDialog from '../../raids/RaidDialog';
-import { Badge, Button, Note, useToast } from '../../styled';
+import { Button, Note, useToast } from '../../styled';
 import NestDialog from '../NestDialog';
 import PortalDialog from '../PortalDialog';
 import HoneyTreeDialog from '../HoneyTreeDialog';
@@ -794,6 +794,15 @@ export default function OverworldBoard(props: {
   const carried = createStoreSignal(walk.carried);
   const resume = walk.resume;
 
+  // The egg is drawn in the menu's trainer corner, a sibling of the
+  // board, so it travels there the way the place's name does
+  createEffect(() => {
+    game.setEgg(carried());
+  });
+  onCleanup(() => {
+    game.setEgg(null);
+  });
+
   // A cleared raid leaves its legendary waiting, and a beaten grunt
   // what they dropped. Both are collected by the game itself the
   // moment the fight is won — the world is not on screen then — and
@@ -1281,23 +1290,6 @@ export default function OverworldBoard(props: {
                 }}
               />
               {notes.view()}
-            </div>
-
-            {/* How close the carried egg is, over the corner of the
-                map rather than under it. It is a thing about this
-                moment and not worth a strip of the world when there is
-                no egg */}
-            <div class="pointer-events-none absolute top-2 right-2 flex flex-col items-end gap-1">
-              <Show when={carried()}>
-                {(egg) => (
-                  <Badge tone={egg().steps >= egg().hatchSteps ? 'leaf' : 'neutral'}>
-                    {(egg().steps >= egg().hatchSteps ? m.board_egg_ready : m.board_egg_steps)({
-                      steps: egg().steps,
-                      hatch: egg().hatchSteps,
-                    })}
-                  </Badge>
-                )}
-              </Show>
             </div>
           </>
         )}

@@ -17,10 +17,13 @@ import { usePortalHost } from '../styled/portal-host';
  * work out, where a cell is on the screen.
  */
 
-/** How long one hangs over its cell, and how long it takes to arrive and go */
+/**
+ * How long one hangs over its cell, and how long it takes to go: the
+ * Field Kit's base exit (168ms), and a little over so the element
+ * outlives its fade
+ */
 const LIFETIME = 2000;
-const ARRIVING = 260;
-const LEAVING = 400;
+const LEAVING = 200;
 
 /** How far above the ground the first note sits, and how far apart they stack */
 const LIFT = 12;
@@ -28,12 +31,13 @@ const APART = 30;
 
 export type CellNoteTone = 'neutral' | 'leaf' | 'ember' | 'gold' | 'arcane';
 
+/** The board's chips: a soft fill, the hue's keyline, the words in its dark shade */
 const TONES: Record<CellNoteTone, string> = {
   neutral: 'border-tide bg-paper text-ink',
   leaf: 'border-leaf bg-leaf-soft text-leaf-dark',
   ember: 'border-ember bg-ember-soft text-ember-dark',
   gold: 'border-gold bg-gold-soft text-gold-dark',
-  arcane: 'border-arcane bg-arcane-soft text-arcane',
+  arcane: 'border-arcane bg-arcane-soft text-arcane-dark',
 };
 
 export interface CellNoteRequest {
@@ -211,12 +215,15 @@ export function createCellNotes(
               // Wide enough for an item's whole name, and it wraps
               // rather than clipping: a reward the player cannot read
               // is not a reward they were told about
-              class={`flex max-w-56 items-center gap-1.5 rounded-panel border-2 px-2 py-1 text-xs
-                font-bold shadow-pop ${TONES[note.tone ?? 'leaf']}`}
+              // It rises off the ground on the spring and sinks back into
+              // it on the exit curve. The distance and the times are the
+              // motion tokens, so reduce motion makes both a fade
+              class={`motion-crossfade flex max-w-56 items-center gap-1.5 rounded-button border-2
+                px-2 py-1 text-xs font-extrabold shadow-float ${TONES[note.tone ?? 'leaf']}`}
               style={{
                 animation: note.leaving
-                  ? `cell-note-out ${LEAVING}ms ease-in both`
-                  : `cell-note-in ${ARRIVING}ms ease-out both`,
+                  ? 'rise-in var(--motion-base-exit) var(--ease-exit) reverse both'
+                  : 'rise-in var(--motion-base) var(--ease-spring) both',
               }}
             >
               <Show when={note.art != null}>

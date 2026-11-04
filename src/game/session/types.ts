@@ -4,6 +4,7 @@ import type Awards from '../../data/ids/awards';
 import type { Items } from '../../data/ids/items';
 import type { Species } from '../../data/ids/species';
 import type { ItemStack } from '../../data/overworld/item-pool';
+import type { FieldMove } from '../../overworld/field-moves';
 
 /**
  * What is open over the world.
@@ -99,6 +100,8 @@ export interface OpenSheet {
  * Dig or Teleport still on its way
  */
 export interface FieldMoveOffer {
+  /** Which move it is, for the glyph on its button */
+  move: FieldMove;
   name: string;
   active: boolean;
   busy: boolean;

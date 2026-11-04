@@ -717,6 +717,7 @@ export default function createBoardWalk<View extends WalkGround>(
     if (loaded != null) {
       if (surfOffered(loaded)) {
         offers.push({
+          move: Moves.Surf,
           name: describeMove(Moves.Surf),
           active: ride.get().travel === 'surf',
           busy: false,
@@ -725,6 +726,7 @@ export default function createBoardWalk<View extends WalkGround>(
       }
       if (flyOffered(loaded)) {
         offers.push({
+          move: Moves.Fly,
           name: describeMove(Moves.Fly),
           active: ride.get().travel === 'fly',
           busy: false,
@@ -733,6 +735,7 @@ export default function createBoardWalk<View extends WalkGround>(
       }
       if (knows(Moves.Dig) && loaded.underground) {
         offers.push({
+          move: Moves.Dig,
           name: describeMove(Moves.Dig),
           active: false,
           busy: warping.get(),
@@ -743,6 +746,7 @@ export default function createBoardWalk<View extends WalkGround>(
       }
       if (knows(Moves.Teleport)) {
         offers.push({
+          move: Moves.Teleport,
           name: describeMove(Moves.Teleport),
           active: false,
           busy: warping.get(),

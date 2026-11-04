@@ -489,34 +489,6 @@
 }
 
 /**
- * A note over a cell: it lifts off the ground it is about and fades
- * back into it. The rise is small, since it is a label on a square
- */
-@keyframes cell-note-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.5rem) scale(0.9);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes cell-note-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(-0.75rem);
-  }
-}
-
-/**
  * The reduce-motion setting, as far as CSS goes: a class on the root
  * element, put there from `src/components/app/settings.ts`.
  *

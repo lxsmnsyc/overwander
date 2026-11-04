@@ -13,6 +13,9 @@
  * a way that moving a pointer over it is not.
  *
  * Tooltips wait for nothing at all: a label is read at a glance.
+ *
+ * The Field Kit sets the open wait at 300ms: long enough to pass over
+ * a square, short enough that resting on one answers.
  */
-export const OPEN_DELAY = 400;
+export const OPEN_DELAY = 300;
 export const CLOSE_DELAY = 400;

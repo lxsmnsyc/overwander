@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Catch sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55);animation:fade 240ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes fade{from{opacity:0}}
+.sheet{position:absolute;left:32px;top:28px;width:1216px;height:672px;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both;display:flex;flex-direction:column;overflow:hidden}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+.hero{position:relative;display:flex;gap:18px;padding:16px 18px;background:linear-gradient(180deg,#FFF1E8,#fff);border-bottom:2px solid #F3E2D6}
+.stage{position:relative;width:220px;height:150px;flex:0 0 220px;border-radius:18px;background:linear-gradient(#BFE3FF,#E6F6FF 55%,#9FD87F 55%,#6FB458);overflow:hidden}
+.sprite{position:absolute;left:50%;top:34px;width:84px;height:84px;margin-left:-42px;border-radius:20px;background:#F0584A;box-shadow:inset 0 -12px 0 0 #C9402F;animation:idle 1400ms steps(2,end) infinite}
+@keyframes idle{50%{transform:translateY(-4px)}}
+.badge{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 9px;border-radius:999px;font-size:11px;font-weight:800;border:2px solid #C3D2E8;background:#fff}
+.h3{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;display:flex;align-items:center;gap:6px}
+.hint{width:18px;height:18px;border-radius:9px;border:2px solid #C3D2E8;font-size:10px;display:inline-flex;align-items:center;justify-content:center;color:#2360C8;font-weight:800}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0}
+.card{border:2px solid #E7EEF8;border-radius:18px;padding:12px;animation:rise 280ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(10px);opacity:0}}
+.stats{display:grid;grid-template-columns:12px 58px 34px 24px 50px;gap:4px 8px;align-items:center;font-size:12px}
+.ev{width:50px;height:24px;box-sizing:border-box;border:2px solid #C3D2E8;border-radius:7px;font-family:Fredoka,sans-serif;font-size:12px;text-align:right;padding:0 5px}
+.hex polygon.val{transform-origin:110px 100px;animation:hex 600ms 200ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes hex{from{transform:scale(0)}}
+.move{position:relative;height:66px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;padding:8px 10px 8px 16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:2px;cursor:grab;overflow:hidden;transition:transform 140ms cubic-bezier(.34,1.56,.64,1),box-shadow 140ms}
+.move:hover{transform:translateY(-3px);box-shadow:0 4px 0 0 rgba(20,32,58,.15)}
+.move .type{position:absolute;left:0;top:0;bottom:0;width:6px}
+.move.empty{border-style:dashed;background:transparent;color:#52627F;align-items:center;font-weight:700;font-size:13px;cursor:pointer}
+.move.locked{border-style:dashed;background:#F4F7FC;color:#9AA8C0;align-items:center;font-weight:700;font-size:13px;cursor:default}
+.move.empty:hover,.move.locked:hover{transform:none;box-shadow:none}
+.slot{height:36px;border-radius:10px;display:flex;align-items:center;padding:0 10px;font-size:13px;font-weight:800;border:2px solid #C3D2E8;background:#fff}
+.slot.empty{border-style:dashed;color:#52627F;font-weight:700}
+.slot.locked{border-style:dashed;color:#9AA8C0;background:#F4F7FC}
+.item{width:48px;height:48px;border-radius:12px;border:2px solid #C3D2E8;display:flex;align-items:center;justify-content:center}
+.evo{display:flex;flex-direction:column;align-items:center;gap:6px}
+.evo .pic{width:64px;height:64px;border-radius:16px}
+.arrow{width:2px;height:22px;background:#C3D2E8;position:relative}
+.arrow:after{content:"";position:absolute;left:-4px;bottom:-2px;border:5px solid transparent;border-top-color:#C3D2E8}
+.ready{animation:ready 1600ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes ready{50%{box-shadow:0 0 0 6px rgba(30,143,82,.18)}}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="sheet" role="dialog" aria-label="Pokemon Info: Blaze">
+<div class="hero">
+<div class="stage"><div class="sprite"></div><span style="position: absolute; left: 8px; top: 8px; width: 26px; height: 26px; border-radius: 13px; background: #fff; box-shadow: inset 0 -12px 0 0 #2360C8" title="Great Ball"></span></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 7px; min-width: 0">
+<div style="display: flex; align-items: baseline; gap: 10px"><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 30px; line-height: 34px">Blaze</span><span style="font-size: 15px; font-weight: 700; color: #52627F">Charmander ♂</span><svg width="18" height="18" viewBox="0 0 24 24" fill="#C98A0A" role="img" aria-label="Shiny"><path d="M12 2l2 7 7 3-7 3-2 7-2-7-7-3 7-3z"></path></svg><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px; padding: 0 10px; border-radius: 10px; background: #14203A; color: #fff">Lv. 41</span></div>
+<div style="display: flex; flex-wrap: wrap; gap: 5px"><span class="badge" style="background: #F0584A; border-color: #C9402F; color: #fff">Fire</span><span class="badge">Lizard</span><span class="badge">0.62 m</span><span class="badge">8.7 kg</span><span class="badge" style="background: #E3F3EA; border-color: #A9DCC0; color: #156B3D">♥ Close</span><span class="badge">1,240 steps</span></div>
+<div style="display: flex; align-items: center; gap: 10px; max-width: 420px"><span style="color: #C98A0A; letter-spacing: .2em; font-size: 13px" role="img" aria-label="4 of 5 stars">★★★★☆</span><span style="font-family: ui-monospace, monospace; font-size: 11px; letter-spacing: .2em; color: #52627F">K7·R2</span><div style="flex-grow: 1; height: 8px; border-radius: 4px; background: #E7EEF8; overflow: hidden"><div style="width: 88%; height: 100%; background: #1E8F52"></div></div><span style="font-family: Fredoka, sans-serif; font-size: 13px">103/117</span><span style="width: 12px; height: 12px; border-radius: 3px; background: #F0584A" title="Burned"></span></div>
+<div style="display: flex; gap: 6px; align-items: center"><span class="badge" style="background: #E3F3EA; border-color: #A9DCC0; color: #156B3D">Buddy</span><span class="badge" style="background: #E3EEFB; border-color: #A9C4EA; color: #163F86">Locked</span><span class="badge" style="background: #EFE8FB; border-color: #CDBDF2; color: #4E2F9E">Gigantamax</span></div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
+<div style="display: flex; gap: 6px"><button class="btn" style="height: 34px">In Box 1 ▾</button><button class="btn" style="height: 34px">Actions ▾</button><button class="btn" style="height: 34px; width: 34px; padding: 0" aria-label="Close">×</button></div>
+<div style="display: flex; gap: 10px; align-items: stretch">
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 8px 14px; border-radius: 16px; border: 2px solid #A9C4EA; background: #E3EEFB"><span class="h3" style="color: #163F86">Tera</span><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 17px; color: #163F86">Water</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border-radius: 16px; border: 2px solid #F2D58F; background: #FFF8E6"><span style="font-size: 12px; font-weight: 800; color: #7A5300">● 86 Charmander candy</span><button class="btn go" style="height: 36px">Level Up · ● 2</button></div>
+</div>
+</div>
+</div>
+<div style="flex-grow: 1; display: grid; grid-template-columns: 300px minmax(0, 1fr) 220px; gap: 14px; padding: 14px 18px; min-height: 0">
+<div class="col">
+<div class="card" style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center"><span class="h3">Stats <span class="hint">?</span></span><span class="badge">Brave · ▲Atk ▼Spe</span></div>
+<svg class="hex" width="220" height="200" viewBox="0 0 220 200" style="align-self: center" role="img" aria-label="Stat shape"><polygon points="110,20 180,60 180,140 110,180 40,140 40,60" fill="#F4F7FC" stroke="#E7EEF8" stroke-width="2"></polygon><polygon points="110,60 145,80 145,120 110,140 75,120 75,80" fill="none" stroke="#E7EEF8" stroke-width="2"></polygon><polygon class="val" points="110,27 167,67 172,145 110,135 69,124 55,63" fill="rgba(240,88,74,.25)" stroke="#F0584A" stroke-width="3" stroke-linejoin="round"></polygon><text x="110" y="13" text-anchor="middle" font-size="11" font-weight="800" fill="#52627F" font-family="Nunito">HP 117</text><text x="190" y="58" font-size="11" font-weight="800" fill="#D6372A" font-family="Nunito">Atk 70</text><text x="190" y="148" font-size="11" font-weight="800" fill="#52627F" font-family="Nunito">Def 80</text><text x="110" y="196" text-anchor="middle" font-size="11" font-weight="800" fill="#2360C8" font-family="Nunito">Spe 96</text><text x="2" y="148" font-size="11" font-weight="800" fill="#52627F" font-family="Nunito">SpD 81</text><text x="2" y="58" font-size="11" font-weight="800" fill="#52627F" font-family="Nunito">SpA 123</text></svg>
+<div class="stats"><span></span><span></span><span style="font-size: 10px; font-weight: 800; color: #52627F; text-align: right">TOT</span><span style="font-size: 10px; font-weight: 800; color: #52627F; text-align: right">IV</span><span style="font-size: 10px; font-weight: 800; color: #52627F; text-align: right">EV</span>
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="6"><span style="color: {{ s.markColor }}; font-weight: 800">{{ s.mark }}</span><span>{{ s.label }}</span><span style="text-align: right; font-family: Fredoka, sans-serif; color: {{ s.markColor }}">{{ s.total }}</span><span style="text-align: right; font-family: Fredoka, sans-serif; color: {{ s.ivColor }}">{{ s.iv }}</span><input class="ev" type="number" value="{{ s.ev }}" step="4" aria-label="{{ s.label }} effort"></input></sc-for>
+</div>
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 6px"><span style="font-size: 11px; color: #52627F">Remaining: 210</span><button class="btn" style="height: 30px">Undo</button><button class="btn go" style="height: 30px">Save</button></div>
+</div>
+</div>
+<div class="col">
+<div class="card" style="animation-delay: 60ms; display: flex; flex-direction: column; gap: 8px"><span class="h3">Moves <span class="hint">?</span><span style="flex-grow: 1"></span><span style="text-transform: none; letter-spacing: 0; font-weight: 700">Drag to reorder</span></span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{ moves }}" as="m" hint-placeholder-count="4"><div class="move"><span class="type" style="background: {{ m.color }}"></span><span style="font-weight: 800; font-size: 14px">{{ m.name }}</span><span style="font-size: 11px; color: #52627F">{{ m.meta }}</span></div></sc-for>
+<div class="move empty">+ Empty slot</div><div class="move locked">Locked slot</div>
+</div></div>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 10px">
+<div class="card" style="animation-delay: 120ms; display: flex; flex-direction: column; gap: 6px"><span class="h3">Abilities <span class="hint">?</span></span><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px"><span class="slot">Blaze</span><span class="slot" style="background: #EFE8FB; border-color: #CDBDF2; color: #4E2F9E">Ember Halo</span><span class="slot empty">Empty slot</span><span class="slot locked">Locked slot</span></div></div>
+<div class="card" style="animation-delay: 160ms; display: flex; flex-direction: column; gap: 6px"><span class="h3">Held items <span class="hint">?</span></span><div style="display: flex; gap: 6px"><span class="item" title="Charcoal"><span style="width: 26px; height: 26px; border-radius: 6px; background: #3A3F4B"></span></span><span class="item" style="border-style: dashed; color: #52627F; font-weight: 800">+</span><span class="item" style="border-style: dashed; background: #F4F7FC"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9AA8C0" stroke-width="2.5" role="img" aria-label="Locked slot"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span></div></div>
+</div>
+</div>
+<div class="col">
+<div class="card" style="animation-delay: 200ms; display: flex; flex-direction: column; gap: 8px; align-items: center"><span class="h3" style="align-self: flex-start">Evolves into</span>
+<div class="evo"><span class="pic" style="background: #F0584A"></span><span style="font-size: 12px; font-weight: 800">Charmander</span></div><span class="arrow"></span>
+<div class="evo"><span class="pic ready" style="background: #F7A06A"></span><span style="font-size: 12px; font-weight: 800">Charmeleon · <span style="color: #1E8F52">ready</span></span></div>
+<button class="btn go" style="align-self: stretch">Evolve</button>
+</div>
+<div class="card" style="animation-delay: 240ms; display: flex; flex-direction: column; gap: 6px"><span class="h3">Origin</span><span style="font-size: 12px; line-height: 17px; color: #52627F">Caught by you in a Great Ball, Shellford Town, 20 Aug 2026</span><button class="btn" style="height: 34px">History (3)</button></div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const rows = [['HP', 117, 22, 0, ''], ['Attack', 70, 31, 64, '▲'], ['Defense', 80, 9, 0, ''], ['Sp. Atk', 123, 28, 128, ''], ['Sp. Def', 81, 14, 0, ''], ['Speed', 96, 30, 60, '▼']];
+    return {
+      stats: rows.map(([label, total, iv, ev, mark]) => ({
+        label, total, iv, ev, mark,
+        markColor: mark === '▲' ? '#D6372A' : mark === '▼' ? '#2360C8' : '#14203A',
+        ivColor: iv === 31 ? '#C98A0A' : '#52627F',
+      })),
+      moves: [
+        { name: 'Flamethrower', meta: 'Fire · Special · 90 · 15 PP', color: '#F0584A' },
+        { name: 'Dragon Pulse', meta: 'Dragon · Special · 85 · 10 PP', color: '#6E46C9' },
+        { name: 'Slash', meta: 'Normal · Physical · 70 · 20 PP', color: '#9AA8C0' },
+        { name: 'Smokescreen', meta: 'Normal · Status · 20 PP', color: '#9AA8C0' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@ import {
 import { m } from '../../i18n/paraglide/messages.js';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
-import { SHEER } from './transition';
+import { DROP, dropOrigin } from './transition';
 
 /**
  * A short list of things that can be done to whatever is on screen,
@@ -126,7 +126,7 @@ export default function Menu(props: MenuProps): JSX.Element {
           floating.refs.setReference(element);
         }}
         aria-label={props.icon == null && props.face == null ? undefined : props.label}
-        class={`inline-flex items-center gap-1.5 rounded-xl border-2 py-1 text-sm shadow-pop-sm
+        class={`inline-flex items-center gap-1.5 rounded-button border-2 py-1 text-sm shadow-pop-sm
           transition-colors focus-visible:outline-2
           focus-visible:outline-offset-2 focus-visible:outline-tide ${look()} ${props.icon == null ? 'px-3' : 'px-2'}`}
       >
@@ -154,12 +154,17 @@ export default function Menu(props: MenuProps): JSX.Element {
                 }
           }
         >
-          <Transition show={open()} {...SHEER} class={asSheet() ? 'w-full' : 'w-max'}>
+          {/* Grown out of the button's side, or up from the bottom edge as a sheet */}
+          <Transition
+            show={open()}
+            {...DROP}
+            class={asSheet() ? 'w-full origin-bottom' : `w-max ${dropOrigin(floating.placement)}`}
+          >
             <PopoverPanel
               class={
                 asSheet()
                   ? 'max-h-[80vh] overflow-y-auto rounded-t-3xl border-2 border-b-0 border-line bg-paper px-3 pt-2 pb-4 shadow-float'
-                  : 'max-h-[var(--drop-room,24rem)] min-w-44 overflow-y-auto rounded-xl border-2 border-line bg-paper p-1 shadow-float'
+                  : 'max-h-[var(--drop-room,24rem)] min-w-44 overflow-y-auto rounded-button border-2 border-line bg-paper p-1 shadow-float'
               }
             >
               <Show when={asSheet()}>

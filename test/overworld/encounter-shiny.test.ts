@@ -23,7 +23,13 @@ describe('deriveShiny', () => {
           for (const shinyBoost of [1, 512]) {
             for (const type of [EncounterType.Wild, EncounterType.TotemRaid]) {
               const options = { type, weather, shinyBoost };
-              const shiny = deriveShiny(species, traitValue, snapshot.timestamp, 'player-uid', options);
+              const shiny = deriveShiny(
+                species,
+                traitValue,
+                snapshot.timestamp,
+                'player-uid',
+                options,
+              );
 
               expect(shiny).toBe(
                 deriveEncounter(snapshot, [species, 1, traitValue], 'player-uid', options).shiny,

@@ -32,7 +32,7 @@ const TONES: Record<CellNoteTone, string> = {
   neutral: 'border-tide bg-paper text-ink',
   leaf: 'border-leaf bg-leaf-soft text-leaf-dark',
   ember: 'border-ember bg-ember-soft text-ember-dark',
-  gold: 'border-gold bg-gold-soft text-gold',
+  gold: 'border-gold bg-gold-soft text-gold-dark',
   arcane: 'border-arcane bg-arcane-soft text-arcane',
 };
 

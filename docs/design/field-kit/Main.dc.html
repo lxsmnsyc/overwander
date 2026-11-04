@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Field Kit: the Overwander design system</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#2360C8}a:hover{color:#163F86}
+.fk-btn{font-family:Nunito,sans-serif;font-weight:800;font-size:14px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:10px 18px;min-height:44px;box-shadow:0 3px 0 0 rgba(20,32,58,.22);cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms cubic-bezier(.2,.8,.2,1),border-color 140ms,background 140ms}
+.fk-btn:hover{border-color:#2360C8;transform:translateY(-1px);box-shadow:0 4px 0 0 rgba(20,32,58,.22)}
+.fk-btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:0 0 0 0 rgba(20,32,58,.22)}
+.fk-btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.fk-btn.go:hover{background:#21A05C}
+.fk-btn.go:active{box-shadow:0 0 0 0 #0F5430}
+.fk-btn.stop{background:#D6372A;border-color:#A8261C;color:#fff;box-shadow:0 3px 0 0 #7E1B13}
+.fk-btn.stop:active{box-shadow:0 0 0 0 #7E1B13}
+.fk-btn.chrome{background:#2360C8;border-color:#163F86;color:#fff;box-shadow:0 3px 0 0 #102E63}
+.fk-btn.chrome:active{box-shadow:0 0 0 0 #102E63}
+.fk-lane{position:relative;height:28px;border-radius:14px;background:#E7EEF8;overflow:hidden}
+.fk-dot{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:10px;background:#2360C8}
+.e-settle{animation:fk-run 1800ms cubic-bezier(.2,.8,.2,1) infinite alternate}
+.e-spring{animation:fk-run 1800ms cubic-bezier(.34,1.56,.64,1) infinite alternate;background:#1E8F52}
+.e-exit{animation:fk-run 1800ms cubic-bezier(.5,0,.75,0) infinite alternate;background:#D6372A}
+.e-step{animation:fk-run 1800ms steps(6,end) infinite alternate;background:#C98A0A}
+@keyframes fk-run{0%,15%{left:4px}85%,100%{left:calc(100% - 24px)}}
+.tabs{position:relative;display:flex;gap:4px;padding:4px;border-radius:999px;background:#E7EEF8;border:2px solid #C3D2E8;width:max-content}
+.tabs-ind{position:absolute;top:4px;left:4px;height:36px;width:92px;border-radius:999px;background:#2360C8;box-shadow:0 2px 0 0 #102E63;animation:fk-tab 3600ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes fk-tab{0%,28%{transform:translateX(0)}33%,61%{transform:translateX(96px)}66%,94%{transform:translateX(192px)}100%{transform:translateX(0)}}
+.tab{position:relative;z-index:1;width:92px;height:36px;border:0;background:transparent;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;color:#52627F;border-radius:999px;cursor:pointer}
+.plate{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 18px 0 6px;border-radius:999px;background:#2360C8;color:#fff;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;box-shadow:0 3px 0 0 #102E63;animation:fk-plate 2800ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes fk-plate{0%{transform:translateX(-24px);opacity:0}14%,86%{transform:translateX(0);opacity:1}100%{transform:translateX(0);opacity:1}}
+.count{display:inline-block;animation:fk-roll 2400ms cubic-bezier(.34,1.56,.64,1) infinite}
+@keyframes fk-roll{0%,40%{transform:translateY(0)}50%{transform:translateY(-6px)}60%,100%{transform:translateY(0)}}
+.hp{position:relative;height:12px;border-radius:6px;background:#E7EEF8;overflow:hidden;border:2px solid #C3D2E8}
+.hp-ghost{position:absolute;left:0;top:0;bottom:0;background:#F2B33D;animation:fk-ghost 3200ms cubic-bezier(.2,.8,.2,1) infinite}
+.hp-fill{position:absolute;left:0;top:0;bottom:0;background:#1E8F52;animation:fk-hit 3200ms cubic-bezier(.2,.8,.2,1) infinite}
+@keyframes fk-hit{0%,20%{width:82%}24%,100%{width:46%}}
+@keyframes fk-ghost{0%,30%{width:82%}70%,100%{width:46%}}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1240px; box-sizing: border-box; padding: 64px 72px; background: #EEF4FC; font-family: Nunito, sans-serif; color: #14203A; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 48px">
+<div style="display: flex; flex-direction: column; gap: 12px; max-width: 760px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Overwander design system</div>
+<h1 style="margin: 0; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 64px; line-height: 64px; letter-spacing: -.01em">Field Kit</h1>
+<p style="margin: 0; font-size: 18px; line-height: 28px; color: #52627F">The world is the screen; the interface is the gear a trainer carries. Every panel is an object with weight: it comes out of the button that opened it, lands with a small bounce, and goes back where it came from. Colour only ever means something.</p>
+</div>
+<div style="display: flex; gap: 12px">
+<button class="fk-btn">Press me</button>
+<button class="fk-btn go">Throw</button>
+<button class="fk-btn stop">Release</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px">
+<div style="background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 18px; box-shadow: 0 3px 0 0 rgba(20,32,58,.12)"><div style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">The world first</div><p style="margin: 8px 0 0; font-size: 14px; line-height: 21px; color: #52627F">Chrome hugs the edges. Nothing sits over the middle of the board unless the player asked for it.</p></div>
+<div style="background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 18px; box-shadow: 0 3px 0 0 rgba(20,32,58,.12)"><div style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">Things have weight</div><p style="margin: 8px 0 0; font-size: 14px; line-height: 21px; color: #52627F">Hard shadows, a 2px keyline, buttons that squash and land. A press is felt before it is read.</p></div>
+<div style="background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 18px; box-shadow: 0 3px 0 0 rgba(20,32,58,.12)"><div style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">Motion has an origin</div><p style="margin: 8px 0 0; font-size: 14px; line-height: 21px; color: #52627F">A panel grows out of what opened it and returns to it. Exits are faster than entrances.</p></div>
+<div style="background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 18px; box-shadow: 0 3px 0 0 rgba(20,32,58,.12)"><div style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">Colour is a word</div><p style="margin: 8px 0 0; font-size: 14px; line-height: 21px; color: #52627F">Blue frames, green offers, red cannot be undone, gold is worth something, violet is channelled.</p></div>
+<div style="background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 18px; box-shadow: 0 3px 0 0 rgba(20,32,58,.12)"><div style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px">Pixels stay pixels</div><p style="margin: 8px 0 0; font-size: 14px; line-height: 21px; color: #52627F">Sprites are never smoothed or scaled by fractions. Only sprite moments use stepped timing.</p></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Colour, day and night</div>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #2360C8"></div><div style="height: 28px; border-radius: 8px; background: #4A8BF0"></div><div style="font-size: 12px; font-weight: 800">Tide</div><div style="font-size: 11px; color: #52627F">frames, place, focus</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #1E8F52"></div><div style="height: 28px; border-radius: 8px; background: #36B26F"></div><div style="font-size: 12px; font-weight: 800">Leaf</div><div style="font-size: 11px; color: #52627F">offers, go, health</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #D6372A"></div><div style="height: 28px; border-radius: 8px; background: #F0584A"></div><div style="font-size: 12px; font-weight: 800">Ember</div><div style="font-size: 11px; color: #52627F">irreversible, damage</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #F2B33D"></div><div style="height: 28px; border-radius: 8px; background: #F7C969"></div><div style="font-size: 12px; font-weight: 800">Gold</div><div style="font-size: 11px; color: #52627F">value, wind-up</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #6E46C9"></div><div style="height: 28px; border-radius: 8px; background: #9C7BF0"></div><div style="font-size: 12px; font-weight: 800">Arcane</div><div style="font-size: 11px; color: #52627F">channelled, rare</div></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 56px; border-radius: 12px; background: #fff; border: 2px solid #C3D2E8; box-sizing: border-box"></div><div style="height: 28px; border-radius: 8px; background: #141C33"></div><div style="font-size: 12px; font-weight: 800">Paper</div><div style="font-size: 11px; color: #52627F">panels, day / night</div></div>
+</div>
+<div style="font-size: 13px; color: #52627F; line-height: 20px">Top swatch is day, bottom is night. Fills keep their hue at night and gain light; text on any fill is white, except on Gold, which takes ink.</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Type</div>
+<div style="display: flex; flex-direction: column; gap: 8px; background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 20px">
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 92px; font-size: 11px; font-weight: 800; color: #52627F">DISPLAY 40</span><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 40px; line-height: 44px">Victory!</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 92px; font-size: 11px; font-weight: 800; color: #52627F">TITLE 22</span><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 22px">Charmander ♂ · Lv. 41</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 92px; font-size: 11px; font-weight: 800; color: #52627F">BODY 15</span><span style="font-size: 15px; line-height: 22px">Its tail flame flares when it lands a critical hit.</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 92px; font-size: 11px; font-weight: 800; color: #52627F">LABEL 12</span><span style="font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #2360C8">Base stats</span></div>
+<div style="display: flex; align-items: baseline; gap: 16px"><span style="width: 92px; font-size: 11px; font-weight: 800; color: #52627F">NUMBER</span><span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 22px; font-variant-numeric: tabular-nums">12,500 <span style="color: #52627F; font-size: 14px">gold</span></span></div>
+<div style="font-size: 13px; color: #52627F; line-height: 20px">Fredoka for anything that is a name or a number; Nunito for everything read. Japanese falls back to Hiragino Maru Gothic, so both scripts stay round.</div>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Pieces</div>
+<div style="display: flex; flex-direction: column; gap: 18px; background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 22px">
+<div style="display: flex; align-items: center; gap: 16px"><span class="plate"><span style="width: 28px; height: 28px; border-radius: 14px; background: #fff; display: inline-block; box-shadow: inset 0 -12px 0 0 #D6372A"></span>Pokédex</span><span style="font-size: 13px; color: #52627F">Nameplate slides in after the sheet lands</span></div>
+<div class="tabs"><span class="tabs-ind"></span><button class="tab" style="color: #fff">Level</button><button class="tab">Machines</button><button class="tab">Egg</button></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 800"><span>HP</span><span style="font-family: Fredoka, sans-serif">46 / 100</span></div><div class="hp"><div class="hp-ghost"></div><div class="hp-fill"></div></div><div style="font-size: 12px; color: #52627F">Damage leaves a gold trail that drains after the hit, so a big hit reads as big</div></div>
+<div style="display: flex; gap: 8px; align-items: center"><span style="padding: 4px 10px; border-radius: 999px; background: #E3F3EA; color: #156B3D; font-size: 12px; font-weight: 800; border: 2px solid #A9DCC0">Caught <span class="count">412</span></span><span style="padding: 4px 10px; border-radius: 999px; background: #FFF3D6; color: #7A5300; font-size: 12px; font-weight: 800; border: 2px solid #F2D58F">12,500 gold</span><span style="padding: 4px 10px; border-radius: 999px; background: #EFE8FB; color: #4E2F9E; font-size: 12px; font-weight: 800; border: 2px solid #CDBDF2">Shiny</span><span style="font-size: 12px; color: #52627F">counts hop when they change</span></div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Motion tokens</div>
+<div style="display: flex; flex-direction: column; gap: 12px; background: #fff; border: 2px solid #C3D2E8; border-radius: 18px; padding: 22px">
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; gap: 12px; align-items: center"><span style="font-size: 13px; font-weight: 800">settle</span><div class="fk-lane"><span class="fk-dot e-settle"></span></div><span style="font-size: 12px; color: #52627F">.2 .8 .2 1 · most moves</span></div>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; gap: 12px; align-items: center"><span style="font-size: 13px; font-weight: 800">spring</span><div class="fk-lane"><span class="fk-dot e-spring"></span></div><span style="font-size: 12px; color: #52627F">.34 1.56 .64 1 · arrivals</span></div>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; gap: 12px; align-items: center"><span style="font-size: 13px; font-weight: 800">exit</span><div class="fk-lane"><span class="fk-dot e-exit"></span></div><span style="font-size: 12px; color: #52627F">.5 0 .75 0 · leaving</span></div>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr) 150px; gap: 12px; align-items: center"><span style="font-size: 13px; font-weight: 800">pixel</span><div class="fk-lane"><span class="fk-dot e-step"></span></div><span style="font-size: 12px; color: #52627F">steps(6) · sprites only</span></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 6px">
+<div style="background: #F4F7FC; border-radius: 10px; padding: 8px 10px"><div style="font-family: Fredoka, sans-serif; font-size: 18px; font-weight: 600">90</div><div style="font-size: 11px; color: #52627F">tap · press</div></div>
+<div style="background: #F4F7FC; border-radius: 10px; padding: 8px 10px"><div style="font-family: Fredoka, sans-serif; font-size: 18px; font-weight: 600">140</div><div style="font-size: 11px; color: #52627F">quick · hover</div></div>
+<div style="background: #F4F7FC; border-radius: 10px; padding: 8px 10px"><div style="font-family: Fredoka, sans-serif; font-size: 18px; font-weight: 600">240</div><div style="font-size: 11px; color: #52627F">base · panels</div></div>
+<div style="background: #F4F7FC; border-radius: 10px; padding: 8px 10px"><div style="font-family: Fredoka, sans-serif; font-size: 18px; font-weight: 600">360</div><div style="font-size: 11px; color: #52627F">move · sheets</div></div>
+<div style="background: #F4F7FC; border-radius: 10px; padding: 8px 10px"><div style="font-family: Fredoka, sans-serif; font-size: 18px; font-weight: 600">560</div><div style="font-size: 11px; color: #52627F">scene · battle</div></div>
+</div>
+<div style="font-size: 12px; color: #52627F; line-height: 18px">Milliseconds. An exit takes 70% of its entrance. Lists stagger 30ms a row, six rows at most. Reduce motion turns every move into a 120ms crossfade.</div>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Radius</div><div style="display: flex; gap: 8px; align-items: flex-end"><div style="width: 40px; height: 40px; border: 2px solid #2360C8; border-radius: 8px"></div><div style="width: 48px; height: 48px; border: 2px solid #2360C8; border-radius: 12px"></div><div style="width: 56px; height: 56px; border: 2px solid #2360C8; border-radius: 18px"></div><div style="width: 64px; height: 64px; border: 2px solid #2360C8; border-radius: 24px"></div></div><div style="font-size: 12px; color: #52627F">8 chip · 12 button · 18 card · 24 sheet</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Elevation</div><div style="display: flex; gap: 14px; align-items: flex-end"><div style="width: 56px; height: 40px; background: #fff; border: 2px solid #C3D2E8; border-radius: 12px; box-shadow: 0 2px 0 0 rgba(20,32,58,.18)"></div><div style="width: 56px; height: 40px; background: #fff; border: 2px solid #C3D2E8; border-radius: 12px; box-shadow: 0 4px 0 0 rgba(20,32,58,.2), 0 14px 24px -14px rgba(20,32,58,.5)"></div><div style="width: 56px; height: 40px; background: #fff; border: 2px solid #C3D2E8; border-radius: 12px; box-shadow: 0 6px 0 0 rgba(16,46,99,.3), 0 28px 48px -18px rgba(20,32,58,.6)"></div></div><div style="font-size: 12px; color: #52627F">rest · float · sheet: a hard edge plus a cast</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Spacing</div><div style="display: flex; gap: 6px; align-items: flex-end"><div style="width: 4px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 8px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 12px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 16px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 24px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 32px; height: 24px; background: #2360C8; border-radius: 2px"></div><div style="width: 48px; height: 24px; background: #2360C8; border-radius: 2px"></div></div><div style="font-size: 12px; color: #52627F">4-pixel grid, the board's own unit</div></div>
+<div style="display: flex; flex-direction: column; gap: 8px"><div style="font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #2360C8">Targets</div><div style="display: flex; gap: 8px; align-items: center"><div style="width: 44px; height: 44px; border-radius: 12px; border: 2px dashed #2360C8; box-sizing: border-box"></div><span style="font-size: 13px; line-height: 19px; color: #52627F">44px for anything pressed, on any screen; squares in a grid are 56px.</span></div></div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1240}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

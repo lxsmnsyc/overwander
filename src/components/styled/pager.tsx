@@ -68,7 +68,7 @@ export function createPager<T>(
           >
             <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
-          <Meta class="tabular-nums">
+          <Meta class="font-display tabular-nums">
             {options?.range === true
               ? m.pager_range({
                   page: page() + 1,

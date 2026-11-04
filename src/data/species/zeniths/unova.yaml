@@ -4,7 +4,6 @@
 # a test, and wears an `ability` the line can never be born with.
 # Everything not written here is read off `base`.
 
-
 # The victory pokemon only gathers pace as the fight goes on
 VictiniZenith:
   base: Victini
@@ -204,7 +203,8 @@ DarmanitanZenith:
   forms:
     DarmanitanZenZenith:
       base: DarmanitanZen
-      stats: { HP: 105, Attack: 30, Defense: 120, SpecialAttack: 175, SpecialDefense: 120, Speed: 90 }
+      stats:
+        { HP: 105, Attack: 30, Defense: 120, SpecialAttack: 175, SpecialDefense: 120, Speed: 90 }
 
 # Its spines cut whatever touches it
 MaractusZenith:
@@ -562,10 +562,12 @@ KyuremZenith:
   forms:
     KyuremBlackZenith:
       base: KyuremBlack
-      stats: { HP: 125, Attack: 200, Defense: 115, SpecialAttack: 120, SpecialDefense: 110, Speed: 130 }
+      stats:
+        { HP: 125, Attack: 200, Defense: 115, SpecialAttack: 120, SpecialDefense: 110, Speed: 130 }
     KyuremWhiteZenith:
       base: KyuremWhite
-      stats: { HP: 125, Attack: 120, Defense: 110, SpecialAttack: 200, SpecialDefense: 115, Speed: 130 }
+      stats:
+        { HP: 125, Attack: 120, Defense: 110, SpecialAttack: 200, SpecialDefense: 115, Speed: 130 }
 
 # The colt's critical hits land with everything behind them
 KeldeoZenith:
@@ -589,4 +591,5 @@ MeloettaZenith:
   forms:
     MeloettaPirouetteZenith:
       base: MeloettaPirouette
-      stats: { HP: 100, Attack: 158, Defense: 100, SpecialAttack: 77, SpecialDefense: 97, Speed: 168 }
+      stats:
+        { HP: 100, Attack: 158, Defense: 100, SpecialAttack: 77, SpecialDefense: 97, Speed: 168 }

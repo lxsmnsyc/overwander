@@ -1,69 +1,116 @@
 /**
- * How everything that floats over the game arrives and leaves.
- *
- * A dialog, a tooltip, a hover card and the list a filter drops are
- * all the same event — something appearing on top of what the player
- * was looking at — so they all fade rather than each picking their
- * own way in. Spread one into terracotta's `Transition`:
+ * How everything that floats over the game arrives and leaves, in the
+ * Field Kit's motion: a thing comes out of what opened it on a spring,
+ * and leaves on the exit curve in 70% of the time it took to arrive.
+ * Spread one into terracotta's `Transition` or `TransitionChild`:
  *
  * ```tsx
- * <Transition show={isOpen} {...FADE}>…</Transition>
+ * <TransitionChild {...FADE}>…</TransitionChild>
  * ```
  *
- * There are two. `FADE` fades and grows, and belongs to a **dialog's
- * panel**. `SHEER` is the same fade with nothing else in it, and is
- * what everything else takes: the veil behind a dialog, a tooltip or
- * card placed against the window, and anything dropped from a control
- * it is attached to — a popover, a listbox, a combobox.
+ * | preset | for                                           |
+ * | ------ | --------------------------------------------- |
+ * | FADE   | a dialog's panel: it springs in and grows     |
+ * | SHEER  | a veil behind a dialog: opacity alone         |
+ * | DROP   | a list or a menu hung from its button         |
+ * | RISE   | a card placed against the window              |
  *
- * The element it is spread onto has to be the one the portal already
- * contains, since opacity on an ancestor does not reach through a
- * portal to what was drawn somewhere else.
+ * The resting state (`entered`) never carries a scale or a translate.
+ * Either one makes the element the containing block for anything
+ * `fixed` inside it, which put a hover card a whole viewport down the
+ * page.
  *
- * Somebody who has asked for less motion gets a fade too short to
- * read rather than none at all, so that what is on screen still
- * arrives and leaves the way the rest of the game does.
+ * Every preset is marked `motion-crossfade`, and its distances are CSS
+ * variables, so reduce motion (in `src/app.css`) turns each of them
+ * into a 120ms fade.
  */
 
-/**
- * The same arrival with the scale taken out: opacity alone.
- *
- * A veil behind a dialog has no edges to grow from, and a list
- * dropped from a button grows from the button rather than from
- * itself. It also keeps a transform off anything placed against the
- * window: a transform makes the element the containing block for
- * whatever is fixed inside it, which put a hover card a whole
- * viewport down the page
- */
+/** Opacity alone, for the veil behind a dialog */
 export const SHEER = {
-  enter: 'transition-opacity duration-250 ease-out motion-reduce:duration-75',
+  enter: 'motion-crossfade transition-opacity duration-(--motion-base) ease-settle',
   enterFrom: 'opacity-0',
   enterTo: 'opacity-100',
   /** The resting state, once the fade in is over */
   entered: 'opacity-100',
-  leave: 'transition-opacity duration-250 ease-in motion-reduce:duration-75',
+  leave: 'motion-crossfade transition-opacity duration-(--motion-base-exit) ease-exit',
   leaveFrom: 'opacity-100',
   leaveTo: 'opacity-0',
 } as const;
 
 /**
- * The arrival for a dialog's panel: it fades and grows from half its
- * size. Everything else takes `SHEER`.
- *
- * The property is `scale` rather than `transform`, because that is
- * what Tailwind's `scale-*` sets; a transition naming `transform`
- * animates nothing and the panel appears at full size. Both are named
- * in one `transition-[…]`, since two utilities each naming one are
- * settled by the order Tailwind emits them in
+ * A list or a menu hung from its button: it grows out of the button's
+ * side on a spring. Pair it with `dropOrigin(placement)` on the same
+ * element, so it grows from the button rather than from its own middle
+ */
+export const DROP = {
+  enter: 'motion-crossfade transition-[opacity,scale] duration-(--motion-base) ease-spring',
+  enterFrom: 'opacity-0 scale-(--motion-drop)',
+  enterTo: 'opacity-100 scale-100',
+  entered: 'opacity-100',
+  leave: 'motion-crossfade transition-[opacity,scale] duration-(--motion-base-exit) ease-exit',
+  leaveFrom: 'opacity-100 scale-100',
+  leaveTo: 'opacity-0 scale-(--motion-drop)',
+} as const;
+
+/** A card placed against the window: it rises a few pixels as it fades in */
+export const RISE = {
+  enter: 'motion-crossfade transition-[opacity,translate] duration-(--motion-quick) ease-settle',
+  enterFrom: 'opacity-0 translate-y-(--motion-rise)',
+  enterTo: 'opacity-100 translate-y-0',
+  entered: 'opacity-100',
+  leave: 'motion-crossfade transition-[opacity,translate] duration-(--motion-quick-exit) ease-exit',
+  leaveFrom: 'opacity-100 translate-y-0',
+  leaveTo: 'opacity-0 translate-y-(--motion-rise)',
+} as const;
+
+/**
+ * Where a dropped list grows from, by Floating UI's placement: the
+ * corner or the edge that touches its button. Written out whole so
+ * Tailwind sees each class
+ */
+const ORIGINS: Record<string, string> = {
+  bottom: 'origin-top',
+  'bottom-start': 'origin-top-left',
+  'bottom-end': 'origin-top-right',
+  top: 'origin-bottom',
+  'top-start': 'origin-bottom-left',
+  'top-end': 'origin-bottom-right',
+  left: 'origin-right',
+  'left-start': 'origin-top-right',
+  'left-end': 'origin-bottom-right',
+  right: 'origin-left',
+  'right-start': 'origin-top-left',
+  'right-end': 'origin-bottom-left',
+};
+
+export function dropOrigin(placement: string): string {
+  return ORIGINS[placement] ?? 'origin-top';
+}
+
+/**
+ * A dialog's panel: it springs in from a little under its size and
+ * leaves on the exit curve. The scale is the `scale` property, which
+ * is what Tailwind's `scale-*` sets; a transition naming `transform`
+ * would animate nothing
  */
 const FADE = {
-  enter: 'transition-[opacity,scale] duration-250 ease-out motion-reduce:duration-75',
-  enterFrom: 'opacity-0 scale-50',
+  enter: 'motion-crossfade transition-[opacity,scale] duration-(--motion-move) ease-spring',
+  enterFrom: 'opacity-0 scale-(--motion-grow)',
   enterTo: 'opacity-100 scale-100',
-  entered: 'opacity-100 scale-100',
-  leave: 'transition-[opacity,scale] duration-250 ease-in motion-reduce:duration-75',
+  entered: 'opacity-100',
+  leave: 'motion-crossfade transition-[opacity,scale] duration-(--motion-move-exit) ease-exit',
   leaveFrom: 'opacity-100 scale-100',
-  leaveTo: 'opacity-0 scale-50',
+  leaveTo: 'opacity-0 scale-(--motion-grow)',
+} as const;
+
+/**
+ * The same, for a panel that grows out of the control that opened it:
+ * it starts as a speck at that control and returns to it on close
+ */
+export const GROW = {
+  ...FADE,
+  enterFrom: 'opacity-0 scale-(--motion-grow-origin)',
+  leaveTo: 'opacity-0 scale-(--motion-grow-origin)',
 } as const;
 
 export default FADE;

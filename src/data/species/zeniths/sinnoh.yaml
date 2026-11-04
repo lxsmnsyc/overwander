@@ -4,7 +4,6 @@
 # a test, and wears an `ability` the line can never be born with.
 # Everything not written here is read off `base`.
 
-
 # The continent on its back turns aside the hits that should break it
 TorterraZenith:
   base: Torterra
@@ -87,7 +86,8 @@ WormadamZenith:
   forms:
     WormadamSandyZenith:
       base: WormadamSandy
-      stats: { HP: 60, Attack: 110, Defense: 124, SpecialAttack: 72, SpecialDefense: 110, Speed: 48 }
+      stats:
+        { HP: 60, Attack: 110, Defense: 124, SpecialAttack: 72, SpecialDefense: 110, Speed: 48 }
     WormadamTrashZenith:
       base: WormadamTrash
       stats: { HP: 60, Attack: 94, Defense: 120, SpecialAttack: 94, SpecialDefense: 108, Speed: 48 }
@@ -146,7 +146,8 @@ GastrodonZenith:
   forms:
     GastrodonEastZenith:
       base: GastrodonEast
-      stats: { HP: 111, Attack: 83, Defense: 93, SpecialAttack: 105, SpecialDefense: 113, Speed: 70 }
+      stats:
+        { HP: 111, Attack: 83, Defense: 93, SpecialAttack: 105, SpecialDefense: 113, Speed: 70 }
 
 # Its tail hands hit harder on contact
 AmbipomZenith:
@@ -398,19 +399,24 @@ RotomZenith:
   forms:
     RotomHeatZenith:
       base: RotomHeat
-      stats: { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
+      stats:
+        { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
     RotomWashZenith:
       base: RotomWash
-      stats: { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
+      stats:
+        { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
     RotomFrostZenith:
       base: RotomFrost
-      stats: { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
+      stats:
+        { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
     RotomFanZenith:
       base: RotomFan
-      stats: { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
+      stats:
+        { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
     RotomMowZenith:
       base: RotomMow
-      stats: { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
+      stats:
+        { HP: 50, Attack: 65, Defense: 126, SpecialAttack: 136, SpecialDefense: 126, Speed: 117 }
 
 # The being of knowledge turns aside every trick
 UxieZenith:

@@ -35,7 +35,8 @@ export interface RadioGroupProps<V> {
 
 const OPTION =
   'flex cursor-pointer items-start gap-2 rounded-xl border-2 border-line bg-paper px-3 py-2' +
-  ' text-sm shadow-pop-sm transition-colors hover:border-tide aria-checked:border-leaf' +
+  ' text-sm shadow-pop-sm transition-colors duration-(--motion-quick) hover:border-tide' +
+  ' aria-checked:border-leaf' +
   ' aria-checked:bg-leaf-soft aria-disabled:cursor-not-allowed aria-disabled:opacity-70' +
   ' aria-disabled:hover:border-line focus-visible:outline-2 focus-visible:outline-offset-2' +
   ' focus-visible:outline-tide';

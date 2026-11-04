@@ -17,7 +17,7 @@ import {
   Transition,
   TransitionChild,
 } from 'terracotta';
-import FADE, { SHEER } from './transition';
+import FADE, { GROW, SHEER } from './transition';
 import { PortalHost, usePortalHost } from './portal-host';
 
 /**
@@ -60,7 +60,7 @@ const PLACE = 'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2';
  * outside it rather than being clipped by it
  */
 const SHEET =
-  'relative overflow-y-auto rounded-[22px] border-2 border-line bg-paper px-4 text-left' +
+  'relative overflow-y-auto rounded-sheet border-2 border-line bg-paper px-4 text-left' +
   ' shadow-sheet sm:px-5';
 const PANEL = `${SHEET} max-h-[84vh]`;
 
@@ -72,14 +72,14 @@ const PANEL = `${SHEET} max-h-[84vh]`;
 const SHEET_PANEL = `${SHEET} max-h-[92vh] md:h-[min(92vh,46rem)] md:overflow-hidden`;
 
 /**
- * The name box, sat across the top edge the way a handheld names who
- * is talking. Its edge and drop are dark in both themes, since the blue
- * under them is the same by day and by night
+ * The nameplate, a tide pill across the top edge the way a handheld
+ * names who is talking. It slides in from the left 120ms after the
+ * sheet starts, so it lands once the sheet has
  */
 const PLATE =
-  'absolute top-0 left-4 z-30 flex max-w-[calc(100%-2rem)] items-center gap-2 rounded-xl' +
-  ' border-2 border-black/25 bg-tide py-1 pr-3 text-on-accent' +
-  ' shadow-[0_3px_0_0_rgb(0_0_0/0.25)]';
+  'motion-crossfade absolute top-0 left-4 z-30 flex max-w-[calc(100%-2rem)] items-center gap-2' +
+  ' rounded-full bg-tide py-1.5 pr-4 text-on-accent shadow-[0_3px_0_0_var(--blue-shade)]' +
+  ' animate-[plate-in_var(--motion-base)_var(--ease-spring)_120ms_both]';
 
 /**
  * The panel's vertical padding, which lives on the **content** rather
@@ -229,6 +229,33 @@ export interface DialogProps extends ParentProps {
    * scrolling. The caller's content has to fit
    */
   layout?: 'page' | 'sheet';
+  /**
+   * The control that opened the dialog. The panel grows out of it and
+   * shrinks back into it on close; without one it springs in from its
+   * own middle. Read as the panel opens, so a signal holding the element
+   * works
+   */
+  origin?: Element | null;
+}
+
+/**
+ * Point a centred panel's transform origin at the control it grows
+ * from. The panel's own size is read unscaled (`offsetWidth`), since it
+ * is mid-scale when this runs
+ */
+function aimAt(panel: HTMLElement, origin: Element | null | undefined): void {
+  if (origin == null) {
+    panel.style.transformOrigin = '';
+    return;
+  }
+
+  const from = origin.getBoundingClientRect();
+  const left = (globalThis.innerWidth - panel.offsetWidth) / 2;
+  const top = (globalThis.innerHeight - panel.offsetHeight) / 2;
+
+  panel.style.transformOrigin = `${from.left + from.width / 2 - left}px ${
+    from.top + from.height / 2 - top
+  }px`;
 }
 
 /**
@@ -260,6 +287,9 @@ export function Dialog(props: DialogProps): JSX.Element {
    * put it away
    */
   let asked = false;
+
+  /** The placed box that grows, for aiming it at `origin` */
+  let panel: HTMLElement | undefined;
 
   const close = (): void => {
     asked = true;
@@ -294,15 +324,15 @@ export function Dialog(props: DialogProps): JSX.Element {
     const lead = children(() => props.lead);
 
     return (
-      <div class={`${PLATE} ${lead() == null ? 'pl-3' : 'pl-1.5'}`}>
+      <div class={`${PLATE} ${lead() == null ? 'pl-4' : 'pl-1.5'}`}>
         {lead() == null ? null : (
-          <span class="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/20">
+          <span class="flex size-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/20">
             {lead()}
           </span>
         )}
         {/* A heading rather than bold text: it is what a screen reader
             announces the dialog by */}
-        <HeadlessDialogTitle class="truncate text-base font-extrabold tracking-tight">
+        <HeadlessDialogTitle class="truncate font-display text-lg leading-6 font-semibold">
           {props.title}
         </HeadlessDialogTitle>
       </div>
@@ -435,7 +465,15 @@ export function Dialog(props: DialogProps): JSX.Element {
           <PortalHost>
             <Suspense>
               <TransitionChild
-                {...FADE}
+                {...(props.origin == null ? FADE : GROW)}
+                ref={(element: HTMLElement) => {
+                  panel = element;
+                }}
+                beforeEnter={() => {
+                  if (panel != null) {
+                    aimAt(panel, props.origin);
+                  }
+                }}
                 class={`${PLACE} ${
                   props.quiet === true ? '' : 'pt-[17px]'
                 } ${WIDTHS[props.width ?? 'narrow']}`}

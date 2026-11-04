@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone: overworld</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.world{position:absolute;inset:0;background-color:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.water{position:absolute;background:#5AA9E6;animation:wave 2400ms steps(4,end) infinite;background-image:linear-gradient(rgba(255,255,255,.18) 2px,transparent 2px);background-size:32px 16px}
+@keyframes wave{to{background-position:0 16px}}
+.tree{position:absolute;width:32px;height:32px;border-radius:8px 8px 4px 4px;background:#2F7A3E;box-shadow:inset 0 -8px 0 0 #245E30}
+.mon{position:absolute;width:24px;height:24px;border-radius:6px;background:#F2B33D;animation:bob 1200ms steps(2,end) infinite}
+@keyframes bob{50%{transform:translateY(-3px)}}
+.glass{background:rgba(255,255,255,.95);backdrop-filter:blur(8px)}
+.ibtn{position:relative;min-width:44px;height:44px;border-radius:999px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;gap:4px;color:#14203A;cursor:pointer;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;padding:0 8px;transition:background 140ms,transform 90ms}
+.ibtn:active{transform:scale(.9)}
+.ibtn.on{background:#2360C8;color:#fff}
+.count{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:#D6372A;color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.div{width:2px;height:28px;background:#E7EEF8;border-radius:1px;flex:0 0 2px}
+.pop{position:absolute;left:16px;right:16px;bottom:88px;border-radius:20px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18),0 18px 30px -16px rgba(20,32,58,.55);animation:pop 240ms cubic-bezier(.34,1.56,.64,1) both;padding:8px;box-sizing:border-box}
+@keyframes pop{from{transform:translateY(16px) scale(.92);opacity:0}}
+.tile{position:relative;height:68px;border-radius:14px;border:2px solid transparent;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;color:#14203A;cursor:pointer;animation:tile 240ms cubic-bezier(.34,1.56,.64,1) both}
+.tile:active{background:#E3EEFB;transform:scale(.94)}
+@keyframes tile{from{transform:translateY(10px);opacity:0}}
+.grp{font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;padding:2px 6px}
+.mtile{width:80px;height:52px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;font-family:Nunito,sans-serif;font-weight:800;font-size:12px;cursor:pointer}
+.mtile.on{border-color:#2360C8;background:#E3EEFB;color:#163F86}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="world"></div>
+<div class="water" style="left: 0; top: 0; width: 160px; height: 256px"></div>
+<div class="tree" style="left: 256px; top: 192px"></div><div class="tree" style="left: 64px; top: 576px"></div><div class="tree" style="left: 320px; top: 512px"></div>
+<div style="position: absolute; left: 179px; top: 406px; width: 32px; height: 32px; border-radius: 8px; background: #fff; border: 3px solid #14203A; box-sizing: border-box"></div>
+<div class="mon" style="left: 120px; top: 380px"></div><div class="mon" style="left: 250px; top: 470px; background: #9C7BF0; animation-delay: 300ms"></div>
+
+<div class="glass" style="position: absolute; top: 56px; right: 12px; height: 38px; padding: 0 10px 0 4px; border-radius: 999px; border: 2px solid #C3D2E8; display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800"><svg width="28" height="28" viewBox="0 0 30 30" role="img" aria-label="Egg"><circle cx="15" cy="15" r="11" fill="none" stroke="#E7EEF8" stroke-width="4"></circle><circle cx="15" cy="15" r="11" fill="none" stroke="#1E8F52" stroke-width="4" stroke-linecap="round" stroke-dasharray="69" stroke-dashoffset="24" transform="rotate(-90 15 15)"></circle></svg>1,280</div>
+
+<sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+<div class="pop">
+<sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
+<div role="group" aria-label="{{ g.label }}"><div class="grp">{{ g.label }}</div><div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px">
+<sc-for list="{{ g.entries }}" as="e" hint-placeholder-count="4"><button class="tile" style="animation-delay: {{ e.delay }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="{{ e.icon }}"></path></svg>{{ e.label }}<sc-if value="{{ e.hasCount }}" hint-placeholder-val="{{ false }}"><span class="count" style="top: 4px; right: 6px">{{ e.count }}</span></sc-if></button></sc-for>
+</div></div>
+</sc-for>
+<div style="display: flex; gap: 6px; border-top: 2px solid #E7EEF8; margin-top: 6px; padding-top: 6px"><button class="tile" style="flex-grow: 1; height: 44px; flex-direction: row">Settings</button><button class="tile" style="width: 56px; height: 44px" aria-label="Night mode"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 14A8 8 0 0 1 10 4a8 8 0 1 0 10 10z"></path></svg></button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ detailsOpen }}" hint-placeholder-val="{{ false }}">
+<div class="pop" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13px">
+<div style="display: flex; justify-content: space-between; gap: 8px"><span style="font-weight: 800">Shellford Town, Ashmarch</span><span style="font-family: Fredoka, sans-serif; font-weight: 600; color: #8A5E00">12,500 gold</span></div>
+<div style="display: flex; flex-direction: column; gap: 4px"><span style="font-weight: 800">Clear</span><span style="font-size: 12px; color: #52627F">A cloudless sky; nothing in the air.</span></div>
+<div style="display: flex; justify-content: space-between"><span style="font-weight: 800">Morning</span><span style="color: #52627F">9:12 am</span></div>
+<div style="border-top: 2px solid #E7EEF8; padding-top: 8px; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; font-size: 12px"><span>Pokémon</span><span style="color: #52627F">in 3m</span><span>Landmarks</span><span style="color: #52627F">in 13m</span><span>Weather</span><span style="color: #52627F">in 48m</span><span>Raids</span><span style="color: #52627F">in 2h 48m</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ movesOpen }}" hint-placeholder-val="{{ false }}">
+<div class="pop" style="left: 50%; right: auto; width: 188px; margin-left: -94px; display: flex; gap: 6px"><button class="mtile on">Surf</button><button class="mtile">Rock Smash</button></div>
+</sc-if>
+
+<nav aria-label="Game" class="glass" style="position: absolute; left: 12px; right: 12px; bottom: 24px; border: 2px solid #2360C8; border-radius: 999px; padding: 4px; display: flex; align-items: center; gap: 4px; box-shadow: 0 3px 0 0 rgba(16,46,99,.3)">
+<button class="{{ menuCls }}" onClick="{{ toggleMenu }}" aria-label="Menu, 3 waiting"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><span class="count">3</span></button>
+<span class="div"></span>
+<button onClick="{{ toggleDetails }}" style="flex-grow: 1; min-width: 0; border: 0; background: transparent; text-align: left; padding: 2px 6px; border-radius: 14px; cursor: pointer; font-family: Nunito, sans-serif"><span style="display: block; font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Shellford Town ▾</span><span style="display: block; font-size: 11px; color: #52627F">☼ Morning 9:12 am</span></button>
+<span class="div"></span>
+<button class="{{ movesCls }}" onClick="{{ toggleMoves }}" aria-label="Field moves"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M2 14c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2"></path></svg>Surf</button>
+<span class="div"></span>
+<button class="ibtn" aria-label="Fullscreen"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"></path></svg></button>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { open: null }; }
+  renderVals() {
+    const open = this.state.open;
+    const groups = [
+      { label: 'You', entries: [['Boxes', 'M8 10h8M8 14h5', 0], ['Bag', 'M9 4v3h6V4M8 12h8', 0], ['Pokedex', 'M12 8v8M8 12h8', 0], ['Profile', 'M12 8a2 2 0 1 0 0 .1M8 17h8', 1]] },
+      { label: 'Play', entries: [['World', 'M4 8l5-2 6 2 5-2v10l-5 2-6-2-5 2z', 0], ['Quests', 'M8 9h8M8 13h8M8 17h4', 2], ['Battle', 'M7 17l10-10M9 7h8v8', 0], ['Raids', 'M12 6c3 4 3 8 0 12-3-4-3-8 0-12z', 0]] },
+      { label: 'Inbox', entries: [['Notices', 'M8 10a4 4 0 0 1 8 0v4H8z', 0], ['Gifts', 'M6 10h12v8H6zM12 10v8', 1], ['News', 'M7 8h10M7 12h10M7 16h6', 0]] },
+    ];
+    let n = 0;
+    const toggle = (id) => () => this.setState({ open: open === id ? null : id });
+    return {
+      menuOpen: open === 'menu', detailsOpen: open === 'details', movesOpen: open === 'moves',
+      menuCls: open === 'menu' ? 'ibtn on' : 'ibtn',
+      movesCls: open === 'moves' ? 'ibtn on' : 'ibtn',
+      toggleMenu: toggle('menu'), toggleDetails: toggle('details'), toggleMoves: toggle('moves'),
+      groups: groups.map((g) => ({ label: g.label, entries: g.entries.map(([label, icon, count]) => ({ label, icon, count, hasCount: count > 0, delay: (n++ * 25) + 'ms' })) })),
+    };
+  }
+}
+</script>
+</body>
+</html>

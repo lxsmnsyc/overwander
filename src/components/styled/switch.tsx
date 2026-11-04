@@ -21,12 +21,17 @@ export interface SwitchProps {
 
 const TRACK =
   'relative h-6 w-11 shrink-0 rounded-full border-2 border-line bg-line-soft transition-colors' +
+  ' duration-(--motion-quick)' +
   ' aria-pressed:border-leaf-dark aria-pressed:bg-leaf aria-disabled:cursor-not-allowed' +
   ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide';
 
-/** The knob, moved by the same distance the track is wider than it */
+/**
+ * The knob, moved by the same distance the track is wider than it. It
+ * springs across, so it lands with a small overshoot
+ */
 const KNOB =
-  'absolute top-0.5 left-0.5 size-4 rounded-full bg-paper shadow-pop-sm transition-transform';
+  'absolute top-0.5 left-0.5 size-4 rounded-full bg-paper shadow-pop-sm' +
+  ' transition-[translate] duration-(--motion-base) ease-spring';
 
 export default function Switch(props: SwitchProps): JSX.Element {
   return (

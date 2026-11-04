@@ -369,7 +369,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
                 <TooltipHost class="block" kind="item" {...item}>
                   <span
                     class="block truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5
-                      text-gold"
+                      text-gold-dark"
                   >
                     {item.name}
                   </span>

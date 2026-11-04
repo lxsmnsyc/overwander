@@ -79,3 +79,11 @@ New (proposal, approved with the board): the trainer's name and face in the corn
 - The waiting count is keyed, so a new count remounts and plays `animate-hop`. The board's endless pulse needs a keyframe in `src/app.css`, which this node does not own. The hop is the Motion board's rule for a count.
 - Cell notes: chip tones (arcane words now `arcane-dark`), `rounded-button`, `shadow-float`, and `rise-in` on the motion tokens (in on the spring, out reversed on the exit curve), marked `motion-crossfade`.
 - Captures: `before/` and `after/` 16 each, `board/` 3. Compared each desktop capture with the board: corner, ring, plate, capsule, card, keypad, field moves and fullscreen all sit where the board puts them. Fixed after the first pass: the capsule truncated the place at 416px (now up to 34rem), the window tiles truncated "Caches and patches" (now wrap), the Fly glyph, the capsule width on a phone.
+
+## Gate review fixes
+
+- Ultra-wide: the `nav` is a frame capped at `calc(100dvh * 16 / 9)` and centred with `mx-auto`. No transform, so the phone's fixed sheet still places against the window. Checked at 2560x1080 and 3440x1440: the corners sit beside the board picture and the capsule stays centred.
+- Theme switch labelled with the existing `theme_to_night` and `theme_to_day` messages, through a new optional `labelClass` on `ThemeToggle` (`src/components/app/theme.tsx`). The first try left the switch in the middle of the footer, because `ROW` carried `w-full`. `w-full` is now only on the keypad rows.
+- Phone tabs are the styled `TabGroup`, `TabBar` and `TabButton`, each with its group's total waiting count.
+- Removed `cell-note-in` and `cell-note-out` from `src/app.css`.
+- The dev db is in memory, so it was rebuilt: migrate, seed, sign in, claim, the same hand-set data. Recaptured every `after/` shot with an egg, plus the ultra-wide ones.

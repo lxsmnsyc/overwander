@@ -44,7 +44,11 @@ export default function ThemeProvider(props: ParentProps): JSX.Element {
  * touched the switch has an opinion, and a third state they have to
  * cycle through to get back to where they were is not a switch
  */
-export function ThemeToggle(props: { class?: string }): JSX.Element {
+export function ThemeToggle(props: {
+  class?: string;
+  /** Writes the label beside the glyph, in a span with these classes */
+  labelClass?: string;
+}): JSX.Element {
   const [, setScheme] = useColorScheme();
   /**
    * What the game is *actually* drawn in — `system` resolved against
@@ -67,6 +71,12 @@ export function ThemeToggle(props: { class?: string }): JSX.Element {
     >
       <Show when={showing() === 'dark'} fallback={<SunIcon class="size-5" aria-hidden="true" />}>
         <MoonIcon class="size-5" aria-hidden="true" />
+      </Show>
+      {/* Written out where there is room, such as the keypad's footer */}
+      <Show when={props.labelClass != null}>
+        <span class={props.labelClass}>
+          {showing() === 'dark' ? m.theme_to_day() : m.theme_to_night()}
+        </span>
       </Show>
     </Toggle>
   );

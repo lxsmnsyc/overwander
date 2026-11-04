@@ -48,7 +48,7 @@ import {
 } from '../icons';
 import { PlayerFace } from '../profile/PlayerPlate';
 import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
-import { CloseButton } from '../styled';
+import { CloseButton, TabBar, TabButton, TabGroup } from '../styled';
 import { GROW, MORPH } from '../styled/transition';
 import FullscreenToggle from './FullscreenToggle';
 import { ThemeToggle } from './theme';
@@ -83,18 +83,12 @@ const COUNT = `flex h-5 min-w-5 items-center justify-center rounded-full bg-embe
   font-display text-[11px] leading-none font-semibold text-on-accent tabular-nums`;
 
 /** A row of the keypad, and the footer's buttons drawn the same way */
-const ROW = `flex h-11 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-button border-0
+const ROW = `flex h-11 min-w-0 cursor-pointer items-center gap-2.5 rounded-button border-0
   bg-transparent px-2.5 text-left text-sm font-extrabold text-ink shadow-none transition-colors
   duration-(--motion-quick) hover:bg-tide-soft hover:text-tide-dark active:translate-y-0
   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
   disabled:cursor-not-allowed disabled:text-muted disabled:opacity-55
   disabled:hover:bg-transparent sm:h-10 sm:text-[13px]`;
-
-/** The theme switch in the keypad's footer, a square of the row's height */
-const SQUARE = `flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-button
-  border-0 bg-transparent text-ink shadow-none transition-colors duration-(--motion-quick)
-  hover:bg-tide-soft hover:text-tide-dark active:translate-y-0 focus-visible:outline-2
-  focus-visible:outline-offset-2 focus-visible:outline-tide sm:size-10`;
 
 /** How long the ring round the trainer button is, for drawing the egg's share of it */
 const RING_RADIUS = 34;
@@ -348,6 +342,16 @@ export default function GameMenu(): JSX.Element {
     return count;
   };
 
+  /** How many things are waiting behind a whole group, for its tab on a phone */
+  const countGroup = (group: MenuGroup): number => {
+    let count = 0;
+
+    for (const entry of group.entries) {
+      count += countFor(entry.dialog);
+    }
+    return count;
+  };
+
   /** Opens one panel and closes the other, since both stand over the foot of the screen */
   const only = (panel: 'menu' | 'details'): void => {
     setOpen(panel === 'menu');
@@ -451,10 +455,13 @@ export default function GameMenu(): JSX.Element {
   return (
     <nav
       aria-label={m.menu_game()}
-      // Over the whole window and letting presses through to the map,
-      // above the map and below anything opened over it. Each piece
-      // takes the presses on itself
-      class="pointer-events-none fixed inset-0 z-10"
+      // Over the window and letting presses through to the map, above
+      // the map and below anything opened over it. Each piece takes the
+      // presses on itself. On a screen wider than 16:9 the corners are
+      // a centred 16:9 frame's, so they stay beside the board picture
+      // rather than out in the margins. Centred by its margins, not a
+      // transform, which would hold the phone's fixed sheet
+      class="pointer-events-none fixed inset-0 z-10 mx-auto max-w-[calc(100dvh*16/9)]"
     >
       {/* The trainer corner. Laid out before the capsule so the keypad,
           which grows out of it, can stand over everything else */}
@@ -552,26 +559,29 @@ export default function GameMenu(): JSX.Element {
             class="flex flex-col overflow-hidden rounded-t-sheet border-2 border-b-0 border-line
               bg-paper shadow-sheet sm:rounded-sheet sm:border-b-2"
           >
-            {/* A phone has room for one column, so the three are tabs */}
-            <div class="mx-2.5 mt-2.5 flex gap-1 rounded-full bg-line-soft p-1 sm:hidden">
-              <For each={GROUPS}>
-                {(group, index) => (
-                  <button
-                    type="button"
-                    aria-pressed={tab() === index()}
-                    class="h-9 flex-1 cursor-pointer rounded-full border-0 bg-transparent text-sm
-                      font-extrabold text-muted shadow-none transition-colors
-                      duration-(--motion-quick) active:translate-y-0 aria-pressed:bg-paper
-                      aria-pressed:text-tide-dark aria-pressed:shadow-rest"
-                    onClick={() => {
-                      setTab(index());
-                    }}
-                  >
-                    {group.label()}
-                  </button>
-                )}
-              </For>
-            </div>
+            {/* A phone has room for one column, so the three are tabs,
+                each with what is waiting behind it */}
+            <TabGroup
+              value={tab()}
+              onChange={(picked) => {
+                setTab(picked);
+              }}
+              horizontal
+              class="sm:hidden"
+            >
+              <TabBar class="mx-2.5 mt-2.5">
+                <For each={GROUPS}>
+                  {(group, index) => (
+                    <TabButton value={index()} class="flex-1 gap-1.5">
+                      {group.label()}
+                      <Show when={countGroup(group) > 0}>
+                        <span class={COUNT}>{countGroup(group)}</span>
+                      </Show>
+                    </TabButton>
+                  )}
+                </For>
+              </TabBar>
+            </TabGroup>
 
             <div class="grid gap-1 p-2.5 sm:grid-cols-3">
               <For each={GROUPS}>
@@ -592,7 +602,7 @@ export default function GameMenu(): JSX.Element {
                       {(entry) => (
                         <button
                           type="button"
-                          class={`${ROW} animate-rise`}
+                          class={`${ROW} w-full animate-rise`}
                           style={{
                             'animation-delay': `calc(var(--motion-stagger) * ${ROW_ORDER.get(entry) ?? 0})`,
                           }}
@@ -636,7 +646,7 @@ export default function GameMenu(): JSX.Element {
             >
               <button
                 type="button"
-                class={`${ROW} w-auto sm:hidden`}
+                class={`${ROW} sm:hidden`}
                 onClick={() => {
                   setOpen(false);
                 }}
@@ -645,7 +655,7 @@ export default function GameMenu(): JSX.Element {
               </button>
               <button
                 type="button"
-                class={`${ROW} w-auto`}
+                class={ROW}
                 onClick={() => {
                   openDialog(GameDialog.Settings);
                 }}
@@ -654,7 +664,7 @@ export default function GameMenu(): JSX.Element {
                 {m.panel_settings()}
               </button>
               <span class="grow" />
-              <ThemeToggle class={SQUARE} />
+              <ThemeToggle class={ROW} labelClass="hidden sm:inline" />
             </div>
           </PopoverPanel>
         </Transition>

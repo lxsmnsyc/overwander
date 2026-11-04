@@ -82,7 +82,7 @@ All colours are in `src/app.css`. The token names did not change, so every compo
 | `steps(n)` | stepped | sprites only |
 
 - Write a duration as `duration-(--motion-base)`.
-- An exit takes 70% of its entrance: `--motion-base-exit` (168), `--motion-move-exit` (252), `--motion-scene-exit` (392).
+- An exit takes 70% of its entrance: `--motion-quick-exit` (98), `--motion-base-exit` (168), `--motion-move-exit` (252), `--motion-scene-exit` (392).
 - Lists stagger `--motion-stagger` (30ms) a row, for six rows at most.
 - The hover card opens after 300ms (`OPEN_DELAY` in `src/components/styled/hover-delay.ts`). A tooltip still opens at once and rises into place in 140ms.
 
@@ -96,7 +96,7 @@ All colours are in `src/app.css`. The token names did not change, so every compo
 | `GROW` | springs out of a control from 15% | a dialog given `origin` |
 | `SHEER` | opacity only | the veil behind a dialog |
 | `DROP` | grows from its button's side | a menu, a listbox, a combobox; pair with `dropOrigin(placement)` |
-| `RISE` | rises 4px | a card placed against the window |
+| `RISE` | rises 4px, leaves in 98ms | a card placed against the window |
 
 - The resting state never keeps a scale or a translate. Either one makes the element the containing block for anything `fixed` inside it.
 - The `dialog-transitions` skill has the rest: the wrapper `Transition` never animates.
@@ -106,6 +106,7 @@ All colours are in `src/app.css`. The token names did not change, so every compo
 - The setting puts `.reduce-motion` on the root (`src/components/app/settings.ts`, `src/app.tsx`).
 - Under it every move becomes a 120ms crossfade. The distance tokens (`--motion-grow`, `--motion-rise` and the rest) go to nothing, so a preset only fades.
 - Everything else is cut to 1ms, not 0. A transition of 0ms never fires `transitionend`, and dialogs wait on it to unmount.
+- So a thing that moves rather than fades, such as the tab indicator or the switch knob, jumps to its new place.
 - Mark a fade of your own with `motion-crossfade` to get the 120ms. Mark a timer bar with `motion-timer` and set `--motion-timer`, so it keeps its real length.
 
 ## Primitives
@@ -115,7 +116,7 @@ All colours are in `src/app.css`. The token names did not change, so every compo
 | `Button` | Tones as before. A filled tone stands on its own darker shade and brightens on hover. Hover lifts 1px, a press drops 3px and squashes to 98% by 94%, and release springs back in 90ms. |
 | `Dialog` | 24px sheet, `shadow-sheet`. Springs in (360ms) and leaves on the exit curve (252ms). The nameplate is a tide pill in Fredoka that slides in 120ms after the sheet. New optional `origin` prop: the control that opened it, which the panel grows out of and returns to. |
 | `DialogActions` | Unchanged: the dock, way out on the left. |
-| `TabBar`, `TabButton` | Pill tabs on a `line-soft` track. An indicator springs to the selected tab (360ms). Before it has measured, the selected tab draws its own fill. |
+| `TabBar`, `TabButton` | Pill tabs on a `line-soft` track. An indicator springs to the selected tab (360ms). It measures again when any tab changes size and when the fonts finish loading. Before it has measured, the selected tab draws its own fill. |
 | `Menu`, `Select`, `Combobox`, `Filter`, search suggestions | `DROP`: grow from the button's side on a spring. A phone sheet grows up from the bottom. |
 | `HoverCard` | 18px card, opens after 300ms, `RISE`. |
 | `TooltipHost` | No wait. Rises into place in 140ms. |

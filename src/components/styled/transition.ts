@@ -58,7 +58,7 @@ export const RISE = {
   enterFrom: 'opacity-0 translate-y-(--motion-rise)',
   enterTo: 'opacity-100 translate-y-0',
   entered: 'opacity-100',
-  leave: 'motion-crossfade transition-[opacity,translate] duration-(--motion-base-exit) ease-exit',
+  leave: 'motion-crossfade transition-[opacity,translate] duration-(--motion-quick-exit) ease-exit',
   leaveFrom: 'opacity-100 translate-y-0',
   leaveTo: 'opacity-0 translate-y-(--motion-rise)',
 } as const;

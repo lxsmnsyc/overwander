@@ -12,7 +12,7 @@
   - Elevation `shadow-rest`, `shadow-pop`, `shadow-pop-lift`, `shadow-float`, `shadow-sheet`. Targets `size-target` (44px) and `size-square` (56px).
   - Motion: `--motion-tap|quick|base|move|scene` (90, 140, 240, 360, 560ms), their `-exit` twins at 70%, `--motion-stagger` (30ms), the distance tokens, `ease-settle`, `ease-spring`, `ease-exit`, `animate-rise`, `animate-hop`.
   - Reduce motion: under `.reduce-motion` the distances go to nothing and the durations to 120ms. Elements marked `motion-crossfade` fade over 120ms, and everything else keeps the 1ms floor. `motion-timer` keeps a timer bar at its real length.
-- **Presets** in `src/components/styled/transition.ts`: `FADE` (dialog panel), new `GROW` (panel growing out of a control), `SHEER` (veil), new `DROP` with `dropOrigin(placement)` (dropped lists and menus), and new `RISE` (hover card). No preset leaves a scale or a translate on the resting state.
+- **Presets** in `src/components/styled/transition.ts`: `FADE` (dialog panel), new `GROW` (panel growing out of a control), `SHEER` (veil), new `DROP` with `dropOrigin(placement)` (dropped lists and menus), and new `RISE` (hover card, 140ms in and 98ms out on `--motion-quick-exit`). No preset leaves a scale or a translate on the resting state.
 - **Primitives**. Every prop and behaviour is kept.
   - `Button`: board tones, a filled tone on its own shade, hover lift, a press that drops 3px and squashes, a spring release.
   - `Dialog`: 24px sheet. It springs in and leaves on the exit curve. The nameplate is a Fredoka tide pill that slides in 120ms later. New optional prop `origin?: Element | null` grows the panel out of that element and back into it.
@@ -39,15 +39,19 @@
 
 - None.
 
+## Handoffs
+
+- The Motion board's hover card slides out sideways from the square it describes. `RISE` only rises 4px. The area node that redesigns the trays should give the card a slide that follows its placement.
+
 ## Gotchas
 
 - Words in gold must use `text-gold-dark`. Plain `text-gold` is for fills, bars and icons.
 - Night has no board values for ink, muted, line, line-soft or the page. The values here (`#E9F0FB`, `#9AA8C0`, `#2E3D5E`, `#1D2742`, `#0B1020`) were picked to sit on the board's night paper `#141C33`.
-- `TabList` from terracotta did not call a `ref` before `onMount`. `TabBar` reaches the bar through its indicator's `parentElement`.
+- `TabList` from terracotta did not call a `ref` before `onMount`. `TabBar` reaches the bar through its indicator's `parentElement`. It measures again when the bar or any tab resizes, on a selection or a relabel, and whenever a font finishes loading (`document.fonts` `loadingdone`).
 - `Dialog`'s `origin` is read when the panel enters. Pass it from a signal (`origin={opener()}`), since a bare variable assigned by `ref` is still undefined when the JSX is built.
 - `<meta name="theme-color">` in `src/entry-server.tsx` is still the old blue `#2a75bb`. It is outside the owned paths.
 - Comments that were already in the touched `styled` files still have em-dashes. Only new prose was checked.
-- Under reduce motion the tab indicator and the switch knob jump, since they move rather than fade.
+- Under reduce motion the tab indicator and the switch knob jump, since they move rather than fade. The changeset says so.
 
 ## Proposed learnings
 

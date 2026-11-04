@@ -152,8 +152,9 @@
  * | move   | 360 | a sheet, a tab indicator   |
  * | scene  | 560 | a battle coming in         |
  *
- * An exit takes 70% of its entrance, so each has an `-exit` twin. Lists
- * stagger `--motion-stagger` a row, six rows at most.
+ * An exit takes 70% of its entrance, so each has an `-exit` twin. Tap
+ * has none, since a press does not leave. Lists stagger
+ * `--motion-stagger` a row, six rows at most.
  *
  * The distances a move covers are tokens too, so reduce motion can set
  * them to nothing and leave only the fade.
@@ -161,6 +162,7 @@
 :root {
   --motion-tap: 90ms;
   --motion-quick: 140ms;
+  --motion-quick-exit: 98ms;
   --motion-base: 240ms;
   --motion-base-exit: 168ms;
   --motion-move: 360ms;
@@ -531,6 +533,7 @@
 .reduce-motion {
   --motion-tap: 120ms;
   --motion-quick: 120ms;
+  --motion-quick-exit: 120ms;
   --motion-base: 120ms;
   --motion-base-exit: 120ms;
   --motion-move: 120ms;

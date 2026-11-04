@@ -143,8 +143,25 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
       setMoving(true);
     });
 
-    // A new selection, a tab added or relabelled, or the bar resized
-    const changes = new MutationObserver(measure);
+    // The bar or any tab changing size: the font swapping in, a count
+    // badge growing. Observing a tab twice is a no-op, so new tabs are
+    // added by observing them all again
+    const sizes = new ResizeObserver(measure);
+    const watchTabs = (): void => {
+      sizes.observe(list, { box: 'border-box' });
+      for (const tab of list.querySelectorAll('[role="tab"]')) {
+        // The border box: the pill covers padding and border too
+        sizes.observe(tab, { box: 'border-box' });
+      }
+    };
+
+    watchTabs();
+
+    // A new selection, or a tab added or relabelled
+    const changes = new MutationObserver(() => {
+      watchTabs();
+      measure();
+    });
     changes.observe(list, {
       attributes: true,
       attributeFilter: ['aria-selected'],
@@ -152,10 +169,13 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
       childList: true,
       characterData: true,
     });
-    const sizes = new ResizeObserver(measure);
-    sizes.observe(list);
+
+    // The fonts load with `display=swap`, so the first measure may be in
+    // the fallback face. Fonts already loaded need nothing more
+    document.fonts.addEventListener('loadingdone', measure);
 
     onCleanup(() => {
+      document.fonts.removeEventListener('loadingdone', measure);
       cancelAnimationFrame(frame);
       changes.disconnect();
       sizes.disconnect();

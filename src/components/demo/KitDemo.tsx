@@ -178,9 +178,7 @@ export default function KitDemo(): JSX.Element {
             title="Great Ball"
             kind="Item"
             description="A good ball, better than a Poke Ball."
-            trigger={
-              <span class="kit-hover rounded-xl border-2 border-line bg-paper p-3">Hover</span>
-            }
+            trigger={<Button>Hover</Button>}
           >
             <p class="m-0">In the bag: 12</p>
           </HoverCard>
@@ -197,7 +195,6 @@ export default function KitDemo(): JSX.Element {
               setOpener(element);
             }}
             type="button"
-            class="kit-open"
             onClick={() => {
               setOpen(true);
             }}

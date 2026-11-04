@@ -9,4 +9,4 @@ The game has a new look, Field Kit. Text is set in Nunito, with names and number
 - Tabs slide a pill to the tab you pick. Menus and lists grow out of their button.
 - Hover cards open after 300ms instead of 400ms.
 - A toast shows how long it has left, and pauses while the pointer rests on it.
-- With reduce motion on, every move is a short fade.
+- With reduce motion on, panels, menus, cards and toasts only fade in and out, in 120ms. The tab pill and the switch knob jump straight to their new place.

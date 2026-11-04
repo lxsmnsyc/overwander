@@ -1,7 +1,7 @@
 ---
 id: ui-design-system
 title: Design system for the UI redesign
-status: todo
+status: active
 priority: must
 type: feature
 outline: false
@@ -36,6 +36,7 @@ Build the approved "Field Kit" system into the game: tokens, type, motion and th
 
 ## Steps
 
+- [ ] Copy the approved boards into `docs/design/field-kit/` (the nine `*.dc.html` boards and `canvas.json`), so the spec is versioned with the code. Source: the canvas artifact above, or the matching local copy in the maintainer's last session scratchpad, `/private/tmp/claude-501/-Users-alexis-Documents-GitHub-poketerra/a9e019ff-3f54-4e29-99c4-c4880ac70d58/scratchpad/fieldkit/project` (same SHA-256 as the artifact's live version `1793706728-01cf`).
 - [ ] Tokens: colours (day and night), radii, elevations, the motion durations and easings as CSS custom properties and Tailwind theme entries in `src/app.css`; the fonts.
 - [ ] Primitives in `src/components/styled/`, restyled and given their motion, keeping every prop and behaviour: Button (tones, squash and land), Dialog (nameplate slides in after the sheet lands; the sheet springs in and leaves on exit; an optional origin so a panel can grow from the control that opened it), DialogActions, Tabs (a sliding indicator), Menu and Popover panels (spring from their trigger), Hover card and Tooltip (300ms delay, rise), Toast (spring in, lifetime bar, pauses on hover), Badge, Pager, StatTile, Switch, RadioGroup, Slider, inputs.
 - [ ] A short `docs/design/field-kit.md` the area nodes read: the rules, the tokens, the motion table, and the inventory rule below.
@@ -49,7 +50,7 @@ Before a screen is restyled or laid out anew, write its inventory from its `.tsx
 
 - [ ] The tokens and primitives match the system board in light and dark; no screen loses a control; reduce motion works.
 - [ ] `docs/design/field-kit.md` is written.
-- [ ] Changeset `patch` (or `minor` if the maintainer calls the new look a feature). Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers on this machine).
+- [ ] Changeset `minor` (the maintainer calls the new look a feature, 2026-11-04). Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers on this machine).
 
 ## Still to design (not this node)
 

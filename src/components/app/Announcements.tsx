@@ -86,7 +86,7 @@ export default function Announcements(): JSX.Element {
               type="button"
               aria-label={m.ui_dismiss()}
               class="inline-flex shrink-0 cursor-pointer items-center rounded-full border-0
-                bg-transparent p-0.5 text-ink shadow-none hover:text-gold"
+                bg-transparent p-0.5 text-ink shadow-none hover:text-gold-dark"
               onClick={() => {
                 dismiss(announcement.id);
               }}

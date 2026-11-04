@@ -1,7 +1,8 @@
 ---
 id: ui-design-system
 title: Design system for the UI redesign
-status: active
+status: done
+spent: 390252
 priority: must
 type: feature
 outline: false

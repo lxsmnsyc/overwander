@@ -96,16 +96,20 @@ FlorgesZenith:
   forms:
     FlorgesYellowZenith:
       base: FlorgesYellow
-      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+      stats:
+        { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
     FlorgesOrangeZenith:
       base: FlorgesOrange
-      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+      stats:
+        { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
     FlorgesBlueZenith:
       base: FlorgesBlue
-      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+      stats:
+        { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
     FlorgesWhiteZenith:
       base: FlorgesWhite
-      stats: { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
+      stats:
+        { HP: 78, Attack: 65, Defense: 118, SpecialAttack: 142, SpecialDefense: 154, Speed: 95 }
 
 # The mountain goat butts heads without feeling it, sure-footed on the ground it climbs
 GogoatZenith:
@@ -141,7 +145,8 @@ AegislashZenith:
   forms:
     AegislashBladeZenith:
       base: AegislashBlade
-      stats: { HP: 60, Attack: 170, Defense: 50, SpecialAttack: 170, SpecialDefense: 50, Speed: 120 }
+      stats:
+        { HP: 60, Attack: 170, Defense: 50, SpecialAttack: 170, SpecialDefense: 50, Speed: 120 }
 
 # Its perfume clings to anything that touches it
 AromatisseZenith:
@@ -249,7 +254,8 @@ GourgeistZenith:
   forms:
     GourgeistSuperZenith:
       base: GourgeistSuper
-      stats: { HP: 85, Attack: 120, Defense: 142, SpecialAttack: 58, SpecialDefense: 115, Speed: 74 }
+      stats:
+        { HP: 85, Attack: 120, Defense: 142, SpecialAttack: 58, SpecialDefense: 115, Speed: 74 }
 
 # Its clear ice blunts the blows that ought to break it
 AvaluggZenith:

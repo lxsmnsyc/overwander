@@ -15,7 +15,7 @@
 
 ## Gotchas
 
-- The tag is found by scanning back to `<` and forward to the first `>` that is not `=>`; a class on a non-JSX string is judged by whatever tag precedes it.
+- The tag is the nearest `<` that starts a JSX tag, with no `>` (other than `=>`) between it and the class; a class outside a tag fails. A `>` comparison inside an attribute would end the tag early.
 
 ## Proposed learnings
 
@@ -23,7 +23,7 @@
 
 ## Verification
 
-- New test passes; fails with plain `text-gold` on words (checked, reverted).
+- New test passes, with fixture cases for the checker; fails with plain `text-gold` on words (checked, reverted). typecheck, oxlint exit 0, full suite pass.
 
 ## Size
 

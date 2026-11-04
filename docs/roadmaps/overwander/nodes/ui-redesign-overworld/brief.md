@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-overworld
 title: Redesign the overworld HUD
-status: todo
+status: active
 priority: must
 type: feature
 outline: false

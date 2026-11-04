@@ -13,7 +13,7 @@ import type { EncounterRecord } from '../../model/encounter-record';
 import type { Notice } from '../../auth/notifications';
 import type { PositionRecord } from '../../model/position-record';
 import type { Species } from '../../data/ids/species';
-import type { WalkReport } from '../../auth/eggs';
+import type { EggWalk, WalkReport } from '../../auth/eggs';
 import { AWARD_NAMES } from '../../data/awards';
 import { getItemData } from '../../data/items';
 import type { WritableStore } from '../../game/store';
@@ -132,6 +132,13 @@ export interface GameState {
    */
   fieldMoves: Accessor<FieldMoveOffer[]>;
   setFieldMoves: (value: FieldMoveOffer[]) => void;
+  /**
+   * The egg being carried and its steps, travelling from the board to
+   * the menu's trainer corner the way the field moves do. Null without
+   * one, and off the board
+   */
+  egg: Accessor<EggWalk | null>;
+  setEgg: (value: EggWalk | null) => void;
   /**
    * The raid lobby the player is in, shown inside the raids dialog
    */
@@ -362,6 +369,7 @@ export default function GameProvider(
   const [place, setPlace] = storeSignal(session.place);
   const [weather, setWeather] = storeSignal(session.weather);
   const [fieldMoves, setFieldMoves] = storeSignal(session.fieldMoves);
+  const [egg, setEgg] = storeSignal(session.egg);
   const [raid, setRaid] = storeSignal(session.raid);
   const [duel, setDuel] = storeSignal(session.duel);
   const [battle, setBattle] = storeSignal(session.battle);
@@ -395,6 +403,8 @@ export default function GameProvider(
         setWeather,
         fieldMoves,
         setFieldMoves,
+        egg,
+        setEgg,
         raid,
         setRaid,
         duel,

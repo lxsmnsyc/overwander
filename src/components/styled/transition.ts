@@ -14,6 +14,7 @@
  * | SHEER  | a veil behind a dialog: opacity alone         |
  * | DROP   | a list or a menu hung from its button         |
  * | RISE   | a card placed against the window              |
+ * | MORPH  | a control opening into a card in its place    |
  *
  * The resting state (`entered`) never carries a scale or a translate.
  * Either one makes the element the containing block for anything
@@ -61,6 +62,22 @@ export const RISE = {
   leave: 'motion-crossfade transition-[opacity,translate] duration-(--motion-quick-exit) ease-exit',
   leaveFrom: 'opacity-100 translate-y-0',
   leaveTo: 'opacity-0 translate-y-(--motion-rise)',
+} as const;
+
+/**
+ * A control opening into a card in its own place: the card starts as
+ * wide as the control and a sliver of its height, and springs to full
+ * size. Put the origin on the control's edge (`origin-bottom` for a
+ * capsule at the foot of the screen)
+ */
+export const MORPH = {
+  enter: 'motion-crossfade transition-[opacity,scale] duration-(--motion-move) ease-spring',
+  enterFrom: 'opacity-0 scale-x-(--motion-drop) scale-y-(--motion-grow-origin)',
+  enterTo: 'opacity-100 scale-100',
+  entered: 'opacity-100',
+  leave: 'motion-crossfade transition-[opacity,scale] duration-(--motion-move-exit) ease-exit',
+  leaveFrom: 'opacity-100 scale-100',
+  leaveTo: 'opacity-0 scale-x-(--motion-drop) scale-y-(--motion-grow-origin)',
 } as const;
 
 /**

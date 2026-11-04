@@ -1,3 +1,4 @@
+import type { EggWalk } from '../../auth/eggs';
 import type { Notice } from '../../auth/notifications';
 import { ensureProfile } from '../../auth/profile';
 import type { PlayerIdentity } from '../../auth/user';
@@ -30,6 +31,8 @@ export interface Session extends Walk, Rewards {
   weather: WritableStore<Weather | null>;
   /** The buddy's field moves usable right here, travelling from the board to the menu bar */
   fieldMoves: WritableStore<FieldMoveOffer[]>;
+  /** The egg the buddy is, and how far it has been walked, travelling from the board to the menu */
+  egg: WritableStore<EggWalk | null>;
   /** The raid lobby the player is in */
   raid: WritableStore<string | null>;
   /** The battle lobby the player is in */
@@ -103,6 +106,7 @@ export default function createSession(events: SessionEvents): Session {
     place: createStore<string | null>(null),
     weather: createStore<Weather | null>(null),
     fieldMoves: createStore<FieldMoveOffer[]>([]),
+    egg: createStore<EggWalk | null>(null),
     raid: createStore<string | null>(null),
     duel: createStore<string | null>(null),
     sheet: createStore<OpenSheet | null>(null),

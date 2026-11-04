@@ -12,9 +12,11 @@ import { Dynamic } from 'solid-js/web';
 import { Popover, PopoverButton, PopoverPanel, Transition } from 'terracotta';
 import { useAuth } from '../../auth/context';
 import { localNow, serverNow, syncServerClock } from '../../auth/clock';
+import type { EggWalk } from '../../auth/eggs';
 import { getLocalOffset, toLocalTime } from '../../model/local-time';
 import { TIME_OF_DAY_NAMES } from '../../data/biome';
 import { getTimeOfDay } from '../../data/ids/biome';
+import { Moves } from '../../data/ids/moves';
 import { WEATHER_DESCRIPTIONS, WEATHER_NAMES } from '../../data/overworld/weather';
 import {
   LANDMARK_INTERVAL,
@@ -24,21 +26,19 @@ import {
   SNAPSHOT_INTERVAL,
   WEATHER_INTERVAL,
 } from '../../overworld/chunk-snapshot';
-import { type FieldMoveOffer, GameDialog, useGame } from './game-context';
+import type { FieldMove } from '../../overworld/field-moves';
+import { GameDialog, useGame } from './game-context';
 import { watchProfile } from '../../auth/profile';
 import { listMysteryGifts } from '../../auth/gifts';
 import { NoticeKind } from '../../auth/notifications';
 import { getDueQuests } from '../../auth/quests';
 import {
-  ActionsIcon,
   BagIcon,
   BellIcon,
   BoxIcon,
-  ChevronDownIcon,
   FireIcon,
   GiftIcon,
   MapIcon,
-  MenuIcon,
   NewsIcon,
   SearchIcon,
   SettingsIcon,
@@ -46,10 +46,11 @@ import {
   TrophyIcon,
   UserIcon,
 } from '../icons';
+import { PlayerFace } from '../profile/PlayerPlate';
 import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
-import { Divider } from '../styled';
-import { SHEER } from '../styled/transition';
-import FullscreenToggle, { fullscreenOffered } from './FullscreenToggle';
+import { CloseButton } from '../styled';
+import { GROW, MORPH } from '../styled/transition';
+import FullscreenToggle from './FullscreenToggle';
 import { ThemeToggle } from './theme';
 import { actionOf, forTheGame } from './keys';
 import settings, { type ClockFormat } from './settings';
@@ -57,36 +58,47 @@ import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
- * How a switch is drawn, on the bar and over the keypad alike: the
- * bar's own button, without the box a button usually carries
+ * The furniture around the world, each piece in a corner of it so the
+ * middle stays the board's:
+ *
+ * - bottom left, the trainer corner: the player's face is the menu
+ *   button, ringed by the egg they carry, with their name, gold and the
+ *   egg's steps beside it. The keypad grows out of it.
+ * - bottom centre, the place capsule: where they stand and what the sky
+ *   and clock are doing, which opens in place into a card of the
+ *   windows the world turns over on.
+ * - bottom right, the buddy's field moves as round buttons.
+ * - top right, the fullscreen switch.
+ *
+ * A phone keeps the same corners. The keypad opens as a sheet across
+ * the foot of the screen with its three groups as tabs, and the
+ * capsule shows the sky and the clock alone until it is opened.
  */
-const TOGGLE = `cursor-pointer rounded-full border-0 bg-transparent px-2 py-1 text-ink shadow-none
-  transition-colors hover:border-0 hover:bg-tide hover:text-on-accent active:translate-y-0
-  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide`;
 
-/** A round icon button on the bar */
-const BAR_BUTTON = `relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-2
-  border-transparent bg-transparent p-1.5 text-sm font-bold text-ink shadow-none
-  transition-colors hover:bg-tide hover:text-on-accent focus-visible:outline-2
-  focus-visible:outline-offset-2 focus-visible:outline-tide`;
+/** A glass plate standing on the world: the capsule, the name plate and the fullscreen square */
+const GLASS = 'border-2 border-line bg-paper/95 shadow-float backdrop-blur-sm';
 
-/** How many things are waiting, on the key or button that opens them */
-const COUNT = `min-w-4 rounded-full border-2 border-ember bg-ember-soft px-1 text-center
-  text-[0.65rem] leading-4 text-ember-dark`;
+/** The waiting count on the trainer button and on a keypad row */
+const COUNT = `flex h-5 min-w-5 items-center justify-center rounded-full bg-ember px-1.5
+  font-display text-[11px] leading-none font-semibold text-on-accent tabular-nums`;
 
-/** A field move on the bar. Pressed is a travel mode that is on */
-const CHIP = `shrink-0 cursor-pointer rounded-full border-2 border-tide bg-transparent px-2.5 py-0.5
-  text-xs font-bold text-tide-dark shadow-none transition-colors hover:bg-tide-soft
-  active:translate-y-0 aria-pressed:bg-tide aria-pressed:text-on-accent
+/** A row of the keypad, and the footer's buttons drawn the same way */
+const ROW = `flex h-11 w-full min-w-0 cursor-pointer items-center gap-2.5 rounded-button border-0
+  bg-transparent px-2.5 text-left text-sm font-extrabold text-ink shadow-none transition-colors
+  duration-(--motion-quick) hover:bg-tide-soft hover:text-tide-dark active:translate-y-0
   focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
-  disabled:cursor-not-allowed disabled:opacity-55`;
+  disabled:cursor-not-allowed disabled:text-muted disabled:opacity-55
+  disabled:hover:bg-transparent sm:h-10 sm:text-[13px]`;
 
-/**
- * The one piece of furniture the game has: a bar along the bottom of
- * the world, with every destination in a keypad above the button on it.
- * Beside the button is where the player stands and what the sky and
- * clock are doing, which opens into the windows the world turns over on.
- */
+/** The theme switch in the keypad's footer, a square of the row's height */
+const SQUARE = `flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-button
+  border-0 bg-transparent text-ink shadow-none transition-colors duration-(--motion-quick)
+  hover:bg-tide-soft hover:text-tide-dark active:translate-y-0 focus-visible:outline-2
+  focus-visible:outline-offset-2 focus-visible:outline-tide sm:size-10`;
+
+/** How long the ring round the trainer button is, for drawing the egg's share of it */
+const RING_RADIUS = 34;
+const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 
 /**
  * One key on the keypad. An entry without a `dialog` is a place kept
@@ -99,7 +111,7 @@ interface MenuEntry {
   icon: (props: ComponentProps<'svg'>) => JSX.Element;
 }
 
-/** A labelled row of keys. A new key joins its own row, so no other key moves */
+/** A labelled column of keys. A new key joins its own column, so no other key moves */
 interface MenuGroup {
   label: () => string;
   entries: MenuEntry[];
@@ -144,19 +156,35 @@ const GROUPS: MenuGroup[] = [
   },
 ];
 
-const TILE =
-  'flex w-full min-w-0 cursor-pointer flex-col items-center gap-1 rounded-xl border-2' +
-  ' border-transparent bg-transparent px-1 py-2 text-xs font-bold text-ink shadow-none' +
-  ' transition-colors hover:border-tide hover:bg-tide-soft hover:text-tide-dark' +
-  ' active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2' +
-  ' focus-visible:outline-tide disabled:cursor-not-allowed disabled:text-muted' +
-  ' disabled:opacity-55 disabled:hover:border-transparent disabled:hover:bg-transparent' +
-  ' disabled:hover:text-muted';
+/** The most rows that stagger in; the rest arrive with the sixth */
+const STAGGERED_ROWS = 6;
 
 /**
- * How often the hour on the bar is re-read. The world turns over in
- * five-minute windows and the periods themselves are hours long, so a
- * minute is fine enough to never be seen to be wrong
+ * Each key's place in the order the keypad's rows rise in, down each
+ * column and then across
+ */
+const ROW_ORDER = new Map<MenuEntry, number>();
+
+for (const group of GROUPS) {
+  for (const entry of group.entries) {
+    ROW_ORDER.set(entry, Math.min(ROW_ORDER.size, STAGGERED_ROWS));
+  }
+}
+
+/** The line drawn on each field move's button */
+const MOVE_GLYPHS: Record<FieldMove, string> = {
+  [Moves.Surf]:
+    'M2 10c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2M2 16c2 0 2-2 4-2s2 2 4 2 2-2 4-2 2 2 4 2 2-2 4-2',
+  [Moves.Fly]: 'M20 4C13 4 7 9 5 16l-2 4 4-2c7-2 12-8 13-14zM5 16l8-8',
+  [Moves.Dig]: 'M15 3l6 6M18 6l-8 8M7 13l4 4-3 3-4-4z',
+  [Moves.Teleport]:
+    'M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8',
+};
+
+/**
+ * How often the hour on the capsule is re-read. The world turns over
+ * in five-minute windows and the periods themselves are hours long, so
+ * a minute is fine enough to never be seen to be wrong
  */
 const CLOCK_TICK = 60_000;
 
@@ -223,53 +251,66 @@ function saidWait(left: number): string {
   return m.menu_wait_mixed({ hours, minutes: past });
 }
 
-/** When each window next turns over, rather than how long it runs */
-function Windows(props: { now: number; class?: string }): JSX.Element {
+/** When each window next turns over, as a grid of six tiles */
+function Windows(props: { now: number }): JSX.Element {
   return (
     <>
-      <dl class={props.class}>
+      <dl class="grid grid-cols-3 gap-1.5">
         <For each={WINDOWS}>
           {([called, every]) => (
-            <>
-              <dt>{called()}</dt>
-              <dd>{saidWait(until(props.now, every))}</dd>
-            </>
+            <div class="flex min-w-0 flex-col rounded-button bg-line-soft px-2 py-1.5">
+              <dt class="text-[11px] leading-tight font-extrabold text-ink">{called()}</dt>
+              <dd class="font-display text-[13px] font-semibold text-tide-dark tabular-nums">
+                {saidWait(until(props.now, every))}
+              </dd>
+            </div>
           )}
         </For>
       </dl>
-      <p class="mt-2 text-xs text-muted">{m.menu_windows_note()}</p>
+      <p class="text-xs text-muted">{m.menu_windows_note()}</p>
     </>
   );
 }
 
-/** The travel mode that is on, if any, for the phone's field move button */
-function activeMove(offers: FieldMoveOffer[]): FieldMoveOffer | null {
-  for (const offer of offers) {
-    if (offer.active) {
-      return offer;
-    }
+/** How far along the carried egg is, as a share of the ring */
+function readEggShare(egg: EggWalk | null): number {
+  if (egg == null || egg.hatchSteps <= 0) {
+    return 0;
   }
-  return null;
+  return Math.min(1, egg.steps / egg.hatchSteps);
+}
+
+/** The trainer's sheet, or none for the default one while it is unread or unset */
+function readSprite(trainer: { sprite: string } | null): string | null {
+  return trainer == null || trainer.sprite === '' ? null : trainer.sprite;
+}
+
+/** The egg's steps in words, saying so once it is ready */
+function sayEgg(egg: EggWalk): string {
+  const words = egg.steps >= egg.hatchSteps ? m.board_egg_ready : m.board_egg_steps;
+
+  return words({ steps: egg.steps, hatch: egg.hatchSteps });
 }
 
 export default function GameMenu(): JSX.Element {
   const auth = useAuth();
   const game = useGame();
   const [open, setOpen] = createSignal(false);
-  /** Where the player stands and the world's clock, opened from the bar */
+  /** Where the player stands and the world's clock, opened from the capsule */
   const [details, setDetails] = createSignal(false);
-  /** The buddy's field moves, behind their own button on a phone */
-  const [moves, setMoves] = createSignal(false);
+  /** Which group of keys a phone's keypad is showing */
+  const [tab, setTab] = createSignal(0);
   const [now, setNow] = createSignal(localNow());
   const [gold, setGold] = createSignal<number | null>(null);
+  const [trainer, setTrainer] = createSignal<{ name: string; sprite: string } | null>(null);
 
   /** The way in, kept so the bound key can hand it the keyboard */
   let button: HTMLButtonElement | undefined;
 
-  /** How many things are waiting on the player, for the menu button's own badge */
+  /** How many things are waiting on the player, for the trainer button's own count */
   const waiting = (): number => game.notices().length;
 
-  /** Gifts waiting on the shelf and quests ready to claim, read when the menu opens */
+  /** Gifts waiting on the shelf and quests ready to claim, read when the keypad opens */
   const [shelf, setShelf] = createSignal({ gifts: 0, quests: 0 });
 
   const readShelf = (): void => {
@@ -307,11 +348,10 @@ export default function GameMenu(): JSX.Element {
     return count;
   };
 
-  /** Opens one panel off the bar and closes the others, since all of them open upward */
-  const only = (panel: 'menu' | 'details' | 'moves'): void => {
+  /** Opens one panel and closes the other, since both stand over the foot of the screen */
+  const only = (panel: 'menu' | 'details'): void => {
     setOpen(panel === 'menu');
     setDetails(panel === 'details');
-    setMoves(panel === 'moves');
     if (panel === 'menu') {
       readShelf();
     }
@@ -326,6 +366,7 @@ export default function GameMenu(): JSX.Element {
   const clock = (): string => worldClock(now(), settings().clock);
   const place = (): string => game.place() ?? m.menu_somewhere();
   const purse = (): string => m.ui_gold({ amount: formatNumber(gold() ?? 0) });
+  const share = (): number => readEggShare(game.egg());
 
   /**
    * The server's clock for when, put into the player's own zone for
@@ -368,26 +409,29 @@ export default function GameMenu(): JSX.Element {
     });
 
   // Watched rather than read once: gold moves at a vendor, on the
-  // board and at the end of a raid
+  // board and at the end of a raid, and the name and the face change
+  // in the profile
   createEffect(() => {
     const user = auth.user();
 
     if (user == null) {
       setGold(null);
+      setTrainer(null);
       return;
     }
 
     const stop = watchProfile(user.uid, (profile) => {
       setGold(profile?.gold ?? 0);
+      setTrainer(profile == null ? null : { name: profile.nickname, sprite: profile.sprite });
     });
 
     onCleanup(stop);
   });
 
   /**
-   * The bound key puts the keyboard on the bar rather than opening it,
-   * so a player who pressed it to see where they were can walk on
-   * without a panel over the world
+   * The bound key puts the keyboard on the trainer button rather than
+   * opening the keypad, so a player who pressed it to see where they
+   * were can walk on without a panel over the world
    */
   onMount(() => {
     const onKey = (event: KeyboardEvent): void => {
@@ -407,10 +451,13 @@ export default function GameMenu(): JSX.Element {
   return (
     <nav
       aria-label={m.menu_game()}
-      // Held to the bottom of the window and centred on it, above the
-      // map and below anything opened over the map
-      class="pointer-events-none fixed inset-x-0 bottom-4 z-10 flex justify-center px-4"
+      // Over the whole window and letting presses through to the map,
+      // above the map and below anything opened over it. Each piece
+      // takes the presses on itself
+      class="pointer-events-none fixed inset-0 z-10"
     >
+      {/* The trainer corner. Laid out before the capsule so the keypad,
+          which grows out of it, can stand over everything else */}
       <Popover
         isOpen={open()}
         onChange={(state: boolean) => {
@@ -420,225 +467,135 @@ export default function GameMenu(): JSX.Element {
             setOpen(false);
           }
         }}
-        // No `overflow-hidden`: every panel opens out of the top of
-        // this box, and a clipped panel is a menu that does not appear
-        class="pointer-events-auto relative flex max-w-full items-center gap-2 rounded-full
-          border-2 border-tide bg-paper/95 py-1 pr-1 pl-1 shadow-pop backdrop-blur-sm sm:pr-3"
+        class="pointer-events-auto absolute bottom-4 left-4 flex flex-col-reverse items-start gap-2
+          sm:bottom-5 sm:left-5 sm:flex-row sm:items-center sm:gap-2.5"
       >
         <PopoverButton
           ref={button}
           aria-label={waiting() > 0 ? m.menu_waiting({ count: waiting() }) : m.menu_label()}
-          class={BAR_BUTTON}
+          class="relative size-19 shrink-0 cursor-pointer rounded-full border-0 bg-transparent p-0
+            shadow-none transition-[translate,scale] duration-(--motion-quick) ease-spring
+            hover:-translate-y-0.75 active:translate-y-0 active:scale-92 focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-tide"
         >
-          <MenuIcon class="size-5" aria-hidden="true" />
-          <Show when={waiting() > 0}>
-            <span aria-hidden="true" class={`${COUNT} absolute -top-1 -right-1`}>
-              {waiting()}
-            </span>
+          {/* The egg's walk so far, round the face. A bare track without one */}
+          <svg viewBox="0 0 76 76" class="absolute inset-0 size-full" aria-hidden="true">
+            <circle
+              cx="38"
+              cy="38"
+              r={RING_RADIUS}
+              stroke-width="5"
+              class="fill-paper/95 stroke-line-soft"
+            />
+            <Show when={game.egg() != null}>
+              <circle
+                cx="38"
+                cy="38"
+                r={RING_RADIUS}
+                stroke-width="5"
+                stroke-linecap="round"
+                stroke-dasharray={String(RING_LENGTH)}
+                stroke-dashoffset={String(RING_LENGTH * (1 - share()))}
+                transform="rotate(-90 38 38)"
+                class="fill-none stroke-leaf transition-[stroke-dashoffset] duration-(--motion-move)
+                  ease-settle"
+              />
+            </Show>
+          </svg>
+          <span
+            class="absolute inset-3.5 flex items-center justify-center rounded-full
+              bg-tide-soft shadow-[0_3px_0_0_var(--blue-shade)]"
+          >
+            <PlayerFace sprite={readSprite(trainer())} size={48} />
+          </span>
+          {/* Keyed, so a new count is a new element and hops as it lands */}
+          <Show when={waiting() > 0 ? waiting() : null} keyed>
+            {(count) => (
+              <span
+                aria-hidden="true"
+                class={`${COUNT} absolute -top-1 -right-1 h-5.5 min-w-5.5 animate-hop border-2
+                  border-paper`}
+              >
+                {count}
+              </span>
+            )}
           </Show>
         </PopoverButton>
 
-        <Divider />
-
-        {/* Not positioned itself, so its panel hangs off the bar the way the menu's does */}
-        <Popover
-          isOpen={details()}
-          onChange={(state: boolean) => {
-            if (state) {
-              only('details');
-            } else {
-              setDetails(false);
-            }
-          }}
-          class="flex min-w-0"
-        >
-          {/* Read straight rather than through a callback `Show`, which
-              untracks the call and would hold the first place stood in */}
-          <PopoverButton
-            class="flex max-w-full min-w-0 cursor-pointer flex-col items-start rounded-2xl border-0
-              bg-transparent px-2 py-0.5 text-left leading-tight shadow-none transition-colors
-              hover:bg-tide-soft active:translate-y-0 focus-visible:outline-2
-              focus-visible:outline-offset-2 focus-visible:outline-tide sm:max-w-72"
-          >
-            <span class="flex max-w-full min-w-0 items-center gap-1">
-              <span class="min-w-0 truncate text-sm font-bold text-ink">{place()}</span>
-              <ChevronDownIcon class="size-3.5 shrink-0 text-muted" aria-hidden="true" />
-            </span>
-            <span class="flex items-center gap-1 text-xs whitespace-nowrap text-muted">
-              {(() => {
-                const sky = game.weather();
-
-                return sky == null ? (
-                  ''
-                ) : (
-                  <>
-                    <Dynamic component={getWeatherIcon(sky)} class="size-3.5" aria-hidden="true" />
-                    <span class="hidden sm:inline">{WEATHER_NAMES[sky]} ·</span>
-                  </>
-                );
-              })()}
-              <span>
-                {period()} {clock()}
+        <div class={`${GLASS} flex flex-col rounded-[14px] px-3 py-1.5 leading-[17px]`}>
+          <Show when={trainer()?.name}>
+            {(name) => <span class="text-[13px] font-extrabold text-ink">{name()}</span>}
+          </Show>
+          <span class="font-display text-[13px] font-semibold text-gold-dark tabular-nums">
+            {purse()}
+          </span>
+          <Show when={game.egg()}>
+            {(egg) => (
+              <span class="text-[11px] font-extrabold text-leaf-dark tabular-nums">
+                {sayEgg(egg())}
               </span>
-            </span>
-          </PopoverButton>
-          <Transition
-            show={details()}
-            {...SHEER}
-            class="absolute bottom-full left-1/2 z-30 mb-2 w-72 max-w-[calc(100vw-2rem)]
-              -translate-x-1/2"
-          >
-            <PopoverPanel
-              class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper p-3 text-sm
-                shadow-float"
-            >
-              <div class="flex items-center justify-between gap-3">
-                <span class="min-w-0 truncate font-bold text-ink">{place()}</span>
-                {/* On the bar itself from a screen wide enough to hold it */}
-                <span class="shrink-0 font-bold whitespace-nowrap text-gold-dark sm:hidden">
-                  {purse()}
-                </span>
-              </div>
-              {(() => {
-                const sky = game.weather();
-
-                // Said outright rather than behind a hover, which a phone
-                // has no way to open
-                return sky == null ? (
-                  ''
-                ) : (
-                  <div class="flex flex-col gap-1.5">
-                    <span class="flex items-center gap-2 font-bold text-ink">
-                      <Dynamic component={getWeatherIcon(sky)} class="size-5" aria-hidden="true" />
-                      {WEATHER_NAMES[sky]}
-                    </span>
-                    <p class="text-xs text-muted">{WEATHER_DESCRIPTIONS[sky]}</p>
-                    <WeatherFavors weather={sky} />
-                  </div>
-                );
-              })()}
-              <div class="flex items-center justify-between gap-3">
-                <span class="font-bold text-ink">{period()}</span>
-                <span class="text-muted">{clock()}</span>
-              </div>
-              <div class="border-t-2 border-line-soft pt-2 text-xs">
-                <Windows
-                  now={now()}
-                  class="grid grid-cols-[1fr_auto] gap-x-4 gap-y-0.5 [&_dd]:text-right
-                    [&_dd]:text-muted"
-                />
-              </div>
-            </PopoverPanel>
-          </Transition>
-        </Popover>
-
-        {/* The buddy's field moves, only while there is one to use here */}
-        <Show when={game.fieldMoves().length > 0}>
-          <Divider />
-
-          <div class="hidden items-center gap-1 sm:flex">
-            <For each={game.fieldMoves()}>
-              {(offer) => (
-                <button
-                  type="button"
-                  class={CHIP}
-                  aria-pressed={offer.active}
-                  disabled={offer.busy}
-                  onClick={() => {
-                    offer.use();
-                  }}
-                >
-                  {offer.name}
-                </button>
-              )}
-            </For>
-          </div>
-
-          {/* A phone has no width for the chips, so they go behind a button
-              that names the travel mode that is on */}
-          <Popover
-            isOpen={moves()}
-            onChange={(state: boolean) => {
-              if (state) {
-                only('moves');
-              } else {
-                setMoves(false);
-              }
-            }}
-            class="flex sm:hidden"
-          >
-            <PopoverButton aria-label={m.menu_field_moves()} class={BAR_BUTTON}>
-              <ActionsIcon class="size-5" aria-hidden="true" />
-              <Show when={activeMove(game.fieldMoves())}>
-                {(offer) => <span class="pr-1">{offer().name}</span>}
-              </Show>
-            </PopoverButton>
-            <Transition
-              show={moves()}
-              {...SHEER}
-              class="absolute bottom-full left-1/2 z-30 mb-2 w-max -translate-x-1/2"
-            >
-              <PopoverPanel class="flex gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
-                <For each={game.fieldMoves()}>
-                  {(offer) => (
-                    <button
-                      type="button"
-                      class={`${TILE} w-20 ${offer.active ? 'border-tide bg-tide-soft text-tide-dark' : ''}`}
-                      aria-pressed={offer.active}
-                      disabled={offer.busy}
-                      onClick={() => {
-                        setMoves(false);
-                        offer.use();
-                      }}
-                    >
-                      {offer.name}
-                    </button>
-                  )}
-                </For>
-              </PopoverPanel>
-            </Transition>
-          </Popover>
-        </Show>
-
-        <div class="hidden items-center gap-2 sm:flex">
-          <Divider />
-
-          <span class="shrink-0 text-sm font-bold whitespace-nowrap text-gold-dark">{purse()}</span>
+            )}
+          </Show>
         </div>
 
-        {/* On the bar at every width: taking the screen is what a player
-            does as they start walking. The divider goes with it on a
-            browser that will not fill the screen */}
-        <Show when={fullscreenOffered()}>
-          <Divider />
-        </Show>
-
-        <FullscreenToggle class={`${TOGGLE} shrink-0`} />
-
-        {/* Centred on the bar and pulled back by half its own width, so
-            the panel stays over the middle of the screen */}
+        {/* Grown out of the trainer button and shrunk back into it. On a
+            phone it is a sheet across the foot of the screen, grown out
+            of the same corner */}
         <Transition
           show={open()}
-          {...SHEER}
-          class="absolute bottom-full left-1/2 z-30 mb-2 w-[21rem] max-w-[calc(100vw-2rem)]
-            -translate-x-1/2"
+          {...GROW}
+          class="fixed inset-x-0 bottom-0 z-30 origin-[52px_100%] sm:absolute sm:inset-x-auto
+            sm:bottom-full sm:left-0 sm:mb-3 sm:w-130 sm:max-w-[calc(100vw-2.5rem)]
+            sm:origin-[38px_calc(100%+50px)]"
         >
-          <PopoverPanel class="flex flex-col gap-1 rounded-panel border-2 border-line bg-paper p-2 shadow-float">
-            <For each={GROUPS}>
-              {(group) => (
-                <div role="group" aria-label={group.label()}>
-                  <span
-                    aria-hidden="true"
-                    class="block px-2 pt-1 text-left text-xs font-semibold text-muted uppercase"
+          <PopoverPanel
+            class="flex flex-col overflow-hidden rounded-t-sheet border-2 border-b-0 border-line
+              bg-paper shadow-sheet sm:rounded-sheet sm:border-b-2"
+          >
+            {/* A phone has room for one column, so the three are tabs */}
+            <div class="mx-2.5 mt-2.5 flex gap-1 rounded-full bg-line-soft p-1 sm:hidden">
+              <For each={GROUPS}>
+                {(group, index) => (
+                  <button
+                    type="button"
+                    aria-pressed={tab() === index()}
+                    class="h-9 flex-1 cursor-pointer rounded-full border-0 bg-transparent text-sm
+                      font-extrabold text-muted shadow-none transition-colors
+                      duration-(--motion-quick) active:translate-y-0 aria-pressed:bg-paper
+                      aria-pressed:text-tide-dark aria-pressed:shadow-rest"
+                    onClick={() => {
+                      setTab(index());
+                    }}
                   >
                     {group.label()}
-                  </span>
-                  <div class="grid grid-cols-4 gap-1">
+                  </button>
+                )}
+              </For>
+            </div>
+
+            <div class="grid gap-1 p-2.5 sm:grid-cols-3">
+              <For each={GROUPS}>
+                {(group, index) => (
+                  <div
+                    role="group"
+                    aria-label={group.label()}
+                    class={`${tab() === index() ? 'flex' : 'hidden sm:flex'} min-w-0 flex-col`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="hidden px-2.5 py-1 text-[10px] font-extrabold tracking-[0.12em]
+                        text-tide uppercase sm:block"
+                    >
+                      {group.label()}
+                    </span>
                     <For each={group.entries}>
                       {(entry) => (
                         <button
                           type="button"
-                          class={TILE}
+                          class={`${ROW} animate-rise`}
+                          style={{
+                            'animation-delay': `calc(var(--motion-stagger) * ${ROW_ORDER.get(entry) ?? 0})`,
+                          }}
                           disabled={entry.dialog == null}
                           // The word alone reads as something the game can do and will not
                           title={
@@ -652,42 +609,234 @@ export default function GameMenu(): JSX.Element {
                             }
                           }}
                         >
-                          <span class="relative">
-                            <Dynamic component={entry.icon} class="size-7" aria-hidden="true" />
-                            <Show when={countFor(entry.dialog) > 0}>
-                              <span class={`${COUNT} absolute -top-1 -right-2`}>
-                                {countFor(entry.dialog)}
-                              </span>
-                            </Show>
-                          </span>
-                          {entry.label()}
+                          <Dynamic
+                            component={entry.icon}
+                            class="size-5 shrink-0 text-tide"
+                            aria-hidden="true"
+                          />
+                          <span class="min-w-0 truncate">{entry.label()}</span>
+                          <Show when={countFor(entry.dialog) > 0}>
+                            <span class={`${COUNT} ml-auto`}>{countFor(entry.dialog)}</span>
+                          </Show>
                         </button>
                       )}
                     </For>
                   </div>
-                </div>
-              )}
-            </For>
+                )}
+              </For>
+            </div>
 
             {/* Settings and the day or night switch change how the game
                 behaves rather than where the player goes, so they sit
-                under the keys rather than among them */}
-            <div class="mt-1 flex items-center justify-between gap-2 border-t-2 border-line-soft px-1 pt-2">
+                under the keys rather than among them. A phone's sheet
+                covers the trainer button, so it carries its own way out */}
+            <div
+              class="flex items-center gap-1.5 border-t-2 border-line-soft bg-parchment/60 px-2.5
+                pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:pb-2"
+            >
               <button
                 type="button"
-                class={`${TOGGLE} flex items-center gap-1.5 text-sm font-bold`}
+                class={`${ROW} w-auto sm:hidden`}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                {m.ui_close()}
+              </button>
+              <button
+                type="button"
+                class={`${ROW} w-auto`}
                 onClick={() => {
                   openDialog(GameDialog.Settings);
                 }}
               >
-                <SettingsIcon class="size-5" aria-hidden="true" />
+                <SettingsIcon class="size-5 shrink-0 text-tide" aria-hidden="true" />
                 {m.panel_settings()}
               </button>
-              <ThemeToggle class={TOGGLE} />
+              <span class="grow" />
+              <ThemeToggle class={SQUARE} />
             </div>
           </PopoverPanel>
         </Transition>
       </Popover>
+
+      {/* The place capsule, which opens into its card in the same spot */}
+      <Popover
+        isOpen={details()}
+        onChange={(state: boolean) => {
+          if (state) {
+            only('details');
+          } else {
+            setDetails(false);
+          }
+        }}
+        class="pointer-events-auto absolute bottom-4 left-1/2 flex -translate-x-1/2 sm:bottom-5"
+      >
+        {/* Read straight rather than through a callback `Show`, which
+            untracks the call and would hold the first place stood in */}
+        <PopoverButton
+          class={`${GLASS} flex max-w-[calc(100vw-14rem)] sm:max-w-[min(34rem,calc(100vw-22rem))] min-w-0 cursor-pointer
+            items-center gap-3 rounded-[22px] py-2 pr-4.5 pl-2 text-left transition-[translate,opacity]
+            duration-(--motion-quick) ease-spring hover:-translate-y-0.5 active:translate-y-0
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide
+            ${details() ? 'pointer-events-none opacity-0' : ''}`}
+        >
+          {(() => {
+            const sky = game.weather();
+
+            return sky == null ? (
+              ''
+            ) : (
+              <span
+                class="flex size-10 shrink-0 items-center justify-center rounded-button
+                  bg-gold-soft text-gold-dark"
+              >
+                <Dynamic component={getWeatherIcon(sky)} class="size-5.5" aria-hidden="true" />
+              </span>
+            );
+          })()}
+          {/* A phone has room for the clock alone */}
+          <span class="font-display text-[15px] font-semibold whitespace-nowrap text-ink sm:hidden">
+            {clock()}
+          </span>
+          <span class="hidden min-w-0 flex-col sm:flex">
+            <span class="truncate font-display text-lg leading-6 font-semibold text-ink">
+              {place()}
+            </span>
+            <span class="truncate text-xs font-bold text-muted">
+              {(() => {
+                const sky = game.weather();
+
+                return sky == null ? '' : `${WEATHER_NAMES[sky]} · `;
+              })()}
+              {period()} {clock()}
+            </span>
+          </span>
+        </PopoverButton>
+        <Transition
+          show={details()}
+          {...MORPH}
+          class="absolute bottom-0 left-1/2 z-30 -ml-[min(180px,calc(50vw-1rem))]
+            w-[min(360px,calc(100vw-2rem))] origin-bottom"
+        >
+          <PopoverPanel
+            class="flex flex-col gap-2.5 rounded-sheet border-2 border-line bg-paper p-3.5 text-sm
+              shadow-sheet"
+          >
+            <div class="flex items-center justify-between gap-3">
+              <span class="min-w-0 font-display text-lg leading-6 font-semibold text-ink">
+                {place()}
+              </span>
+              <CloseButton
+                onPress={() => {
+                  setDetails(false);
+                }}
+              />
+            </div>
+            {/* Said outright rather than behind a hover, which a phone
+                has no way to open */}
+            <div class="flex items-start gap-2.5 rounded-card bg-gold-soft p-2.5">
+              {(() => {
+                const sky = game.weather();
+
+                return sky == null ? (
+                  ''
+                ) : (
+                  <Dynamic
+                    component={getWeatherIcon(sky)}
+                    class="size-7.5 shrink-0 text-gold-dark"
+                    aria-hidden="true"
+                  />
+                );
+              })()}
+              <div class="flex min-w-0 flex-col gap-1">
+                <span class="font-extrabold text-ink">
+                  {(() => {
+                    const sky = game.weather();
+
+                    return sky == null ? '' : `${WEATHER_NAMES[sky]} · `;
+                  })()}
+                  {period()}, {clock()}
+                </span>
+                {(() => {
+                  const sky = game.weather();
+
+                  return sky == null ? (
+                    ''
+                  ) : (
+                    <>
+                      <p class="text-xs text-muted">{WEATHER_DESCRIPTIONS[sky]}</p>
+                      <WeatherFavors weather={sky} />
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+            <Windows now={now()} />
+          </PopoverPanel>
+        </Transition>
+      </Popover>
+
+      {/* The buddy's field moves, only while there is one to use here.
+          Stacked up the right edge on a phone, where the thumb is */}
+      <Show when={game.fieldMoves().length > 0}>
+        <div
+          class="pointer-events-auto absolute right-4 bottom-4 flex flex-col-reverse gap-3
+            sm:right-5 sm:bottom-5 sm:flex-row sm:gap-3.5"
+        >
+          <For each={game.fieldMoves()}>
+            {(offer) => (
+              <button
+                type="button"
+                aria-pressed={offer.active}
+                disabled={offer.busy}
+                class="group flex cursor-pointer flex-col items-center gap-1 border-0 bg-transparent
+                  p-0 text-[11px] font-extrabold text-white shadow-none
+                  [text-shadow:0_1px_0_rgb(0_0_0/0.45)] active:translate-y-0
+                  disabled:cursor-not-allowed disabled:opacity-55"
+                onClick={() => {
+                  offer.use();
+                }}
+              >
+                <span
+                  class="flex size-square items-center justify-center rounded-full border-3
+                    border-tide bg-paper text-tide shadow-[0_3px_0_0_rgb(16_46_99/0.35)]
+                    transition-[translate,scale,background-color,color] duration-(--motion-quick)
+                    ease-spring group-hover:-translate-y-0.75 group-active:translate-y-0
+                    group-active:scale-90 group-focus-visible:outline-2
+                    group-focus-visible:outline-offset-2 group-focus-visible:outline-tide
+                    group-aria-pressed:bg-tide group-aria-pressed:text-on-accent
+                    group-aria-pressed:shadow-[0_3px_0_0_var(--blue-shade),0_0_0_4px_rgb(35_96_200/0.25)]"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.25"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="size-6"
+                    aria-hidden="true"
+                  >
+                    <path d={MOVE_GLYPHS[offer.move]} />
+                  </svg>
+                </span>
+                {offer.name}
+              </button>
+            )}
+          </For>
+        </div>
+      </Show>
+
+      {/* Top right, where a window keeps its own */}
+      <div class="pointer-events-auto absolute top-4 right-4">
+        <FullscreenToggle
+          class={`${GLASS} flex size-target cursor-pointer items-center justify-center
+            rounded-[14px] text-ink transition-colors duration-(--motion-quick) hover:border-tide
+            hover:text-tide-dark active:translate-y-0 focus-visible:outline-2
+            focus-visible:outline-offset-2 focus-visible:outline-tide`}
+        />
+      </div>
     </nav>
   );
 }

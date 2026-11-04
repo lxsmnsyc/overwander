@@ -1,25 +1,25 @@
 import {
   EFFORT_STEP,
-  NATURE_BARS,
   NATURE_MARKS,
   NATURE_NUMBERS,
   NATURE_WORDS,
   STAT_LABELS,
-  bestTotal,
   natureShift,
   totalOf,
 } from '../describe';
+import { CARD_TITLE } from '../metrics';
+import StatHexagon, { type HexagonStat } from './StatHexagon';
 
 import type { CaughtPokemon } from '../../../../auth/caught';
 
 import { unusedEffort } from '../../../../model/effort';
 
-import type { Stats } from '../../../../data/constants/stats';
 import {
   EFFORT_PER_LEVEL,
   MAX_EFFORT_PER_STAT,
   MAX_IV,
   STAT_ORDER,
+  Stats,
   getIV,
 } from '../../../../data/constants/stats';
 
@@ -30,7 +30,21 @@ import { NATURE_NAMES } from '../../../../data/ids/text';
 import { Badge, Button, Hint, HintList, Meta } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { formatList } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';
+
+/** The six clockwise from the top, the way a summary screen draws them */
+const HEXAGON_ORDER: readonly Stats[] = [
+  Stats.HP,
+  Stats.Attack,
+  Stats.Defense,
+  Stats.Speed,
+  Stats.SpecialDefense,
+  Stats.SpecialAttack,
+];
+
+/** A corner's label by what the nature does to it: lowered, untouched, raised */
+const HEXAGON_TONES = ['fill-tide', '', 'fill-ember-dark'] as const;
 
 /**
  * The six stats, each read three ways side by side: what the pokemon
@@ -122,19 +136,62 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
   /** A nature's mark and colour for one stat */
   const shift = (stat: Stats): number => natureShift(props.caught.nature, stat);
 
+  /** The nature's name, with the stat it raises and the one it lowers where it moves any */
+  const natureLabel = (): string => {
+    let raised: Stats | null = null;
+    let lowered: Stats | null = null;
+
+    for (const stat of STAT_ORDER) {
+      if (shift(stat) === 2) {
+        raised = stat;
+      } else if (shift(stat) === 0) {
+        lowered = stat;
+      }
+    }
+
+    const nature = NATURE_NAMES[props.caught.nature];
+
+    if (raised == null || lowered == null) {
+      return nature;
+    }
+    return m.catch_nature_shift({
+      nature,
+      raised: STAT_LABELS[raised],
+      lowered: STAT_LABELS[lowered],
+    });
+  };
+
+  /** The six totals, clockwise from the top the way a summary screen draws them */
+  const shape = (): HexagonStat[] => {
+    const corners: HexagonStat[] = [];
+
+    for (const stat of HEXAGON_ORDER) {
+      corners.push({
+        name: STAT_LABELS[stat],
+        value: totalOf(props.caught, stat),
+        tone: HEXAGON_TONES[shift(stat)],
+      });
+    }
+    return corners;
+  };
+
+  /** What the hexagon says, read aloud */
+  const shapeLabel = (): string => {
+    const parts: string[] = [];
+
+    for (const stat of STAT_ORDER) {
+      parts.push(
+        m.catch_stat_value({ stat: STAT_LABELS[stat], value: totalOf(props.caught, stat) }),
+      );
+    }
+    return formatList(parts, 'and');
+  };
+
   return (
-    <section class="flex flex-col gap-1">
-      {/* Columns sized to their content with real gaps between them, so
-          the headings and the numbers under them never run together */}
-      <div
-        class="grid grid-cols-[0.75rem_max-content_minmax(2rem,1fr)_2.25rem_1.75rem_2.75rem]
-          items-center gap-x-2 gap-y-0.5 text-sm
-          sm:grid-cols-[0.75rem_max-content_minmax(3rem,1fr)_2.5rem_2rem_4rem] sm:gap-x-3"
-      >
-        <span class="col-span-3 flex items-center gap-1.5">
-          <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
-            {m.catch_stats()}
-          </h3>
+    <section class="flex flex-col gap-1.5">
+      <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <span class="flex items-center gap-1.5">
+          <h3 class={CARD_TITLE}>{m.catch_stats()}</h3>
           <Hint title={m.catch_stats_help()}>
             <HintList>
               <li>{m.catch_stats_help_iv({ max: MAX_IV })}</li>
@@ -144,19 +201,32 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               <li>{m.catch_stats_help_items({ wing: WING_EFFORT, vitamin: VITAMIN_EFFORT })}</li>
               <li>{m.catch_stats_help_berries()}</li>
               <li>{m.catch_stats_help_nature()}</li>
-              <li>{m.catch_stats_help_bars()}</li>
+              <li>{m.catch_stats_help_shape()}</li>
             </HintList>
           </Hint>
-          {/* Beside the arrows it explains */}
-          <Badge>{NATURE_NAMES[props.caught.nature]}</Badge>
         </span>
-        {/* Spills left over the bars rather than wrapping: ごうけい is
-            wider than the column */}
-        <span class="text-right text-xs font-semibold whitespace-nowrap text-muted uppercase">
+        {/* Beside the arrows it explains */}
+        <Badge>{natureLabel()}</Badge>
+      </div>
+
+      {/* The totals as a shape, measured against its own best stat, so
+          which end of the pokemon is the sharp one reads at a glance */}
+      <StatHexagon stats={shape()} label={shapeLabel()} class="mx-auto max-w-60" />
+
+      {/* Columns sized to their content with real gaps between them, so
+          the headings and the numbers under them never run together */}
+      <div
+        class="grid grid-cols-[0.75rem_minmax(0,1fr)_2.5rem_2rem_3.25rem] items-center gap-x-2 gap-y-1
+          text-sm"
+      >
+        <span />
+        <span />
+        {/* Spills left rather than wrapping: ごうけい is wider than the column */}
+        <span class="text-right text-[10px] font-extrabold whitespace-nowrap text-muted uppercase">
           {m.catch_stats_total()}
         </span>
-        <span class="text-right text-xs font-semibold text-muted uppercase">IV</span>
-        <span class="text-right text-xs font-semibold text-muted uppercase">EV</span>
+        <span class="text-right text-[10px] font-extrabold text-muted uppercase">IV</span>
+        <span class="text-right text-[10px] font-extrabold text-muted uppercase">EV</span>
 
         <For each={STAT_ORDER}>
           {(stat) => (
@@ -164,7 +234,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               {/* The arrow in its own column keeps the names in line,
                   and a colour is not something everybody can read */}
               <span
-                class={NATURE_NUMBERS[shift(stat)]}
+                class={`text-xs font-extrabold ${NATURE_NUMBERS[shift(stat)]}`}
                 title={
                   NATURE_MARKS[shift(stat)] === ''
                     ? undefined
@@ -179,22 +249,14 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               >
                 {NATURE_MARKS[shift(stat)]}
               </span>
-              <span class="text-left whitespace-nowrap">{STAT_LABELS[stat]}</span>
-              {/* Measured against its own best stat, so the bar says which
-                  end of the pokemon is the sharp one */}
-              <div class="h-2 overflow-hidden rounded-full bg-line-soft">
-                <div
-                  class={`h-full rounded-full ${NATURE_BARS[shift(stat)]}`}
-                  style={{
-                    width: `${(totalOf(props.caught, stat) / bestTotal(props.caught)) * 100}%`,
-                  }}
-                />
-              </div>
-              <span class={`text-right tabular-nums ${NATURE_NUMBERS[shift(stat)]}`}>
+              <span class="truncate text-left">{STAT_LABELS[stat]}</span>
+              <span
+                class={`text-right font-display font-semibold tabular-nums ${NATURE_NUMBERS[shift(stat)]}`}
+              >
                 {totalOf(props.caught, stat)}
               </span>
               <span
-                class={`text-right tabular-nums ${
+                class={`text-right font-display tabular-nums ${
                   getIV(props.caught.ivs, stat) === MAX_IV
                     ? 'font-semibold text-gold-dark'
                     : 'text-muted'
@@ -207,11 +269,15 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
                   one point of the stat costs */}
               <Show
                 when={props.owned}
-                fallback={<span class="text-right tabular-nums text-muted">{laidOut()[stat]}</span>}
+                fallback={
+                  <span class="text-right font-display tabular-nums text-muted">
+                    {laidOut()[stat]}
+                  </span>
+                }
               >
                 <input
                   type="number"
-                  class="w-full px-1 py-0 text-right tabular-nums"
+                  class="h-7 w-full rounded-chip px-1 py-0 text-right font-display tabular-nums"
                   min={floorOf(stat)}
                   max={ceilingOf(stat)}
                   step={EFFORT_STEP}

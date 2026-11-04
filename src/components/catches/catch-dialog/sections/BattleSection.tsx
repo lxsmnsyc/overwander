@@ -21,7 +21,8 @@ import { Items } from '../../../../data/ids/items';
 
 import type { Moves } from '../../../../data/ids/moves';
 
-import { getMoveData } from '../../../../data/moves';
+import { getMoveData, getMovePP } from '../../../../data/moves';
+import { TYPE_COLORS, TYPE_NAMES } from '../../../../data/constants/types';
 
 import {
   type AbilityKind,
@@ -38,13 +39,11 @@ import ItemCard from '../../../items/ItemCard';
 
 import ItemSprite from '../../../items/ItemSprite';
 import MoveTooltip from '../../../moves/MoveTooltip';
-import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
-import { Sigil } from '../../../sprites/TypeBadge';
+import { MOVE_CATEGORY_LABELS } from '../../../sprites/MoveCategorySprite';
 import { LockIcon } from '../../../icons';
-import type { BadgeTone } from '../../../styled';
+import { CARD, CARD_TITLE, riseAfter } from '../metrics';
 
 import {
-  Badge,
   Button,
   Hint,
   HintList,
@@ -84,15 +83,6 @@ export interface BattleSectionProps {
   onArrange: (order: CatchOrder) => void;
 }
 
-/** How big a move's type mark is drawn */
-const MARK_SIZE = 18;
-
-/**
- * The category badge's width. The sheet cuts it at 32x14, so this is
- * what stands it as tall as the row's line of text
- */
-const CATEGORY_SIZE = 45;
-
 /**
  * A slot the pokemon has room for and has not filled, or one it has no
  * room for yet. Both are drawn so the layout never shifts, and are told
@@ -110,12 +100,36 @@ function unfilled(shown: number, room: number, kind: Slots): OpenSlot[] {
   return open;
 }
 
-/** An ability's badge colour by where it comes from: its hidden pool, or its family's signature */
-const ABILITY_BADGES: Record<AbilityKind, BadgeTone> = {
-  regular: 'neutral',
-  hidden: 'arcane',
-  signature: 'gold',
+/** An ability's slot colour by where it comes from: its hidden pool, or its family's signature */
+const ABILITY_SLOTS: Record<AbilityKind, string> = {
+  regular: 'border-line bg-paper text-ink',
+  hidden: 'border-arcane/40 bg-arcane-soft text-arcane-dark',
+  signature: 'border-gold/60 bg-gold-soft text-gold-dark',
 };
+
+/** A move card, and the empty and locked cards beside it */
+const MOVE_CARD = 'min-h-[66px] rounded-[14px]';
+
+/** An ability slot */
+const ABILITY_SLOT = 'h-9 rounded-[10px]';
+
+/** A held item's square */
+const ITEM_SQUARE = 'size-12 rounded-button';
+
+/** What a move is, said under its name: type, category, power and PP */
+function describeMove(move: Moves, points: number): string {
+  const data = getMoveData(move);
+  const facts = {
+    type: TYPE_NAMES[data.type],
+    category: MOVE_CATEGORY_LABELS[data.category](),
+    pp: getMovePP(move, points),
+  };
+
+  // A status move has no power to state
+  return data.power == null
+    ? m.catch_move_facts_status(facts)
+    : m.catch_move_facts({ ...facts, power: data.power });
+}
 
 /** What opens a locked slot of each kind */
 const UNLOCKED_BY: Record<Slots, () => string> = {
@@ -124,18 +138,27 @@ const UNLOCKED_BY: Record<Slots, () => string> = {
   [Slots.Move]: () => m.catch_slot_unlock_move({ item: describeItem(Items.HeartScale) }),
 };
 
-/** An unfilled slot: dashed while free, shaded with a lock while it still has to be opened */
-function Unfilled(props: { state: OpenSlot; kind: Slots; class: string }): JSX.Element {
+/**
+ * An unfilled slot: dashed while free, shaded with a lock while it still
+ * has to be opened. A wordy one says which it is; a square says it with
+ * its look alone and its label
+ */
+function Unfilled(props: {
+  state: OpenSlot;
+  kind: Slots;
+  class: string;
+  wordy?: boolean;
+}): JSX.Element {
   return (
     <Show
       when={props.state === 'locked'}
       fallback={
         <li
           aria-label={m.catch_slot_empty_label()}
-          class={`flex items-center justify-center rounded-lg border-2 border-dashed
-            border-line text-[10px] font-bold tracking-wide text-muted uppercase ${props.class}`}
+          class={`flex items-center justify-center border-2 border-dashed border-line text-[13px] font-bold
+            text-muted ${props.class}`}
         >
-          {m.catch_slot_empty()}
+          {props.wordy === true ? m.catch_slot_empty_label() : ''}
         </li>
       }
     >
@@ -146,10 +169,11 @@ function Unfilled(props: { state: OpenSlot; kind: Slots; class: string }): JSX.E
           description={UNLOCKED_BY[props.kind]()}
         >
           <span
-            class={`flex items-center justify-center rounded-lg border-2 border-line-soft
-              bg-line-soft text-muted ${props.class}`}
+            class={`flex items-center justify-center gap-1.5 border-2 border-dashed border-line-soft
+              bg-line-soft/60 text-[13px] font-bold text-muted ${props.class}`}
           >
             <LockIcon class="size-3.5" aria-hidden="true" />
+            {props.wordy === true ? m.catch_slot_locked() : ''}
           </span>
         </TooltipHost>
       </li>
@@ -164,6 +188,8 @@ function Unfilled(props: { state: OpenSlot; kind: Slots; class: string }): JSX.E
  */
 function Heading(props: {
   title: string;
+  /** A word on the right while nothing is waiting to be saved */
+  note?: string;
   /** What the info icon beside the title explains */
   hint: JSX.Element;
   shifted: boolean;
@@ -172,14 +198,19 @@ function Heading(props: {
   onSave: () => void;
 }): JSX.Element {
   return (
-    <div class="flex min-h-9 items-center justify-between gap-2">
+    <div class="flex min-h-8 items-center justify-between gap-2">
       <span class="flex items-center gap-1.5">
-        <h3 class="text-left text-xs font-extrabold tracking-wider text-muted uppercase">
-          {props.title}
-        </h3>
+        <h3 class={CARD_TITLE}>{props.title}</h3>
         {props.hint}
       </span>
-      <Show when={props.shifted}>
+      <Show
+        when={props.shifted}
+        fallback={
+          <Show when={props.note}>
+            <span class="text-xs font-bold text-muted">{props.note}</span>
+          </Show>
+        }
+      >
         <div class="flex gap-1">
           <Button onClick={props.onUndo}>{m.catch_undo()}</Button>
           <Button tone="primary" disabled={props.frozen} onClick={props.onSave}>
@@ -264,10 +295,87 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   };
 
   return (
-    <section class="flex flex-col gap-3 md:h-full">
-      {/* Abilities and held items side by side in one card, over the moves */}
-      <div class="grid grid-cols-2 rounded-2xl border-2 border-line-soft p-3">
-        <div class="flex min-w-0 flex-col gap-1 border-r border-line-soft pr-3">
+    // A container, so the cards lay themselves out by the room the
+    // column has rather than by the window: three moves to a row and
+    // the two short cards side by side where there is room for them
+    <section class="@container flex min-w-0 flex-col gap-2.5">
+      {/* The moves first: they are what a player builds around */}
+      <div class={CARD} style={riseAfter(1)}>
+        <Heading
+          title={m.catch_moves()}
+          hint={
+            <Hint title={m.catch_moves_help()}>
+              <HintList>
+                <li>
+                  {m.catch_moves_help_room({
+                    start: DEFAULT_MOVE_SLOTS,
+                    max: mostSlots(Slots.Move),
+                  })}
+                </li>
+                <li>{m.catch_moves_help_order()}</li>
+                <li>{m.catch_moves_help_pp()}</li>
+                <li>{m.catch_moves_help_speed()}</li>
+              </HintList>
+            </Hint>
+          }
+          note={arrangeable() ? m.catch_drag_reorder() : undefined}
+          shifted={shifted(moves(), props.caught.moves)}
+          frozen={props.frozen}
+          onUndo={() => {
+            setMoves([...props.caught.moves]);
+          }}
+          onSave={save}
+        />
+        <ul
+          class="m-0 grid list-none grid-cols-2 gap-2 p-0 @lg:grid-cols-3"
+          {...movesOrder.listProps}
+        >
+          <Index each={moves()}>
+            {(move, at) => (
+              <li
+                {...movesOrder.itemProps(at)}
+                style={movesOrder.style(at)}
+                class={grip(movesOrder.held() === at)}
+              >
+                <MoveTooltip
+                  class="block"
+                  move={move()}
+                  points={getMovePoints(props.caught, move())}
+                  speed={getStats(props.caught)[Stats.Speed]}
+                >
+                  {/* Its name and what it is at a glance, its type as the
+                      stripe down its side; what it does is on the card
+                      over it */}
+                  <span
+                    class={`relative flex ${MOVE_CARD} flex-col justify-center gap-0.5 overflow-hidden
+                      border-2 border-line bg-paper py-2 pr-2.5 pl-4 text-left transition-[translate,box-shadow]
+                      duration-(--motion-quick) ease-spring hover:-translate-y-0.75 hover:shadow-pop`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="absolute inset-y-0 left-0 w-1.5"
+                      style={{ background: TYPE_COLORS[getMoveData(move()).type] }}
+                    />
+                    <span class="truncate text-sm font-extrabold">{getMoveData(move()).name}</span>
+                    <span class="line-clamp-2 text-[11px] leading-[14px] text-muted @lg:truncate">
+                      {describeMove(move(), getMovePoints(props.caught, move()))}
+                    </span>
+                  </span>
+                </MoveTooltip>
+              </li>
+            )}
+          </Index>
+          <Index
+            each={unfilled(moves().length, getCatchSlots(props.caught, Slots.Move), Slots.Move)}
+          >
+            {(state) => <Unfilled state={state()} kind={Slots.Move} class={MOVE_CARD} wordy />}
+          </Index>
+        </ul>
+      </div>
+
+      {/* What it is and what it carries, side by side under the moves */}
+      <div class="grid gap-2.5 @lg:grid-cols-[minmax(0,1fr)_12.5rem]">
+        <div class={CARD} style={riseAfter(2)}>
           <Heading
             title={m.catch_abilities()}
             hint={
@@ -297,7 +405,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
             }}
             onSave={save}
           />
-          <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...abilitiesOrder.listProps}>
+          <ul class="m-0 grid list-none grid-cols-2 gap-1.5 p-0" {...abilitiesOrder.listProps}>
             <Index each={abilities()}>
               {(ability, at) => (
                 <li
@@ -306,13 +414,12 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   class={grip(abilitiesOrder.held() === at)}
                 >
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability())}>
-                    <Badge
-                      class="w-full justify-center"
-                      wrap
-                      tone={ABILITY_BADGES[abilityKind(props.caught.species, ability())]}
+                    <span
+                      class={`flex ${ABILITY_SLOT} min-w-0 items-center border-2 px-2.5 text-[13px]
+                        font-extrabold ${ABILITY_SLOTS[abilityKind(props.caught.species, ability())]}`}
                     >
-                      {describeAbility(ability())}
-                    </Badge>
+                      <span class="truncate">{describeAbility(ability())}</span>
+                    </span>
                   </TooltipHost>
                 </li>
               )}
@@ -324,12 +431,19 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 Slots.Ability,
               )}
             >
-              {(state) => <Unfilled state={state()} kind={Slots.Ability} class="h-7" />}
+              {(state) => (
+                <Unfilled
+                  state={state()}
+                  kind={Slots.Ability}
+                  class={`${ABILITY_SLOT} px-2.5`}
+                  wordy
+                />
+              )}
             </Index>
           </ul>
         </div>
 
-        <div class="flex min-w-0 flex-col gap-1 pl-3">
+        <div class={CARD} style={riseAfter(3)}>
           <Heading
             title={m.catch_held_items()}
             hint={
@@ -355,11 +469,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
             onSave={save}
           />
           {/* Only its own room is drawn, and only for somebody who can
-                fill it: an empty square on a stranger's pokemon is a
-                button nobody may press. Four to a row below `md`, where
-                eight squares are too small to press */}
+              fill it: an empty square on a stranger's pokemon is a
+              button nobody may press */}
           <ul
-            class="m-0 grid list-none grid-cols-4 gap-1 p-0 md:grid-cols-8"
+            class="m-0 grid list-none grid-cols-[repeat(auto-fill,3rem)] gap-1.5 p-0"
             {...itemsOrder.listProps}
           >
             <Index each={itemSlots(props.caught, props.owned)}>
@@ -376,11 +489,11 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                         type="button"
                         disabled={props.frozen || props.holdables.length === 0}
                         aria-label={m.catch_give_item()}
-                        class="flex aspect-square cursor-pointer items-center
-                      justify-center rounded-lg border-2 border-dashed
-                      border-line bg-paper/40 p-0 text-muted shadow-none
-                      hover:border-tide hover:text-tide-dark
-                      active:translate-y-0 disabled:cursor-not-allowed"
+                        class={`flex ${ITEM_SQUARE} cursor-pointer items-center
+                          justify-center border-2 border-dashed border-line
+                          bg-transparent p-0 font-extrabold text-muted shadow-none
+                          hover:border-tide hover:text-tide-dark
+                          active:translate-y-0 disabled:cursor-not-allowed`}
                         onClick={() => {
                           props.onGiving(true);
                         }}
@@ -412,8 +525,8 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                       )}
                       trigger={
                         <span
-                          class="flex aspect-square w-full items-center
-                        justify-center rounded-lg border-2 border-line bg-paper"
+                          class={`flex ${ITEM_SQUARE} items-center justify-center border-2
+                            border-line bg-paper`}
                         >
                           <ItemSprite item={items()[at]} size={ITEM_SPRITE} label="" />
                         </span>
@@ -432,78 +545,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 Slots.Item,
               )}
             >
-              {(state) => (
-                <Unfilled state={state()} kind={Slots.Item} class="aspect-square w-full" />
-              )}
+              {(state) => <Unfilled state={state()} kind={Slots.Item} class={ITEM_SQUARE} />}
             </Index>
           </ul>
         </div>
-      </div>
-
-      {/* The moves under them: the longest of the three lists */}
-      {/* Grows to the foot of the column, so the right side ends level with the left */}
-      <div class="flex min-w-0 flex-col gap-1 rounded-2xl border-2 border-line-soft p-3 md:flex-1">
-        <Heading
-          title={m.catch_moves()}
-          hint={
-            <Hint title={m.catch_moves_help()}>
-              <HintList>
-                <li>
-                  {m.catch_moves_help_room({
-                    start: DEFAULT_MOVE_SLOTS,
-                    max: mostSlots(Slots.Move),
-                  })}
-                </li>
-                <li>{m.catch_moves_help_order()}</li>
-                <li>{m.catch_moves_help_pp()}</li>
-                <li>{m.catch_moves_help_speed()}</li>
-              </HintList>
-            </Hint>
-          }
-          shifted={shifted(moves(), props.caught.moves)}
-          frozen={props.frozen}
-          onUndo={() => {
-            setMoves([...props.caught.moves]);
-          }}
-          onSave={save}
-        />
-        <ul class="m-0 grid list-none grid-cols-2 gap-1 p-0" {...movesOrder.listProps}>
-          <Index each={moves()}>
-            {(move, at) => (
-              <li
-                {...movesOrder.itemProps(at)}
-                style={movesOrder.style(at)}
-                class={grip(movesOrder.held() === at)}
-              >
-                <MoveTooltip
-                  class="block"
-                  move={move()}
-                  points={getMovePoints(props.caught, move())}
-                  speed={getStats(props.caught)[Stats.Speed]}
-                >
-                  {/* Its name, type and category at a glance; what
-                          it does is on the card over it */}
-                  <span
-                    class="flex items-center gap-2 rounded-lg border-2 border-line bg-paper
-                          px-2 py-1 text-left text-sm font-medium"
-                  >
-                    <span class="grow truncate">{getMoveData(move()).name}</span>
-                    <Sigil type={getMoveData(move()).type} size={MARK_SIZE} />
-                    <MoveCategorySprite
-                      category={getMoveData(move()).category}
-                      size={CATEGORY_SIZE}
-                    />
-                  </span>
-                </MoveTooltip>
-              </li>
-            )}
-          </Index>
-          <Index
-            each={unfilled(moves().length, getCatchSlots(props.caught, Slots.Move), Slots.Move)}
-          >
-            {(state) => <Unfilled state={state()} kind={Slots.Move} class="h-8" />}
-          </Index>
-        </ul>
       </div>
 
       {/* The bag opens as its own window rather than

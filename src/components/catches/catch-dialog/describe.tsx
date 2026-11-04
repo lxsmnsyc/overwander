@@ -5,7 +5,7 @@ import describeDate from '../../../core/dates';
 import { BIOME_NAMES, TIME_OF_DAY_NAMES } from '../../../data/biome';
 import { EVOLUTION_FRIENDSHIP } from '../../../data/constants/friendship';
 import { getMoveData } from '../../../data/moves';
-import { STAT_NAMES, STAT_ORDER, Stats, getIV, getOtherStat } from '../../../data/constants/stats';
+import { STAT_NAMES, Stats, getIV, getOtherStat } from '../../../data/constants/stats';
 import Biome, { TimeOfDay } from '../../../data/ids/biome';
 import type Natures from '../../../data/ids/natures';
 import { getNatureFactor } from '../../../data/ids/natures';
@@ -46,11 +46,9 @@ export const EFFORT_STEP = 4;
  * that a drop is 0, no change is 1 and a boost is 2.
  *
  * Red for the raised one and blue for the lowered one, the way the
- * games have always marked them. Nothing rests on the colour alone —
- * the same bar is longer or shorter for the same reason
+ * games have always marked them. Nothing rests on the colour alone:
+ * the marks below say the same
  */
-export const NATURE_BARS = ['bg-tide', 'bg-leaf', 'bg-ember'] as const;
-
 export const NATURE_NUMBERS = ['text-tide', '', 'text-ember-dark'] as const;
 
 /**
@@ -498,20 +496,6 @@ export const totalOf = (caught: CaughtPokemon, stat: Stats): number =>
         caught.effortValues[stat],
         getNatureFactor(caught.nature, stat),
       );
-
-/**
- * The tallest of the six the bars are drawn against. Health counts
- * with the rest: it is the longest bar on most pokemon, which is
- * the honest picture of a stat that is bigger than the others
- */
-export const bestTotal = (caught: CaughtPokemon): number => {
-  let best = 1;
-
-  for (const stat of STAT_ORDER) {
-    best = Math.max(best, totalOf(caught, stat));
-  }
-  return best;
-};
 
 /** What it has left, as a share of what it has */
 export const healthLeft = (caught: CaughtPokemon): number => {

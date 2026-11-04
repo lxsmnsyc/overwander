@@ -24,7 +24,16 @@ export interface OriginSectionProps {
 export default function OriginSection(props: OriginSectionProps): JSX.Element {
   return (
     <>
-      <h3 class={CARD_TITLE}>{m.catch_origin()}</h3>
+      {/* The way into the full history stands beside the title, so the
+          card stays two lines tall under a long evolution list */}
+      <div class="flex min-h-7 items-center justify-between gap-2">
+        <h3 class={CARD_TITLE}>{m.catch_origin()}</h3>
+        <Show when={props.caught.history.length > 0}>
+          <Button class="px-2! py-0.5! text-xs!" onClick={props.onHistory}>
+            {m.catch_history_count({ count: props.caught.history.length })}
+          </Button>
+        </Show>
+      </div>
       <span class="flex min-w-0 items-start gap-2">
         <ItemSprite
           item={BALL_ITEMS[props.caught.ball]}
@@ -32,15 +41,10 @@ export default function OriginSection(props: OriginSectionProps): JSX.Element {
           class={HISTORY_BALL_INSET}
           label={describeItem(BALL_ITEMS[props.caught.ball])}
         />
-        <span class="min-w-0 text-left text-xs leading-[17px] text-muted">
+        <span class="min-w-0 text-left text-xs leading-[15px] text-muted">
           {describeHistory(props.caught)}
         </span>
       </span>
-      <Show when={props.caught.history.length > 0}>
-        <Button onClick={props.onHistory}>
-          {m.catch_history_count({ count: props.caught.history.length })}
-        </Button>
-      </Show>
     </>
   );
 }

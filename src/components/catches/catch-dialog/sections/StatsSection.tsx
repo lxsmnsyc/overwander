@@ -27,7 +27,7 @@ import { VITAMIN_EFFORT } from '../../../../data/items/vitamins';
 import { WING_EFFORT } from '../../../../data/items/wings';
 
 import { NATURE_NAMES } from '../../../../data/ids/text';
-import { Badge, Button, Hint, HintList, Meta } from '../../../styled';
+import { Badge, Button, Hint, HintList, Meta, TooltipHost } from '../../../styled';
 
 import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 import { formatList } from '../../../../i18n/format';
@@ -42,6 +42,16 @@ const HEXAGON_ORDER: readonly Stats[] = [
   Stats.SpecialDefense,
   Stats.SpecialAttack,
 ];
+
+/** The stats' short names, for the nature badge where the full ones do not fit */
+const STAT_SHORT: Record<Stats, () => string> = {
+  [Stats.HP]: m.catch_stat_short_hp,
+  [Stats.Attack]: m.catch_stat_short_attack,
+  [Stats.Defense]: m.catch_stat_short_defense,
+  [Stats.SpecialAttack]: m.catch_stat_short_special_attack,
+  [Stats.SpecialDefense]: m.catch_stat_short_special_defense,
+  [Stats.Speed]: m.catch_stat_short_speed,
+};
 
 /** A corner's label by what the nature does to it: lowered, untouched, raised */
 const HEXAGON_TONES = ['fill-tide', '', 'fill-ember-dark'] as const;
@@ -136,8 +146,8 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
   /** A nature's mark and colour for one stat */
   const shift = (stat: Stats): number => natureShift(props.caught.nature, stat);
 
-  /** The nature's name, with the stat it raises and the one it lowers where it moves any */
-  const natureLabel = (): string => {
+  /** Which stat the nature raises and which it lowers, where it moves any */
+  const natureShifts = (): { raised: Stats; lowered: Stats } | null => {
     let raised: Stats | null = null;
     let lowered: Stats | null = null;
 
@@ -148,16 +158,24 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
         lowered = stat;
       }
     }
+    return raised == null || lowered == null ? null : { raised, lowered };
+  };
 
+  /**
+   * The nature's name, with the stats it moves, named short on the badge
+   * and in full on its tooltip
+   */
+  const natureLabel = (short: boolean): string => {
     const nature = NATURE_NAMES[props.caught.nature];
+    const moved = natureShifts();
 
-    if (raised == null || lowered == null) {
+    if (moved == null) {
       return nature;
     }
     return m.catch_nature_shift({
       nature,
-      raised: STAT_LABELS[raised],
-      lowered: STAT_LABELS[lowered],
+      raised: short ? STAT_SHORT[moved.raised]() : STAT_LABELS[moved.raised],
+      lowered: short ? STAT_SHORT[moved.lowered]() : STAT_LABELS[moved.lowered],
     });
   };
 
@@ -206,11 +224,15 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
           </Hint>
         </span>
         {/* Beside the arrows it explains */}
-        <Badge class="min-w-0">
-          <span class="min-w-0 truncate" title={natureLabel()}>
-            {natureLabel()}
-          </span>
-        </Badge>
+        <TooltipHost
+          class="flex min-w-0"
+          name={NATURE_NAMES[props.caught.nature]}
+          description={natureLabel(false)}
+        >
+          <Badge class="min-w-0">
+            <span class="min-w-0 truncate">{natureLabel(true)}</span>
+          </Badge>
+        </TooltipHost>
       </div>
 
       {/* The totals as a shape, measured against its own best stat, so

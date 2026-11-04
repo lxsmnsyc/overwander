@@ -93,3 +93,10 @@ From `index.tsx`, `sheet.tsx`, `describe.tsx` and `sections/`. Each line: from -
 - Form captures (Deoxys, Rotom, Ogerpon, Eevee): branching evolutions as tiles, the hero name wrapping on a phone, condition parts wrapping as a line.
 - The dev db was stopped between sessions and lost its data; it was migrated, seeded and refilled from the scratchpad's `cs/data2.sql`.
 - Checks after the gate fixes: typecheck 0, oxlint exit 0, `pnpm test --maxWorkers=2` 282 files and 5835 tests passed.
+
+## 2026-11-05, gate round 2
+
+- Nature badge: short stat names (`catch_stat_short_*` in en, ja, es), the full names in a tooltip. ja uses こう/ぼう/とくこう/とくぼう/すば, es PS/Ata/Def/AtE/DfE/Vel.
+- Branching evolutions: compact rows (40px sprite, condition, small Evolve). To fit Eevee's eight at 720 the right column grew to 15rem, the rows are 32px with the sprite overhanging, and the Origin card puts History beside its title. Measured: right column scrollHeight equals its clientHeight (442) on Eevee.
+- Title "Forms" (`dex_forms`) when every option shares the pokemon's dex number (`speciesDexNumber`), "Evolves into" otherwise.
+- The dev db lost its data again on stop; refilled from the scratchpad's `cs/data3.sql`.

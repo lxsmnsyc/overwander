@@ -1337,7 +1337,7 @@ export function CatchSheetBody(
                       moves, abilities and items, stats, evolution, origin */}
                   <div
                     class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1 md:grid-cols-[15rem_minmax(0,1fr)_12rem]
-                      md:gap-3.5 lg:grid-cols-[18.75rem_minmax(0,1fr)_13.75rem]"
+                      md:gap-3.5 lg:grid-cols-[18.75rem_minmax(0,1fr)_15rem]"
                   >
                     <div class="contents md:flex md:min-h-0 md:flex-col md:gap-2.5 md:overflow-y-auto">
                       <div class={`${CARD} order-2 md:order-none`} style={riseAfter(0)}>

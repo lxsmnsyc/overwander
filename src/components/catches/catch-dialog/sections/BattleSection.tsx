@@ -22,7 +22,7 @@ import { Items } from '../../../../data/ids/items';
 import type { Moves } from '../../../../data/ids/moves';
 
 import { getMoveData, getMovePP } from '../../../../data/moves';
-import { TYPE_COLORS, TYPE_NAMES } from '../../../../data/constants/types';
+import { TYPE_COLORS } from '../../../../data/constants/types';
 
 import {
   type AbilityKind,
@@ -39,7 +39,8 @@ import ItemCard from '../../../items/ItemCard';
 
 import ItemSprite from '../../../items/ItemSprite';
 import MoveTooltip from '../../../moves/MoveTooltip';
-import { MOVE_CATEGORY_LABELS } from '../../../sprites/MoveCategorySprite';
+import MoveCategorySprite from '../../../sprites/MoveCategorySprite';
+import { Sigil } from '../../../sprites/TypeBadge';
 import { LockIcon } from '../../../icons';
 import { CARD, CARD_TITLE, riseAfter } from '../metrics';
 
@@ -108,7 +109,16 @@ const ABILITY_SLOTS: Record<AbilityKind, string> = {
 };
 
 /** A move card, and the empty and locked cards beside it */
-const MOVE_CARD = 'min-h-[66px] rounded-[14px]';
+const MOVE_CARD = 'min-h-9 rounded-[10px] md:h-9';
+
+/** How big a move's type mark is drawn */
+const MARK_SIZE = 18;
+
+/**
+ * The category badge's width. The sheet cuts it at 32x14, so this is
+ * what stands it as tall as the row's line of text
+ */
+const CATEGORY_SIZE = 45;
 
 /** An ability slot */
 const ABILITY_SLOT = 'h-9 rounded-[10px]';
@@ -116,19 +126,17 @@ const ABILITY_SLOT = 'h-9 rounded-[10px]';
 /** A held item's square */
 const ITEM_SQUARE = 'size-12 rounded-button';
 
-/** What a move is, said under its name: type, category, power and PP */
-function describeMove(move: Moves, points: number): string {
+/**
+ * A move's power and PP, said after it on a phone, where there is no
+ * pointer to open its card with. A status move has no power to state
+ */
+function describeMoveNumbers(move: Moves, points: number): string {
   const data = getMoveData(move);
-  const facts = {
-    type: TYPE_NAMES[data.type],
-    category: MOVE_CATEGORY_LABELS[data.category](),
-    pp: getMovePP(move, points),
-  };
+  const pp = getMovePP(move, points);
 
-  // A status move has no power to state
   return data.power == null
-    ? m.catch_move_facts_status(facts)
-    : m.catch_move_facts({ ...facts, power: data.power });
+    ? m.catch_move_numbers_status({ pp })
+    : m.catch_move_numbers({ power: data.power, pp });
 }
 
 /** What opens a locked slot of each kind */
@@ -326,10 +334,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           }}
           onSave={save}
         />
-        <ul
-          class="m-0 grid list-none grid-cols-2 gap-2 p-0 @lg:grid-cols-3"
-          {...movesOrder.listProps}
-        >
+        <ul class="m-0 grid list-none grid-cols-2 gap-1.5 p-0" {...movesOrder.listProps}>
           <Index each={moves()}>
             {(move, at) => (
               <li
@@ -343,23 +348,33 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   points={getMovePoints(props.caught, move())}
                   speed={getStats(props.caught)[Stats.Speed]}
                 >
-                  {/* Its name and what it is at a glance, its type as the
-                      stripe down its side; what it does is on the card
-                      over it */}
+                  {/* Its name, type and category at a glance, its type
+                      again as the edge down its side; its numbers and
+                      what it does are on the card over it */}
                   <span
-                    class={`relative flex ${MOVE_CARD} flex-col justify-center gap-0.5 overflow-hidden
-                      border-2 border-line bg-paper py-2 pr-2.5 pl-4 text-left transition-[translate,box-shadow]
-                      duration-(--motion-quick) ease-spring hover:-translate-y-0.75 hover:shadow-pop`}
+                    class={`relative grid ${MOVE_CARD} grid-cols-[minmax(0,1fr)_auto_auto] items-center
+                      gap-x-2 overflow-hidden border-2 border-line bg-paper py-1 pr-2 pl-3.5 text-left
+                      transition-[translate,box-shadow] duration-(--motion-quick) ease-spring
+                      hover:-translate-y-0.5 hover:shadow-pop-sm md:py-0`}
                   >
                     <span
                       aria-hidden="true"
                       class="absolute inset-y-0 left-0 w-1.5"
                       style={{ background: TYPE_COLORS[getMoveData(move()).type] }}
                     />
-                    <span class="truncate text-sm font-extrabold">{getMoveData(move()).name}</span>
-                    <span class="line-clamp-2 text-[11px] leading-[14px] text-muted @lg:truncate">
-                      {describeMove(move(), getMovePoints(props.caught, move()))}
+                    {/* On a phone the name has the first line to itself and
+                        its numbers start the second, beside the icons */}
+                    <span class="col-span-3 min-w-0 truncate text-sm font-bold md:col-span-1">
+                      {getMoveData(move()).name}
                     </span>
+                    <span class="min-w-0 text-[11px] whitespace-nowrap text-muted tabular-nums md:hidden">
+                      {describeMoveNumbers(move(), getMovePoints(props.caught, move()))}
+                    </span>
+                    <Sigil type={getMoveData(move()).type} size={MARK_SIZE} />
+                    <MoveCategorySprite
+                      category={getMoveData(move()).category}
+                      size={CATEGORY_SIZE}
+                    />
                   </span>
                 </MoveTooltip>
               </li>
@@ -373,8 +388,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
         </ul>
       </div>
 
-      {/* What it is and what it carries, side by side under the moves */}
-      <div class="grid gap-2.5 @lg:grid-cols-[minmax(0,1fr)_12.5rem]">
+      {/* What it is and what it carries, side by side under the moves.
+          The items' card is four squares wide there, so a full tray of
+          eight is two rows of four and the column needs no scrolling */}
+      <div class="grid gap-2.5 @lg:grid-cols-[minmax(0,1fr)_15rem]">
         <div class={CARD} style={riseAfter(2)}>
           <Heading
             title={m.catch_abilities()}
@@ -471,10 +488,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           {/* Only its own room is drawn, and only for somebody who can
               fill it: an empty square on a stranger's pokemon is a
               button nobody may press */}
-          <ul
-            class="m-0 grid list-none grid-cols-[repeat(auto-fill,3rem)] gap-1.5 p-0"
-            {...itemsOrder.listProps}
-          >
+          <ul class="m-0 flex list-none flex-row flex-wrap gap-1.5 p-0" {...itemsOrder.listProps}>
             <Index each={itemSlots(props.caught, props.owned)}>
               {(_, at) => (
                 <li

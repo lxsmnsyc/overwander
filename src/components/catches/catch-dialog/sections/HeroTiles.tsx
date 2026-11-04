@@ -57,20 +57,22 @@ export default function HeroTiles(props: HeroTilesProps): JSX.Element {
         </span>
       </div>
 
-      <div class="flex flex-col justify-center gap-1.5 rounded-[16px] border-2 border-gold/60 bg-gold-soft px-2.5 py-2">
-        <span class="flex items-center gap-1 text-xs font-extrabold text-gold-dark">
-          <CandySprite family={family()} label="" class={CANDY_BADGE} />
-          <span class="tabular-nums">
-            {m.catch_candy_held({
-              count: props.candies ?? '?',
-              family: getFamilyName(family()),
-            })}
+      {/* The pile is the reader's own, so it is drawn only on their own
+          pokemon: on somebody else's it would read as theirs */}
+      <Show when={props.owned}>
+        <div class="flex flex-col justify-center gap-1.5 rounded-[16px] border-2 border-gold/60 bg-gold-soft px-2.5 py-2">
+          <span class="flex items-center gap-1 text-xs font-extrabold text-gold-dark">
+            <CandySprite family={family()} label="" class={CANDY_BADGE} />
+            <span class="tabular-nums">
+              {m.catch_candy_held({
+                count: props.candies ?? '?',
+                family: getFamilyName(family()),
+              })}
+            </span>
           </span>
-        </span>
-        {/* The level and what raises it are one control: where it
-            stands and what the next step costs. Presses are gathered and
-            sent together once they stop */}
-        <Show when={props.owned}>
+          {/* The level and what raises it are one control: where it
+              stands and what the next step costs. Presses are gathered and
+              sent together once they stop */}
           <Button tone="primary" disabled={props.held} onClick={props.onFeed}>
             {props.level >= MAX_LEVEL ? (
               m.catch_level({ level: props.level })
@@ -89,8 +91,8 @@ export default function HeroTiles(props: HeroTilesProps): JSX.Element {
               </>
             )}
           </Button>
-        </Show>
-      </div>
+        </div>
+      </Show>
     </>
   );
 }

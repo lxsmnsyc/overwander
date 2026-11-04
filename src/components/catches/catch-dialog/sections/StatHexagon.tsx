@@ -22,10 +22,10 @@ export interface StatHexagonProps {
 
 /** The drawing's own units: the box, the middle and the outer corner's reach */
 const WIDTH = 240;
-const HEIGHT = 200;
+const HEIGHT = 180;
 const MIDDLE_X = WIDTH / 2;
 const MIDDLE_Y = HEIGHT / 2;
-const REACH = 62;
+const REACH = 54;
 
 /** How far past the outer ring a corner's label sits */
 const LABEL_GAP = 14;
@@ -87,7 +87,7 @@ export default function StatHexagon(props: StatHexagonProps): JSX.Element {
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       role="img"
       aria-label={props.label}
-      class={`block w-full overflow-visible ${props.class ?? ''}`}
+      class={`block max-w-full overflow-visible ${props.class ?? ''}`}
     >
       <polygon
         points={ring(1)}

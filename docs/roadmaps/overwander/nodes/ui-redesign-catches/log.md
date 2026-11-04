@@ -83,3 +83,13 @@ From `index.tsx`, `sheet.tsx`, `describe.tsx` and `sections/`. Each line: from -
 - No separate split commit: the new parts (`HeroSection`, `HeroTiles`, `OriginSection`, `StatHexagon`, `metrics.ts`) came out of `sheet.tsx` as the layout changed, so a behaviour-only split would have been redone at once.
 - Sideways (844x390) first showed the hero filling the fixed-height panel with the columns clipped under it. `layout="sheet"` now fixes its height only at 48rem wide and 32rem tall, so the panel scrolls there. Recorded as a deviation (the dex entry uses the same layout).
 - Checks: typecheck 0, oxlint exit 0, `pnpm test --maxWorkers=2` 282 files and 5835 tests passed.
+
+## 2026-11-05, gate fixes
+
+- Moves: two to a row of 36px cards with main's sigil and category badge and a type-coloured left edge; power and PP only on a phone, under the name (`catch_move_numbers`); `catch_move_facts` and `catch_move_facts_status` removed.
+- Held items: a wrapping row of 48px squares. It stacked into a column because the base layer makes every `ul` `flex-col`; `flex-row` fixed it. At 1280 the card is 15rem, four squares to a row.
+- Stats: nature badge back beside the heading (cut with an ellipsis), hexagon 156px tall, rows 24px, the Save row reserved at button height. Fits at 720.
+- Candy tile hidden where the reader does not own the pokemon.
+- Form captures (Deoxys, Rotom, Ogerpon, Eevee): branching evolutions as tiles, the hero name wrapping on a phone, condition parts wrapping as a line.
+- The dev db was stopped between sessions and lost its data; it was migrated, seeded and refilled from the scratchpad's `cs/data2.sql`.
+- Checks after the gate fixes: typecheck 0, oxlint exit 0, `pnpm test --maxWorkers=2` 282 files and 5835 tests passed.

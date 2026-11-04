@@ -1350,8 +1350,8 @@
   "catch_stats_help_shape": "La forma se mide frente a la mejor estadística de este Pokémon.",
   "catch_stat_value": "{stat} {value}",
   "catch_nature_shift": "{nature} · ▲{raised} ▼{lowered}",
-  "catch_move_facts": "{type} · {category} · {power} · {pp} PP",
-  "catch_move_facts_status": "{type} · {category} · {pp} PP",
+  "catch_move_numbers": "{power} · {pp} PP",
+  "catch_move_numbers_status": "{pp} PP",
   "catch_drag_reorder": "Arrastra para ordenar",
   "catch_candy_held": [
     {

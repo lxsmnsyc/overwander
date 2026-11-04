@@ -189,8 +189,8 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
 
   return (
     <section class="flex flex-col gap-1.5">
-      <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-        <span class="flex items-center gap-1.5">
+      <div class="flex items-center justify-between gap-2">
+        <span class="flex shrink-0 items-center gap-1.5">
           <h3 class={CARD_TITLE}>{m.catch_stats()}</h3>
           <Hint title={m.catch_stats_help()}>
             <HintList>
@@ -206,17 +206,21 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
           </Hint>
         </span>
         {/* Beside the arrows it explains */}
-        <Badge>{natureLabel()}</Badge>
+        <Badge class="min-w-0">
+          <span class="min-w-0 truncate" title={natureLabel()}>
+            {natureLabel()}
+          </span>
+        </Badge>
       </div>
 
       {/* The totals as a shape, measured against its own best stat, so
           which end of the pokemon is the sharp one reads at a glance */}
-      <StatHexagon stats={shape()} label={shapeLabel()} class="mx-auto max-w-60" />
+      <StatHexagon stats={shape()} label={shapeLabel()} class="mx-auto h-39" />
 
       {/* Columns sized to their content with real gaps between them, so
           the headings and the numbers under them never run together */}
       <div
-        class="grid grid-cols-[0.75rem_minmax(0,1fr)_2.5rem_2rem_3.25rem] items-center gap-x-2 gap-y-1
+        class="grid grid-cols-[0.75rem_minmax(0,1fr)_2.5rem_2rem_3.25rem] items-center gap-x-2 gap-y-0.5
           text-sm"
       >
         <span />
@@ -277,7 +281,7 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
               >
                 <input
                   type="number"
-                  class="h-7 w-full rounded-chip px-1 py-0 text-right font-display tabular-nums"
+                  class="h-6 w-full rounded-chip px-1 py-0 text-right font-display tabular-nums"
                   min={floorOf(stat)}
                   max={ceilingOf(stat)}
                   step={EFFORT_STEP}
@@ -302,7 +306,9 @@ export default function StatsSection(props: StatsSectionProps): JSX.Element {
 
       {/* Points are laid out first and saved on one press, so six
           stats are one round trip and free to change until then */}
-      <div class="flex items-center justify-end gap-2">
+      {/* As tall as its buttons whether or not they are showing, so
+          laying a point out never pushes the column past the sheet */}
+      <div class="flex min-h-9 items-center justify-end gap-2 empty:hidden">
         <Show when={props.owned}>
           <Meta class="tabular-nums">{m.catch_stats_remaining({ count: left() })}</Meta>
           <Show when={spent() > 0}>

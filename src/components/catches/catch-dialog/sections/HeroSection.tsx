@@ -81,7 +81,7 @@ export default function HeroSection(props: HeroSectionProps): JSX.Element {
             its place, its gender and whether it sparkles, and its level */}
         <div class="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1 self-center md:self-auto">
           <span
-            class="min-w-0 truncate font-display text-2xl leading-8 font-semibold md:text-[30px] md:leading-[34px]"
+            class="min-w-0 font-display text-2xl leading-7 font-semibold break-words md:truncate md:text-[30px] md:leading-[34px]"
             data-name
           >
             {props.named}

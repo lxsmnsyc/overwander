@@ -89,107 +89,128 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
               />
             </span>
             <span class="text-xs font-extrabold">{getSpeciesData(props.species).name}</span>
-            {/* `Index` rather than `For`: the list is re-read after
+            <Arrow />
+            {/* One option stands under the arrow; a line that branches
+                (an Eevee, a Rotom's appliances) lays its options out
+                side by side, as many to a row as the card has room for,
+                so eight of them are rows of tiles rather than a column
+                eight pictures long */}
+            <div
+              class={`grid w-full gap-x-2 gap-y-3 ${
+                (props.options?.length ?? 0) > 1
+                  ? 'grid-cols-[repeat(auto-fill,minmax(5.25rem,1fr))]'
+                  : 'grid-cols-1'
+              }`}
+            >
+              {/* `Index` rather than `For`: the list is re-read after
                 everything this sheet writes, and each read hands back
                 fresh objects, so a keyed-by-value list throws every row
                 away and builds it again, sprite and all, when what
                 actually changed is a flag on one of them. What a line
                 evolves into does not move; only whether it can yet */}
-            <Index each={props.options}>
-              {(option) => {
-                const becomes = (): Species => option().evolution.species;
-                const known = (): { met: boolean; owned: boolean; shiny: boolean } =>
-                  props.dexKnows(becomes());
+              <Index each={props.options}>
+                {(option) => {
+                  const becomes = (): Species => option().evolution.species;
+                  const known = (): { met: boolean; owned: boolean; shiny: boolean } =>
+                    props.dexKnows(becomes());
 
-                return (
-                  <>
-                    <Arrow />
-                    <div
-                      class="flex w-full flex-col items-center gap-1 text-center"
-                      // The shorthand under the picture spelled out, for
-                      // anyone who stops on it and for anything that
-                      // reads it aloud
-                      title={describeEvolutionMethod(
-                        option().evolution,
-                        option().covered,
-                        option().progress,
-                      )}
-                    >
-                      {/* What it turns into, drawn to what the reader has
+                  return (
+                    <>
+                      <div
+                        class="flex w-full min-w-0 flex-col items-center gap-1 text-center"
+                        // The shorthand under the picture spelled out, for
+                        // anyone who stops on it and for anything that
+                        // reads it aloud
+                        title={describeEvolutionMethod(
+                          option().evolution,
+                          option().covered,
+                          option().progress,
+                        )}
+                      >
+                        {/* What it turns into, drawn to what the reader has
                           earned of it the way the dex draws one: a line
                           whose end they have never met is a shape rather
                           than a spoiler. Ringed in green once it is in
                           reach */}
-                      <span
-                        class={`${PICTURE} ${option().available ? 'bg-leaf-soft ring-4 ring-leaf/25' : ''}`}
-                      >
-                        <SpeciesCoat
-                          species={becomes()}
-                          met={known().met}
-                          // A shiny sheet asks about the shiny coat. Having
-                          // owned an ordinary Pidgeotto is no reason to show
-                          // a reader the sparkling one they have never held
-                          revealed={props.shiny ? known().shiny : known().owned}
-                          // The sparkling coat is drawn only once it is
-                          // earned. A shadow is the shape with the colour
-                          // taken out, so an unearned one is the ordinary
-                          // sheet blacked out rather than a shiny sheet
-                          // fetched to be hidden
-                          shiny={props.shiny && known().shiny}
-                          female={props.female}
-                          called={
-                            props.shiny
-                              ? m.catch_shiny_name({ name: getSpeciesData(becomes()).name })
-                              : undefined
-                          }
-                          // Standing the way the pokemon above it stands,
-                          // met or not
-                          animation={SpriteAnim.Idle}
-                          unmet={SpriteAnim.Idle}
-                          direction="DownLeft"
-                          fill
-                        />
-                      </span>
-                      {/* Named only once it has been met */}
-                      <Show when={known().met}>
-                        <span class="text-xs font-extrabold">{getSpeciesData(becomes()).name}</span>
-                      </Show>
-                      {/* The condition stays under the picture rather than
+                        <span
+                          class={`${PICTURE} ${option().available ? 'bg-leaf-soft ring-4 ring-leaf/25' : ''}`}
+                        >
+                          <SpeciesCoat
+                            species={becomes()}
+                            met={known().met}
+                            // A shiny sheet asks about the shiny coat. Having
+                            // owned an ordinary Pidgeotto is no reason to show
+                            // a reader the sparkling one they have never held
+                            revealed={props.shiny ? known().shiny : known().owned}
+                            // The sparkling coat is drawn only once it is
+                            // earned. A shadow is the shape with the colour
+                            // taken out, so an unearned one is the ordinary
+                            // sheet blacked out rather than a shiny sheet
+                            // fetched to be hidden
+                            shiny={props.shiny && known().shiny}
+                            female={props.female}
+                            called={
+                              props.shiny
+                                ? m.catch_shiny_name({ name: getSpeciesData(becomes()).name })
+                                : undefined
+                            }
+                            // Standing the way the pokemon above it stands,
+                            // met or not
+                            animation={SpriteAnim.Idle}
+                            unmet={SpriteAnim.Idle}
+                            direction="DownLeft"
+                            fill
+                          />
+                        </span>
+                        {/* Named only once it has been met */}
+                        <Show when={known().met}>
+                          <span class="text-xs font-extrabold break-words">
+                            {getSpeciesData(becomes()).name}
+                          </span>
+                        </Show>
+                        {/* The condition stays under the picture rather than
                           hiding on the button: it is what the player is
                           working towards. Once a handover has settled it
                           there is nothing left to work towards */}
-                      <Show
-                        when={!option().covered}
-                        fallback={
-                          <span class="text-xs font-extrabold text-leaf-dark">
-                            {m.catch_evolution_ready()}
-                          </span>
-                        }
-                      >
-                        <span class="flex flex-wrap items-center justify-center gap-1 text-xs text-muted">
-                          <EvolutionCondition
-                            evolution={option().evolution}
-                            progress={option().progress}
-                          />
-                        </span>
-                      </Show>
-                      <Show when={props.owned}>
-                        <Button
-                          tone="primary"
-                          class="w-full justify-center"
-                          disabled={props.frozen || !option().available}
-                          onClick={() => {
-                            props.onEvolve(option().evolution.species);
-                          }}
+                        <Show
+                          when={!option().covered}
+                          fallback={
+                            <span class="text-xs font-extrabold text-leaf-dark">
+                              {m.catch_evolution_ready()}
+                            </span>
+                          }
                         >
-                          {m.catch_evolve()}
-                        </Button>
-                      </Show>
-                    </div>
-                  </>
-                );
-              }}
-            </Index>
+                          <span
+                            // The condition's own row wraps between its parts
+                            // in a narrow tile, rather than squeezing each into
+                            // a column of its own
+                            class="flex flex-wrap items-center justify-center gap-1 text-xs text-muted
+                            [&>span]:flex-wrap [&>span]:justify-center [&>span]:gap-x-1 [&>span]:gap-y-0"
+                          >
+                            <EvolutionCondition
+                              evolution={option().evolution}
+                              progress={option().progress}
+                            />
+                          </span>
+                        </Show>
+                        <Show when={props.owned}>
+                          <Button
+                            tone="primary"
+                            class="w-full justify-center"
+                            disabled={props.frozen || !option().available}
+                            onClick={() => {
+                              props.onEvolve(option().evolution.species);
+                            }}
+                          >
+                            {m.catch_evolve()}
+                          </Button>
+                        </Show>
+                      </div>
+                    </>
+                  );
+                }}
+              </Index>
+            </div>
           </div>
         </Show>
       </section>

@@ -9,7 +9,7 @@ branches:
 
 ## Outcome
 
-Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, wild pokemon come, go and roam around the player, the remaining items are in, the whole UI is redesigned on one design system, and a shiny dex tracks shiny coats (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
+Every eligible pokemon has its Zenith, and the whole UI is redesigned on one design system (`now`). The game then plays in Japanese and Spanish beside English, boots lighter, wild pokemon come, go and roam around the player, the remaining items are in, and a shiny dex tracks shiny coats (`next`). Pixel effects, dungeons, the signature rebalance, game data in Postgres and the player systems follow (`later`).
 
 ## Acceptance
 
@@ -19,7 +19,7 @@ Every eligible pokemon has its Zenith (`now`). The game then plays in Japanese a
 
 ## Priorities
 
-- must: the `now` milestone, the Zenith rollout.
+- must: the `now` milestone: the Zenith rollout (done), then the whole-game UI redesign, set first by the maintainer on 2026-11-03.
 - should: the `next` milestone: translations, the first boot work, and the remaining items.
 - could: the `later` milestone, worth doing when the `next` work is in.
 - later: parked; listed so it is not lost.

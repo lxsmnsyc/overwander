@@ -2,10 +2,10 @@
 id: ui-redesign-shell
 title: Redesign settings, profile, quests and the shell
 status: todo
-priority: should
+priority: must
 type: feature
 outline: true
-milestone: next
+milestone: now
 size: L
 added: 2026-11-03
 owns:

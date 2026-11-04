@@ -1,7 +1,7 @@
 ---
 name: spawn-life
 version: 1
-status: draft
+status: frozen
 defined_by: spawn-life-design
 ---
 

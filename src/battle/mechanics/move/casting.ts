@@ -1,7 +1,7 @@
 import { EventPriority } from '../../../core/event-emitter';
 import { Moves } from '../../../data/ids/moves';
 import type Battle from '../../battle';
-import { BattleEvents, MoveTargetType } from '../../events';
+import { BattleEvents, MoveTargetType, UnitActionKind } from '../../events';
 import type Unit from '../../unit';
 import { getCastTime } from './timing';
 
@@ -81,13 +81,16 @@ export default function setupCastingMechanics(battle: Battle): void {
   battle.on(BattleEvents.UnitCast, EventPriority.Exact, (event) => {
     const castTime = event.source.checkMoveCastTime(event.move, event.target);
 
-    event.source.casting = {
-      target: event.target,
-      time: {
-        progress: 0,
-        duration: castTime,
+    event.source.action = {
+      kind: UnitActionKind.Casting,
+      data: {
+        target: event.target,
+        time: {
+          progress: 0,
+          duration: castTime,
+        },
+        move: event.move,
       },
-      move: event.move,
     };
 
     // Add new entry for the tick updates
@@ -99,20 +102,21 @@ export default function setupCastingMechanics(battle: Battle): void {
   });
 
   battle.on(BattleEvents.UnitUpdateCast, EventPriority.Exact, (event) => {
-    if (event.source.casting) {
-      event.source.casting = {
-        ...event.source.casting,
-        ...event.data,
-      };
+    const casting = event.source.casting;
+    if (casting) {
+      const data = { ...casting, ...event.data };
+      event.source.action = { kind: UnitActionKind.Casting, data };
 
-      if (event.source.casting.time.progress >= event.source.casting.time.duration) {
+      if (data.time.progress >= data.time.duration) {
         event.source.finishCast();
       }
     }
   });
 
   battle.on(BattleEvents.UnitStopCast, EventPriority.Exact, (event) => {
-    event.source.casting = undefined;
+    if (event.source.action?.kind === UnitActionKind.Casting) {
+      event.source.action = undefined;
+    }
     queue.delete(event.source);
 
     if (queue.size === 0) {

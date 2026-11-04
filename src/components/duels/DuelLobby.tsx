@@ -51,16 +51,22 @@ import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 
+/** The lobby the player is standing in, as the panel around it needs it */
+export interface DuelLobbyReport {
+  /** What the lobby is called, so the dialog's own heading can say it */
+  title: string;
+  /** Whether this player holds a seat, so the panel only closes by Leave */
+  seated: boolean;
+}
+
 export interface DuelLobbyProps {
   user: PlayerIdentity;
   duelId: string;
-  /** Whether this player holds a seat, so the panel only closes by Leave */
-  onSeated?: (seated: boolean) => void;
   /**
-   * What the lobby is called, reported upwards so the dialog's own
-   * heading can say it
+   * The lobby, reported upwards once it has loaded, and null while it
+   * loads and on the way out. Title and seat travel together
    */
-  onTitle?: (title: string | null) => void;
+  onLobby?: (lobby: DuelLobbyReport | null) => void;
 }
 
 /**
@@ -151,28 +157,24 @@ function LobbyRows(
   const fighting = (): boolean => mine()?.role === LobbyRole.Fighter;
   const seatFree = (): boolean => fighters().length < DUEL_FIGHTERS;
 
-  // Named for whoever hosts it, so the plate says whose lobby this is
+  // Named for whoever hosts it, so the plate says whose lobby this is.
+  // A seated player leaves by Leave alone: shutting the panel any other
+  // way would leave their party standing in a lobby they walked out of
   createEffect(() => {
     const record = duel();
 
     if (record == null) {
-      props.onTitle?.(null);
+      props.onLobby?.(null);
       return;
     }
-    props.onTitle?.(
-      isHost() ? m.duels_your_lobby() : m.duels_their_lobby({ name: named(record.host) }),
-    );
-  });
-
-  // A seated player leaves by Leave alone: shutting the panel any other
-  // way would leave their party standing in a lobby they walked out of
-  createEffect(() => {
-    props.onSeated?.(fighting());
+    props.onLobby?.({
+      title: isHost() ? m.duels_your_lobby() : m.duels_their_lobby({ name: named(record.host) }),
+      seated: fighting(),
+    });
   });
 
   onCleanup(() => {
-    props.onTitle?.(null);
-    props.onSeated?.(false);
+    props.onLobby?.(null);
   });
 
   // Opened from a call rather than joined: walking in answers it, so

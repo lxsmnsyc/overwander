@@ -62,6 +62,62 @@ export interface Challenge {
   challenger: StopChallenge | null;
 }
 
+/** Which one thing is open over the board */
+export const enum Opening {
+  /** A pokemon being met */
+  Meeting = 0,
+  /** A stop's challenge, put to the player before it is accepted */
+  Challenge = 1,
+  /** Somebody standing at a counter, being talked to */
+  Wanderer = 2,
+  Portal = 3,
+  HoneyTree = 4,
+  Seat = 5,
+  Lair = 6,
+  /** An egg offered at a nest or a grotto */
+  Egg = 7,
+}
+
+/**
+ * What is open over the board. Only one thing is open at a time, and
+ * what a dialog needs lives in the one entry, so a lair's reason or a
+ * meeting's `once` cannot outlive the dialog it belongs to
+ */
+export type Opened =
+  | {
+      kind: Opening.Meeting;
+      session: SafariSession<EncounterRecord>;
+      /** The meeting happens once, so no overlay press may throw it away */
+      once: boolean;
+    }
+  | { kind: Opening.Challenge; challenge: Challenge }
+  | { kind: Opening.Wanderer; spot: Placed; npc: Npc }
+  | { kind: Opening.Portal; spot: Placed }
+  | { kind: Opening.HoneyTree; spot: Placed }
+  | { kind: Opening.Seat; spot: Placed; standing: GymSeatStanding }
+  | {
+      kind: Opening.Lair;
+      spot: Placed;
+      standing: RaidView | null;
+      /** What the dialog says when nothing stands in it */
+      reason: string;
+    }
+  | {
+      kind: Opening.Egg;
+      offer: EggOffer;
+      /** The claim is with the server */
+      taking: boolean;
+    };
+
+/** The open entry when it is of this kind, or null */
+export function getOpened<K extends Opening>(
+  opened: Opened | null,
+  kind: K,
+): Extract<Opened, { kind: K }> | null {
+  // oxlint-disable-next-line typescript/no-unsafe-type-assertion
+  return opened?.kind === kind ? (opened as Extract<Opened, { kind: K }>) : null;
+}
+
 export interface InteractDeps {
   user: () => PlayerIdentity | null;
   walk: BoardWalk<BoardView>;
@@ -97,21 +153,17 @@ export interface InteractBoard {
 export interface BoardInteractions {
   /** Hand over the board in view; until then nothing can be reached */
   attach: (board: InteractBoard) => void;
-  session: WritableStore<SafariSession<EncounterRecord> | null>;
-  /** Whether the meeting on screen happens once, so no overlay press may throw it away */
-  once: Store<boolean>;
+  /** The one thing open over the board, or null when nothing is */
+  opened: Store<Opened | null>;
+  /** Open something, in place of whatever was open */
+  open: (next: Opened) => void;
+  /**
+   * Close what is open, only if it is still of this kind: a dialog
+   * closing late does not shut what has opened since
+   */
+  close: (kind: Opening) => void;
   /** An interaction in flight, so a second press does not open the same thing twice */
   busy: Store<boolean>;
-  challenge: WritableStore<Challenge | null>;
-  wanderer: WritableStore<[Placed, Npc] | null>;
-  portal: WritableStore<Placed | null>;
-  honeyTree: WritableStore<Placed | null>;
-  seat: WritableStore<[Placed, GymSeatStanding] | null>;
-  lair: WritableStore<[Placed, RaidView | null] | null>;
-  /** What the lair dialog says when nothing stands in it */
-  lairReason: Store<string | null>;
-  eggOffer: WritableStore<EggOffer | null>;
-  taking: WritableStore<boolean>;
   /** Cells whose claim is still with the server, by world cell */
   claiming: Store<Set<string>>;
   /** Whether something is open over the board, which refuses a press */
@@ -139,18 +191,8 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
   let board: InteractBoard | null = null;
   const view = (): BoardView | null => board?.view() ?? null;
 
-  const session = createStore<SafariSession<EncounterRecord> | null>(null);
-  const once = createStore(false);
+  const opened = createStore<Opened | null>(null);
   const busy = createStore(false);
-  const challenge = createStore<Challenge | null>(null);
-  const wanderer = createStore<[Placed, Npc] | null>(null);
-  const portal = createStore<Placed | null>(null);
-  const honeyTree = createStore<Placed | null>(null);
-  const seat = createStore<[Placed, GymSeatStanding] | null>(null);
-  const lair = createStore<[Placed, RaidView | null] | null>(null);
-  const lairReason = createStore<string | null>(null);
-  const eggOffer = createStore<EggOffer | null>(null);
-  const taking = createStore(false);
   const claiming = createStore<Set<string>>(new Set());
 
   /** A board cell said as the world cell it sits on, which does not move as the player walks */
@@ -173,14 +215,13 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     windows.forgetClaims();
   };
 
-  const engaged = (): boolean =>
-    session.get() != null ||
-    challenge.get() != null ||
-    wanderer.get() != null ||
-    portal.get() != null ||
-    seat.get() != null ||
-    lair.get() != null ||
-    eggOffer.get() != null;
+  const engaged = (): boolean => opened.get() != null;
+
+  const close = (kind: Opening): void => {
+    if (opened.get()?.kind === kind) {
+      opened.set(null);
+    }
+  };
 
   const showing = (loaded: BoardView, index: number): Phenomenon | undefined =>
     windows.spent.get().has(keyOf(index)) ? undefined : loaded.phenomena.get(index);
@@ -243,8 +284,11 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       // Ran off or already in the bag: either way nobody is standing there
       return m.interact_done_with_you();
     }
-    once.set(metOnce);
-    session.set(await createSafariSession(user, encounter));
+    opened.set({
+      kind: Opening.Meeting,
+      session: await createSafariSession(user, encounter),
+      once: metOnce,
+    });
     return null;
   };
 
@@ -311,11 +355,14 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       return m.interact_nothing_to_fight({ who });
     }
     // Put to the player rather than taken for them; the dialog accepts it
-    challenge.set({
-      stop,
-      npc: grunt ? Npc.RocketGrunt : Npc.Trainer,
-      coat: spot.snapshot.getWandererCoats().get(spot.cell),
-      challenger: staged,
+    opened.set({
+      kind: Opening.Challenge,
+      challenge: {
+        stop,
+        npc: grunt ? Npc.RocketGrunt : Npc.Trainer,
+        coat: spot.snapshot.getWandererCoats().get(spot.cell),
+        challenger: staged,
+      },
     });
     return null;
   };
@@ -330,7 +377,11 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     const hidden = await peekPhenomenonEgg(spot.snapshot, spot.cell);
 
     if (hidden != null) {
-      eggOffer.set({ spot, cell: at, from: 'grotto', state: stateOf(hidden) });
+      opened.set({
+        kind: Opening.Egg,
+        offer: { spot, cell: at, from: 'grotto', state: stateOf(hidden) },
+        taking: false,
+      });
       return null;
     }
 
@@ -378,12 +429,12 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       deps.setDialog(GameDialog.Raids);
       return null;
     }
-    lairReason.set(
+    const reason =
       standing != null || (await canJoinRaids(user.uid))
         ? m.interact_lair_quiet()
-        : m.interact_lair_need_pokemon(),
-    );
-    lair.set([spot, standing]);
+        : m.interact_lair_need_pokemon();
+
+    opened.set({ kind: Opening.Lair, spot, standing, reason });
     return null;
   };
 
@@ -448,7 +499,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         windows.askForWindow(true, true);
         return m.interact_no_seat();
       }
-      seat.set([spot, standing]);
+      opened.set({ kind: Opening.Seat, spot, standing });
       return null;
     }
     // The wandering cell, the market stall and the centre open the same counter
@@ -470,11 +521,10 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       // second is a decision about the first, and a bare nest still answers
       const offer = await peekNest(spot.snapshot, spot.cell);
 
-      eggOffer.set({
-        spot,
-        cell: at,
-        from: 'nest',
-        state: offer == null ? 'bare' : stateOf(offer),
+      opened.set({
+        kind: Opening.Egg,
+        offer: { spot, cell: at, from: 'nest', state: offer == null ? 'bare' : stateOf(offer) },
+        taking: false,
       });
       return null;
     }
@@ -485,7 +535,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       return happeningAt(user, spot, at, happening);
     }
     if (landmark === Landmark.HoneyTree) {
-      honeyTree.set(spot);
+      opened.set({ kind: Opening.HoneyTree, spot });
       return null;
     }
     if (landmark === Landmark.CaveMouth) {
@@ -516,7 +566,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     }
     if (landmark === Landmark.Portal) {
       // Where it goes is derived in the dialog; the key is what the server is for
-      portal.set(spot);
+      opened.set({ kind: Opening.Portal, spot });
       return null;
     }
     return lairAt(user, spot);
@@ -562,12 +612,23 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
    * first and only write, and a second player at the same nest is unaffected
    */
   const takeEgg = (): void => {
-    const offer = eggOffer.get();
+    const egg = getOpened(opened.get(), Opening.Egg);
 
-    if (offer == null || taking.get()) {
+    if (egg == null || egg.taking) {
       return;
     }
-    taking.set(true);
+
+    // Marked as taking, and the answer is applied only to this same
+    // offer: one closed and reopened meanwhile is somebody else's
+    const offer = egg.offer;
+    const pending: Opened = { kind: Opening.Egg, offer, taking: true };
+    const settle = (next: Opened | null): void => {
+      if (opened.get() === pending) {
+        opened.set(next);
+      }
+    };
+
+    opened.set(pending);
     (offer.from === 'nest'
       ? claimNest(offer.spot.snapshot, offer.spot.cell)
       : claimPhenomenon(offer.spot.snapshot, offer.spot.cell).then((claim) =>
@@ -575,8 +636,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         )
     )
       .then((catchId) => {
-        taking.set(false);
-        eggOffer.set(null);
+        settle(null);
         deps.tookEgg(catchId != null);
         if (catchId != null) {
           // A new record, under whatever list is showing behind this
@@ -590,7 +650,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
         }
       })
       .catch((caught: unknown) => {
-        taking.set(false);
+        settle({ kind: Opening.Egg, offer, taking: false });
         deps.remark(describeFailure(caught), 'ember');
       });
   };
@@ -599,18 +659,12 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
     attach: (attached) => {
       board = attached;
     },
-    session,
-    once,
+    opened,
+    open: (next) => {
+      opened.set(next);
+    },
+    close,
     busy,
-    challenge,
-    wanderer,
-    portal,
-    honeyTree,
-    seat,
-    lair,
-    lairReason,
-    eggOffer,
-    taking,
     claiming,
     engaged,
     showing,
@@ -625,10 +679,9 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       if (user == null) {
         return;
       }
-      once.set(true);
       createSafariSession(user, encounter)
-        .then((opened) => {
-          session.set(opened);
+        .then((session) => {
+          opened.set({ kind: Opening.Meeting, session, once: true });
         })
         .catch((caught: unknown) => {
           deps.remark(describeFailure(caught), 'ember');

@@ -9,7 +9,12 @@ import { m } from '../../../i18n/paraglide/messages.js';
 import { useAuth } from '../../../auth/context';
 import createBoardWalk, { type BoardWalk } from '../../../game/overworld/walk';
 import createBoardWindows from '../../../game/overworld/windows';
-import createBoardInteractions from '../../../game/overworld/interact';
+import createBoardInteractions, {
+  type Challenge,
+  type Opened,
+  Opening,
+  getOpened,
+} from '../../../game/overworld/interact';
 import createStoreSignal from '../../app/store-signal';
 import LRUMap from '../../../core/lru-map';
 import { settled } from '../../app/resource-reads';
@@ -388,26 +393,27 @@ export default function OverworldBoard(props: {
     },
   });
 
-  const session = createStoreSignal(acts.session);
-  const setSession = acts.session.set;
-  const once = createStoreSignal(acts.once);
+  const opened = createStoreSignal(acts.opened);
   const busy = createStoreSignal(acts.busy);
-  const challengeOpen = createStoreSignal(acts.challenge);
+  const meeting = (): Extract<Opened, { kind: Opening.Meeting }> | null =>
+    getOpened(opened(), Opening.Meeting);
+  const challengeOpen = (): Challenge | null =>
+    getOpened(opened(), Opening.Challenge)?.challenge ?? null;
   const challenge = (): [string, StopRecord] | null => challengeOpen()?.stop ?? null;
-  const wanderer = createStoreSignal(acts.wanderer);
-  const setWanderer = acts.wanderer.set;
-  const portal = createStoreSignal(acts.portal);
-  const honeyTree = createStoreSignal(acts.honeyTree);
+  const wanderer = (): Extract<Opened, { kind: Opening.Wanderer }> | null =>
+    getOpened(opened(), Opening.Wanderer);
+  const portal = (): Placed | null => getOpened(opened(), Opening.Portal)?.spot ?? null;
+  const honeyTree = (): Placed | null => getOpened(opened(), Opening.HoneyTree)?.spot ?? null;
   /** Its world cell, as the lathered list names it */
   const treeKey = (): string => {
     const tree = honeyTree();
 
     return tree == null ? '' : keyAt(tree);
   };
-  const seat = createStoreSignal(acts.seat);
-  const setSeat = acts.seat.set;
-  const lair = createStoreSignal(acts.lair);
-  const lairReason = createStoreSignal(acts.lairReason);
+  const seat = (): Extract<Opened, { kind: Opening.Seat }> | null =>
+    getOpened(opened(), Opening.Seat);
+  const lair = (): Extract<Opened, { kind: Opening.Lair }> | null =>
+    getOpened(opened(), Opening.Lair);
   /**
    * The lair dialog is handed a window and a cell of it, so the cell it
    * is given is the chunk's rather than the board's
@@ -415,10 +421,10 @@ export default function OverworldBoard(props: {
   const standingLair = (): [number, RaidView | null] | null => {
     const open = lair();
 
-    return open == null ? null : [open[0].cell, open[1]];
+    return open == null ? null : [open.spot.cell, open.standing];
   };
-  const eggOffer = createStoreSignal(acts.eggOffer);
-  const taking = createStoreSignal(acts.taking);
+  const eggOpen = (): Extract<Opened, { kind: Opening.Egg }> | null =>
+    getOpened(opened(), Opening.Egg);
   const engaged = acts.engaged;
   const showing = acts.showing;
   const holdsSomething = acts.holdsSomething;
@@ -498,7 +504,7 @@ export default function OverworldBoard(props: {
 
   /** Walk up to whoever is standing there and hear them out */
   const talkTo = (spot: Placed, npc: Npc, player: string): void => {
-    setWanderer([spot, npc]);
+    acts.open({ kind: Opening.Wanderer, spot, npc });
     talking = visitNpc({
       npc,
       cell: spot.cell,
@@ -517,7 +523,7 @@ export default function OverworldBoard(props: {
       })
       .finally(() => {
         talking = undefined;
-        setWanderer(null);
+        acts.close(Opening.Wanderer);
         recheck();
       });
   };
@@ -696,7 +702,7 @@ export default function OverworldBoard(props: {
   createEffect(() => {
     const open = wanderer();
 
-    if (open != null && open[0].snapshot.getStandingNpc(open[0].cell) !== open[1]) {
+    if (open != null && open.spot.snapshot.getStandingNpc(open.spot.cell) !== open.npc) {
       talking?.end();
     }
   });
@@ -819,13 +825,13 @@ export default function OverworldBoard(props: {
   const ahead = walk.ahead;
 
   const journey = createStoreSignal(walk.journey);
-  const travel = createStoreSignal(walk.travel);
+  const ride = createStoreSignal(walk.ride);
 
   /** The buddy as the player is drawn riding it */
   const mount = (): RiddenCoat | null => {
     const riding = buddy();
 
-    return travel() === 'walk' || riding == null
+    return ride().travel === 'walk' || riding == null
       ? null
       : {
           species: riding.species,
@@ -1318,8 +1324,8 @@ export default function OverworldBoard(props: {
           <>
             <SafariDialog
               user={user()}
-              session={session()}
-              insistent={once()}
+              session={meeting()?.session ?? null}
+              insistent={meeting()?.once === true}
               // A Frisk buddy reads what is standing there before
               // anything is thrown at it
               revealsHeld={view()?.revealsHeld === true}
@@ -1329,7 +1335,7 @@ export default function OverworldBoard(props: {
                 // The encounter is finished the moment it is caught, so
                 // the safari closes and the sheet for what was caught
                 // opens in its place
-                setSession(null);
+                acts.close(Opening.Meeting);
                 game.setSheet({ catchId });
                 // And it is off the map: a caught pokemon is retired
                 // from this player's world the same way one that ran
@@ -1339,7 +1345,7 @@ export default function OverworldBoard(props: {
                 props.onFled();
               }}
               onClose={() => {
-                setSession(null);
+                acts.close(Opening.Meeting);
                 // A won raid's claim lands while its pokemon is being met
                 recheck();
                 // A meeting that ended in a flight leaves the chunk
@@ -1356,52 +1362,66 @@ export default function OverworldBoard(props: {
               sheet={challengeOpen()?.coat}
               challenger={challengeOpen()?.challenger ?? null}
               onClose={() => {
-                acts.challenge.set(null);
+                acts.close(Opening.Challenge);
                 recheck();
               }}
             />
             <GymSeatDialog
               user={user()}
-              snapshot={seat()?.[0].snapshot ?? null}
-              cell={seat()?.[0].cell ?? null}
-              standing={seat()?.[1] ?? null}
+              snapshot={seat()?.spot.snapshot ?? null}
+              cell={seat()?.spot.cell ?? null}
+              standing={seat()?.standing ?? null}
               onClose={() => {
-                setSeat(null);
+                acts.close(Opening.Seat);
                 recheck();
               }}
               onChange={() => {
                 recheck();
                 // The seat moved under the dialog, so what it is
                 // showing is re-read rather than guessed at
-                const standing = seat();
+                const open = seat();
 
-                if (standing != null) {
-                  enterGymSeat(standing[0].snapshot, standing[0].cell)
+                if (open != null) {
+                  // Applied only while that same seat is still the one open
+                  const settle = (next: Opened | null): void => {
+                    if (acts.opened.get() === open) {
+                      if (next == null) {
+                        acts.close(Opening.Seat);
+                      } else {
+                        acts.open(next);
+                      }
+                    }
+                  };
+
+                  enterGymSeat(open.spot.snapshot, open.spot.cell)
                     .then((held) => {
-                      setSeat(held === 'absent' ? null : [standing[0], held]);
+                      settle(
+                        held === 'absent'
+                          ? null
+                          : { kind: Opening.Seat, spot: open.spot, standing: held },
+                      );
                     })
                     .catch(() => {
-                      setSeat(null);
+                      settle(null);
                     });
                 }
               }}
             />
             <NestDialog
-              offer={eggOffer()}
-              busy={taking()}
+              offer={eggOpen()?.offer ?? null}
+              busy={eggOpen()?.taking === true}
               buddy={buddy() ?? null}
               onAccept={acts.takeEgg}
               onClose={() => {
-                acts.eggOffer.set(null);
-                acts.taking.set(false);
+                acts.close(Opening.Egg);
               }}
             />
             <RaidDialog
-              snapshot={lair()?.[0].snapshot ?? null}
+              snapshot={lair()?.spot.snapshot ?? null}
               lair={standingLair()}
-              reason={lairReason()}
+              reason={lair()?.reason ?? null}
               onClose={() => {
-                acts.lair.set(null);
+                acts.close(Opening.Lair);
               }}
             />
             <HoneyTreeDialog
@@ -1410,7 +1430,7 @@ export default function OverworldBoard(props: {
               cell={honeyTree()?.cell ?? null}
               lathered={lathered().has(treeKey())}
               onClose={() => {
-                acts.honeyTree.set(null);
+                acts.close(Opening.HoneyTree);
               }}
               onLathered={(_, encounter) => {
                 boardWindows.lathered.update((cells) => new Set(cells).add(treeKey()));
@@ -1432,7 +1452,7 @@ export default function OverworldBoard(props: {
               snapshot={portal()?.snapshot ?? null}
               cell={portal()?.cell ?? null}
               onClose={() => {
-                acts.portal.set(null);
+                acts.close(Opening.Portal);
               }}
               onTravel={(destination) => {
                 // Out of a portal and into the one it opened onto:

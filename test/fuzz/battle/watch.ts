@@ -31,6 +31,14 @@ export interface WatchReport {
   broken: Record<Rule, string[]>;
 }
 
+/**
+ * Every event a guess may raise is a question: a Check, a Resolve, or
+ * the decision itself. Anything else is something happening. The same
+ * rule as the sweep in `test/battle/ai/estimates.test.ts`
+ */
+const QUESTION =
+  /^(Check|Resolve|UnitAttackResolve|UnitAttackCheck|UnitTriggerMoveResolve|UnitAIChooseMove)/;
+
 /** How often the AI is asked for a move outside its own turn, in ticks */
 const PROBE_EVERY = 30;
 
@@ -151,6 +159,10 @@ export function watchBattle(
   const everHeld = new Map<Unit, Set<Items>>();
   const wear = new Map<Unit, number>();
   let ticks = 0;
+  // What a probed decision raised and drew while it was only guessing
+  let probing = false;
+  let happened: string[] = [];
+  let draws = 0;
 
   function breach(rule: Rule, message: string): void {
     if (broken[rule].length < MAX_BREACHES) {
@@ -159,6 +171,26 @@ export function watchBattle(
   }
 
   function start(battle: Battle): void {
+    // A guess raises only questions and draws nothing past the tie-break
+    const emit = battle.emit.bind(battle);
+    const random = battle.random.bind(battle);
+
+    battle.emit = (name, event) => {
+      if (probing && battle.estimating && !QUESTION.test(event.id)) {
+        happened.push(event.id);
+      }
+      emit(name, event);
+    };
+    battle.random = () => {
+      if (probing && battle.estimating) {
+        draws++;
+        if (process.env.FUZZ_TRACE != null) {
+          process.stderr.write(`DRAW ${new Error().stack?.split('\n').slice(2, 7).join(' | ')}\n`);
+        }
+      }
+      return random();
+    };
+
     // The items each unit walked on with
     for (const unit of battle.units()) {
       const items = readHeldItems(unit);
@@ -260,15 +292,30 @@ export function watchBattle(
       }
       const before = JSON.stringify(snapshotBattle(battle));
 
-      chooseMove(battle, unit);
+      happened = [];
+      draws = 0;
+      probing = true;
+
+      const choice = chooseMove(battle, unit);
+
+      probing = false;
+
+      // A tie between equal picks is broken by one draw, which is a choice and not a guess
+      if (choice != null) {
+        draws--;
+      }
 
       const after = JSON.stringify(snapshotBattle(battle));
+      const what = `weighing a move for ${describeUnit(unit)} at ${Math.round(time)} ms`;
 
       if (before !== after) {
-        breach(
-          Rule.Purity,
-          `weighing a move for ${describeUnit(unit)} at ${time} ms changed the fight`,
-        );
+        breach(Rule.Purity, `${what} changed the fight`);
+      }
+      if (happened.length > 0) {
+        breach(Rule.Purity, `${what} raised ${[...new Set(happened)].join(', ')}`);
+      }
+      if (draws > 0) {
+        breach(Rule.Purity, `${what} drew ${draws} times`);
       }
     }
   }

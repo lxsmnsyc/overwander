@@ -16,5 +16,7 @@
 - Raids get a quarter of the run count: a raid boss lasts the whole time limit.
 - The boss cap check mirrors the boss's own allowance (cap 200, refilling at 50 a second) with one frame of slack, read at `AttackPriority.Cleanup` so it sees the final value.
 - The item rule checks two things: the held set changes only through `UnitAddItem` and `UnitRemoveItem`, and a foe takes an item for good only when it is a consumable (the rule in `5b0d2841d`).
-- With signatures on and one seed per run, the Three Heads revert still passed purity at 500 and 3000 runs. 7 of 3000 drawn inputs field Hydreigon with Three Heads beside a second unit, and it holds the ability on the field (200294), yet six of them replayed report no breach. Time-boxed and left open in the outcome.
+- Reverting one signature's guard (Three Heads) was the wrong acceptance check: it tests how often the generator draws Hydreigon, not the bug class. The class is an estimate that is not marked as one.
+- With `Simulated` removed from `estimateDamage`, the snapshot-only purity property still passed, while the sweep in `test/battle/ai/estimates.test.ts` failed at once. The sweep fails on any non-question event and any RNG draw during a guess; the property now does the same, and then fails on the first fight with the flag removed.
+- The new detector found two things on a clean engine: `CheckUnitRecoil` had an empty `id`, and `stealableItem` drew from the RNG inside Fling and Poltergeist questions.
 - The damage property first failed on type Z-Moves, Max Moves, Present and Frenzy Burst, none of which can be tried bare. They are listed as untried with reasons.

@@ -7,7 +7,8 @@ import { Rule, playCasts, watchFight, watchRaid } from './watch';
 /**
  * Random AI-against-AI fights checked on every tick. A failure prints
  * the fight that broke the rule, shrunk, and the seed and path to play
- * it again: FUZZ_SEED=<seed> FUZZ_PATH=<path> pnpm fuzz
+ * it again: FUZZ_SEED=<seed> FUZZ_PATH=<path> pnpm fuzz. FUZZ_TRACE=1
+ * prints where each draw a guess made came from
  */
 beforeAll(() => {
   registerGameData();

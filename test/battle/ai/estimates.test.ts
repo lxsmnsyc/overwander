@@ -18,7 +18,7 @@ import { DEFAULT_MOVE_SLOTS } from '../../../src/data/constants/slots';
 import { Types } from '../../../src/data/constants/types';
 import registerAbilities, { getRegisteredAbilities } from '../../../src/data/abilities';
 import Abilities from '../../../src/data/ids/abilities';
-import { ItemTypes, type Items } from '../../../src/data/ids/items';
+import { ItemTypes, Items } from '../../../src/data/ids/items';
 import { Species } from '../../../src/data/ids/species';
 import { listItemsByType } from '../../../src/data/items/__create';
 import { MoveAttackFlags, MoveCategories, Moves } from '../../../src/data/ids/moves';
@@ -186,6 +186,32 @@ describe('the AI weighing its moves', () => {
     expect(draws).toBe(0);
 
     quaker.checkMovePower(Moves.Magnitude, unitTarget(foe));
+    expect(draws).toBe(1);
+  });
+
+  it('draws nothing from the fight to guess what a Fling or a Poltergeist finds', () => {
+    const { battle, teamA, teamB } = createAIBattle();
+    const thrower = createUnit(battle, teamA);
+    const foe = createUnit(battle, teamB);
+
+    thrower.addItem(Items.Leftovers);
+    thrower.addItem(Items.LifeOrb);
+    foe.addItem(Items.Leftovers);
+    foe.addItem(Items.LifeOrb);
+
+    let draws = 0;
+    battle.random = () => {
+      draws++;
+      return 0.5;
+    };
+
+    withAIContext(battle, thrower, () => {
+      thrower.checkMovePower(Moves.Fling, unitTarget(foe));
+      thrower.checkMoveImmunity(Moves.Poltergeist, unitTarget(foe), Types.Ghost);
+    });
+    expect(draws).toBe(0);
+
+    thrower.checkMovePower(Moves.Fling, unitTarget(foe));
     expect(draws).toBe(1);
   });
 });

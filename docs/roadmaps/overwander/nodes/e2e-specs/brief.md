@@ -1,7 +1,7 @@
 ---
 id: e2e-specs
 title: Cut the e2e specs to a working smoke suite
-status: todo
+status: active
 priority: should
 type: chore
 outline: false
@@ -33,6 +33,7 @@ Keep end-to-end tests only for what no other suite can catch, the wiring between
 - CI does not run e2e, so the specs fell behind the game unseen: no spec loaded from about 2026-09-25 until deps-update, and in the run stopped after 46 of 59 tests, 43 failed, most by timing out. A new player starts on a Portal, and its dialog covers the world, so a spec that presses keys or opens a dialog right after `signIn` waits out its timeout.
 - The rules, data and server are covered elsewhere: about 5,800 unit tests, the database suite (`pnpm test:db`, 32 files over the server functions) and the component tests. A spec that only re-checks one of those is not worth a browser on this machine (8 GB, one suite at a time).
 - `standBeside` in `e2e/walk.ts` writes the player's position beside a landmark, but the game puts the player back at their start town (seen 2026-11-03 trying to screenshot Nurse Joy and a Vendor): a position saved by the page wins over the written row, or the write misses. `openAuctionBoard` relies on the same helper.
+- Since this brief was written, the HUD (#284) and the catch sheet (#286) were redesigned on Field Kit. The kept specs need new selectors: read the current components, not the old specs.
 
 ## Steps
 

@@ -4,7 +4,7 @@ import { CELL_COUNT, CHUNK_CELLS } from '../overworld/grid';
 import { AuctionLot, MAX_INCREMENT, MAX_STARTING_BID } from '../model/auction-record';
 import { MAX_OFFSET, MIN_OFFSET } from '../model/local-time';
 import { NICKNAME_LIMIT, PLAYER_NAME_LIMIT } from '../model/nickname';
-import { SPECIAL_ABILITIES, Slots, mostSlots } from '../data/constants/slots';
+import { MAX_PACKED_SLOTS, SPECIAL_ABILITIES, Slots, mostSlots } from '../data/constants/slots';
 import { DUEL_BANS, MAX_BST_CAP } from '../data/constants/duel-bans';
 import { WORLD_MAX, WORLD_MIN } from '../overworld/world';
 import BattleOutcome from '../model/battle-outcome';
@@ -453,7 +453,8 @@ const GIFT_POKEMON = {
   moves: listOf(GAME_ID, mostSlots(Slots.Move)),
   items: listOf(GAME_ID, mostSlots(Slots.Item)),
   place: TEXT,
-  slots: COUNT,
+  // Packed, so held to the packing's width as the caught rows are
+  slots: whole(0, MAX_PACKED_SLOTS),
 };
 
 /** The three shapes a gift comes in, whether or not it names a player */

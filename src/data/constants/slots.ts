@@ -56,6 +56,12 @@ const SLOT_MASK = 0b111;
 export const MAX_SLOTS = 1 << SLOT_BITS;
 
 /**
+ * The largest packed value: all three counts at the width's ceiling.
+ * `caught_slots_check` holds the column to it
+ */
+export const MAX_PACKED_SLOTS = (1 << (SLOT_BITS * 3)) - 1;
+
+/**
  * How much room a pokemon may have for each list, least and most.
  *
  * The width holds eight of everything, which is a fact about the

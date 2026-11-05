@@ -1,4 +1,5 @@
 import * as v from 'valibot';
+import { MAX_LEVEL } from '../constants/levels';
 import { ENGLISH_STAT_NAMES, Stats } from '../constants/stats';
 import type { Types } from '../constants/types';
 import type Abilities from '../ids/abilities';
@@ -124,8 +125,19 @@ const ABILITIES = v.strictObject({
   hidden: v.optional(NAMES),
 });
 
+/**
+ * A level a move is learned at, as a key. Read as a number afterwards,
+ * so anything but the digits of a level would file its moves under no
+ * level at all and the species would never learn them
+ */
+const LEARNED_AT = v.pipe(
+  v.string(),
+  v.regex(/^[1-9][0-9]*$/, 'a level'),
+  v.check((at) => Number(at) <= MAX_LEVEL, `a level up to ${MAX_LEVEL}`),
+);
+
 const LEARNSET = v.strictObject({
-  level: v.optional(v.record(v.string(), NAMES), {}),
+  level: v.optional(v.record(LEARNED_AT, NAMES), {}),
   teachable: v.optional(NAMES, []),
   egg: v.optional(NAMES),
 });
@@ -432,6 +444,22 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     }
     localize(data, name, translated, ['name', 'category']);
     read.push([species, data]);
+  }
+
+  // A part under a name world/ does not have is a species misspelt, or
+  // a family key such as family-teachable misspelt into one, and would
+  // be dropped without a word
+  for (const [field, kind] of [
+    [stats, 'stats'],
+    [abilities, 'abilities'],
+    [learnsets, 'learnset'],
+    [text, 'name'],
+  ] as const) {
+    for (const [name, placed] of field) {
+      if (!world.has(name)) {
+        throw new Error(`${placed.where}: ${name} has ${kind} but is not in world/`);
+      }
+    }
   }
 
   read.sort(

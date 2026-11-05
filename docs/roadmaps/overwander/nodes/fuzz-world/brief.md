@@ -1,7 +1,7 @@
 ---
 id: fuzz-world
 title: Property and oracle tests for the world and the data
-status: todo
+status: active
 priority: should
 type: chore
 outline: false

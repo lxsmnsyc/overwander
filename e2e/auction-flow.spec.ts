@@ -48,12 +48,19 @@ interface Trader {
   uid: string;
 }
 
-async function arrive(browser: Browser): Promise<Trader> {
+/**
+ * Sign a player up. Only the seller claims the starter: it is the
+ * pokemon they list a flawless copy of, and a buyer needs no pokemon to
+ * bid
+ */
+async function arrive(browser: Browser, starter: boolean): Promise<Trader> {
   const context = await browser.newContext();
   const page = await context.newPage();
   const player = await signIn(page);
 
-  await claimStarter(page);
+  if (starter) {
+    await claimStarter(page);
+  }
   return { page, player, uid: await uidOf(player) };
 }
 
@@ -184,8 +191,8 @@ test.describe('the auction house', () => {
   test('a pokemon goes up, is bid on, and lands in the winner`s box', async ({ browser }) => {
     test.slow();
 
-    const seller = await arrive(browser);
-    const buyer = await arrive(browser);
+    const seller = await arrive(browser, true);
+    const buyer = await arrive(browser, false);
 
     // A flawless copy of whatever the seller was handed. Perfect values
     // are one of the four things that make a pokemon worth a day of the
@@ -243,14 +250,13 @@ test.describe('the auction house', () => {
     await collect.click();
     await expect(buyerBoard.getByText('Collected.')).toBeVisible();
 
-    // Two pokemon in the winner's box now: the one they were handed and
-    // the one they won
+    // The winner had no pokemon, so the one they won is the only square
     await buyerBoard.getByRole('button', { name: 'Close' }).click();
 
     const catches = await openPanel(buyer.page, 'Boxes');
 
     await expect(
-      catches.getByRole('group', { name: /^Box of pokemon, 2 of 30 squares filled/ }),
+      catches.getByRole('group', { name: /^Box of pokemon, 1 of 30 squares filled/ }),
     ).toBeVisible();
   });
 });

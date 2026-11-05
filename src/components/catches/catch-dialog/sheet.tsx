@@ -1,12 +1,15 @@
-import { HISTORY_BALL, HISTORY_BALL_INSET, describeHistory, isHoldable } from './describe';
+import { isHoldable } from './describe';
 import { capAsksForStat } from '../../../data/items/bottle-caps';
 import BattleData from '../../app/BattleData';
 import CandySprite from '../../sprites/CandySprite';
 import BattleSection from './sections/BattleSection';
 import EvolutionSection from './sections/EvolutionSection';
+import HeroSection from './sections/HeroSection';
+import HeroTiles from './sections/HeroTiles';
 import HistorySection from './sections/HistorySection';
-import PortraitSection from './sections/PortraitSection';
+import OriginSection from './sections/OriginSection';
 import StatsSection from './sections/StatsSection';
+import { CARD, CARD_TITLE, riseAfter } from './metrics';
 import BoxChip from './sections/BoxChip';
 import { isAuctionableCatch } from '../../../auth/auctions';
 import { setBuddy } from '../../../auth/buddy';
@@ -35,7 +38,6 @@ import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { HeadingPortrait } from '../../forms/terms';
 import TargetStrip from '../TargetStrip';
 import { hatchEgg } from '../../../auth/eggs';
-import { deriveCatchSize } from '../../../overworld/encounter';
 import { type EvolutionOption, evolveCatch } from '../../../auth/evolution';
 import { fuseCatch, unfuseCatch } from '../../../auth/fusion';
 import type { InventoryEntry } from '../../../auth/inventory';
@@ -46,9 +48,7 @@ import { trainEfforts } from '../../../auth/training';
 import { MAX_LEVEL } from '../../../data/constants/levels';
 
 import type { Stats } from '../../../data/constants/stats';
-import { BALL_ITEMS, type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
-import { MAX_FRIENDSHIP } from '../../../data/constants/friendship';
-import ItemSprite from '../../items/ItemSprite';
+import { type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
 import { Genders, Species } from '../../../data/ids/species';
 
 import { isPPItem } from '../../../data/items/vitamins';
@@ -57,11 +57,9 @@ import { isAbilityPatch } from '../../../data/items/ability-items';
 import { isPurifyingGem } from '../../../data/items/purifying-gem';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import { getFusionHusk, getFusionPartner, isFusedSpecies } from '../../../data/species/fusion';
-import { teraTypeOf } from '../../../data/species/tera-type';
 
-import { HeartIcon, LockIcon, SparklesIcon, StarIcon } from '../../icons';
-import TypeBadge from '../../sprites/TypeBadge';
-import { GENDER_LABELS, GENDER_MARKS, sayFriendship } from '../catch-summary';
+import { SparklesIcon } from '../../icons';
+import { GENDER_LABELS, GENDER_MARKS } from '../catch-summary';
 import InventoryPicker from '../../items/InventoryPicker';
 
 import { describeItem } from '../../details';
@@ -71,8 +69,8 @@ import createCandyFeed from '../../../game/catches/candy-feed';
 import createStoreSignal from '../../app/store-signal';
 
 import {
-  Badge,
   Button,
+  CloseButton,
   Dialog,
   DialogActions,
   Field,
@@ -82,7 +80,6 @@ import {
   Note,
   Row,
   type ToastTone,
-  TooltipHost,
   useToast,
 } from '../../styled';
 import AbilityPatchDialog from '../AbilityPatchDialog';
@@ -92,7 +89,6 @@ import BottleCapDialog from '../BottleCapDialog';
 import { askTeachings } from '../../forms/teach-move';
 
 import {
-  For,
   type JSX,
   type Resource,
   Show,
@@ -164,12 +160,6 @@ export interface CatchDialogProps {
    */
   readOnly?: boolean;
 }
-
-/**
- * A candy's art is a 16px picture centred in a 32px cell, so the margin
- * is pulled in to keep a badge as tight as its text
- */
-const CANDY_BADGE = '-m-2';
 
 /** How large a candy is drawn on the toast that says a release paid it */
 const CANDY_ART = 24;
@@ -1137,12 +1127,20 @@ export function CatchSheetBody(
     ];
   };
 
+  /** Put the sheet away. A release half-confirmed is a release declined */
+  const closeSheet = (): void => {
+    setReleasing(false);
+    setTracing(false);
+    setPanel(null);
+    props.onClose();
+  };
+
   /**
-   * The box chip, the badges and the Actions menu, in the heading row
-   * beside the nameplate rather than a bar of their own under it
+   * The box chip, the Actions menu and the way out, at the top right of
+   * the hero
    */
-  const actionsRow = (): JSX.Element => (
-    <div class="flex flex-wrap items-center justify-end gap-2">
+  const controls = (): JSX.Element => (
+    <>
       {/* Which box it is filed in, and where else it could go, first
           in the row as the box it is in is the first thing about it */}
       <Show when={owned() != null && props.catchId != null && view()}>
@@ -1163,55 +1161,21 @@ export function CatchSheetBody(
           />
         )}
       </Show>
-      <Show when={view()}>
-        {(record) => (
-          <span class="flex min-w-0 flex-wrap items-center gap-2 text-left">
-            <Show when={isFavorite(record())}>
-              <Badge tone="gold">
-                <StarIcon class="size-3.5" aria-hidden="true" />
-                {m.catch_favorite()}
-              </Badge>
-            </Show>
-            <Show when={isGuarded(record())}>
-              <Badge tone="tide">
-                <LockIcon class="size-3.5" aria-hidden="true" />
-                {m.catch_badge_locked()}
-              </Badge>
-            </Show>
-            <Show when={isShadow(record())}>
-              <Badge>{m.catch_badge_shadow()}</Badge>
-            </Show>
-            <Show when={record().gigantamax}>
-              <Badge tone="arcane">{m.catch_badge_gigantamax()}</Badge>
-            </Show>
-            <Show when={props.buddy.latest === props.catchId}>
-              <Badge tone="leaf">{m.catch_badge_buddy()}</Badge>
-            </Show>
-            <Show when={owned() != null && props.fighting.latest === true}>
-              <Badge tone="ember">{m.catch_badge_in_raid()}</Badge>
-            </Show>
-          </span>
-        )}
-      </Show>
       <Show when={owned() != null || props.onDex != null}>
         <Menu label={m.catch_actions()} actions={menuActions()} />
       </Show>
-    </div>
+      <CloseButton onPress={closeSheet} />
+    </>
   );
-
-  /** Put the sheet away. A release half-confirmed is a release declined */
-  const closeSheet = (): void => {
-    setReleasing(false);
-    setTracing(false);
-    setPanel(null);
-    props.onClose();
-  };
 
   return (
     <>
       <Dialog
-        width="broad"
+        width="sheet"
         layout="sheet"
+        // The hero names it, so the nameplate and the line under it are
+        // for the screen reader alone
+        quiet
         // The sheet steps aside while the teaching dialog is up rather
         // than sitting open behind it: two modals at once fight for the
         // click that closes them, and the sheet is what the player comes
@@ -1230,8 +1194,8 @@ export function CatchSheetBody(
           panel() !== 'items'
         }
         onClose={closeSheet}
-        // The name box carries who it is: its name, its species where a
-        // nickname took its place, and its marks, with its ball as the face
+        // What it is announced as: its name, its species where a
+        // nickname took its place, and its marks
         title={
           <Show when={view()} fallback={m.catch_sheet_title()}>
             {(record) => (
@@ -1262,14 +1226,6 @@ export function CatchSheetBody(
             )}
           </Show>
         }
-        lead={
-          <Show when={view()}>
-            {(record) => <ItemSprite item={BALL_ITEMS[record().ball]} size={28} label="" />}
-          </Show>
-        }
-        terse
-        // Beside the nameplate, filling the band that would otherwise stand empty
-        aside={actionsRow()}
         description={
           props.readOnly === true ? m.catch_sheet_description_theirs() : m.catch_sheet_description()
         }
@@ -1289,29 +1245,53 @@ export function CatchSheetBody(
           >
             {(loaded) => (
               <>
+                <HeroSection
+                  caught={loaded()}
+                  named={named()}
+                  level={shownLevel()}
+                  buddy={props.buddy.latest === props.catchId}
+                  raiding={owned() != null && props.fighting.latest === true}
+                  controls={controls()}
+                  tiles={
+                    // An egg has no type to raise and no family to feed yet
+                    isEgg(loaded()) ? undefined : (
+                      <HeroTiles
+                        caught={loaded()}
+                        owned={owned() != null}
+                        candies={failed(props.candies) == null ? shownCandies() : null}
+                        level={shownLevel()}
+                        cost={getCandyCost(loaded())}
+                        held={
+                          shownCandies() < getCandyCost(loaded()) ||
+                          shownLevel() >= MAX_LEVEL ||
+                          // A level already paid for is waiting on an
+                          // answer, and pressing past it would take the
+                          // offer away
+                          teaching()?.levelled === true ||
+                          frozen()
+                        }
+                        onFeed={feedCandy}
+                      />
+                    )
+                  }
+                />
+
                 {/* An egg is one thing and one question: how far along it
                     is, and whether it is ready. It has no stats, no
                     moves and nothing to evolve into yet, and what
                     family it belongs to is exactly what hatching it
-                    tells you, so the columns and the candy stay away
-                    until there is a pokemon to put in them */}
+                    tells you, so the columns stay away until there is
+                    a pokemon to put in them */}
                 <Show
                   when={!isEgg(loaded())}
                   fallback={
                     <div
-                      class="flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-line-soft p-4
-                        text-center md:min-h-0 md:flex-1"
+                      class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1 md:grid-cols-[minmax(0,1fr)_13.75rem]
+                        md:items-start md:gap-3.5"
                     >
-                      {/* Fitted to a square of its own: an egg drawn to
-                          whatever width the panel has is a very large
-                          egg */}
-                      <div class="flex w-40 max-w-full flex-col items-center gap-2">
-                        <PortraitSection caught={loaded()} named={named()} />
-                      </div>
-
-                      <section class="flex w-full max-w-sm flex-col gap-2">
-                        <h3>{m.catch_buddy_hatching()}</h3>
-                        <div class="h-2 overflow-hidden rounded-full bg-line-soft">
+                      <section class={CARD} style={riseAfter(0)}>
+                        <h3 class={CARD_TITLE}>{m.catch_buddy_hatching()}</h3>
+                        <div class="h-2.5 overflow-hidden rounded-full bg-line-soft">
                           <div
                             class="h-full rounded-full bg-leaf transition-[width]"
                             style={{
@@ -1331,146 +1311,36 @@ export function CatchSheetBody(
                               })}
                         </Note>
                         <Show when={owned()}>
-                          <Row class="justify-center">
+                          <Row class="justify-end">
                             <Button tone="primary" disabled={!canHatch(loaded())} onClick={hatch}>
                               {m.catch_hatch_it()}
                             </Button>
                           </Row>
                         </Show>
                       </section>
+                      <section class={CARD} style={riseAfter(1)}>
+                        <OriginSection
+                          caught={loaded()}
+                          onHistory={() => {
+                            setTracing(true);
+                          }}
+                        />
+                      </section>
                     </div>
                   }
                 >
-                  {/* Fitted to one screen: who it is and what it becomes on
-                      the left, what it fights with and what it is made of on
-                      the right. The columns size apart, so a tall block on
-                      one side never pushes the other. One scrolling column
-                      on a phone, portrait, moves, evolutions, then stats */}
+                  {/* Fitted to one screen: what it is made of on the left,
+                      what it fights with in the middle, what it becomes
+                      and where it came from on the right. Each column
+                      scrolls apart, so a tall block on one side never
+                      pushes the others. One scrolling column on a phone:
+                      moves, abilities and items, stats, evolution, origin */}
                   <div
-                    class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1
-                      md:grid-cols-[16rem_minmax(0,1fr)] md:gap-4"
+                    class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1 md:grid-cols-[15rem_minmax(0,1fr)_12rem]
+                      md:gap-3.5 lg:grid-cols-[18.75rem_minmax(0,1fr)_15rem]"
                   >
-                    {/* Scrolls like the right side does, so a short screen
-                        never pushes the evolutions down over the history */}
-                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-3 md:overflow-y-auto">
-                      <div
-                        class="flex flex-col items-center gap-2 rounded-2xl border-2 border-line-soft p-3 text-center
-                          md:flex-1"
-                      >
-                        <PortraitSection caught={loaded()} named={named()} level={shownLevel()} />
-
-                        {/* Its facts as chips: what it is, its size, and what walking
-                            with it has earned */}
-                        <div class="flex flex-wrap items-center justify-center gap-1.5">
-                          <Badge>{getSpeciesData(loaded().species).category}</Badge>
-                          <For each={getSpeciesData(loaded().species).types}>
-                            {(type) => <TypeBadge type={type} />}
-                          </For>
-                          <Badge>
-                            {deriveCatchSize(
-                              loaded().species,
-                              loaded().traitValue,
-                              loaded().type,
-                            ).height.toFixed(2)}{' '}
-                            m
-                          </Badge>
-                          <Badge>
-                            {deriveCatchSize(
-                              loaded().species,
-                              loaded().traitValue,
-                              loaded().type,
-                            ).weight.toFixed(1)}{' '}
-                            kg
-                          </Badge>
-                          <TooltipHost
-                            name={m.catch_friendship()}
-                            description={m.catch_friendship_of({
-                              count: loaded().friendship,
-                              max: MAX_FRIENDSHIP,
-                            })}
-                          >
-                            <Badge tone="leaf">
-                              <HeartIcon class="size-3.5" aria-hidden="true" />
-                              {sayFriendship(loaded().friendship)}
-                            </Badge>
-                          </TooltipHost>
-                          <Badge>{m.catch_steps({ count: loaded().walked })}</Badge>
-                        </div>
-                        <div class="flex items-center justify-center gap-1.5">
-                          <span class="text-xs font-extrabold tracking-wider text-muted uppercase">
-                            {m.catch_tera_type()}
-                          </span>
-                          <TypeBadge type={teraTypeOf(loaded())} />
-                        </div>
-                        <div class="flex flex-wrap items-center justify-center gap-1.5">
-                          <Badge tone="gold">
-                            <CandySprite
-                              family={getSpeciesData(loaded().species).family}
-                              label=""
-                              class={CANDY_BADGE}
-                            />
-                            <span class="tabular-nums">
-                              {failed(props.candies) == null ? shownCandies() : '?'}
-                            </span>
-                          </Badge>
-                          {/* The level and what raises it are one control:
-                            where it stands and what the next step costs */}
-                          <Show when={owned() != null}>
-                            {/* Presses are gathered and sent together once they stop */}
-                            <Button
-                              tone="primary"
-                              disabled={
-                                shownCandies() < getCandyCost(loaded()) ||
-                                shownLevel() >= MAX_LEVEL ||
-                                // A level already paid for is waiting on an
-                                // answer, and pressing past it would take the
-                                // offer away
-                                teaching()?.levelled === true ||
-                                frozen()
-                              }
-                              onClick={feedCandy}
-                            >
-                              {/* The cost in candy, drawn, as a badge on the button */}
-                              {shownLevel() >= MAX_LEVEL ? (
-                                m.catch_level({ level: shownLevel() })
-                              ) : (
-                                <>
-                                  {m.catch_level_up()}
-                                  <Badge tone="gold">
-                                    <CandySprite
-                                      family={getSpeciesData(loaded().species).family}
-                                      label={m.tooltip_kind_candy()}
-                                      class={CANDY_BADGE}
-                                    />
-                                    x {getCandyCost(loaded())}
-                                  </Badge>
-                                </>
-                              )}
-                            </Button>
-                          </Show>
-                        </div>
-                      </div>
-
-                      <div
-                        class="order-3 flex min-h-0 flex-col rounded-2xl border-2 border-line-soft p-3 md:order-none md:h-48
-                          md:shrink-0"
-                      >
-                        <EvolutionSection
-                          options={props.evolutions.latest}
-                          owned={owned() != null}
-                          frozen={frozen()}
-                          shiny={isShiny(loaded())}
-                          female={loaded().gender === Genders.Female}
-                          dexKnows={dexKnows}
-                          onEvolve={evolve}
-                        />
-                      </div>
-                    </div>
-
-                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-3">
-                      {/* Stats lead the column: they are what a player
-                          opens a catch to read */}
-                      <div class="order-2 rounded-2xl border-2 border-line-soft p-3 md:order-none md:shrink-0">
+                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-2.5 md:overflow-y-auto">
+                      <div class={`${CARD} order-2 md:order-none`} style={riseAfter(0)}>
                         <StatsSection
                           caught={loaded()}
                           owned={owned() != null}
@@ -1478,59 +1348,56 @@ export function CatchSheetBody(
                           onTrain={train}
                         />
                       </div>
+                    </div>
 
-                      <div class="order-4 min-h-0 md:order-none md:flex-1 md:overflow-y-auto">
-                        {/* An egg has nothing to fight with yet, so its side
-                          holds the way out of the shell */}
-                        <BattleSection
+                    <div class="order-1 min-w-0 md:order-none md:min-h-0 md:overflow-y-auto">
+                      <BattleSection
+                        caught={loaded()}
+                        owned={owned() != null}
+                        frozen={frozen()}
+                        holdables={holdables()}
+                        bag={readable(props.bag)}
+                        giving={panel() === 'give'}
+                        onGiving={(open) => {
+                          setPanel(open ? 'give' : null);
+                        }}
+                        onGive={(item) => {
+                          moveItem(item, true);
+                        }}
+                        onTake={(item) => {
+                          moveItem(item, false);
+                        }}
+                        onArrange={arrange}
+                      />
+                    </div>
+
+                    <div class="contents md:flex md:min-h-0 md:flex-col md:gap-2.5 md:overflow-y-auto">
+                      <EvolutionSection
+                        class="order-3 md:order-none"
+                        style={riseAfter(4)}
+                        species={loaded().species}
+                        // Asked only for the reader's own: the resource keeps
+                        // its last answer when the question goes away, which
+                        // was the last pokemon of theirs that was open
+                        options={owned() == null ? undefined : props.evolutions.latest}
+                        owned={owned() != null}
+                        frozen={frozen()}
+                        shiny={isShiny(loaded())}
+                        female={loaded().gender === Genders.Female}
+                        dexKnows={dexKnows}
+                        onEvolve={evolve}
+                      />
+                      <section class={`${CARD} order-4 md:order-none`} style={riseAfter(5)}>
+                        <OriginSection
                           caught={loaded()}
-                          owned={owned() != null}
-                          frozen={frozen()}
-                          holdables={holdables()}
-                          bag={readable(props.bag)}
-                          giving={panel() === 'give'}
-                          onGiving={(open) => {
-                            setPanel(open ? 'give' : null);
+                          onHistory={() => {
+                            setTracing(true);
                           }}
-                          onGive={(item) => {
-                            moveItem(item, true);
-                          }}
-                          onTake={(item) => {
-                            moveItem(item, false);
-                          }}
-                          onArrange={arrange}
                         />
-                      </div>
+                      </section>
                     </div>
                   </div>
                 </Show>
-
-                {/* Where it came from in one line, beside the full chain it
-                    begins, and the way out */}
-                <DialogActions
-                  note={
-                    <span class="flex min-w-0 items-center gap-2">
-                      <ItemSprite
-                        item={BALL_ITEMS[loaded().ball]}
-                        size={HISTORY_BALL}
-                        class={HISTORY_BALL_INSET}
-                        label={describeItem(BALL_ITEMS[loaded().ball])}
-                      />
-                      <Meta class="truncate text-left">{describeHistory(loaded())}</Meta>
-                    </span>
-                  }
-                >
-                  <Show when={loaded().history.length > 0}>
-                    <Button
-                      onClick={() => {
-                        setTracing(true);
-                      }}
-                    >
-                      {m.catch_history_count({ count: loaded().history.length })}
-                    </Button>
-                  </Show>
-                  <Button onClick={closeSheet}>{m.ui_close()}</Button>
-                </DialogActions>
               </>
             )}
           </Show>

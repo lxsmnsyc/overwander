@@ -476,6 +476,20 @@
   }
 }
 
+/* A shape growing out of its own middle, such as a chart's values.
+   Under reduce motion the scale stays at 1 and only the fade is left */
+@keyframes grow-in {
+  from {
+    opacity: 0;
+    transform: scale(var(--motion-grow-origin));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* A count hopping once when it changes */
 @keyframes hop {
   0%,

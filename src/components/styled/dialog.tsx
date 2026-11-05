@@ -39,13 +39,15 @@ import { PortalHost, usePortalHost } from './portal-host';
  * a few — the catch sheet, the world map — are a page of detail, and
  * asking for room is better than every one of them being that wide
  */
-export type DialogWidth = 'narrow' | 'wide' | 'broad';
+export type DialogWidth = 'narrow' | 'wide' | 'broad' | 'sheet';
 
 const WIDTHS: Record<DialogWidth, string> = {
   narrow: 'w-[min(92vw,26rem)]',
   wide: 'w-[min(92vw,44rem)]',
   // Room for two columns, so a sheet can be read without scrolling
   broad: 'w-[min(96vw,64rem)]',
+  // Three columns under a header, for the catch sheet
+  sheet: 'w-[min(96vw,76rem)]',
 };
 
 /**
@@ -66,10 +68,13 @@ const PANEL = `${SHEET} max-h-[84vh]`;
 
 /**
  * A sheet: one screen of fixed height that is laid out to fit rather
- * than scrolled. Below `md` there is no room for its columns, so it
+ * than scrolled. Below `md`, and on a screen shorter than 32rem (a
+ * phone held sideways), there is no room for its columns to fit, so it
  * falls back to scrolling like any other panel
  */
-const SHEET_PANEL = `${SHEET} max-h-[92vh] md:h-[min(92vh,46rem)] md:overflow-hidden`;
+const SHEET_PANEL =
+  `${SHEET} max-h-[92vh] [@media(min-width:48rem)_and_(min-height:32rem)]:h-[min(92vh,46rem)]` +
+  ' [@media(min-width:48rem)_and_(min-height:32rem)]:overflow-hidden';
 
 /**
  * The nameplate, a tide pill across the top edge the way a handheld

@@ -988,6 +988,7 @@
   "catch_shiny_name": "{name}, variocolor",
   "catch_evolution_ready": "lista",
   "catch_evolve": "Evolucionar",
+  "catch_change_form": "Cambiar",
   "catch_box_default": "Principal",
   "catch_box_move_failed": "No se pudo mover.",
   "catch_box_moved": "Movido a {name}.",
@@ -1347,7 +1348,29 @@
   "catch_stats_help_items": "Las plumas suman {wing} y las vitaminas {vitamin} a una estadística, además de los puntos de nivel y no a costa de ellos.",
   "catch_stats_help_berries": "Algunas bayas quitan esfuerzo de una estadística, para que se pueda repartir otra vez.",
   "catch_stats_help_nature": "La naturaleza sube una estadística un 10 % (▲) y baja otra un 10 % (▼).",
-  "catch_stats_help_bars": "Cada barra se mide frente a la mejor estadística de este Pokémon.",
+  "catch_stats_help_shape": "La forma se mide frente a la mejor estadística de este Pokémon.",
+  "catch_stat_value": "{stat} {value}",
+  "catch_stat_short_hp": "PS",
+  "catch_stat_short_attack": "Ata",
+  "catch_stat_short_defense": "Def",
+  "catch_stat_short_special_attack": "AtE",
+  "catch_stat_short_special_defense": "DfE",
+  "catch_stat_short_speed": "Vel",
+  "catch_nature_shift": "{nature} · ▲{raised} ▼{lowered}",
+  "catch_move_numbers": "{power} · {pp} PP",
+  "catch_move_numbers_status": "{pp} PP",
+  "catch_drag_reorder": "Arrastra para ordenar",
+  "catch_candy_held": [
+    {
+      "declarations": ["input count", "input family", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} caramelo de {family}",
+        "countPlural=*": "{count} caramelos de {family}"
+      }
+    }
+  ],
+  "catch_origin": "Origen",
   "catch_stats_total": "Total",
   "catch_stats_nature": "{stat}: {shift}",
   "catch_stats_effort": "Esfuerzo en {stat}, {saved} guardados",

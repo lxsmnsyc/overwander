@@ -1,6 +1,7 @@
 import { type Locator, type Page, expect, test } from '@playwright/test';
 import { BOARD_CELLS, BOARD_CENTER, boardCells, reachOf } from '../src/canvas/overworld/board';
-import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
+import registerGameData from '../src/data';
+import { getRegisteredSpecies, getSpeciesData } from '../src/data/species';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
 import { boardOf, findSpawn, nameAt, pressCell, standBeside } from './walk';
 
@@ -17,7 +18,8 @@ import { boardOf, findSpawn, nameAt, pressCell, standBeside } from './walk';
  * exists on screen.
  */
 
-registerSpecies();
+// Spawns are rolled out of the registries, and so are the names the board shows
+registerGameData();
 
 /**
  * Everything the chunk canvas might name a pokemon. A cell is titled

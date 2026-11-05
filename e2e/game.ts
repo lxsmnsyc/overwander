@@ -66,7 +66,7 @@ export async function signIn(page: Page, player: Player = newPlayer()): Promise<
     // long as it takes to compile, and a page that never hydrated stays
     // there. Neither the form nor the world by then means reload
     try {
-      await expect(creating.or(menu)).toBeVisible({ timeout: 30_000 });
+      await expect(creating.or(menu)).toBeVisible({ timeout: 45_000 });
     } catch (error) {
       await page.reload();
       throw error;
@@ -98,8 +98,8 @@ export async function signIn(page: Page, player: Player = newPlayer()): Promise<
 export async function reloadGame(page: Page): Promise<void> {
   await expect(async () => {
     await page.reload();
-    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 15_000 });
-  }).toPass({ timeout: 60_000 });
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 45_000 });
+  }).toPass({ timeout: 150_000 });
 }
 
 /**

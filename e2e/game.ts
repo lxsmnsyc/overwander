@@ -51,6 +51,19 @@ export function newPlayer(): Player {
  * position
  */
 export async function signIn(page: Page, player: Player = newPlayer()): Promise<Player> {
+  // The dev server draws its own error overlay over the page for any server
+  // error, including a connection another page dropped, and it covers every
+  // control. It is hidden on every page this signs in
+  await page.addInitScript(() => {
+    const hide = (): void => {
+      const style = document.createElement('style');
+
+      style.textContent = 'vite-error-overlay { display: none !important; }';
+      document.head.append(style);
+    };
+
+    document.addEventListener('DOMContentLoaded', hide);
+  });
   await page.goto('/');
 
   // Filled and pressed again if the world does not arrive: a fill that

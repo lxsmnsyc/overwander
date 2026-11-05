@@ -272,15 +272,24 @@ export async function standBeside(page: Page, player: Player, at: Standing): Pro
     .poll(async () => (await findRows('positions', 'player', uid)).length, { timeout: 30_000 })
     .toBeGreaterThan(0);
 
-  await upsertRow('positions', {
-    player: uid,
-    generation: GENERATION,
-    chunk_x: at.chunkX,
-    chunk_y: at.chunkY,
-    cell_x: stoodX,
-    cell_y: cellY,
-    moved_at: Date.now(),
-  });
-  await reloadGame(page);
+  // A page that has been walking still has saves on their way, and one
+  // landing after the write puts the player back. So the write is
+  // checked against what the board says once the page has read it back,
+  // and made again when it did not take
+  await expect(async () => {
+    await upsertRow('positions', {
+      player: uid,
+      generation: GENERATION,
+      chunk_x: at.chunkX,
+      chunk_y: at.chunkY,
+      cell_x: stoodX,
+      cell_y: cellY,
+      moved_at: Date.now(),
+    });
+    await reloadGame(page);
+    await expect
+      .poll(async () => placeOf(boardOf(page)), { timeout: 20_000 })
+      .toContain(`(${at.chunkX}, ${at.chunkY})`);
+  }).toPass({ timeout: 120_000 });
   return BOARD_CENTER * BOARD_CELLS + BOARD_CENTER + (cellX - stoodX);
 }

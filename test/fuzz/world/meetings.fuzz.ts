@@ -97,33 +97,41 @@ describe('spawns on the ground', () => {
 
   // Fails today: a meeting records the chunk's middle, not the cell's
   // country, which 55f99f410 fixed for the pools and not for the row.
-  // The `meetings-cell-biome` node fixes it at every caller and turns
-  // this back into `it`
-  it.fails('are met in the country of the cell they stand on', () => {
-    fc.assert(
-      fc.property(
-        seedArbitrary,
-        cellArbitrary,
-        clockArbitrary,
-        playerArbitrary,
-        (seed, place, clock, uid) => {
-          const snapshot = readSnapshot(seed, place, clock);
-          const spawns = snapshot.getSpawns(PUBLISHED);
-          const cells = [...snapshot.getSpawnCells().keys()];
+  // The check asks for that mismatch and nothing else, so a throw
+  // fails the test. The `meetings-cell-biome` node fixes it at every
+  // caller and turns this into `fc.assert`
+  it('are met in the country of the cell they stand on (not yet)', () => {
+    const met = fc.property(
+      seedArbitrary,
+      cellArbitrary,
+      clockArbitrary,
+      playerArbitrary,
+      (seed, place, clock, uid) => {
+        const snapshot = readSnapshot(seed, place, clock);
+        const spawns = snapshot.getSpawns(PUBLISHED);
+        const cells = [...snapshot.getSpawnCells().keys()];
 
-          for (const [index, spawn] of spawns.entries()) {
-            const id = spawnId(snapshot.key, snapshot.timestamp, index);
-            const met = stageEncounter(uid, snapshot, id, spawn, null);
+        for (const [index, spawn] of spawns.entries()) {
+          const id = spawnId(snapshot.key, snapshot.timestamp, index);
 
-            expect(met.biome, id).toBe(snapshot.biomeAt(cells[index]));
+          if (
+            stageEncounter(uid, snapshot, id, spawn, null).biome !== snapshot.biomeAt(cells[index])
+          ) {
+            return false;
           }
-        },
-      ),
-      parameters,
+        }
+        return true;
+      },
     );
+    const details = fc.check(met, parameters);
+
+    expect(details.failed).toBe(true);
+    expect(String(details.errorInstance)).toContain('returning false');
   });
 
   it('are written down inside the bounds the tables check', () => {
+    let checked = 0;
+
     fc.assert(
       fc.property(
         seedArbitrary,
@@ -138,6 +146,7 @@ describe('spawns on the ground', () => {
           for (const [index, spawn] of snapshot.getSpawns(PUBLISHED).entries()) {
             const id = spawnId(snapshot.key, snapshot.timestamp, index);
 
+            checked += 1;
             broken.push(...checkEncounterRow(stageEncounter(uid, snapshot, id, spawn, buddy)));
           }
           expect(broken).toEqual([]);
@@ -145,6 +154,8 @@ describe('spawns on the ground', () => {
       ),
       parameters,
     );
+    // The chunks drawn put something on the ground to check
+    expect(checked).toBeGreaterThan(0);
   });
 });
 
@@ -223,6 +234,8 @@ function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number][] {
 
 describe('raid prizes', () => {
   it('are written down inside the bounds the tables check', () => {
+    let checked = 0;
+
     fc.assert(
       fc.property(
         seedArbitrary,
@@ -246,6 +259,7 @@ describe('raid prizes', () => {
               shinyBoost: RAID_SHINY_BOOST,
             });
 
+            checked += 1;
             broken.push(...checkEncounterRow(prize));
           }
           expect(broken).toEqual([]);
@@ -253,6 +267,8 @@ describe('raid prizes', () => {
       ),
       parameters,
     );
+    // Lairs are rare, but the chunks drawn hold some
+    expect(checked).toBeGreaterThan(0);
   });
 });
 
@@ -265,11 +281,12 @@ function giftArbitrary(): fc.Arbitrary<StaffGift> {
       catch: fc.boolean(),
       player: fc.option(playerArbitrary),
       species: fc.constantFrom(...species),
-      level: fc.integer({ min: -5, max: 120 }),
+      level: fc.oneof(fc.integer({ min: 1, max: 100 }), fc.integer({ min: -5, max: 120 })),
       shiny: fc.boolean(),
       shadow: fc.boolean(),
       ivs: fc.option(fc.integer({ min: -1, max: 2 ** 31 })),
-      slots: fc.integer({ min: 0, max: 4096 }),
+      // Mostly inside the column, sometimes just past it
+      slots: fc.oneof(fc.integer({ min: 0, max: 511 }), fc.integer({ min: 512, max: 600 })),
     })
     .map((drawn): StaffGift => {
       const pokemon = {

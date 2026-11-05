@@ -2,7 +2,7 @@
 
 ## Status
 
-- Done. Every acceptance item is met. One property found a bug too wide for this node and runs as `it.fails` until `meetings-cell-biome` fixes it.
+- Done. Every acceptance item is met. One property found a bug too wide for this node and is expected to fail until `meetings-cell-biome` fixes it.
 
 ## Built
 
@@ -11,7 +11,7 @@
 - `test/fuzz/world/walking.test.ts` (in `pnpm test`): a route across the board takes its Euclidean length times the pace, the same turned a quarter. A stranger's run plays for its Euclidean length times the pace, turned or not.
 - `test/fuzz/world/meetings.fuzz.ts` (in `pnpm fuzz`):
   - Spawns stand on the cell they were placed on, out of that cell's own pool.
-  - Spawns are met in the country of their cell (`it.fails`, see Bugs found).
+  - Spawns are met in the country of their cell (expected to fail, see Bugs found).
   - Every spawn, every wild meeting of any species beside any buddy, every level band any buddy lifts, every raid prize and every gift the staff schema admits is written inside the bounds the tables check.
 - `test/fuzz/world/bounds.ts`: the bounds, read once from `db/migrations` and named (level 1 to 100, ivs 0 to 1073741823, slots 0 to 511, eight move slots, the `smallint` and `integer` columns of `encounters`).
 - `test/fuzz/data/registries.test.ts` (in `pnpm test`), over every entry:
@@ -46,8 +46,8 @@ Each broken once, run, and put back (not committed):
 
 - `pnpm typecheck`: exit 0.
 - `rtk proxy pnpm exec oxlint src test vitest.fuzz.ts`: exit 0.
-- `pnpm fuzz`: 13 passed, 1 expected fail, 58 s.
-- `FUZZ_RUNS=500` over `test/fuzz/world` under the fuzz config: 6 passed, 1 expected fail, 24 s.
+- `pnpm fuzz`: 14 passed, 58 s.
+- `FUZZ_RUNS=500` over `test/fuzz/world` under the fuzz config: 7 passed, 24 s.
 - `pnpm test --maxWorkers=2`: 5855 passed (287 files).
 
 ## Size

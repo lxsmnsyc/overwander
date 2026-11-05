@@ -18,8 +18,9 @@ import { deriveTrainedAbilities } from './traits';
 
 /**
  * The record a meeting is written down as, worked out in full before
- * anything is stored. The server stages every meeting through this,
- * so what a test rolls here is what the encounters table is handed
+ * anything is stored. The server stages every wild meeting and raid
+ * prize through this, so what a test rolls here is what the encounters
+ * table is handed
  */
 export default function stageEncounter(
   uid: string,

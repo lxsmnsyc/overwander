@@ -263,6 +263,9 @@ describe('the YAML registries', () => {
     const keys = listKeys(loader);
 
     it(`refuse a misspelt key anywhere in the ${loader.name} files`, () => {
+      // The files as written read, so a throw below is the misspelling's
+      expect(() => loader.read(loader.parts)).not.toThrow();
+
       fc.assert(
         fc.property(
           fc.nat({ max: keys.length - 1 }),

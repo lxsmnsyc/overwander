@@ -100,7 +100,7 @@ function playRun(steps: Facing[], length: number): { before: boolean; after: boo
 }
 
 describe('walking', () => {
-  it('takes a route its Euclidean length times the pace, the same turned a quarter', () => {
+  it('takes a route the length of its steps times the pace, the same turned a quarter', () => {
     fc.assert(
       fc.property(cellArbitrary, cellArbitrary, (from, to) => {
         const route = findPath(toCell(from), toCell(to), OPEN) ?? [];

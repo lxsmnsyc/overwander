@@ -26,7 +26,7 @@ provides: []
 depends_on:
   - on: fuzz-world
     kind: hard
-    why: Adds `stageEncounter` and the property that finds this, marked `it.fails` until it is fixed
+    why: Adds `stageEncounter` and the property that finds this, expected to fail until it is fixed
 ---
 
 # Record a meeting under the country of its cell
@@ -44,9 +44,9 @@ Every meeting a player has at a cell records the country of that cell, the way `
 ## Steps
 
 - [ ] Give every caller at a cell the cell's country (`snapshot.biomeAt(cell)`), or give `deriveEncounter` the cell and let it read the country itself. Pick the one that leaves no caller able to forget.
-- [ ] Turn the `it.fails` in `meetings.fuzz.ts` back into `it`, and add a sibling property for each other meeting that has a cell.
+- [ ] Turn the `(not yet)` check in `meetings.fuzz.ts` into `fc.assert` over the same property, and add a sibling property for each other meeting that has a cell.
 
 ## Acceptance
 
-- [ ] `pnpm fuzz` passes with the property as `it`.
+- [ ] `pnpm fuzz` passes with the property under `fc.assert`.
 - [ ] Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test`.

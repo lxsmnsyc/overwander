@@ -72,6 +72,11 @@ const NATURES = readIds<Natures>(NATURE_IDS);
  */
 const FIELD_ABILITIES = [...BUDDY_ABILITIES];
 
+// Filled as the field abilities register, which importing setup does
+if (FIELD_ABILITIES.length === 0) {
+  throw new Error('No field abilities registered: import the overworld setup first');
+}
+
 const abilityArbitrary = fc.oneof(
   fc.constantFrom(...FIELD_ABILITIES),
   fc.constantFrom(...ABILITIES),
@@ -93,6 +98,9 @@ export const buddyArbitrary: fc.Arbitrary<Buddy | null> = fc.option(
 /** A player id, which seeds every per-player roll */
 export const playerArbitrary = fc.uuid();
 
+/** How many seeds' worlds stay built at once */
+const KEPT_WORLDS = 8;
+
 const worlds = new Map<string, World>();
 
 /** The world of a seed at a depth, built once a seed. The live seed is the live world */
@@ -106,6 +114,10 @@ export function readWorld(seed: string, depth: Depth): World {
   let world = worlds.get(seed);
 
   if (world == null) {
+    // A world holds its noise and climate, so only the last few are kept
+    if (worlds.size >= KEPT_WORLDS) {
+      worlds.clear();
+    }
     world = new World(seed, live.depth, live.generation);
     worlds.set(seed, world);
   }

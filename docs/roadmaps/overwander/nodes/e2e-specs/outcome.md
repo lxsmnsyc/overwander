@@ -45,17 +45,21 @@
 ## Checks
 
 - `pnpm typecheck`: exit 0.
-- `rtk proxy pnpm exec oxlint src test e2e playwright.config.ts`: exit 0 (one pre-existing `max-depth` warning in `e2e/walk.ts`).
-- `pnpm test --maxWorkers=2`: see the PR description.
-- `pnpm test:e2e`, alone: full runs in this session ended 11 passed and 1 failed each time (auction-flow twice, before the buyer stopped claiming a starter, and battle once). Last run: auction-flow, safari, overworld (7) and starter-gift (2) passed, battle failed as above. No run with 12 of 12.
+- `rtk proxy pnpm exec oxlint src test e2e playwright.config.ts`: exit 0.
+- `pnpm test --maxWorkers=2`: 5835 passed.
+- `pnpm test:e2e`, alone: 12 passed in 5.8 min. Earlier runs in the node, before the spawn-based safari and the `standBeside` retry, ended 11 of 12.
 
 ## Where the time goes
 
-- Under the machine's load (average 17 to 21), a full run took 12 to 23 min. On a quiet machine the specs took about half that.
-- `safari`: 3.1 to 9 min. It sweeps cells with one pointer move and one browser round trip each, then walks to a spawn and throws balls. The sweep reach is now 4 cells (was 7).
-- `battle`: 1.3 to 7 min. It waits for the engine, which runs on real time.
-- `auction-flow`: 1 to 4.5 min. Two sign-ups, a starter, a listing, a bid, a close and a collect.
-- Each overworld test spends most of its 6 to 50 s in `signIn`.
+Last full run, on a machine with load around 5:
+
+- `battle`: 1.4 min. It waits for the engine, which runs on real time.
+- `overworld`: 7 tests in 78 s, 42 s of it in `stands the player beside a landmark`.
+- `auction-flow`: 34 s. Two sign-ups, a starter, a listing, a bid, a close and a collect.
+- `safari`: 34 s. It finds a spawn from the clock instead of sweeping cells (3 to 9 min before).
+- `starter-gift`: 28 s for both tests.
+
+Under the earlier load (average 17 to 21), full runs took 12 to 23 min.
 
 ## Size
 

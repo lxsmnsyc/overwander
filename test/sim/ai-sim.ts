@@ -14,6 +14,8 @@ import { Slots, defaultSlots, withSlots } from '../../src/data/constants/slots';
 import { MAX_IV, Stats, packIVs } from '../../src/data/constants/stats';
 import { Species } from '../../src/data/ids/species';
 import type { Moves } from '../../src/data/ids/moves';
+import type Abilities from '../../src/data/ids/abilities';
+import { getSpeciesSignature } from '../../src/data/abilities';
 import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
 import { getRegisteredSpecies, isFullyEvolved, isWornForm } from '../../src/data/species';
 import { getBestParty } from '../../src/overworld/builds/best-build';
@@ -55,7 +57,7 @@ export const ROLE_NAMES: Record<MoveRole, string> = {
 const PLACEHOLDERS = new Set<Species>([Species.Missingno, Species.Egg, Species.Substitute]);
 
 /** Fight time a battle is given before it is called a stalemate */
-const TIME_LIMIT = 5 * 60 * 1000;
+export const TIME_LIMIT = 5 * 60 * 1000;
 
 const FRAME = 1000 / 60;
 
@@ -67,6 +69,18 @@ export interface SimOptions {
   abilities: number;
   /** Held items each built pokemon carries */
   items: number;
+  /** Whether each built pokemon also carries its species' signature ability */
+  signatures?: boolean;
+}
+
+/** The built abilities, with the species' signature added in front where asked for */
+function addSignature(species: Species, abilities: Abilities[], options: SimOptions): Abilities[] {
+  const signature = options.signatures === true ? getSpeciesSignature(species) : null;
+
+  if (signature == null || abilities.includes(signature)) {
+    return abilities;
+  }
+  return [signature, ...abilities];
 }
 
 export interface Cast {
@@ -139,9 +153,10 @@ function buildParty(
       [Stats.SpecialDefense]: 0,
       [Stats.Speed]: 0,
     };
+    const abilities = addSignature(one, build.abilities, options);
     const items = getExpertHeldItems(one, options.items, {
       moves: build.moves,
-      abilities: build.abilities,
+      abilities,
       role: build.role,
       best: true,
     });
@@ -160,9 +175,9 @@ function buildParty(
       shadow: false,
       moves: build.moves,
       movePoints: {},
-      abilities: build.abilities,
+      abilities,
       items,
-      slots: withSlots(defaultSlots(build.abilities), Slots.Item, Math.max(1, items.length)),
+      slots: withSlots(defaultSlots(abilities), Slots.Item, Math.max(1, items.length)),
       health: getMaxHealth({ species: one, level: options.level, ivs, effortValues }),
       friendship: BASE_FRIENDSHIP,
       statuses: 0,
@@ -197,6 +212,17 @@ export function buildTeams(
   ];
 }
 
+/** What a caller of `runBattle` can watch or change about the fight */
+export interface BattleWatch {
+  /** PvP unless named. A raid fields the alliance `bossAlliance` as the boss side */
+  mode?: BattleModes;
+  bossAlliance?: number | null;
+  /** Called once the units are on the field, before the first tick */
+  onStart?: (battle: Battle) => void;
+  /** Called after every tick, with the fight time reached */
+  onTick?: (battle: Battle, time: number) => void;
+}
+
 /**
  * Field the teams and play the fight out headless, recording every
  * cast. `maxCasts` stops it early, for a look at how a fight opens
@@ -205,9 +231,10 @@ export function runBattle(
   seed: string,
   teams: TeamSnapshotRecord[],
   maxCasts = Infinity,
+  watch: BattleWatch = {},
 ): SimResult {
   const battle: Battle = createBattle(seed, {
-    mode: BattleModes.PvP,
+    mode: watch.mode ?? BattleModes.PvP,
     limits: UNLIMITED_BATTLE_LIMITS,
   });
   const casts: Cast[] = [];
@@ -222,15 +249,17 @@ export function runBattle(
     });
   });
 
-  const { alliances } = fieldTeams(battle, teams, null);
+  const { alliances } = fieldTeams(battle, teams, watch.bossAlliance ?? null);
 
   // The units walk on as the fight starts
   battle.initialize();
   battle.start();
+  watch.onStart?.(battle);
 
   while (!battle.settled && time < TIME_LIMIT && casts.length < maxCasts) {
     battle.tick(FRAME);
     time += FRAME;
+    watch.onTick?.(battle, time);
   }
 
   let winner: number | null = null;

@@ -1,7 +1,7 @@
 ---
 id: e2e-specs
 title: Cut the e2e specs to a working smoke suite
-status: active
+status: done
 priority: should
 type: chore
 outline: false

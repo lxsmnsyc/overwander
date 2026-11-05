@@ -1,7 +1,7 @@
 ---
 id: fuzz-battle
 title: Property tests over random battles
-status: todo
+status: active
 priority: should
 type: chore
 outline: false

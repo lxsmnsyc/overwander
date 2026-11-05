@@ -23,7 +23,7 @@ const TOO_THIN = 0.25;
 export default function setupRecoilMoves(battle: Battle): void {
   function checkRecoil(parent: UnitDamageEvent): boolean {
     const event: CheckUnitRecoilEvent = {
-      id: '',
+      id: 'CheckUnitRecoil',
       disabled: false,
       parent,
       recoil: false,

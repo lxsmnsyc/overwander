@@ -79,6 +79,12 @@ export function stealableItem(unit: Unit): Items | undefined {
     return undefined;
   }
 
+  // The AI weighing a move draws nothing, or the guess would move the
+  // fight's rolls: it reads the first item, which is a guess like any other
+  if (unit.battle.estimating) {
+    return held[0];
+  }
+
   // Held inside the bag: a roll of exactly 1, which a pinned RNG
   // hands out, would otherwise point one past the last item
   return held[Math.min(held.length - 1, Math.floor(unit.battle.random() * held.length))];

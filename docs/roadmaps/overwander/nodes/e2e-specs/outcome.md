@@ -5,6 +5,15 @@
 - Not finished: `pnpm test:e2e` has not passed twice in a row. The last full run (alone) ended with 11 passed and 1 failed. `battle.spec.ts` waited 400 s for the demo raid to report an outcome and did not see one. The same test passed in 1.3 to 1.8 min on three earlier runs. The machine's load average was 17 to 21 from other processes (clang, go builds, other repos' test runs), and the demo fight runs on real time.
 - Needs the maintainer's call: keep "runs to its end" and accept the flake under load, or weaken `battle.spec.ts` to "the health of a party moves" (the old assertion, about 15 s and deterministic).
 
+## Scope changes (approved by the maintainer during the node)
+
+- `auction-flow` no longer walks to a board. A new page, `/demo/auction` (`src/routes/demo/auction.tsx`, `src/components/demo/AuctionDemo.tsx`), mounts the real auction panel for the signed-in player under `GameProvider managing`, with no world, canvas or position. `openAuctionBoard` is deleted. The spec also checks that a bid reaches the seller's open board over the live socket.
+- `starter-gift` runs on a new `/demo/gifts` page (`src/routes/demo/gifts.tsx`, `src/components/demo/GiftsDemo.tsx`), the real shelf with no world.
+- Both demo pages read the session, which the other demos do not: `src/auth/context.tsx` lists them in `DEMOS_WITH_PLAYER`.
+- Production gating: every route under `/demo` is already a 404 outside development (`src/routes/demo.tsx` returns the not-found page unless `import.meta.env.DEV`), so both new pages are gated by that layout and need no check of their own. The e2e server is `vite dev`, where `DEV` holds.
+- `overworld.spec.ts` signs in once and runs its tests in order on one page (serial, shared page), with sign out last.
+- `safari.spec.ts` no longer sweeps the map. `findSpawn` in `e2e/walk.ts` rolls the open five-minute window the way the game does (world seed, chunk, window, UTC, first `SPAWN_COUNT` spawns, land cells only), and `standBeside` puts the player next to it. A window turns over every five minutes, so up to three attempts each pick a fresh spawn for the clock at that moment. The browser is pinned to UTC (`timezoneId` in `playwright.config.ts`) so its zone matches.
+
 ## Built
 
 - Five specs: `overworld`, `safari`, `battle`, `auction-flow`, `starter-gift`, updated to the redesigned HUD, gifts shelf, catch sheet and auction cards.

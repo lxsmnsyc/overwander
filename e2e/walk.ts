@@ -10,10 +10,13 @@ import {
   setBoardScreen,
 } from '../src/canvas/overworld/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
-import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
+import { LURE_SPAWN_BONUS } from '../src/overworld/abilities/__create';
+import ChunkSnapshot, { SPAWN_COUNT } from '../src/overworld/chunk-snapshot';
+import type Landmark from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';
-import { GENERATION, uidOf, upsertRow } from './admin';
-import { type Player, dialogNamed, expectOpen } from './game';
+import { GENERATION, findRows, uidOf, upsertRow } from './admin';
+import { reloadGame } from './game';
+import type { Player } from './game';
 
 /**
  * Getting somewhere in the world.
@@ -203,78 +206,90 @@ export function findLandmark(kind: Landmark): Standing | null {
 }
 
 /**
- * Stand the player one step from a landmark, before the page has read
- * where they are. Written straight into the store the way a staged
- * raid is: the walk is the only thing skipped.
+ * A land spawn in the window that is open at `now`, nearest the origin,
+ * worked out the way the game works it out: the chunk, the five-minute
+ * window and the zone (UTC, which `playwright.config.ts` gives the
+ * browser) are all it is rolled from. Only the first `SPAWN_COUNT` of the
+ * rolled spawns are drawn on the board.
+ */
+export function findSpawn(now: number): Standing | null {
+  const derived = world();
+
+  for (let ring = 0; ring <= SEARCH_RINGS; ring++) {
+    for (let chunkY = -ring; chunkY <= ring; chunkY++) {
+      for (let chunkX = -ring; chunkX <= ring; chunkX++) {
+        if (Math.max(Math.abs(chunkX), Math.abs(chunkY)) !== ring) {
+          continue;
+        }
+
+        const chunk = derived.getChunk(chunkX, chunkY);
+        const snapshot = new ChunkSnapshot(chunk, now, 0);
+        const spawns = snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS);
+        const placed = snapshot.getSpawnCells();
+        const water = chunk.getWaterCells();
+
+        for (const spawn of spawns.slice(0, SPAWN_COUNT)) {
+          for (const [cell, there] of placed) {
+            // Away from the outer columns, so the cell beside it is in the same chunk
+            const column = cell % CHUNK_CELLS;
+
+            if (there === spawn && !water.has(cell) && column > 0 && column < CHUNK_CELLS - 1) {
+              return { chunkX, chunkY, cell };
+            }
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Stand the player one step from a landmark. The page is reloaded so
+ * it reads the position back, and the walk to the landmark is the only
+ * thing skipped.
+ *
+ * The row is written **after** the page has written its own. A new
+ * player has no row, so the page rolls a start position and saves it
+ * once the world is up. A row written before that save is overwritten
+ * by it, and the player is back in their start town.
  *
  * Resolves the **board** cell the landmark will be drawn on. The board
  * is a window that keeps the player in the middle of it, so where
  * something sits on screen is worked out from how far it is from them
  * rather than from where it sits in its chunk
  */
-export async function standBeside(player: Player, at: Standing): Promise<number> {
+export async function standBeside(page: Page, player: Player, at: Standing): Promise<number> {
   const cellX = at.cell % CHUNK_CELLS;
   const cellY = Math.floor(at.cell / CHUNK_CELLS);
   // One cell over, so the press is a step rather than a hike. The
   // landmark is never on the outer rows, so there is always room
   const stoodX = cellX > 0 ? cellX - 1 : cellX + 1;
+  const uid = await uidOf(player);
 
-  await upsertRow('positions', {
-    player: await uidOf(player),
-    generation: GENERATION,
-    chunk_x: at.chunkX,
-    chunk_y: at.chunkY,
-    cell_x: stoodX,
-    cell_y: cellY,
-    moved_at: Date.now(),
-  });
+  // Wait for the page's own save of its start position
+  await expect
+    .poll(async () => (await findRows('positions', 'player', uid)).length, { timeout: 30_000 })
+    .toBeGreaterThan(0);
+
+  // A page that has been walking still has saves on their way, and one
+  // landing after the write puts the player back. So the write is
+  // checked against what the board says once the page has read it back,
+  // and made again when it did not take
+  await expect(async () => {
+    await upsertRow('positions', {
+      player: uid,
+      generation: GENERATION,
+      chunk_x: at.chunkX,
+      chunk_y: at.chunkY,
+      cell_x: stoodX,
+      cell_y: cellY,
+      moved_at: Date.now(),
+    });
+    await reloadGame(page);
+    await expect
+      .poll(async () => placeOf(boardOf(page)), { timeout: 20_000 })
+      .toContain(`(${at.chunkX}, ${at.chunkY})`);
+  }).toPass({ timeout: 120_000 });
   return BOARD_CENTER * BOARD_CELLS + BOARD_CENTER + (cellX - stoodX);
-}
-
-/**
- * Open the auction house the way a player does: by standing at a board.
- *
- * There is no key for it in the menu — the lots are read at a board out
- * in the world, which is what makes trading somewhere a player goes —
- * so a spec that wants the panel has to go there too
- */
-export async function openAuctionBoard(page: Page, player: Player): Promise<Locator> {
-  const standing = findLandmark(Landmark.AuctionBoard);
-
-  if (standing == null) {
-    throw new Error('no auction board stands within reach of the origin');
-  }
-  const board = boardOf(page);
-
-  // Written down and then checked, rather than written down and
-  // trusted. The world saves where the player is standing as they
-  // walk, so a save still in the air when the row is written puts them
-  // back where they started; what says it took is the chunk the board
-  // names once the page has read it again
-  let seat = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
-
-  await expect(async () => {
-    seat = await standBeside(player, standing);
-    await page.reload();
-    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
-    await expect(board).toBeVisible();
-    expect(await placeOf(board)).toContain(`(${standing.chunkX}, ${standing.chunkY})`);
-  }).toPass({ timeout: 60_000 });
-
-  // Aimed at rather than fired at. The chunk is still being read when
-  // the canvas first appears, and a press at a board that is not drawn
-  // yet lands on bare ground — so the cell is hovered until it says
-  // what is standing on it, which is also what proves the arithmetic
-  // above found the right one
-  await expect(async () => {
-    expect(await nameAt(page, board, seat)).toContain(LANDMARK_NAMES[Landmark.AuctionBoard]);
-  }).toPass({ timeout: 30_000 });
-
-  // The walk is one step, and the panel opens when it arrives
-  await pressCell(page, board, seat);
-
-  const lots = dialogNamed(page, 'Auctions');
-
-  await expectOpen(lots, 20_000);
-  return lots;
 }

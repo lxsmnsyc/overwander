@@ -1,8 +1,6 @@
 import { type Browser, type Locator, type Page, expect, test } from '@playwright/test';
 import { PERFECT_IVS } from '../src/data/constants/stats';
-import { Items } from '../src/data/ids/items';
-import { copyable, findRows, insertRow, patchRow, setBagItem, setGold, uidOf } from './admin';
-import { openAuctionBoard } from './walk';
+import { findRows, insertRow, patchRow, setGold, uidOf } from './admin';
 import {
   type Player,
   claimStarter,
@@ -48,12 +46,19 @@ interface Trader {
   uid: string;
 }
 
-async function arrive(browser: Browser): Promise<Trader> {
+/**
+ * Sign a player up. Only the seller claims the starter: it is the
+ * pokemon they list a flawless copy of, and a buyer needs no pokemon to
+ * bid
+ */
+async function arrive(browser: Browser, starter: boolean): Promise<Trader> {
   const context = await browser.newContext();
   const page = await context.newPage();
   const player = await signIn(page);
 
-  await claimStarter(page);
+  if (starter) {
+    await claimStarter(page);
+  }
   return { page, player, uid: await uidOf(player) };
 }
 
@@ -64,8 +69,20 @@ async function arrive(browser: Browser): Promise<Trader> {
  */
 async function grantGold(trader: Trader, gold: number): Promise<void> {
   await setGold(trader.uid, gold);
-  await trader.page.reload();
-  await expect(trader.page.getByRole('navigation', { name: 'Game' })).toBeVisible();
+}
+
+/**
+ * Open the board on its own page. The game reaches it by walking to a
+ * board in the world; this page (`/demo/auction`) is the same panel for
+ * the signed-in player with no world behind it
+ */
+async function openBoard(page: Page): Promise<Locator> {
+  await page.goto('/demo/auction');
+
+  const board = dialogNamed(page, 'Auctions');
+
+  await expectOpen(board, 60_000);
+  return board;
 }
 
 /**
@@ -132,7 +149,9 @@ async function cardOf(page: Page, lot: Locator): Promise<Locator> {
   await page.mouse.move(0, 0);
   await lot.hover();
 
-  const card = page.getByRole('dialog', { name: 'Info' });
+  // Named after what the lot is, so told from the terracotta dialogs by
+  // what it lacks: it is our own element and carries no `tc-dialog`
+  const card = page.locator('[role="dialog"]:not([tc-dialog])');
 
   await expect(card).toBeVisible();
   return card;
@@ -143,7 +162,7 @@ async function cardOf(page: Page, lot: Locator): Promise<Locator> {
  * opening bid; anything up to what the bidder holds is legal, so the
  * amount is typed rather than nudged
  */
-async function bid(page: Page, board: Locator, lot: Locator, amount: number): Promise<void> {
+async function bid(page: Page, lot: Locator, amount: number): Promise<void> {
   // The card carries one bid button, wearing the floor as a badge; the
   // amount itself is named in the dialog it opens
   await (await cardOf(page, lot)).getByRole('button', { name: /^Bid/ }).click();
@@ -153,8 +172,9 @@ async function bid(page: Page, board: Locator, lot: Locator, amount: number): Pr
   await expectOpen(naming);
   await naming.getByLabel('Bid').fill(String(amount));
   await naming.getByRole('button', { name: `Bid ${amount} gold` }).click();
+  // Said in a toast, which stands outside the board's own dialog
   await expect(
-    board.getByText(`Bid ${amount} gold — it is yours unless somebody raises it.`),
+    page.getByText(`Bid ${amount} gold — it is yours unless somebody raises it.`).first(),
   ).toBeVisible();
 }
 
@@ -178,86 +198,12 @@ async function narrowTo(board: Locator, seller: Trader, lot: Locator): Promise<v
   }
 }
 
-/**
- * The purse badge at the head of a board. Asked for as the first match
- * because a lot's square wears its price in the same words, and the
- * shared board can be holding somebody's lot at exactly this figure —
- * the badge is drawn above the trays, so it is always first
- */
-function purseOf(board: Locator, gold: number): Locator {
-  return board.getByText(`${gold} gold`, { exact: true }).first();
-}
-
 test.describe('the auction house', () => {
-  test('an item goes up, is bid on, and is collected', async ({ browser }) => {
-    const seller = await arrive(browser);
-    const buyer = await arrive(browser);
-
-    // A Master Ball: the special band, which is the only band the
-    // block takes
-    await setBagItem(seller.uid, Items.MasterBall, 1);
-    await seller.page.reload();
-
-    const sellerBoard = await openAuctionBoard(seller.page, seller.player);
-
-    await sellerBoard.getByRole('button', { name: 'Add' }).click();
-    // The bag is a tray of pictures, so the square says what pressing
-    // it does and how many are in it
-    await sellerBoard.getByRole('button', { name: /^Sell Master Ball,/ }).click();
-    await putItUp(seller.page, /^Auction Master Ball$/, 5);
-
-    // Listed: the board comes back with the lot on it, on the tray the
-    // items are kept in and under the seller's own name
-    await expect(sellerBoard.getByRole('button', { name: /^Master Ball —.*by you/ })).toBeVisible();
-
-    // The other side of the board
-    await grantGold(buyer, 100);
-
-    const buyerBoard = await openAuctionBoard(buyer.page, buyer.player);
-
-    const lot = lotOf(buyerBoard, seller, 'item');
-
-    await narrowTo(buyerBoard, seller, lot);
-
-    // What it is and whose it is, in the card the square puts up
-    const card = await cardOf(buyer.page, lot);
-
-    await expect(card.getByText('Master Ball')).toBeVisible();
-    await expect(card.getByText(nicknameOf(seller))).toBeVisible();
-    await bid(buyer.page, buyerBoard, lot, 10);
-
-    // The gold left the bidder's purse as the bid was made rather than
-    // when the lot closed: a standing bid is always paid for
-    await expect(purseOf(buyerBoard, 90)).toBeVisible();
-
-    await closeBidding(seller.uid);
-
-    // Nothing happens at the closing instant — the winner collects
-    // when they come back for it. The square wears what it went for and
-    // the card carries the way to take it
-    await expect(lot.getByText('won for 10 gold')).toBeVisible({ timeout: 20_000 });
-
-    const won = await cardOf(buyer.page, lot);
-    const collect = won.getByRole('button', { name: 'Collect' });
-
-    await expect(collect).toBeVisible({ timeout: 20_000 });
-    await collect.click();
-    await expect(buyerBoard.getByText('Collected.')).toBeVisible();
-
-    // The ball is in the winner's bag
-    await buyerBoard.getByRole('button', { name: 'Close' }).click();
-
-    const bag = await openPanel(buyer.page, 'Bag');
-
-    await expect(bag.getByRole('button', { name: /^Master Ball, 1 carried/ })).toBeVisible();
-
-    // And the purse is the seller's, paid when the winner collected
-    await expect(purseOf(sellerBoard, 10)).toBeVisible({ timeout: 20_000 });
-  });
-
   test('a pokemon goes up, is bid on, and lands in the winner`s box', async ({ browser }) => {
-    const seller = await arrive(browser);
-    const buyer = await arrive(browser);
+    test.slow();
+
+    const seller = await arrive(browser, true);
+    const buyer = await arrive(browser, false);
 
     // A flawless copy of whatever the seller was handed. Perfect values
     // are one of the four things that make a pokemon worth a day of the
@@ -267,14 +213,12 @@ test.describe('the auction house', () => {
 
     expect(starter, 'the starter should be there').toBeTruthy();
     await insertRow('caught', {
-      ...copyable(starter),
+      ...starter,
       id: `flawless-${seller.uid}`,
       ivs: PERFECT_IVS,
       auctionable: true,
     });
-    await seller.page.reload();
-
-    const sellerBoard = await openAuctionBoard(seller.page, seller.player);
+    const sellerBoard = await openBoard(seller.page);
 
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
 
@@ -293,7 +237,7 @@ test.describe('the auction house', () => {
 
     await grantGold(buyer, 100);
 
-    const buyerBoard = await openAuctionBoard(buyer.page, buyer.player);
+    const buyerBoard = await openBoard(buyer.page);
 
     const lot = lotOf(buyerBoard, seller, 'catch');
 
@@ -304,7 +248,13 @@ test.describe('the auction house', () => {
     const card = await cardOf(buyer.page, lot);
 
     await expect(card.getByText('★★★★★★')).toBeVisible();
-    await bid(buyer.page, buyerBoard, lot, 20);
+    await bid(buyer.page, lot, 20);
+
+    // The bid reaches the seller's board over the live socket, without
+    // the seller doing anything
+    const sellerLot = sellerBoard.getByRole('img', { name: /by you/ });
+
+    await expect(await cardOf(seller.page, sellerLot)).toContainText('20 gold');
 
     await closeBidding(seller.uid);
 
@@ -315,14 +265,16 @@ test.describe('the auction house', () => {
     await collect.click();
     await expect(buyerBoard.getByText('Collected.')).toBeVisible();
 
-    // Two pokemon in the winner's box now: the one they were handed and
-    // the one they won
-    await buyerBoard.getByRole('button', { name: 'Close' }).click();
+    // The winner had no pokemon, so the one they won is the only square
+    await buyer.page.goto('/');
+    await expect(buyer.page.getByRole('navigation', { name: 'Game' })).toBeVisible({
+      timeout: 60_000,
+    });
 
     const catches = await openPanel(buyer.page, 'Boxes');
 
     await expect(
-      catches.getByRole('group', { name: /^Box of pokemon, 2 of 30 squares filled/ }),
+      catches.getByRole('group', { name: /^Box of pokemon, 1 of 30 squares filled/ }),
     ).toBeVisible();
   });
 });

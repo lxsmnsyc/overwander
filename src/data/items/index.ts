@@ -57,7 +57,7 @@ export { WING_EFFORT, WING_STATS, isWing } from './wings';
  * The families, in the order a shelf lists them: each family's items
  * come in the order its file writes them
  */
-const ITEM_FAMILIES = [
+export const ITEM_FAMILIES = [
   'balls',
   'apricorns',
   'berries',

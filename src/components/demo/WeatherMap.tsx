@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import { Generation, type default as World } from '../../overworld/world';
-import { weatherWindowOf } from '../../overworld/chunk-snapshot';
+import { readMapSky, readMapWindow } from './weather-map-sky';
 import { localNow } from '../../auth/clock';
 import Weather, { WEATHER_NAMES } from '../../data/overworld/weather';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
@@ -97,7 +97,7 @@ export interface WeatherMapProps {
 
 export default function WeatherMap(props: WeatherMapProps): JSX.Element {
   // The live window, the same way every other reader of the sky counts it
-  const windowNow = (): number => weatherWindowOf(localNow());
+  const windowNow = (): number => readMapWindow(localNow());
   const [now, setNow] = createSignal(windowNow());
   // Where the picture stands relative to the live window rather than
   // an hour number, so a page left open crosses into the next hour
@@ -136,8 +136,8 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
 
     for (let row = 0; row < SPAN; row++) {
       for (let column = 0; column < SPAN; column++) {
-        const reading = world.getWeatherReading(x0 + column, y0 + row, shownHour);
-        const weather = world.getWeather(x0 + column, y0 + row, shownHour);
+        const reading = readMapSky(world, x0 + column, y0 + row, shownHour);
+        const weather = reading.weather;
         let shade: [number, number, number];
 
         tally.set(weather, (tally.get(weather) ?? 0) + 1);
@@ -204,14 +204,11 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
     const box = surface.getBoundingClientRect();
     const x = originX() + Math.floor(((event.clientX - box.left) / box.width) * SPAN);
     const y = originY() + Math.floor(((event.clientY - box.top) / box.height) * SPAN);
-    const reading = props.world.getWeatherReading(x, y, hour());
-
     setUnder({
       x,
       y,
-      weather: props.world.getWeather(x, y, hour()),
       biome: props.world.getChunkBiome(x, y),
-      ...reading,
+      ...readMapSky(props.world, x, y, hour()),
     });
   };
 

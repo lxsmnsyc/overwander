@@ -1,7 +1,6 @@
 import { type Browser, type Locator, type Page, expect, test } from '@playwright/test';
 import { PERFECT_IVS } from '../src/data/constants/stats';
 import { findRows, insertRow, patchRow, setGold, uidOf } from './admin';
-import { openAuctionBoard } from './walk';
 import {
   type Player,
   claimStarter,
@@ -9,7 +8,6 @@ import {
   expectOpen,
   openPanel,
   pressBoxSquare,
-  reloadGame,
   signIn,
 } from './game';
 
@@ -71,7 +69,20 @@ async function arrive(browser: Browser, starter: boolean): Promise<Trader> {
  */
 async function grantGold(trader: Trader, gold: number): Promise<void> {
   await setGold(trader.uid, gold);
-  await reloadGame(trader.page);
+}
+
+/**
+ * Open the board on its own page. The game reaches it by walking to a
+ * board in the world; this page (`/demo/auction`) is the same panel for
+ * the signed-in player with no world behind it
+ */
+async function openBoard(page: Page): Promise<Locator> {
+  await page.goto('/demo/auction');
+
+  const board = dialogNamed(page, 'Auctions');
+
+  await expectOpen(board, 60_000);
+  return board;
 }
 
 /**
@@ -207,9 +218,7 @@ test.describe('the auction house', () => {
       ivs: PERFECT_IVS,
       auctionable: true,
     });
-    await reloadGame(seller.page);
-
-    const sellerBoard = await openAuctionBoard(seller.page, seller.player);
+    const sellerBoard = await openBoard(seller.page);
 
     await sellerBoard.getByRole('button', { name: 'Add' }).click();
 
@@ -228,7 +237,7 @@ test.describe('the auction house', () => {
 
     await grantGold(buyer, 100);
 
-    const buyerBoard = await openAuctionBoard(buyer.page, buyer.player);
+    const buyerBoard = await openBoard(buyer.page);
 
     const lot = lotOf(buyerBoard, seller, 'catch');
 
@@ -241,6 +250,12 @@ test.describe('the auction house', () => {
     await expect(card.getByText('★★★★★★')).toBeVisible();
     await bid(buyer.page, lot, 20);
 
+    // The bid reaches the seller's board over the live socket, without
+    // the seller doing anything
+    const sellerLot = sellerBoard.getByRole('img', { name: /by you/ });
+
+    await expect(await cardOf(seller.page, sellerLot)).toContainText('20 gold');
+
     await closeBidding(seller.uid);
 
     const won = await cardOf(buyer.page, lot);
@@ -251,7 +266,10 @@ test.describe('the auction house', () => {
     await expect(buyerBoard.getByText('Collected.')).toBeVisible();
 
     // The winner had no pokemon, so the one they won is the only square
-    await buyerBoard.getByRole('button', { name: 'Close' }).click();
+    await buyer.page.goto('/');
+    await expect(buyer.page.getByRole('navigation', { name: 'Game' })).toBeVisible({
+      timeout: 60_000,
+    });
 
     const catches = await openPanel(buyer.page, 'Boxes');
 

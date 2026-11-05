@@ -10,10 +10,11 @@ import {
   setBoardScreen,
 } from '../src/canvas/overworld/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
-import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
+import type Landmark from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';
 import { GENERATION, findRows, uidOf, upsertRow } from './admin';
-import { type Player, dialogNamed, expectOpen, reloadGame } from './game';
+import { reloadGame } from './game';
+import type { Player } from './game';
 
 /**
  * Getting somewhere in the world.
@@ -241,47 +242,4 @@ export async function standBeside(page: Page, player: Player, at: Standing): Pro
   });
   await reloadGame(page);
   return BOARD_CENTER * BOARD_CELLS + BOARD_CENTER + (cellX - stoodX);
-}
-
-/**
- * Open the auction house the way a player does: by standing at a board.
- *
- * There is no key for it in the menu — the lots are read at a board out
- * in the world, which is what makes trading somewhere a player goes —
- * so a spec that wants the panel has to go there too
- */
-export async function openAuctionBoard(page: Page, player: Player): Promise<Locator> {
-  const standing = findLandmark(Landmark.AuctionBoard);
-
-  if (standing == null) {
-    throw new Error('no auction board stands within reach of the origin');
-  }
-  const board = boardOf(page);
-
-  // Checked rather than trusted: what says the position took is the
-  // chunk the board names once the page has read it again
-  let seat = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
-
-  await expect(async () => {
-    seat = await standBeside(page, player, standing);
-    await expect(board).toBeVisible();
-    expect(await placeOf(board)).toContain(`(${standing.chunkX}, ${standing.chunkY})`);
-  }).toPass({ timeout: 60_000 });
-
-  // Aimed at rather than fired at. The chunk is still being read when
-  // the canvas first appears, and a press at a board that is not drawn
-  // yet lands on bare ground — so the cell is hovered until it says
-  // what is standing on it, which is also what proves the arithmetic
-  // above found the right one
-  await expect(async () => {
-    expect(await nameAt(page, board, seat)).toContain(LANDMARK_NAMES[Landmark.AuctionBoard]);
-  }).toPass({ timeout: 30_000 });
-
-  // The walk is one step, and the panel opens when it arrives
-  await pressCell(page, board, seat);
-
-  const lots = dialogNamed(page, 'Auctions');
-
-  await expectOpen(lots, 20_000);
-  return lots;
 }

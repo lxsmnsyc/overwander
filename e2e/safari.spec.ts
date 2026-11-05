@@ -87,7 +87,7 @@ const ATTEMPTS = 3;
  * trip to the browser per cell, so it reads a near neighbourhood
  * rather than the whole board
  */
-const SWEEP_REACH = 7;
+const SWEEP_REACH = 4;
 
 /**
  * How far a cell is from the player, in straight steps, which is what

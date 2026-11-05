@@ -59,17 +59,47 @@ export async function signIn(page: Page, player: Player = newPlayer()): Promise<
   // a 504. Neither is what any spec is testing
   const creating = page.getByRole('tab', { name: 'Create account' });
   const register = page.getByRole('button', { name: 'Create account', exact: true });
+  const menu = page.getByRole('navigation', { name: 'Game' });
 
   await expect(async () => {
+    // A cold dev server can leave the page on "Loading session" for as
+    // long as it takes to compile, and a page that never hydrated stays
+    // there. Neither the form nor the world by then means reload
+    try {
+      await expect(creating.or(menu)).toBeVisible({ timeout: 30_000 });
+    } catch (error) {
+      await page.reload();
+      throw error;
+    }
     if (await creating.isVisible()) {
       await creating.click();
       await page.getByLabel('Email').fill(player.email);
       await page.getByLabel('New password').fill(player.password);
       await register.click();
     }
-    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
-  }).toPass({ timeout: 60_000 });
+    await expect(menu).toBeVisible({ timeout: 20_000 });
+  }).toPass({ timeout: 150_000 });
+
+  // A dialog the start opens (a portal beside the player's first step)
+  // covers the world, and a spec that presses a key or opens a panel
+  // would wait out its timeout behind it
+  if ((await openDialogs(page).count()) > 0) {
+    await page.keyboard.press('Escape');
+    await expect(openDialogs(page)).toHaveCount(0);
+  }
   return player;
+}
+
+/**
+ * Reload the page and wait for the world to come back. A reload that
+ * lands while the session is still being read can stay on "Loading
+ * session", so it is pressed again rather than waited on
+ */
+export async function reloadGame(page: Page): Promise<void> {
+  await expect(async () => {
+    await page.reload();
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 15_000 });
+  }).toPass({ timeout: 60_000 });
 }
 
 /**
@@ -202,7 +232,8 @@ export async function openMenu(page: Page): Promise<Locator> {
 export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): Promise<Locator> {
   const menu = await openMenu(page);
 
-  await menu.getByRole('button', { name: label, exact: true }).click();
+  // A key with something waiting wears a count after its name ("Gifts 16")
+  await menu.getByRole('button', { name: new RegExp(`^${label}( \\d+)?$`) }).click();
 
   const dialog = dialogNamed(page, MENU_DIALOGS[label]);
 
@@ -211,85 +242,15 @@ export async function openPanel(page: Page, label: keyof typeof MENU_DIALOGS): P
 }
 
 /**
- * Open the sheet's Actions menu and press one of its entries.
+ * Take one gift off the shelf. The square is the button: claiming is
+ * the only thing a shelf square does, and a pokemon's card carries the
+ * same button, so the square is pressed the way a player presses it.
  *
- * The sheet recentres as its late reads land, and an entry clicked
- * mid-move lands outside the panel — which the menu reads as an
- * outside click and closes. So the pair is retried from scratch:
- * reopen if it shut, then press
+ * The press is not the claim. It is a round trip, and one made while
+ * the world is still coming up can be swallowed whole, so the shelf is
+ * what says the claim landed and it is checked inside the retry
  */
-export async function chooseAction(page: Page, sheet: Locator, action: string): Promise<void> {
-  const trigger = sheet.getByRole('button', { name: /Actions/ });
-  const item = page.getByRole('menuitem', { name: action, exact: true });
-
-  await expect(async () => {
-    // An entry that opens a dialog can swap the whole sheet away
-    // beneath it — the sheet holds itself shut while the smaller
-    // question is up — so a vanished trigger is a taken press, not
-    // something to retry
-    if (!(await trigger.isVisible())) {
-      return;
-    }
-    // Dispatched rather than aimed: the sheet recentres and remounts
-    // as its late reads land, and a pointer press aimed at where the
-    // menu stood a frame ago lands on the overlay behind it, closing
-    // the sheet. A dispatched click reaches the entry wherever it is,
-    // and the menu closing on it is the sign it was taken
-    if ((await trigger.getAttribute('aria-expanded')) !== 'true') {
-      await trigger.dispatchEvent('click');
-    }
-    await expect(item).toBeVisible({ timeout: 2000 });
-    await item.dispatchEvent('click');
-    // Taken means gone: the entry leaves with the closing panel once
-    // the fade ends, and with the whole menu when the sheet swaps
-    await expect(item).not.toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: CLAIMED });
-}
-
-/**
- * Take one pokemon off the shelf. Its square carries a card, and the
- * button is in there, so it is taken the way a player takes one:
- * hover, wait for the card, press it
- */
-export async function claimGift(
-  page: Page,
-  square: Locator,
-  landed?: () => Promise<boolean>,
-): Promise<void> {
-  const card = page.getByRole('dialog', { name: /^(Gift|Info)$/ });
-
-  // Hovered again from scratch on each attempt. A card that closes
-  // while the button in it is being pressed — the shelf redrawing
-  // underneath, the pointer crossing a corner — is gone for good
-  // otherwise: a retried click never hovers anything again
-  await expect(async () => {
-    // The press is not the claim. It is a round trip, and one made
-    // while the world is still coming up can be swallowed whole,
-    // which used to leave the shelf as it was and the caller waiting
-    // on a square that was never going to go. So the shelf itself is
-    // what says the claim landed, and it is checked inside the retry
-    if (landed != null && (await landed())) {
-      return;
-    }
-    // Out of the way first: a hover that moves the pointer nowhere
-    // sends no `mouseenter`, and the card never opens
-    await page.mouse.move(0, 0);
-    await square.hover();
-    await expect(card).toBeVisible({ timeout: 2000 });
-    await card.getByRole('button', { name: 'Claim', exact: true }).click({ timeout: 2000 });
-
-    if (landed != null) {
-      await expect.poll(landed, { timeout: SETTLED }).toBe(true);
-    }
-  }).toPass({ timeout: CLAIMED });
-}
-
-/**
- * And one item, whose square is the button: claiming is the only
- * thing a shelf square of the bag's tray does, so it says what it is
- * in a tooltip and presses
- */
-async function claimItemGift(
+async function claimSquare(
   page: Page,
   square: Locator,
   landed: () => Promise<boolean>,
@@ -298,12 +259,30 @@ async function claimItemGift(
     if (await landed()) {
       return;
     }
-    // Out of the way first, so a card left over another square is not
-    // standing between the pointer and this one
+    // Out of the way first, and the press dispatched rather than aimed:
+    // the card a pointer opens over a square can land on top of it
+    // between the check and the press, and a click aimed at the square
+    // then reaches the card
     await page.mouse.move(0, 0);
-    await square.click({ timeout: 2000 });
+    await square.dispatchEvent('click', undefined, { timeout: 2000 });
     await expect.poll(landed, { timeout: SETTLED }).toBe(true);
   }).toPass({ timeout: CLAIMED });
+}
+
+/**
+ * Switch the shelf to one of its tabs. The pointer is taken away from
+ * the squares first: a card that is still open over a square sits on
+ * top of the tab bar and swallows the press
+ */
+export async function openShelfTab(
+  page: Page,
+  gifts: Locator,
+  tab: 'Catches' | 'Items' | 'Encounters',
+): Promise<void> {
+  await page.mouse.move(0, 0);
+  // Dispatched rather than aimed, like a square: a card still open over
+  // the tab bar would take a pointer press
+  await gifts.getByRole('tab', { name: new RegExp(`^${tab}`) }).dispatchEvent('click');
 }
 
 /**
@@ -338,12 +317,14 @@ export async function claimStarter(page: Page): Promise<void> {
   // The shelf is read again after a claim, so the square goes when the
   // server answers rather than when the press lands. That square going
   // is the claim; until it does, the press never reached the shelf
-  await claimGift(page, taking, async () => (await taking.count()) === 0);
+  await claimSquare(page, taking, async () => (await taking.count()) === 0);
+
+  await openShelfTab(page, gifts, 'Items');
 
   const balls = gifts.getByRole('button', { name: /^Claim \d+ × / });
 
   await expect(balls).toBeVisible();
-  await claimItemGift(page, balls, async () => (await balls.count()) === 0);
+  await claimSquare(page, balls, async () => (await balls.count()) === 0);
 
   await gifts.getByRole('button', { name: 'Close' }).click();
   await expectShut(gifts);
@@ -388,21 +369,8 @@ export async function pressBoxSquare(
 
   // Not one of `openDialogs`: a hover card is our own element rather
   // than a terracotta dialog, and carries no `tc-dialog`
-  const card = page.getByRole('dialog', { name: 'Info' });
+  const card = page.locator('[role="dialog"]:not([tc-dialog])');
 
   await expect(card).toBeVisible();
   await card.getByRole('button', { name: verb, exact: true }).click();
-}
-
-/**
- * Open the record behind a square. The squares are newest first, so
- * nothing is the pokemon the account was handed
- */
-export async function openCatch(page: Page, index = 0): Promise<Locator> {
-  await pressBoxSquare(page, await openBox(page), 'Open', index);
-
-  const sheet = dialogNamed(page, SHEET);
-
-  await expectOpen(sheet);
-  return sheet;
 }

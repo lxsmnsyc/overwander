@@ -79,6 +79,9 @@ const THROW_LIMIT = 8_000;
  */
 const EDGE_PUSHES = 2;
 
+/** How many encounters are tried before the run gives up on a catch */
+const ATTEMPTS = 3;
+
 /**
  * How far out from the player the sweep looks, in cells. It is a round
  * trip to the browser per cell, so it reads a near neighbourhood
@@ -177,9 +180,87 @@ async function meetSomething(page: Page, world: Locator): Promise<boolean> {
   return false;
 }
 
+/**
+ * Meet something and throw balls at it until it is caught. Resolves
+ * true when the offer to look at the catch is up, false when nothing
+ * was met or the encounter ended some other way (it fled, or the balls
+ * ran out), which is the game working but not the thing being tested.
+ */
+async function catchSomething(page: Page, world: Locator): Promise<boolean> {
+  const met = await meetSomething(page, world);
+
+  // The world is derived, not seeded: a stretch with nothing in it has
+  // nothing to catch, and the caller walks on to another
+  if (!met) {
+    return false;
+  }
+
+  const throwBall = page.getByRole('button', { name: /^Throw / });
+
+  await expect(throwBall).toBeVisible();
+
+  /**
+   * The canvas, marked so it can be recognised again.
+   *
+   * Ending an encounter re-reads what has run from this player, and
+   * a resource being re-read is a resource that is loading: read the
+   * ordinary way it throws the board back to its boundary, which
+   * tears the canvas down and builds a new one. Nothing is lost by
+   * it and it looks like the world reloading because something ran
+   * off. A rebuilt canvas would not be carrying this
+   */
+  await world.evaluate((canvas) => {
+    canvas.setAttribute('data-standing', 'yes');
+  });
+
+  /**
+   * What the ball holding leaves behind: the offer to look at what
+   * was caught. The sheet is not opened for the player — it is
+   * offered, since one that arrived on its own would land before
+   * they had taken in that they caught anything — so this is the
+   * signal that the throw worked
+   */
+  const look = page.getByRole('button', { name: 'Have a look' });
+
+  /**
+   * Asked without waiting, all of it. Every one of these is a
+   * question about a dialog that is being redrawn under the answer,
+   * and a locator that waits for an element the encounter has
+   * finished with hangs until the whole test times out
+   */
+  const showing = async (button: typeof look): Promise<boolean> =>
+    button.isVisible().catch(() => false);
+
+  for (let ball = 0; ball < 25; ball++) {
+    if (await showing(look)) {
+      break;
+    }
+    if (!(await showing(throwBall)) || (await throwBall.isDisabled().catch(() => true))) {
+      break;
+    }
+    await throwBall.click();
+    // Waited on the throw being over rather than on the clock. The
+    // button is shut for as long as the ball is in the air, so a
+    // flat beat shorter than the animation read a throw still
+    // rocking as an encounter that had ended
+    await expect
+      .poll(
+        async () => (await showing(look)) || !(await throwBall.isDisabled().catch(() => true)),
+        { timeout: THROW_LIMIT },
+      )
+      .toBe(true)
+      .catch(() => {
+        // Still nothing, which the next turn of the loop reads for
+        // itself: either the encounter ended or the bag is empty
+      });
+  }
+
+  return showing(look);
+}
+
 test.describe('the safari', () => {
   test('opens the sheet for the new pokemon the moment it is caught', async ({ page }) => {
-    test.slow();
+    test.setTimeout(600_000);
 
     await signIn(page);
     await claimStarter(page);
@@ -188,87 +269,22 @@ test.describe('the safari', () => {
 
     await expect(world).toBeVisible();
 
-    const met = await meetSomething(page, world);
+    // Another encounter when one ended without a catch
+    let caught = false;
 
-    // The world is derived, not seeded: a run that walked into an
-    // empty stretch has nothing to catch, and saying so is honester
-    // than passing on an encounter that never happened
-    test.skip(!met, 'no spawn came within reach of the player in this world');
-
-    const throwBall = page.getByRole('button', { name: /^Throw / });
-
-    await expect(throwBall).toBeVisible();
-
-    /**
-     * The canvas, marked so it can be recognised again.
-     *
-     * Ending an encounter re-reads what has run from this player, and
-     * a resource being re-read is a resource that is loading: read the
-     * ordinary way it throws the board back to its boundary, which
-     * tears the canvas down and builds a new one. Nothing is lost by
-     * it and it looks like the world reloading because something ran
-     * off. A rebuilt canvas would not be carrying this
-     */
-    await world.evaluate((canvas) => {
-      canvas.setAttribute('data-standing', 'yes');
-    });
-
-    /**
-     * What the ball holding leaves behind: the offer to look at what
-     * was caught. The sheet is not opened for the player — it is
-     * offered, since one that arrived on its own would land before
-     * they had taken in that they caught anything — so this is the
-     * signal that the throw worked
-     */
-    const look = page.getByRole('button', { name: 'Have a look' });
-
-    /**
-     * Asked without waiting, all of it. Every one of these is a
-     * question about a dialog that is being redrawn under the answer,
-     * and a locator that waits for an element the encounter has
-     * finished with hangs until the whole test times out
-     */
-    const showing = async (button: typeof look): Promise<boolean> =>
-      button.isVisible().catch(() => false);
-
-    for (let ball = 0; ball < 25; ball++) {
-      if (await showing(look)) {
-        break;
-      }
-      if (!(await showing(throwBall)) || (await throwBall.isDisabled().catch(() => true))) {
-        break;
-      }
-      await throwBall.click();
-      // Waited on the throw being over rather than on the clock. The
-      // button is shut for as long as the ball is in the air, so a
-      // flat beat shorter than the animation read a throw still
-      // rocking as an encounter that had ended
-      await expect
-        .poll(
-          async () => (await showing(look)) || !(await throwBall.isDisabled().catch(() => true)),
-          { timeout: THROW_LIMIT },
-        )
-        .toBe(true)
-        .catch(() => {
-          // Still nothing, which the next turn of the loop reads for
-          // itself: either the encounter ended or the bag is empty
-        });
+    for (let attempt = 0; attempt < ATTEMPTS && !caught; attempt++) {
+      caught = await catchSomething(page, world);
     }
+    test.skip(!caught, 'nothing was met and caught in this world');
 
-    // Either it is in the bag and there is something to look at, or the
-    // encounter ended some other way — which is the game working, but
-    // not the thing being tested
-    test.skip(
-      !(await showing(look)),
-      'the encounter ended without a catch — it fled, or the balls ran out',
-    );
-
-    await look.click();
+    await page.getByRole('button', { name: 'Have a look' }).click();
 
     const sheet = dialogNamed(page, SHEET);
 
     await expectOpen(sheet);
-    await expect(sheet.getByRole('button', { name: /^Lv\. \d+/ })).toBeVisible();
+    // The sheet is for the pokemon that was caught: its name is in the title
+    await expect(sheet.getByRole('heading', { name: /^Pokemon Info: \S/ })).toBeVisible();
+    await expect(sheet.getByText(/Lv\. \d+/).first()).toBeVisible();
     // And the encounter it came from is gone rather than sitting under it
     await expect(page.getByRole('button', { name: /^Throw / })).toBeHidden();
     // And the world it happened in is the one that was standing there

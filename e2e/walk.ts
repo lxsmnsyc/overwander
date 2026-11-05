@@ -12,8 +12,8 @@ import {
 import { CHUNK_CELLS } from '../src/overworld/chunk';
 import Landmark, { LANDMARK_NAMES } from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';
-import { GENERATION, uidOf, upsertRow } from './admin';
-import { type Player, dialogNamed, expectOpen } from './game';
+import { GENERATION, findRows, uidOf, upsertRow } from './admin';
+import { type Player, dialogNamed, expectOpen, reloadGame } from './game';
 
 /**
  * Getting somewhere in the world.
@@ -203,24 +203,35 @@ export function findLandmark(kind: Landmark): Standing | null {
 }
 
 /**
- * Stand the player one step from a landmark, before the page has read
- * where they are. Written straight into the store the way a staged
- * raid is: the walk is the only thing skipped.
+ * Stand the player one step from a landmark. The page is reloaded so
+ * it reads the position back, and the walk to the landmark is the only
+ * thing skipped.
+ *
+ * The row is written **after** the page has written its own. A new
+ * player has no row, so the page rolls a start position and saves it
+ * once the world is up. A row written before that save is overwritten
+ * by it, and the player is back in their start town.
  *
  * Resolves the **board** cell the landmark will be drawn on. The board
  * is a window that keeps the player in the middle of it, so where
  * something sits on screen is worked out from how far it is from them
  * rather than from where it sits in its chunk
  */
-export async function standBeside(player: Player, at: Standing): Promise<number> {
+export async function standBeside(page: Page, player: Player, at: Standing): Promise<number> {
   const cellX = at.cell % CHUNK_CELLS;
   const cellY = Math.floor(at.cell / CHUNK_CELLS);
   // One cell over, so the press is a step rather than a hike. The
   // landmark is never on the outer rows, so there is always room
   const stoodX = cellX > 0 ? cellX - 1 : cellX + 1;
+  const uid = await uidOf(player);
+
+  // Wait for the page's own save of its start position
+  await expect
+    .poll(async () => (await findRows('positions', 'player', uid)).length, { timeout: 30_000 })
+    .toBeGreaterThan(0);
 
   await upsertRow('positions', {
-    player: await uidOf(player),
+    player: uid,
     generation: GENERATION,
     chunk_x: at.chunkX,
     chunk_y: at.chunkY,
@@ -228,6 +239,7 @@ export async function standBeside(player: Player, at: Standing): Promise<number>
     cell_y: cellY,
     moved_at: Date.now(),
   });
+  await reloadGame(page);
   return BOARD_CENTER * BOARD_CELLS + BOARD_CENTER + (cellX - stoodX);
 }
 
@@ -246,17 +258,12 @@ export async function openAuctionBoard(page: Page, player: Player): Promise<Loca
   }
   const board = boardOf(page);
 
-  // Written down and then checked, rather than written down and
-  // trusted. The world saves where the player is standing as they
-  // walk, so a save still in the air when the row is written puts them
-  // back where they started; what says it took is the chunk the board
-  // names once the page has read it again
+  // Checked rather than trusted: what says the position took is the
+  // chunk the board names once the page has read it again
   let seat = BOARD_CENTER * BOARD_CELLS + BOARD_CENTER;
 
   await expect(async () => {
-    seat = await standBeside(player, standing);
-    await page.reload();
-    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 20_000 });
+    seat = await standBeside(page, player, standing);
     await expect(board).toBeVisible();
     expect(await placeOf(board)).toContain(`(${standing.chunkX}, ${standing.chunkY})`);
   }).toPass({ timeout: 60_000 });

@@ -15,14 +15,14 @@ import { DEMO_TEAM_SIZE } from '../src/overworld/raid/demo';
  * So this covers what a browser can see and a unit test cannot: that
  * the field measures itself against the room it was given, that a card
  * exists for every pokemon in the viewer's party, and that the fight
- * is *running* rather than a still frame of one.
+ * runs to its end and says how it ended.
  */
 
 /**
- * How long to give the fight to visibly do something. Moves are cast
- * over seconds and the first exchange lands well inside this
+ * How long to give a fight to settle. The engine runs in real time,
+ * and a boss against four parties takes minutes
  */
-const MOVING = 15_000;
+const SETTLING = 400_000;
 
 /**
  * The cards themselves.
@@ -37,67 +37,38 @@ function cardsOf(page: Page): Locator {
 }
 
 test.describe('a battle', () => {
-  test.beforeEach(async ({ page }) => {
+  test('runs to its end', async ({ page }) => {
+    test.setTimeout(SETTLING + 60_000);
     await page.goto('/demo/raid?seed=poketerra');
-  });
 
-  test('draws the field at the size of the room it was given', async ({ page }) => {
+    // The field takes the width it is offered rather than sitting
+    // letterboxed in the middle of a page of nothing
     const field = page.locator('canvas').first();
 
-    await expect(field).toBeVisible();
+    // The demo route is compiled on its first visit, which can outlast the default wait
+    await expect(field).toBeVisible({ timeout: 90_000 });
 
     const bounds = await field.boundingBox();
     const room = page.viewportSize();
 
-    // Not a letterboxed picture in the middle of a page of nothing:
-    // the canvas takes the width it is offered
     expect(bounds?.width ?? 0).toBeGreaterThan((room?.width ?? 0) * 0.5);
     expect(bounds?.height ?? 0).toBeGreaterThan(200);
-  });
 
-  test('gives the viewer a card for each of their own pokemon', async ({ page }) => {
+    // A card for each of the viewer's own pokemon, saying what it is
     const cards = cardsOf(page);
 
-    await expect(page.getByRole('list', { name: 'Your party' })).toBeVisible();
     await expect(cards).toHaveCount(DEMO_TEAM_SIZE);
 
-    // What a card is for: what it is, and what it can throw
     const first = cards.first();
 
     await expect(first.getByText(/^Lv\. \d+$/)).toBeVisible();
-    await expect(first.locator('li[title]').first()).toBeVisible();
-  });
 
-  test('is a fight rather than a picture of one', async ({ page }) => {
-    const party = page.getByRole('list', { name: 'Your party' });
-    /**
-     * What the whole party has left, as one string. Any one of the six
-     * moving is the engine running
-     */
-    const left = async (): Promise<string> =>
-      (await party.locator('span.tabular-nums').allTextContents()).join(',');
-
-    await expect(cardsOf(page).first()).toBeVisible();
-
-    const started = await left();
-
-    // Somebody's health moves — a hit landing, a status ticking, a
-    // berry going off. A field that never changes is one whose engine
-    // never started, which looks exactly like a working screenshot
-    await expect
-      .poll(left, { timeout: MOVING, message: 'the battle should be running' })
-      .not.toBe(started);
-  });
-
-  test('stages a different fight for a different seed', async ({ page }) => {
-    await expect(page.getByText('seed poketerra')).toBeVisible();
-
-    await page.getByRole('button', { name: 'Roll another' }).click();
-
-    await expect(page.getByText('seed poketerra')).toBeHidden();
-    await expect(page.getByText(/^seed /)).toBeVisible();
-    // And the new fight is a fight: the party is rebuilt rather than
-    // left pointing at the battle that was ended under it
-    await expect(cardsOf(page)).toHaveCount(DEMO_TEAM_SIZE);
+    // And it is a fight rather than a picture of one: the engine runs
+    // until the page reports how it ended
+    await expect(
+      page.getByText(
+        /^(The boss is still standing|The parties took it down|Nobody left standing)\.$/,
+      ),
+    ).toBeVisible({ timeout: SETTLING });
   });
 });

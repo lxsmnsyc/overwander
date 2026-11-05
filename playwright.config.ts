@@ -37,6 +37,14 @@ const onCI = process.env.CI != null;
  * the loud dev ones
  */
 const STAGED = {
+  // The root .env is production's and the dev server loads it past
+  // `OVERWANDER_ENV_DIR`, and an empty value on the process does not
+  // beat it. So the world is named outright: the seed and generation the
+  // specs work out in Node (`e2e/walk.ts`, `e2e/admin.ts`). Left to
+  // the root .env, the server ran production's generation 2 and read
+  // positions the specs had written for generation 1
+  VITE_WORLD_SEED: 'overworld',
+  VITE_WORLD_GENERATION: '1',
   // The tests' own environment rather than the root .env (see test/env/.env.test)
   OVERWANDER_ENV_DIR: 'test/env',
   VITE_REAL_SHINY_ODDS: 'true',
@@ -46,6 +54,18 @@ const STAGED = {
   BETTER_AUTH_SECRET: 'e2e-secret-that-is-at-least-thirty-two-characters',
   BETTER_AUTH_URL: ORIGIN,
 };
+
+/**
+ * Playwright starts the web server before the global setup runs, and
+ * the server migrates the database as it boots. So the throwaway
+ * database has to be up before the server is, which only the server's
+ * own command can arrange. A database somebody else started
+ * (`TEST_DATABASE_URL`) is left alone
+ */
+const START_DATABASE =
+  process.env.TEST_DATABASE_URL == null
+    ? 'docker compose -f compose.dev.yaml up --detach --wait && '
+    : '';
 
 export default defineConfig({
   testDir: 'e2e',
@@ -75,7 +95,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: `pnpm exec vite dev --port ${PORT}`,
+    command: `${START_DATABASE}pnpm exec vite dev --port ${PORT}`,
     url: ORIGIN,
     reuseExistingServer: !onCI,
     timeout: 180_000,

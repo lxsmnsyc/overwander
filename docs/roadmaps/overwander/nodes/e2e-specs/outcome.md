@@ -2,8 +2,7 @@
 
 ## Status
 
-- Not finished: `pnpm test:e2e` has not passed twice in a row. The last full run (alone) ended with 11 passed and 1 failed. `battle.spec.ts` waited 400 s for the demo raid to report an outcome and did not see one. The same test passed in 1.3 to 1.8 min on three earlier runs. The machine's load average was 17 to 21 from other processes (clang, go builds, other repos' test runs), and the demo fight runs on real time.
-- Needs the maintainer's call: keep "runs to its end" and accept the flake under load, or weaken `battle.spec.ts` to "the health of a party moves" (the old assertion, about 15 s and deterministic).
+- Done. Merged in #287. The last full run passed 12 of 12 in 5.8 min (see Checks).
 
 ## Scope changes (approved by the maintainer during the node)
 

@@ -948,6 +948,7 @@
   "catch_shiny_name": "{name}（いろちがい）",
   "catch_evolution_ready": "しんか できる",
   "catch_evolve": "しんか",
+  "catch_change_form": "チェンジ",
   "catch_box_default": "デフォルト",
   "catch_box_move_failed": "うつせなかった。",
   "catch_box_moved": "{name}に うつした。",

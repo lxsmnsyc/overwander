@@ -223,7 +223,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                             evolve(option());
                           }}
                         >
-                          {m.catch_evolve()}
+                          {forms() ? m.catch_change_form() : m.catch_evolve()}
                         </Button>
                       </Show>
                     </div>
@@ -277,7 +277,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                           evolve(option());
                         }}
                       >
-                        {m.catch_evolve()}
+                        {forms() ? m.catch_change_form() : m.catch_evolve()}
                       </Button>
                     </Show>
                   </li>

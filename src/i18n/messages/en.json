@@ -961,6 +961,7 @@
   "catch_shiny_name": "{name}, shiny",
   "catch_evolution_ready": "ready",
   "catch_evolve": "Evolve",
+  "catch_change_form": "Change",
   "catch_box_default": "Default",
   "catch_box_move_failed": "It could not be moved.",
   "catch_box_moved": "Moved to {name}.",

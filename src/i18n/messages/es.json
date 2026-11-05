@@ -988,6 +988,7 @@
   "catch_shiny_name": "{name}, variocolor",
   "catch_evolution_ready": "lista",
   "catch_evolve": "Evolucionar",
+  "catch_change_form": "Cambiar",
   "catch_box_default": "Principal",
   "catch_box_move_failed": "No se pudo mover.",
   "catch_box_moved": "Movido a {name}.",

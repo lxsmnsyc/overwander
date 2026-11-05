@@ -1,7 +1,8 @@
 ---
 id: ui-redesign-catches
 title: Redesign the catch sheet
-status: active
+status: done
+spent: 439419
 priority: must
 type: feature
 outline: false

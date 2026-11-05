@@ -46,6 +46,12 @@ export function useAuth(): AuthState {
 const SESSIONLESS = '/demo';
 
 /**
+ * The demo pages that show a signed-in player's own data (the browser
+ * tests open them), so they read the session like the game does
+ */
+const DEMOS_WITH_PLAYER = new Set(['/demo/auction', '/demo/gifts']);
+
+/**
  * Tracks the session for the whole app. The subscription lives in
  * onMount, which never runs during SSR, so the server renders the
  * signed-out shell and the client hydrates the session.
@@ -62,7 +68,7 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
   onMount(() => {
     // No session here, and none coming: the shell settles as
     // signed-out rather than sitting on "loading" for ever
-    if (location.pathname.startsWith(SESSIONLESS)) {
+    if (location.pathname.startsWith(SESSIONLESS) && !DEMOS_WITH_PLAYER.has(location.pathname)) {
       setLoading(false);
       return;
     }

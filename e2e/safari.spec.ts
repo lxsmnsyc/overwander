@@ -2,7 +2,7 @@ import { type Locator, type Page, expect, test } from '@playwright/test';
 import { BOARD_CELLS, BOARD_CENTER, boardCells, reachOf } from '../src/canvas/overworld/board';
 import { getRegisteredSpecies, getSpeciesData, registerSpecies } from '../src/data/species';
 import { SHEET, claimStarter, dialogNamed, expectOpen, signIn } from './game';
-import { boardOf, nameAt, placeOf, pressCell, pressFar } from './walk';
+import { boardOf, findSpawn, nameAt, pressCell, standBeside } from './walk';
 
 /**
  * Meeting something and catching it.
@@ -28,18 +28,10 @@ registerSpecies();
 const SPECIES_NAMES = new Set(getRegisteredSpecies().map((id) => getSpeciesData(id).name));
 
 /**
- * How many stretches of country to try before giving up, and how many
- * of the pokemon standing in one to walk up to.
- *
- * The search is deliberately shaped to be cheap. Reading what is on a
- * cell means moving the pointer onto it and asking the canvas what it
- * is called, which is a round trip to the browser — so the chunk is
- * swept **once** to find out where everything is, and the walking is
- * done afterwards against that list. Sweeping again on every step, the
- * obvious way to write this, costs a quarter of a minute per step and
- * turns the test into a ten-minute one
+ * How many of the pokemon near the player are walked up to. The player
+ * is stood beside a spawn, so the sweep reads only a few cells round
+ * them: reading a cell is a round trip to the browser
  */
-const STRETCHES = 2;
 const CANDIDATES = 2;
 
 /**
@@ -59,25 +51,12 @@ const WALK_PACE = 800;
 const WALK_SLACK = 8;
 
 /**
- * The longest anything here waits: a walk across the board and then
- * some
- */
-const WALK_LIMIT = (BOARD_CELLS + WALK_SLACK) * WALK_PACE;
-
-/**
  * How long a throw is given to answer. The ball lands, rocks up to
  * three times with a beat between each, and lies still before the
  * result is said, so a throw is seconds rather than the moment the
  * request takes
  */
 const THROW_LIMIT = 8_000;
-
-/**
- * How many times one stretch presses for the far side of the board.
- * Two crosses a chunk boundary from anywhere, since one press walks
- * the player half the board's width
- */
-const EDGE_PUSHES = 2;
 
 /** How many encounters are tried before the run gives up on a catch */
 const ATTEMPTS = 3;
@@ -132,50 +111,26 @@ async function findSpawns(page: Page, world: Locator): Promise<number[]> {
  */
 async function meetSomething(page: Page, world: Locator): Promise<boolean> {
   const throwing = page.getByRole('button', { name: /^Throw / });
+  const standing = (await findSpawns(page, world))
+    .sort((one, other) => stepsBetween(one) - stepsBetween(other))
+    .slice(0, CANDIDATES);
 
-  for (let stretch = 0; stretch < STRETCHES; stretch++) {
-    const standing = (await findSpawns(page, world))
-      .sort((one, other) => stepsBetween(one) - stepsBetween(other))
-      .slice(0, CANDIDATES);
+  for (const cell of standing) {
+    await pressCell(page, world, cell);
 
-    for (const cell of standing) {
-      await pressCell(page, world, cell);
+    const met = await throwing
+      .waitFor({
+        state: 'visible',
+        timeout: (stepsBetween(cell) + WALK_SLACK) * WALK_PACE,
+      })
+      .then(() => true)
+      .catch(() => false);
 
-      const met = await throwing
-        .waitFor({
-          state: 'visible',
-          timeout: (stepsBetween(cell) + WALK_SLACK) * WALK_PACE,
-        })
-        .then(() => true)
-        .catch(() => false);
-
-      if (met) {
-        return true;
-      }
-      // It is gone — the window turned over, it fled, or the way to it
-      // was blocked. The next one on the list is as good
+    if (met) {
+      return true;
     }
-    // Nothing here worth walking to, so walk out of it. A press on the
-    // apron is a walk across the board and one step past it, which is
-    // most of a chunk but not always all of it, so it is pressed again
-    // until the board names somewhere else. Alternating sides keeps it
-    // from pacing back over the same ground
-    const here = await placeOf(world);
-
-    for (let push = 0; push < EDGE_PUSHES && (await placeOf(world)) === here; push++) {
-      await pressFar(page, world, stretch % 2 === 0 ? [-1, 0] : [0, -1]);
-      // Waited on the board saying somewhere else rather than on the
-      // clock: a walk to the edge is however long it is, and a run that
-      // has already crossed should get on with looking
-      await expect
-        .poll(async () => placeOf(world), { timeout: WALK_LIMIT })
-        .not.toBe(here)
-        .catch(() => {
-          // It did not get out of this chunk. Pressing again is the
-          // worst this costs, and the run still ends by saying honestly
-          // that it met nothing
-        });
-    }
+    // It is gone: the window turned over, it fled, or the way to it
+    // was blocked. The next one on the list is as good
   }
   return false;
 }
@@ -262,17 +217,27 @@ test.describe('the safari', () => {
   test('opens the sheet for the new pokemon the moment it is caught', async ({ page }) => {
     test.setTimeout(600_000);
 
-    await signIn(page);
+    const player = await signIn(page);
+
     await claimStarter(page);
 
     const world = boardOf(page);
 
-    await expect(world).toBeVisible();
-
-    // Another encounter when one ended without a catch
+    // The player is stood beside a spawn worked out in Node from the
+    // world seed and the clock. A window turns over every five minutes,
+    // so when the spawn is gone, or the pokemon fled, a fresh one is
+    // worked out and the player stood beside that
     let caught = false;
 
     for (let attempt = 0; attempt < ATTEMPTS && !caught; attempt++) {
+      const spawn = findSpawn(Date.now());
+
+      expect(spawn, 'a land spawn stands within reach of the origin').not.toBeNull();
+      if (spawn == null) {
+        return;
+      }
+      await standBeside(page, player, spawn);
+      await expect(world).toBeVisible();
       caught = await catchSomething(page, world);
     }
     test.skip(!caught, 'nothing was met and caught in this world');

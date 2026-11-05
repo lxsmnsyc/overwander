@@ -1,13 +1,11 @@
-import { type Page, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   CLAIMED,
-  GIFT,
-  claimStarter,
-  expectShut,
+  claimStarterFrom,
   openBox,
+  openGifts,
   openPanel,
   openShelfTab,
-  reloadGame,
   signIn,
 } from './game';
 
@@ -24,7 +22,7 @@ test.describe('the starter gift', () => {
   test('waits on the shelf for a new player', async ({ page }) => {
     await signIn(page);
 
-    const gifts = await openPanel(page, GIFT);
+    const gifts = await openGifts(page);
     const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
 
     await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });
@@ -56,20 +54,30 @@ test.describe('the starter gift', () => {
   });
 
   test('hands over one pokemon and the balls, once', async ({ page }) => {
+    test.slow();
+
     await signIn(page);
 
-    const waiting = await countWaiting(page);
+    let gifts = await openGifts(page);
 
-    await claimStarter(page);
+    const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
 
-    // One square in the box, and it is the pokemon that was waiting
+    await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });
+
+    const waiting = await pokemon.count();
+
+    await claimStarterFrom(page, gifts);
+
+    // In the world: one square in the box, and it is the pokemon that was waiting
+    await page.goto('/');
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible({ timeout: 60_000 });
+
     const box = await openBox(page);
 
     await expect(box.getByRole('button', { name: /Lv\. \d+/ })).toHaveCount(1);
     await page.getByRole('button', { name: 'Close' }).last().click();
 
     const bag = await openPanel(page, 'Bag');
-
     const square = bag.getByRole('button', { name: /Poke Ball, \d+ carried/ });
 
     await expect(square).toBeVisible();
@@ -88,31 +96,11 @@ test.describe('the starter gift', () => {
     await expect(tooltip).toBeHidden();
 
     // Coming back is not the same gift again. A claim is written down
-    // server-side, and a reload that offered what was already taken
+    // server-side, and a shelf that offered what was already taken
     // would be a way to farm it
-    await reloadGame(page);
-
-    const gifts = await openPanel(page, GIFT);
-    const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
-
-    // The ones that were not taken are still standing there; the one
-    // that was, and the balls, are gone
+    gifts = await openGifts(page);
     await expect(pokemon).toHaveCount(waiting - 1, { timeout: CLAIMED });
     await openShelfTab(page, gifts, 'Items');
     await expect(gifts.getByRole('button', { name: /^Claim \d+ × Poke Ball/ })).toHaveCount(0);
   });
 });
-
-/** How many starters stand on a new player's shelf */
-async function countWaiting(page: Page): Promise<number> {
-  const gifts = await openPanel(page, GIFT);
-  const pokemon = gifts.getByRole('button', { name: /^Claim Lv\./ });
-
-  await expect(pokemon.first()).toBeVisible({ timeout: CLAIMED });
-
-  const count = await pokemon.count();
-
-  await gifts.getByRole('button', { name: 'Close' }).click();
-  await expectShut(gifts);
-  return count;
-}

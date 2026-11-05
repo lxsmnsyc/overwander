@@ -10,6 +10,8 @@ import {
   setBoardScreen,
 } from '../src/canvas/overworld/board';
 import { CHUNK_CELLS } from '../src/overworld/chunk';
+import { LURE_SPAWN_BONUS } from '../src/overworld/abilities/__create';
+import ChunkSnapshot, { SPAWN_COUNT } from '../src/overworld/chunk-snapshot';
 import type Landmark from '../src/data/overworld/landmark';
 import World from '../src/overworld/world';
 import { GENERATION, findRows, uidOf, upsertRow } from './admin';
@@ -195,6 +197,45 @@ export function findLandmark(kind: Landmark): Standing | null {
         for (const [cell, landmark] of derived.getChunk(chunkX, chunkY).getLandmarkCells()) {
           if (landmark === kind) {
             return { chunkX, chunkY, cell };
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * A land spawn in the window that is open at `now`, nearest the origin,
+ * worked out the way the game works it out: the chunk, the five-minute
+ * window and the zone (UTC, which `playwright.config.ts` gives the
+ * browser) are all it is rolled from. Only the first `SPAWN_COUNT` of the
+ * rolled spawns are drawn on the board.
+ */
+export function findSpawn(now: number): Standing | null {
+  const derived = world();
+
+  for (let ring = 0; ring <= SEARCH_RINGS; ring++) {
+    for (let chunkY = -ring; chunkY <= ring; chunkY++) {
+      for (let chunkX = -ring; chunkX <= ring; chunkX++) {
+        if (Math.max(Math.abs(chunkX), Math.abs(chunkY)) !== ring) {
+          continue;
+        }
+
+        const chunk = derived.getChunk(chunkX, chunkY);
+        const snapshot = new ChunkSnapshot(chunk, now, 0);
+        const spawns = snapshot.getSpawns(SPAWN_COUNT + LURE_SPAWN_BONUS);
+        const placed = snapshot.getSpawnCells();
+        const water = chunk.getWaterCells();
+
+        for (const spawn of spawns.slice(0, SPAWN_COUNT)) {
+          for (const [cell, there] of placed) {
+            // Away from the outer columns, so the cell beside it is in the same chunk
+            const column = cell % CHUNK_CELLS;
+
+            if (there === spawn && !water.has(cell) && column > 0 && column < CHUNK_CELLS - 1) {
+              return { chunkX, chunkY, cell };
+            }
           }
         }
       }

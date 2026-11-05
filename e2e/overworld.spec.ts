@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { type Page, expect, test } from '@playwright/test';
 import Landmark from '../src/data/overworld/landmark';
 import { GENERATION, findRows, sql, uidOf } from './admin';
 import { type Player, expectShut, openMenu, openPanel, settled, signIn } from './game';
@@ -9,14 +9,27 @@ import { boardOf, findLandmark, placeOf, standBeside } from './walk';
  * are standing in, and the one button that reaches everything else.
  */
 
+/**
+ * One player and one page for the whole file: the world loads once, and
+ * the tests run in order on it. Signing out is last
+ */
 test.describe('the overworld', () => {
+  test.describe.configure({ mode: 'serial' });
+
+  let page: Page;
   let player: Player;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeAll(async ({ browser }) => {
+    test.setTimeout(240_000);
+    page = await (await browser.newContext()).newPage();
     player = await signIn(page);
   });
 
-  test('draws the chunk and nothing else', async ({ page }) => {
+  test.afterAll(async () => {
+    await page.context().close();
+  });
+
+  test('draws the chunk and nothing else', async () => {
     const world = boardOf(page);
 
     await expect(world).toBeVisible();
@@ -29,7 +42,7 @@ test.describe('the overworld', () => {
     expect(bounds?.height ?? 0).toBeGreaterThan(300);
   });
 
-  test('reaches everything from the one button at the bottom', async ({ page }) => {
+  test('reaches everything from the one button at the bottom', async () => {
     const menu = await openMenu(page);
 
     // Everything that is not the world, as a keypad. There is no key
@@ -62,7 +75,7 @@ test.describe('the overworld', () => {
    * read back, so the walk is the one out of the chunk: a held key
    * that only ever took one step would never get there
    */
-  test('walks while a direction is held, and out of the chunk', async ({ page }) => {
+  test('walks while a direction is held, and out of the chunk', async () => {
     test.slow();
 
     const world = boardOf(page);
@@ -104,7 +117,7 @@ test.describe('the overworld', () => {
    * landmark worked out in Node, and the board names that landmark's
    * chunk once the page has read the position back
    */
-  test('stands the player beside a landmark', async ({ page }) => {
+  test('stands the player beside a landmark', async () => {
     const centre = findLandmark(Landmark.PokemonCenter);
 
     expect(centre, 'a Pokemon Center stands within reach of the origin').not.toBeNull();
@@ -125,7 +138,7 @@ test.describe('the overworld', () => {
    * tested is what this screen does when the walk turns up elsewhere,
    * heard over the live socket
    */
-  test('stands down when the walk moves to another screen', async ({ page }) => {
+  test('stands down when the walk moves to another screen', async () => {
     const uid = await uidOf(player);
     const takeOver = page.getByRole('button', { name: 'Walk here instead' });
 
@@ -153,7 +166,25 @@ test.describe('the overworld', () => {
     await expect(takeOver).toBeHidden();
   });
 
-  test('signs out back to the way in', async ({ page }) => {
+  test('lets a dialog go and gives the world back', async () => {
+    const profile = await openPanel(page, 'Profile');
+
+    await expect(profile.getByRole('tab', { name: 'Battles' })).toBeVisible();
+
+    await page.keyboard.press('Escape');
+    await expectShut(profile);
+
+    // And the menu is live again afterwards. A dialog that closes but
+    // leaves its overlay behind looks shut and swallows every press
+    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
+    // `openPanel` asserts the panel is up, which is the whole point
+    const boxes = await openPanel(page, 'Boxes');
+
+    await page.keyboard.press('Escape');
+    await expectShut(boxes);
+  });
+
+  test('signs out back to the way in', async () => {
     // What the page throws while the world is torn down, so a failure to
     // reach the form says why
     const faults: string[] = [];
@@ -169,20 +200,5 @@ test.describe('the overworld', () => {
     // The world is gone and the form is back
     await expect(page.getByLabel('Email'), faults.join('; ')).toBeVisible();
     await expect(page.getByRole('navigation', { name: 'Game' })).toBeHidden();
-  });
-
-  test('lets a dialog go and gives the world back', async ({ page }) => {
-    const profile = await openPanel(page, 'Profile');
-
-    await expect(profile.getByRole('tab', { name: 'Battles' })).toBeVisible();
-
-    await page.keyboard.press('Escape');
-    await expectShut(profile);
-
-    // And the menu is live again afterwards. A dialog that closes but
-    // leaves its overlay behind looks shut and swallows every press
-    await expect(page.getByRole('navigation', { name: 'Game' })).toBeVisible();
-    // `openPanel` asserts the panel is up, which is the whole point
-    await openPanel(page, 'Boxes');
   });
 });

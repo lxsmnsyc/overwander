@@ -88,6 +88,8 @@ export default defineConfig({
   globalSetup: './e2e/global-setup.ts',
   use: {
     baseURL: ORIGIN,
+    // The zone a chunk's spawns are rolled in; the specs work them out for UTC
+    timezoneId: 'UTC',
     // Kept only where something went wrong, since a trace of a passing
     // run is a few megabytes nobody will open
     trace: 'retain-on-failure',

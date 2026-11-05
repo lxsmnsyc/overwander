@@ -222,7 +222,12 @@ export async function settled(page: Page): Promise<void> {
 export async function openMenu(page: Page): Promise<Locator> {
   const menu = page.getByRole('navigation', { name: 'Game' });
 
-  await menu.getByRole('button', { name: 'Menu' }).click();
+  const key = menu.getByRole('button', { name: 'Menu' });
+
+  // Left open by an earlier panel: pressing it again would shut it
+  if ((await key.getAttribute('aria-expanded')) !== 'true') {
+    await key.click();
+  }
   return menu;
 }
 
@@ -296,6 +301,28 @@ export async function openShelfTab(
  */
 export async function claimStarter(page: Page): Promise<void> {
   const gifts = await openPanel(page, 'Gifts');
+
+  await claimStarterFrom(page, gifts);
+  await gifts.getByRole('button', { name: 'Close' }).click();
+  await expectShut(gifts);
+}
+
+/**
+ * Open the gifts shelf on its own page (`/demo/gifts`): the same shelf
+ * for the signed-in player with no world behind it, so a spec that is
+ * about gifts does not load the game to reach it
+ */
+export async function openGifts(page: Page): Promise<Locator> {
+  await page.goto('/demo/gifts');
+
+  const gifts = dialogNamed(page, GIFT);
+
+  await expectOpen(gifts, 60_000);
+  return gifts;
+}
+
+/** Take one starter and the balls off an open shelf */
+export async function claimStarterFrom(page: Page, gifts: Locator): Promise<void> {
   // Waited for rather than looked for: the shelf is empty until the
   // server has written the offers down. Every starter stands on every
   // shelf, so one of them is taken and the rest are left. The squares
@@ -325,9 +352,6 @@ export async function claimStarter(page: Page): Promise<void> {
 
   await expect(balls).toBeVisible();
   await claimSquare(page, balls, async () => (await balls.count()) === 0);
-
-  await gifts.getByRole('button', { name: 'Close' }).click();
-  await expectShut(gifts);
 }
 
 /**

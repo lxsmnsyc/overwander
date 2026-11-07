@@ -28,6 +28,8 @@ export interface RailBox {
    * whole rows it fills, and never less than one box's worth
    */
   size?: number;
+  /** How many it holds whatever a search is counting, for that meter */
+  filled?: number;
 }
 
 export interface BoxRailProps {
@@ -127,7 +129,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
 
   /** How full a made box is, as a share of its squares */
   const fill = (box: RailBox): number =>
-    box.size == null || box.size <= 0 ? 0 : Math.min(1, box.count / box.size);
+    box.size == null || box.size <= 0 ? 0 : Math.min(1, (box.filled ?? box.count) / box.size);
 
   /** What the hint at the foot of the rail says */
   const hint = (): string | null => {

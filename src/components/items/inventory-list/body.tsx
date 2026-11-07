@@ -58,6 +58,12 @@ export interface InventoryListProps {
   onChoose: (item: Items | null) => void;
 }
 
+/**
+ * A pocket's row, a little shorter than a box's: the bag can hold twelve
+ * pockets, and all of them stand beside the tray on a laptop
+ */
+const POCKET_ROW = 'md:!min-h-9 md:!py-1';
+
 /** A pocket's colour, as a square on its row */
 function PocketDot(props: { tone: string }): JSX.Element {
   return (
@@ -425,14 +431,14 @@ export default function BagBody(
       >
         {/* Wide enough for "Objetos equipables" and its count */}
         <RailTabs label={m.panel_bag()} class="md:w-[13rem]">
-          <RailTab value={ALL_ITEMS}>
+          <RailTab value={ALL_ITEMS} class={POCKET_ROW}>
             <PocketDot tone={ALL_TONE} />
             <span class="truncate">{m.item_pocket_all()}</span>
             <RailCount>{readable(props.items)?.length ?? 0}</RailCount>
           </RailTab>
           <For each={types()}>
             {(type) => (
-              <RailTab value={type}>
+              <RailTab value={type} class={POCKET_ROW}>
                 <PocketDot tone={POCKET_TONES[type]} />
                 <span class="truncate">{POCKET_NAMES[type]()}</span>
                 <RailCount>{tray(type).length}</RailCount>
@@ -443,7 +449,7 @@ export default function BagBody(
             aria-hidden="true"
             class="mx-1 my-1.5 hidden h-0.5 shrink-0 bg-line-soft md:block"
           />
-          <RailTab value={CANDIES}>
+          <RailTab value={CANDIES} class={POCKET_ROW}>
             <PocketDot tone={CANDY_TONE} />
             <span class="truncate">{m.item_pocket_candies()}</span>
             <RailCount>{piles().length}</RailCount>

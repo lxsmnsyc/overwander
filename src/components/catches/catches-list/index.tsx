@@ -170,6 +170,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         tone: boxTone(box.colour),
         count: count(id),
         size: sizeBox(tally().spans.get(id) ?? 0),
+        filled: counts.get(id) ?? 0,
       });
     }
     return listed;

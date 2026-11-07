@@ -37,7 +37,7 @@
 - The move tabs in the dex entry are not paged. Their length is fixed by species data, not by the player, so `paged-lists` does not reach them; they scroll in their card as the board draws them.
 - Boxes and the Bag scroll inside their panel at 1280x720 (`page` layout), as the boards' own content runs past their frames. The dex entry is a fixed `sheet` layout.
 - The Bag sheet's width jumps between 59rem and 76rem rather than animating: a width transition on the dialog's placed box would fight the presets' transition property.
-- A bag square is still announced with its verb ("Use Potion, 12 carried") though a press now docks the item first; the verb is one press further on.
+- A bag square is announced as the item and its count ("Potion, 12 carried"), since a press now docks the panel; the verb is on the panel. The square carries `aria-expanded`, and closing the panel returns focus to it.
 - The hover card keeps the `HoverCard` frame (its footer with the verb). The board draws the verb inside the card body.
 - The Bag's dock note and the Pokedex's dock note are new strings the boards carry.
 - New strings: `catch_box_drop_here`, `catch_picked`, `catch_picked_more`, `catch_picked_from`, `item_pocket_stacks`, `item_pocket_piles`, `item_press_note`, `item_panel_sells`, `item_panel_helps`, `item_panel_helps_count`, `item_panel_helps_none`, `item_panel_use`, `item_panel_close`, `dex_entry_forms`, `dex_tile_seen`, `dex_tile_caught`, `dex_regions`, `dex_key_caught`, `dex_key_seen`, `dex_key_unmet`, `dex_key_forms`, `dex_press_note`, `dex_tile_height`, `dex_tile_weight`, `dex_tile_candy`, `dex_tile_hatch`, `dex_total_label`, `dex_ability_hidden`, `dex_ability_signature`.

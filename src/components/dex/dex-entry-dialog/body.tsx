@@ -138,16 +138,14 @@ export function DexEntryBody(
   return (
     <Show when={showing()} fallback={<Note>{m.dex_no_species()}</Note>}>
       {(entry) => (
-        // The left column holds still and the right one scrolls, so the
-        // pokemon stays in view while its lists are read
+        // Three columns that hold still, each card scrolling on its own:
+        // what it is on the left, what it is made of in the middle, and
+        // what it learns on the right. One column on a phone
         <div
-          class="flex flex-col gap-4 md:grid md:min-h-0 md:flex-1
-            md:grid-cols-[16rem_minmax(0,1fr)] md:gap-0"
+          class="flex flex-col gap-3 md:grid md:min-h-0 md:flex-1
+            md:grid-cols-[17rem_minmax(0,1fr)_minmax(0,1fr)]"
         >
-          <div
-            class="flex min-h-0 flex-col items-center gap-2 text-center md:border-r-2
-              md:border-line-soft md:pr-4"
-          >
+          <div class="flex min-h-0 flex-col gap-3">
             <Portrait
               species={entry().species}
               data={entry().data}
@@ -176,17 +174,26 @@ export function DexEntryBody(
             </Show>
           </div>
 
-          {/* Everything that runs long, scrolling on its own */}
-          <div class="flex min-h-0 flex-col gap-4 md:overflow-y-auto md:pl-4">
-            <Show when={known().met} fallback={<Note>{m.dex_meet_first()}</Note>}>
-              <BaseStats data={entry().data} />
-              <div class="grid gap-4 sm:grid-cols-2">
-                <Abilities species={entry().species} data={entry().data} />
-                <Habitat species={entry().species} />
+          <Show
+            when={known().met}
+            fallback={
+              <div
+                class="flex min-h-40 items-center justify-center rounded-card border-2 border-dashed
+                  border-line p-6 text-center text-[15px] font-bold text-muted md:col-span-2"
+              >
+                {m.dex_meet_first()}
               </div>
+            }
+          >
+            <div class="flex min-h-0 flex-col gap-3">
+              <BaseStats data={entry().data} />
+              <Abilities species={entry().species} data={entry().data} />
+              <Habitat species={entry().species} />
+            </div>
+            <div class="flex min-h-0 flex-col">
               <MoveLists species={entry().species} data={entry().data} />
-            </Show>
-          </div>
+            </div>
+          </Show>
         </div>
       )}
     </Show>

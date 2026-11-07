@@ -244,9 +244,9 @@ export function TabButton(props: ParentProps<{ value: number; class?: string }>)
  * Kept here rather than written out at each panel so the boundary
  * cannot be forgotten at the one panel that later grows a resource
  */
-export function TabPane(props: ParentProps<{ value: number }>): JSX.Element {
+export function TabPane(props: ParentProps<{ value: number; class?: string }>): JSX.Element {
   return (
-    <TabPanel value={props.value}>
+    <TabPanel value={props.value} class={props.class}>
       <Suspense fallback={<Note>{m.ui_loading()}</Note>}>{props.children}</Suspense>
     </TabPanel>
   );

@@ -5,7 +5,9 @@ import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
 import { getSpeciesData, getSpeciesForms, isBaseForm } from '../../../data/species';
 import { hasFemaleSheet } from '../../../canvas/sprites/species-sprites';
-import { Badge, CloseButton, Dialog, Divider, Meta, Note, StepButton } from '../../styled';
+import { Badge, Button, CloseButton, Dialog, Note, tint } from '../../styled';
+import { ArrowLeftIcon, ArrowRightIcon } from '../../icons';
+import { TYPE_COLORS, TYPE_NAMES } from '../../../data/constants/types';
 import TypeBadge from '../../sprites/TypeBadge';
 import { dexLabel } from '../PokedexGrid';
 import { answered } from '../../app/resource-reads';
@@ -31,6 +33,26 @@ export type { DexEntryDialogProps, DexReads };
  * the dex's, and the dex knows what it knows whether or not the player
  * has ever held one.
  */
+
+/** A square step to the entry either side, flat where there is none */
+function Step(props: {
+  label: string;
+  onPress: (() => void) | undefined;
+  children: JSX.Element;
+}): JSX.Element {
+  return (
+    <Button
+      class="size-10 shrink-0 justify-center px-0"
+      label={props.label}
+      disabled={props.onPress == null}
+      onClick={() => {
+        props.onPress?.();
+      }}
+    >
+      {props.children}
+    </Button>
+  );
+}
 
 /**
  * One species in full, opened out of the dex and over it.
@@ -120,48 +142,81 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
     };
   };
 
+  /** The header's wash, in the first type's colour once met */
+  const wash = (): string => {
+    const species = props.species;
+
+    return species == null || !met()
+      ? 'var(--color-line-soft)'
+      : tint(TYPE_COLORS[getSpeciesData(species).types[0]], 14);
+  };
+
   return (
     <Dialog
-      width="broad"
+      width="sheet"
       layout="sheet"
       isOpen={props.species != null}
       onClose={props.onClose}
       // Named apart from the dex it was opened out of, and announced by
-      // that name; the species itself heads the top row
+      // that name; the species itself heads the hero
       title={m.dex_entry_title()}
       quiet
-      bar={
-        <>
-          <StepButton label={m.dex_previous()} way="previous" onPress={walk(-1)} />
-          <span class="mr-auto flex min-w-0 flex-wrap items-center gap-2 text-left">
-            <Show when={props.species}>
-              {(species) => (
-                <>
-                  <h3 class="truncate">
-                    {dexLabel(getSpeciesData(species()).dexNumber)}{' '}
-                    {met() ? getSpeciesData(species()).name : '???'}
-                  </h3>
-                  <Meta>
-                    {met() ? getSpeciesData(species()).category : m.dex_unknown_category()}
-                  </Meta>
-                  <Show when={met()}>
-                    <Divider />
-                    <For each={getSpeciesData(species()).types}>
-                      {(type) => <TypeBadge type={type} />}
-                    </For>
-                    <Badge tone="tide">{m.dex_seen({ count: tally().seen })}</Badge>
-                    <Badge tone="leaf">{m.dex_caught({ count: tally().caught })}</Badge>
-                  </Show>
-                </>
-              )}
-            </Show>
-          </span>
-          <StepButton label={m.dex_next()} way="next" onPress={walk(1)} />
-          <CloseButton onPress={props.onClose} />
-        </>
-      }
       description={m.dex_entry_description()}
     >
+      {/* The hero, as the catch sheet's: the steps either side of the
+          name, what it is, and the way out */}
+      <div
+        class="-mx-4 -mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b-2 border-line-soft
+          px-4 py-3 sm:-mx-5 sm:-mt-5 md:px-4.5"
+        style={{ background: `linear-gradient(180deg, ${wash()}, var(--color-paper))` }}
+      >
+        <Step label={m.dex_previous()} onPress={walk(-1)}>
+          <ArrowLeftIcon class="size-4" aria-hidden="true" />
+        </Step>
+        <Show when={props.species}>
+          {(species) => (
+            <span class="flex min-w-0 grow flex-wrap items-center gap-x-2.5 gap-y-1 md:grow-0">
+              <span class="font-display text-base font-semibold text-muted tabular-nums">
+                {dexLabel(getSpeciesData(species()).dexNumber)}
+              </span>
+              <h3 class="m-0 min-w-0 truncate font-display text-2xl leading-tight font-bold md:text-[32px]">
+                {met() ? getSpeciesData(species()).name : '???'}
+              </h3>
+              <span class="text-sm text-muted">
+                {met() ? getSpeciesData(species()).category : m.dex_unknown_category()}
+              </span>
+              <Show when={met()}>
+                <span aria-hidden="true" class="hidden h-6 w-0.5 bg-line md:block" />
+                <For each={getSpeciesData(species()).types}>
+                  {(type) => (
+                    <span
+                      class="inline-flex h-6 items-center gap-1 rounded-full pr-2.5 pl-1 text-[11px]
+                        font-extrabold text-ink"
+                      style={{ background: tint(TYPE_COLORS[type], 22) }}
+                    >
+                      <TypeBadge type={type} size={16} />
+                      {TYPE_NAMES[type]}
+                    </span>
+                  )}
+                </For>
+                <Badge tone="tide" class="text-xs">
+                  {m.dex_seen({ count: tally().seen })}
+                </Badge>
+                <Badge tone="leaf" class="text-xs">
+                  {m.dex_caught({ count: tally().caught })}
+                </Badge>
+              </Show>
+            </span>
+          )}
+        </Show>
+        <span class="ml-auto flex shrink-0 items-center gap-2">
+          <Step label={m.dex_next()} onPress={walk(1)}>
+            <ArrowRightIcon class="size-4" aria-hidden="true" />
+          </Step>
+          <CloseButton onPress={props.onClose} />
+        </span>
+      </div>
+
       <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
         {/* An entry lists what it can learn and what it can hold, so
             it waits for the two registries the walk does not */}

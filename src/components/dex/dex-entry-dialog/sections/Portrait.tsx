@@ -3,33 +3,9 @@ import type { Species } from '../../../../data/ids/species';
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 import type { SpeciesData } from '../../../../data/species';
 import SpeciesCoat from '../../../sprites/SpeciesCoat';
+import { Segmented } from '../../../styled';
 import { ROTATION } from '../species-facts';
 import { m } from '../../../../i18n/paraglide/messages.js';
-
-/** One half of a two-way switch, pressed or not */
-function Toggle(props: {
-  pressed: boolean;
-  onPress: () => void;
-  children: JSX.Element;
-}): JSX.Element {
-  return (
-    <button
-      type="button"
-      aria-pressed={props.pressed}
-      class={`rounded-none border-2 px-2 py-0.5 text-xs font-bold shadow-none first:rounded-l-lg
-        last:rounded-r-lg active:translate-y-0 ${
-          props.pressed
-            ? 'border-tide bg-tide text-on-accent hover:text-on-accent'
-            : 'border-line bg-paper text-ink'
-        }`}
-      onClick={() => {
-        props.onPress();
-      }}
-    >
-      {props.children}
-    </button>
-  );
-}
 
 export interface PortraitProps {
   species: Species;
@@ -46,73 +22,84 @@ export interface PortraitProps {
   onFemale: (female: boolean) => void;
 }
 
-/** The species turning on its stage, with the coat and sex it is drawn in */
+/**
+ * The species turning on the field stage the catch sheet stands its
+ * pokemon on, with the coat and sex it is drawn in under it
+ */
 export default function Portrait(props: PortraitProps): JSX.Element {
   return (
-    <>
-      {/* A fixed square the sprite is fitted to, so every species
-          takes the same room */}
-      <div class="relative size-36 shrink-0">
-        <SpeciesCoat
-          species={props.species}
-          met={props.met}
-          revealed={props.shiny ? props.ownedShiny : props.owned}
-          shiny={props.shiny}
-          female={props.female}
-          animation={SpriteAnim.Rotate}
-          duration={ROTATION}
-          direction="DownLeft"
-          fill
-          sized
-          called={[
-            props.data.name,
-            ...(props.shiny ? [m.dex_coat_shiny()] : []),
-            ...(props.hasFemale ? [props.female ? m.dex_coat_female() : m.dex_coat_male()] : []),
-          ].join(', ')}
-        />
+    <div class="flex flex-col gap-2.5">
+      <div class="relative h-40 shrink-0 md:h-44">
+        {/* The field is a layer of its own, clipped to its corners, so
+            the species standing on it is never clipped with it */}
+        <div
+          aria-hidden="true"
+          class="absolute inset-0 overflow-hidden rounded-card"
+          style={{
+            background:
+              'linear-gradient(var(--field-sky), var(--field-haze) 58%, var(--field-grass) 58%, var(--field-grass-deep))',
+          }}
+        >
+          <span
+            class="absolute bottom-3 left-1/2 h-7 w-32 -translate-x-1/2 rounded-[50%]
+              shadow-[inset_0_-4px_0_rgb(0_0_0/0.15)]"
+            style={{ background: 'var(--field-base)' }}
+          />
+        </div>
+        {/* A fixed square the sprite is fitted to, so every species takes
+            the same room */}
+        <div class="absolute inset-x-0 top-3 bottom-4 flex justify-center">
+          <div class="relative aspect-square h-full">
+            <SpeciesCoat
+              species={props.species}
+              met={props.met}
+              revealed={props.shiny ? props.ownedShiny : props.owned}
+              shiny={props.shiny}
+              female={props.female}
+              animation={SpriteAnim.Rotate}
+              duration={ROTATION}
+              direction="DownLeft"
+              fill
+              sized
+              called={[
+                props.data.name,
+                ...(props.shiny ? [m.dex_coat_shiny()] : []),
+                ...(props.hasFemale
+                  ? [props.female ? m.dex_coat_female() : m.dex_coat_male()]
+                  : []),
+              ].join(', ')}
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-center gap-1.5">
-        <div class="flex" role="group" aria-label={m.dex_coat()}>
-          <Toggle
-            pressed={!props.shiny}
-            onPress={() => {
-              props.onShiny(false);
-            }}
-          >
-            {m.dex_coat_regular()}
-          </Toggle>
-          <Toggle
-            pressed={props.shiny}
-            onPress={() => {
-              props.onShiny(true);
-            }}
-          >
-            {m.catch_shiny()}
-          </Toggle>
-        </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <Segmented
+          label={m.dex_coat()}
+          value={props.shiny}
+          options={[
+            { value: false, label: m.dex_coat_regular() },
+            { value: true, label: m.catch_shiny() },
+          ]}
+          onChange={(shiny) => {
+            props.onShiny(shiny);
+          }}
+        />
         {/* Only where the females were drawn differently */}
         <Show when={props.hasFemale}>
-          <div class="flex" role="group" aria-label={m.dex_sex()}>
-            <Toggle
-              pressed={!props.female}
-              onPress={() => {
-                props.onFemale(false);
-              }}
-            >
-              ♂
-            </Toggle>
-            <Toggle
-              pressed={props.female}
-              onPress={() => {
-                props.onFemale(true);
-              }}
-            >
-              ♀
-            </Toggle>
-          </div>
+          <Segmented
+            label={m.dex_sex()}
+            value={props.female}
+            options={[
+              { value: false, label: '♂' },
+              { value: true, label: '♀' },
+            ]}
+            onChange={(female) => {
+              props.onFemale(female);
+            }}
+          />
         </Show>
       </div>
-    </>
+    </div>
   );
 }

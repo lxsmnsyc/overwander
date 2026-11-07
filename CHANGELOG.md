@@ -1,5 +1,55 @@
 # overwander
 
+## 4.53.0
+
+### Minor Changes
+
+- ce2fb04: The game has a new look, Field Kit. Text is set in Nunito, with names and numbers in Fredoka. Colours, corners and shadows follow the new design system in day and night.
+  
+  - Buttons squash when pressed and spring back when let go.
+  - Dialogs spring in with their nameplate sliding in after them, and can grow out of the button that opened them.
+  - Tabs slide a pill to the tab you pick. Menus and lists grow out of their button.
+  - Hover cards open after 300ms instead of 400ms.
+  - A toast shows how long it has left, and pauses while the pointer rests on it.
+  - With reduce motion on, panels, menus, cards and toasts only fade in and out, in 120ms. The tab pill and the switch knob jump straight to their new place.
+- 1f55177: The battle view moves its furniture to the corners of the field.
+  
+  - Your side stands on a plate at the top left and the other side on a mirrored plate at the top right. Each counts its pokemon as the balls they were caught in, grey once one is out.
+  - A health bar that drops leaves a gold trail behind it, which drains away once the hits stop.
+  - The fight's name is on a nameplate at the top centre. A replay's speeds sit under it, and on a phone one button steps through them.
+  - Leave is in the bottom right, still confirmed while the fight is live.
+  - Pressing a pokemon docks it on the right: what it is casting, its health, its moves with their cooldowns, its abilities, its items as a tray of icons and its statuses. An item it used up, or one knocked off or stolen, stays in the tray faded (struck through when taken), and its card says what happened. Open sheet opens its catch sheet. On a phone it is a sheet along the bottom.
+  - The countdown is a large ring, each number springing in.
+  - A settled fight shows a results screen over the field: the result, what it paid (each prize popping in), both teams with their damage and share, and the best pokemon on a podium.
+  - In a raid, the boss is on a banner at the top centre with its face, its share left and a badge for the kind of raid. Its bar is marked at three quarters, half and a quarter, and passing a mark is called out (a Noble staggers, an Alpha's kind returns). Your side is on a plate at the bottom left.
+  - With reduce motion on, the springs, the trail and the countdown fade instead.
+- 18e9036: The catch sheet is laid out again on the Field Kit system, so one pokemon reads on one screen.
+  
+  - The top of the sheet shows the pokemon on its field with its ball on the corner, its name large with its level as a tag, its chips, stars, sigil and health, and its marks (Favorite, Buddy, Locked, Shadow, Gigantamax, In a raid) when they apply. The header is washed in its first type's colour.
+  - Its tera type and its candy, with Level Up, are tiles on the right of the header. The candy tile shows only on your own pokemon. The box chip, Actions and a close button sit above them.
+  - Stats are on the left: a hexagon of the six totals over the table of totals, IVs and EVs. The nature badge names the stat it raises and the one it lowers.
+  - Moves are compact cards in the middle, two to a row, each with its name, type and category and its type's colour down its edge. All eight slots fit without scrolling. On a phone each card also shows its power and PP. Abilities and held items are cards under them, the items a row of squares.
+  - Evolution is a line on the right, from the pokemon down to what it can become, with Evolve under each. A line that branches, such as Eevee's, shows its options as tiles side by side. Where it came from and its history are in an Origin card under it.
+  - An egg shows its hatching progress and its origin under the header.
+  - On a phone the sheet is one column: header, moves, abilities and items, stats, evolution, origin.
+  - The cards rise in one after another as the sheet opens and the hexagon grows out of its middle. With reduce motion on, both only fade.
+  - A sheet opened on someone else's pokemon no longer shows the evolutions of the last pokemon of yours that was open.
+- ac233de: The overworld's furniture moves to the corners of the screen, so the middle stays the world.
+  
+  - Bottom left is your trainer corner: your face is the menu button, with your name, gold and the egg you carry beside it. A ring round your face fills as the egg is walked.
+  - The menu grows out of your face. Its keys are three columns (You, Play, Inbox) with what is waiting counted on the right. On a phone it is a sheet along the bottom with the three as tabs, each showing how much is waiting in it.
+  - Bottom centre is a capsule with the place, the weather and the clock. It opens in place into a card with the weather, the types it favours and the six windows the world turns over on. On a phone the capsule shows the weather and the clock.
+  - Your buddy's field moves are round buttons in the bottom right, stacked up the edge on a phone.
+  - Fullscreen is a button in the top right.
+  - On a screen wider than 16:9 the corners stay beside the map instead of out at the edges.
+  - Notes over a cell rise off it and sink back into it, and only fade with reduce motion on.
+
+### Patch Changes
+
+- 751c0d6: The AI weighing Fling or Poltergeist against a pokemon holding more than one item no longer moves the fight's random rolls. The guess reads the first held item; the cast still draws which item it finds.
+- a2caf60: A pokemon gift written by hand refuses room past what a catch can hold. Before, a gift with packed slots above 511 was accepted and then failed when it was written down.
+- de7d998: The dismiss button on an announcement darkens its icon on hover instead of fading it to pale gold.
+
 ## 4.52.1
 
 ### Patch Changes

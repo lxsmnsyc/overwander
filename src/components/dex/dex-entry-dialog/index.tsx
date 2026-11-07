@@ -175,7 +175,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
         </Step>
         <Show when={props.species}>
           {(species) => (
-            <span class="flex min-w-0 grow flex-wrap items-center gap-x-2.5 gap-y-1 md:grow-0">
+            <span class="order-last flex min-w-0 basis-full flex-wrap items-center gap-x-2.5 gap-y-1 md:order-none md:basis-auto">
               <span class="font-display text-base font-semibold text-muted tabular-nums">
                 {dexLabel(getSpeciesData(species()).dexNumber)}
               </span>

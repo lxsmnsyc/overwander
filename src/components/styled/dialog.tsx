@@ -39,11 +39,13 @@ import { PortalHost, usePortalHost } from './portal-host';
  * a few — the catch sheet, the world map — are a page of detail, and
  * asking for room is better than every one of them being that wide
  */
-export type DialogWidth = 'narrow' | 'wide' | 'broad' | 'sheet';
+export type DialogWidth = 'narrow' | 'wide' | 'rail' | 'broad' | 'sheet';
 
 const WIDTHS: Record<DialogWidth, string> = {
   narrow: 'w-[min(92vw,26rem)]',
   wide: 'w-[min(92vw,44rem)]',
+  // A rail of places beside a tray six squares wide: the bag, the dex
+  rail: 'w-[min(96vw,59rem)]',
   // Room for two columns, so a sheet can be read without scrolling
   broad: 'w-[min(96vw,64rem)]',
   // Three columns under a header, for the catch sheet

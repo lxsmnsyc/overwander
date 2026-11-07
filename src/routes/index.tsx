@@ -24,7 +24,7 @@ import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
 import type { DuelLobbyReport } from '../components/duels/DuelLobby';
 import OverworldTab from '../components/overworld/overworld-tab';
-import PokedexTab from '../components/dex/PokedexTab';
+import PokedexDialog from '../components/dex/PokedexDialog';
 import ProfileDialog from '../components/profile/ProfileDialog';
 import ProfileTab from '../components/profile/ProfileTab';
 import QuestsTab from '../components/quests/quests-tab';
@@ -177,21 +177,13 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           />
 
           {/* The dex: what there is, beside the box of what they have */}
-          <Dialog
+          <PokedexDialog
             isOpen={showing(GameDialog.Pokedex)}
             onClose={close}
-            width="wide"
-            terse
+            player={props.user.uid}
             title={TITLES[GameDialog.Pokedex]()}
             description={DESCRIPTIONS[GameDialog.Pokedex]()}
-          >
-            <BattleData>
-              <PokedexTab player={props.user.uid} />
-            </BattleData>
-            <DialogActions>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
+          />
 
           <BagDialog
             isOpen={showing(GameDialog.Inventory)}

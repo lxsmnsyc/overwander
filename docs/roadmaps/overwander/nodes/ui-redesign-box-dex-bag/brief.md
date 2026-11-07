@@ -92,7 +92,7 @@ Decided here, at 390x844: every screen is one column. Boxes keeps its chip row o
 
 - [x] Every item in `log.md` is ticked: none is lost.
 - [x] Desktop matches the four boards in light and dark; reduce motion fades.
-- [ ] Screens that share the pieces (gifts, auctions, trades, team picks, NPC forms, buddy) still work and look right with the restyled grid, card and picker: capture each once.
+- [x] Screens that share the pieces (gifts, auctions, trades, team picks, NPC forms, buddy) still work and look right with the restyled grid, card and picker: capture each once.
 - [x] Changeset `minor`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers).
 
 ## Sizing

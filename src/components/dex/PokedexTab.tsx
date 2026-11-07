@@ -13,11 +13,19 @@ import Regions from '../../data/ids/regions';
 import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon, SearchIcon, StarIcon } from '../icons';
-import type { Species } from '../../data/ids/species';
+import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
 import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/species';
-import PokedexGrid, { DEX_PAGE, type DexEntry, FormsMark, dexLabel } from './PokedexGrid';
-import { Button, Note, RAIL, Segmented, type SegmentedOption, railRow } from '../styled';
+import PokedexGrid, {
+  DEX_PAGE,
+  type DexEntry,
+  FormsMark,
+  SILHOUETTE,
+  dexLabel,
+} from './PokedexGrid';
+import AnimatedSprite from '../sprites/AnimatedSprite';
+import { Button, Note, RAIL, Segmented, type SegmentedOption, TextField, railRow } from '../styled';
+import { formatNumber } from '../../i18n/format';
 import { useGame } from '../app/game-context';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -54,6 +62,9 @@ const FILTERS: [DexFilter, () => string][] = [
   ['missing', m.dex_filter_missing],
 ];
 
+/** Who stands in the key's squares: any species reads, so the best known one */
+const KEY_SPECIES = Species.Pikachu;
+
 /** The filters as the segmented control lists them */
 function listFilters(): SegmentedOption<DexFilter>[] {
   const options: SegmentedOption<DexFilter>[] = [];
@@ -77,7 +88,7 @@ function CountTile(props: { count: number; label: string; tone: 'tide' | 'leaf' 
           props.tone === 'tide' ? 'text-tide' : 'text-leaf'
         }`}
       >
-        {props.count}
+        {formatNumber(props.count)}
       </b>
       <span class="text-[10px] font-extrabold tracking-[0.12em] text-muted uppercase">
         {props.label}
@@ -86,11 +97,31 @@ function CountTile(props: { count: number; label: string; tone: 'tide' | 'leaf' 
   );
 }
 
-/** One square of the key under the grid */
-function KeySwatch(props: { class: string; label: string }): JSX.Element {
+/**
+ * One square of the key under the grid, drawn as a small dex square:
+ * the same frame, and the same sprite or silhouette the squares carry
+ */
+function KeySwatch(props: { look: 'caught' | 'seen' | 'unmet'; label: string }): JSX.Element {
   return (
     <span class="inline-flex items-center gap-1.5">
-      <span aria-hidden="true" class={`size-2.5 rounded-[3px] ${props.class}`} />
+      <span
+        aria-hidden="true"
+        class={`relative size-5 overflow-hidden rounded-[5px] border ${
+          props.look === 'unmet' ? 'border-line/70 bg-line-soft' : 'border-line bg-paper'
+        }`}
+      >
+        <Show when={props.look !== 'unmet'}>
+          <span class="absolute inset-0.5">
+            <AnimatedSprite
+              species={KEY_SPECIES}
+              direction="DownLeft"
+              still
+              fill
+              class={props.look === 'seen' ? SILHOUETTE : ''}
+            />
+          </span>
+        </Show>
+      </span>
       {props.label}
     </span>
   );
@@ -341,7 +372,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
                     />
                   </Show>
                   <span class="ml-auto shrink-0 font-display text-xs font-semibold text-muted tabular-nums">
-                    {tally.seen}/{tally.total}
+                    {formatNumber(tally.seen)}/{formatNumber(tally.total)}
                   </span>
                 </span>
                 <span class="hidden h-[5px] w-full overflow-hidden rounded-full bg-line-soft md:block">
@@ -358,22 +389,18 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
 
       <div class="flex min-w-0 grow flex-col gap-2.5">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label
-            class="flex h-10 min-w-0 grow items-center gap-2 rounded-button border-2 border-line
-              bg-paper px-2.5 transition-colors focus-within:border-tide hover:border-tide"
-          >
-            <SearchIcon class="size-4 shrink-0 text-muted" aria-hidden="true" />
-            <span class="sr-only">{m.dex_find()}</span>
-            <input
-              type="text"
-              placeholder={m.dex_find_placeholder()}
-              value={query()}
-              onInput={(event) => {
-                setQuery(event.currentTarget.value);
-              }}
-              class="min-w-0 grow border-0 bg-transparent text-sm outline-none"
-            />
-          </label>
+          <TextField
+            class="min-w-0 grow"
+            kind="search"
+            label={m.dex_find()}
+            quietLabel
+            leading={<SearchIcon class="size-4" aria-hidden="true" />}
+            placeholder={m.dex_find_placeholder()}
+            value={query()}
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
           <Segmented
             label={m.dex_show()}
             value={filter()}
@@ -416,9 +443,9 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
 
         {/* What the three kinds of square mean, and the forms mark */}
         <div class="flex flex-wrap gap-x-3.5 gap-y-1 text-xs text-muted">
-          <KeySwatch class="bg-leaf" label={m.dex_key_caught()} />
-          <KeySwatch class="bg-ink" label={m.dex_key_seen()} />
-          <KeySwatch class="border border-line bg-line-soft" label={m.dex_key_unmet()} />
+          <KeySwatch look="caught" label={m.dex_key_caught()} />
+          <KeySwatch look="seen" label={m.dex_key_seen()} />
+          <KeySwatch look="unmet" label={m.dex_key_unmet()} />
           <span class="inline-flex items-center gap-1.5 text-tide-dark">
             <FormsMark class="size-3.5" />
             {m.dex_key_forms()}

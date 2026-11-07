@@ -45,22 +45,29 @@ export default function Facts(props: { data: SpeciesData; candy: Resource<number
   const candy = (): number | '?' =>
     failed(props.candy) == null ? (readable(props.candy) ?? 0) : '?';
 
+  /** The candy held as the tile writes it, grouped in the reader's language */
+  const writeCandy = (): string => {
+    const held = candy();
+
+    return held === '?' ? held : formatNumber(held);
+  };
+
   return (
     <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-4 md:grid-cols-2">
       <Tile
         label={m.dex_tile_height()}
-        value={`${props.data.height} m`}
-        said={`${m.dex_tile_height()} ${props.data.height} m`}
+        value={`${formatNumber(props.data.height)} m`}
+        said={`${m.dex_tile_height()} ${formatNumber(props.data.height)} m`}
       />
       <Tile
         label={m.dex_tile_weight()}
-        value={`${props.data.weight} kg`}
-        said={`${m.dex_tile_weight()} ${props.data.weight} kg`}
+        value={`${formatNumber(props.data.weight)} kg`}
+        said={`${m.dex_tile_weight()} ${formatNumber(props.data.weight)} kg`}
       />
       <Tile
         gold
         label={m.dex_tile_candy()}
-        value={String(candy())}
+        value={writeCandy()}
         said={m.battle_candy_earned({ count: candy(), family: getFamilyName(props.data.family) })}
       />
       <Tile

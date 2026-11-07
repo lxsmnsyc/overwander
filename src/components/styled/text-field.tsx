@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import { type JSX, Show } from 'solid-js';
 import { FieldFrame } from './form';
 
 /**
@@ -43,6 +43,10 @@ export interface TextFieldProps {
    * the form's own submit already answers Enter
    */
   onEnter?: () => void;
+  /** Whether the label is read but not drawn (see `FieldFrame`) */
+  quietLabel?: boolean;
+  /** A mark drawn inside the box at its start, such as a magnifier on a search */
+  leading?: JSX.Element;
   class?: string;
 }
 
@@ -56,31 +60,39 @@ export default function TextField(props: TextFieldProps): JSX.Element {
       hint={props.hint}
       error={props.error}
       required={props.required}
+      quietLabel={props.quietLabel}
       class={props.class}
     >
       {(parts) => (
-        <input
-          id={parts.id}
-          type={props.kind ?? 'text'}
-          value={props.value}
-          placeholder={props.placeholder}
-          min={props.min}
-          max={props.max}
-          disabled={props.disabled}
-          autocomplete={props.autocomplete}
-          aria-describedby={parts.describedBy}
-          aria-invalid={props.error == null ? undefined : true}
-          aria-required={props.required}
-          class={`w-full ${props.error == null ? '' : WRONG}`}
-          onInput={(event) => {
-            props.onChange(event.currentTarget.value);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              props.onEnter?.();
-            }
-          }}
-        />
+        <div class="relative flex items-center">
+          <Show when={props.leading}>
+            <span class="pointer-events-none absolute left-2.5 flex items-center text-muted">
+              {props.leading}
+            </span>
+          </Show>
+          <input
+            id={parts.id}
+            type={props.kind ?? 'text'}
+            value={props.value}
+            placeholder={props.placeholder}
+            min={props.min}
+            max={props.max}
+            disabled={props.disabled}
+            autocomplete={props.autocomplete}
+            aria-describedby={parts.describedBy}
+            aria-invalid={props.error == null ? undefined : true}
+            aria-required={props.required}
+            class={`w-full ${props.leading == null ? '' : 'pl-8'} ${props.error == null ? '' : WRONG}`}
+            onInput={(event) => {
+              props.onChange(event.currentTarget.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                props.onEnter?.();
+              }
+            }}
+          />
+        </div>
       )}
     </FieldFrame>
   );

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dex entry</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55)}
+.sheet{position:absolute;left:32px;top:28px;width:1216px;height:664px;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.on{background:#E3ECFA;border-color:#2360C8;color:#163F86}
+.btn.quiet{border-color:transparent;background:transparent;box-shadow:none}
+.round{width:40px;padding:0;justify-content:center}
+.label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;display:flex;align-items:center;gap:6px}
+.hint{width:18px;height:18px;border-radius:9px;border:2px solid #C3D2E8;font-size:10px;display:inline-flex;align-items:center;justify-content:center;color:#2360C8;font-weight:800;letter-spacing:0}
+.hero{display:flex;align-items:center;gap:14px;padding:14px 16px;background:linear-gradient(180deg,#FFF1E8,#fff);border-bottom:2px solid #F3E2D6}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:999px;font-size:11px;font-weight:800}
+.card{border:2px solid #E7EEF8;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:0;animation:rise 280ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{transform:translateY(10px);opacity:0}}
+.seg{display:flex;padding:3px;border-radius:12px;background:#E7EEF8;gap:2px}
+.seg .btn{height:30px;box-shadow:none;font-size:12px}
+.stat{display:grid;grid-template-columns:62px 34px 1fr;gap:8px;align-items:center;font-size:12px;font-weight:700}
+.stat .t{height:8px;border-radius:4px;background:#E7EEF8;overflow:hidden}
+.stat .t span{display:block;height:100%;border-radius:4px;transform-origin:left;animation:grow 600ms 120ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes grow{from{transform:scaleX(0)}}
+.evo{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:12px;border:2px solid transparent;background:transparent;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;color:#14203A;cursor:pointer;text-align:left}
+.evo:hover{background:#F4F7FC}
+.evo.here{border-color:#2360C8;background:#EEF4FC;cursor:default}
+.evo .pic{width:30px;height:30px;border-radius:9px;flex:0 0 30px}
+.row{display:grid;grid-template-columns:34px 6px 1fr 64px;gap:8px;align-items:center;height:32px;padding:0 8px;border-radius:10px;font-size:12px;font-weight:800}
+.row:nth-child(odd){background:#F4F7FC}
+.place{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;font-weight:700;padding:6px 0;border-bottom:2px solid #F4F7FC}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="sheet" role="dialog" aria-label="Dex Entry">
+<!-- Hero: the step buttons either side of the name, as the bar is today -->
+<div class="hero">
+<button class="btn round" aria-label="Previous">‹</button>
+<span style="font-family: Fredoka, sans-serif; font-weight: 600; font-size: 16px; color: #52627F">#006</span>
+<span style="font-family: Fredoka, sans-serif; font-weight: 700; font-size: 32px">{{ name }}</span>
+<span style="font-size: 14px; color: #52627F">{{ category }}</span>
+<sc-if value="{{ met }}" hint-placeholder-val="{{ true }}">
+<span style="width: 2px; height: 24px; background: #F3E2D6"></span>
+<span class="pill" style="background: #FBE2DA; color: #A8361F">Fire</span><span class="pill" style="background: #E3ECFA; color: #163F86">Flying</span>
+<span class="pill" style="background: #E3ECFA; color: #163F86; border: 2px solid #2360C866">Seen 14</span><span class="pill" style="background: #E3F3EA; color: #156B3D; border: 2px solid #1E8F5266">Caught 3</span>
+</sc-if>
+<div style="margin-left: auto; display: flex; gap: 8px">
+<button class="btn" onClick="{{ toggleMet }}">{{ metToggle }}</button>
+<button class="btn round" aria-label="Next">›</button>
+<button class="btn round" aria-label="Close">✕</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 270px 1fr 1fr; gap: 12px; padding: 14px 16px 16px; flex: 1 1 auto; min-height: 0">
+<!-- Left: the portrait and what it is -->
+<div style="display: flex; flex-direction: column; gap: 10px; min-height: 0">
+<div style="position: relative; height: 180px; border-radius: 18px; background: linear-gradient(#BFE3FF, #E6F6FF 58%, #9FD87F 58%, #6FB458); overflow: hidden">
+<span style="position: absolute; left: 50%; top: 34px; width: 96px; height: 96px; margin-left: -48px; border-radius: 26px; background: {{ portrait }}; box-shadow: inset 0 -12px 0 0 {{ portraitShade }}"></span>
+</div>
+<div style="display: flex; gap: 8px">
+<div class="seg" role="radiogroup" aria-label="Coat"><sc-for list="{{ coats }}" as="c" hint-placeholder-count="2"><button class="{{ c.cls }}" onClick="{{ c.pick }}">{{ c.name }}</button></sc-for></div>
+<div class="seg" role="radiogroup" aria-label="Sex"><button class="btn">♂</button><button class="btn quiet">♀</button></div>
+</div>
+<sc-if value="{{ met }}" hint-placeholder-val="{{ true }}">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px">
+<div class="card" style="padding: 8px 10px; gap: 0"><span class="label" style="font-size: 10px">Height</span><b style="font-family: Fredoka, sans-serif; font-size: 18px">1.7 m</b></div>
+<div class="card" style="padding: 8px 10px; gap: 0"><span class="label" style="font-size: 10px">Weight</span><b style="font-family: Fredoka, sans-serif; font-size: 18px">90.5 kg</b></div>
+<div class="card" style="padding: 8px 10px; gap: 0; border-color: #F2B33D66"><span class="label" style="font-size: 10px">Candy</span><b style="font-family: Fredoka, sans-serif; font-size: 18px; color: #8A5A00">42</b></div>
+<div class="card" style="padding: 8px 10px; gap: 0"><span class="label" style="font-size: 10px">Hatches in</span><b style="font-family: Fredoka, sans-serif; font-size: 18px">5,120</b></div>
+</div>
+<div class="card" style="flex: 1 1 auto; gap: 2px">
+<span class="label">Evolution line <span class="hint">?</span></span>
+<button class="evo"><span class="pic" style="background: #F0584A"></span>Charmander</button>
+<span style="font-size: 11px; color: #52627F; padding-left: 46px">↓ Level 16</span>
+<button class="evo"><span class="pic" style="background: #E04A3A"></span>Charmeleon</button>
+<span style="font-size: 11px; color: #52627F; padding-left: 46px">↓ Level 36</span>
+<div class="evo here"><span class="pic" style="background: #F59A3B"></span>Charizard</div>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ met }}" hint-placeholder-val="{{ true }}">
+<!-- Centre: base stats and abilities -->
+<div style="display: flex; flex-direction: column; gap: 12px; min-height: 0">
+<div class="card">
+<span class="label">Base stats <span class="hint">?</span></span>
+<sc-for list="{{ stats }}" as="s" hint-placeholder-count="6"><div class="stat"><span>{{ s.name }}</span><span style="font-family: Fredoka, sans-serif; text-align: right">{{ s.value }}</span><span class="t"><span style="width: {{ s.width }}; background: {{ s.color }}"></span></span></div></sc-for>
+<div class="stat" style="border-top: 2px solid #E7EEF8; padding-top: 6px"><span>Total</span><span style="font-family: Fredoka, sans-serif; text-align: right">534</span><span></span></div>
+</div>
+<div class="card">
+<span class="label">Abilities <span class="hint">?</span></span>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px">
+<span class="pill" style="background: #F4F7FC; border: 2px solid #C3D2E8; height: 30px">Blaze</span>
+<span class="pill" style="background: #E3ECFA; color: #163F86; border: 2px solid #2360C866; height: 30px">Solar Power · hidden</span>
+<span class="pill" style="background: #FDF1D6; color: #8A5A00; border: 2px solid #F2B33D66; height: 30px">Ember Crown · signature</span>
+</div>
+</div>
+<div class="card" style="flex: 1 1 auto">
+<span class="label">Habitat <span class="hint">?</span></span>
+<div class="place"><span class="pill" style="background: #F3EAFE; color: #5A3AA8">Lair</span>Volcano · Badlands</div>
+<div class="place">Volcano<span class="pill" style="background: #F4F7FC">Day</span><span class="pill" style="background: #F4F7FC">Dusk</span></div>
+<div class="place" style="border: 0">Towns: Ember Rest<span class="pill" style="background: #F4F7FC">Night</span></div>
+</div>
+</div>
+
+<!-- Right: moves, by how they are learned -->
+<div class="card" style="min-height: 0">
+<span class="label">Moves <span class="hint">?</span></span>
+<div class="seg" role="tablist"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button class="{{ t.cls }}" role="tab" onClick="{{ t.pick }}">{{ t.name }}</button></sc-for></div>
+<div style="display: flex; flex-direction: column; overflow: hidden">
+<sc-for list="{{ moves }}" as="mv" hint-placeholder-count="10"><div class="row"><span style="font-family: Fredoka, sans-serif; color: #52627F">{{ mv.lv }}</span><span style="height: 18px; border-radius: 3px; background: {{ mv.color }}"></span><span>{{ mv.name }}</span><span style="text-align: right; font-family: Fredoka, sans-serif; color: #52627F">{{ mv.power }}</span></div></sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ unmet }}" hint-placeholder-val="{{ false }}">
+<div style="grid-column: 2 / span 2; display: flex; align-items: center; justify-content: center; border: 2px dashed #C3D2E8; border-radius: 18px; color: #52627F; font-size: 15px; font-weight: 700">Meet this pokemon to fill in its entry.</div>
+</sc-if>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { coat: 0, tab: 0, met: true }; }
+  renderVals() {
+    const s = this.state;
+    const coats = ['Regular', 'Shiny'].map((n, i) => ({ name: n, cls: i === s.coat ? 'btn' : 'btn quiet', pick: () => this.setState({ coat: i }) }));
+    const tabs = ['Level', 'Machines', 'Egg'].map((n, i) => ({ name: n, cls: i === s.tab ? 'btn' : 'btn quiet', pick: () => this.setState({ tab: i }) }));
+    const stats = [['HP', 78, '#36B26F'], ['Attack', 84, '#F59A3B'], ['Defense', 78, '#F7C969'], ['Sp. Atk', 109, '#2360C8'], ['Sp. Def', 85, '#7A63C9'], ['Speed', 100, '#E94B6A']]
+      .map(([name, value, color]) => ({ name, value, color, width: Math.round(value / 160 * 100) + '%' }));
+    const sets = [
+      [['1', 'Scratch', '#C3C3B0', '40 · 35'], ['1', 'Growl', '#C3C3B0', '— · 40'], ['7', 'Ember', '#F59A3B', '40 · 25'], ['13', 'Smokescreen', '#C3C3B0', '— · 20'], ['17', 'Dragon Breath', '#7A63C9', '60 · 20'], ['24', 'Fire Fang', '#F59A3B', '65 · 15'], ['30', 'Slash', '#C3C3B0', '70 · 20'], ['36', 'Air Slash', '#8FB8F0', '75 · 15'], ['46', 'Flamethrower', '#F59A3B', '90 · 15'], ['54', 'Flare Blitz', '#F59A3B', '120 · 15']],
+      [['', 'Solar Beam', '#36B26F', '120 · 10'], ['', 'Earthquake', '#C9A36A', '100 · 10'], ['', 'Dragon Claw', '#7A63C9', '80 · 15'], ['', 'Roost', '#8FB8F0', '— · 10']],
+      [['', 'Dragon Dance', '#7A63C9', '— · 20'], ['', 'Ancient Power', '#B8A06A', '60 · 5']],
+    ];
+    const moves = sets[s.tab].map(([lv, name, color, power]) => ({ lv, name, color, power }));
+    return {
+      coats, tabs, stats, moves,
+      met: s.met, unmet: !s.met,
+      name: s.met ? 'Charizard' : '???',
+      category: s.met ? 'Flame Pokemon' : 'Unknown',
+      metToggle: s.met ? 'Show unmet' : 'Show met',
+      toggleMet: () => this.setState({ met: !s.met }),
+      portrait: s.met ? (s.coat === 1 ? '#3A3A44' : '#F59A3B') : '#14203A',
+      portraitShade: s.met ? (s.coat === 1 ? '#22222A' : '#C9771F') : '#0B1222',
+    };
+  }
+}
+</script>
+</body>
+</html>

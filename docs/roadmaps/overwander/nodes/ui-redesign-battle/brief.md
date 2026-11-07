@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-battle
 title: Redesign the battle view
-status: active
+status: done
 priority: must
 type: feature
 outline: false

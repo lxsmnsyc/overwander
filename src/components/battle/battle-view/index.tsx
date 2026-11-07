@@ -15,7 +15,8 @@ import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
 import Countdown from './Countdown';
 import LeaveDialog from './LeaveDialog';
-import VerdictDialog from './VerdictDialog';
+import Inspector from './Inspector';
+import ResultsScreen from './results';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
@@ -100,9 +101,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const [dismissed, setDismissed] = createSignal(false);
   // Whether the player is being asked to confirm walking out of a live fight
   const [leaving, setLeaving] = createSignal(false);
+  /** The pokemon a press docked in the inspector */
+  const [inspected, setInspected] = createSignal<Unit | null>(null);
   /**
-   * The catch sheet a pressed pokemon opened, if it stands for a
-   * record at all: a raid boss belongs to nobody and has none
+   * The catch sheet the inspector's Open sheet opened, which it offers
+   * only for a pokemon that stands for a record: a raid boss belongs to
+   * nobody and has none
    */
   const [opened, setOpened] = createSignal<Unit | null>(null);
   const [speed, setSpeed] = createSignal(1);
@@ -281,11 +285,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   return (
     <section class="flex h-full w-full flex-col overflow-hidden">
-      {/* The field is the page. What each pokemon is — its level, its
-          moves, what it carries, what is stuck to it — is a card that
-          comes up over whichever one the pointer is on, rather than a
-          row of them along each edge: a row lying over each end of the
-          field covered exactly the pokemon a player was watching */}
+      {/* The field is the page. What a pokemon is (its level, moves,
+          items and statuses) is a card over the one under the pointer,
+          and a press docks it in the inspector on the right. The rest
+          of the furniture keeps to the corners */}
       <div class="relative min-h-0 grow">
         <Show
           when={instance()}
@@ -301,12 +304,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
               biome={record()?.biome}
               player={auth.user()?.uid ?? ''}
               onPick={(unit) => {
-                // A pokemon that stands for no record — the raid boss,
-                // and anything a demo or a test builds outright — has
-                // no sheet to open
-                if (unit.caught !== '') {
-                  setOpened(unit);
-                }
+                setInspected(unit);
               }}
               onReady={watch.ready}
             />
@@ -331,7 +329,32 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                   : undefined
               }
               onLeave={askToLeave}
+              kind={staged()?.kind ?? null}
+              raised={inspected() != null}
             />
+          )}
+        </Show>
+
+        {/* The pressed pokemon, docked at the right edge, in the same
+            16:9 frame as the plates */}
+        <Show when={instance()}>
+          {(built) => (
+            <div
+              class="pointer-events-none absolute inset-0 z-20 mx-auto max-w-[calc(100dvh*16/9)]
+                @container"
+            >
+              <Inspector
+                battle={built().battle}
+                unit={inspected()}
+                raid={raiding()}
+                onClose={() => {
+                  setInspected(null);
+                }}
+                onOpenSheet={(unit) => {
+                  setOpened(unit);
+                }}
+              />
+            </div>
           )}
         </Show>
 
@@ -340,8 +363,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         <Countdown left={counting()} />
 
         {/* Anything that went wrong writing the result down. It is not
-            the verdict — that has a dialog of its own — so it sits out
-            of the way rather than under the field */}
+            the verdict, which has a screen of its own, so it sits out of
+            the way at the foot of the field */}
         <div
           class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3
           text-center"
@@ -350,10 +373,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         </div>
       </div>
 
-      {/* Pressing a pokemon opens its sheet. Anybody else's — a
-          teammate's in a raid, the other trainer's in a stop — is
-          shown and nothing more, since none of it is the reader's to
-          change */}
+      {/* Open sheet in the inspector opens this. Anybody else's (a
+          teammate's in a raid, the other trainer's in a stop) is shown
+          and nothing more, since none of it is the reader's to change */}
       <CatchDialog
         player={auth.user()?.uid ?? ''}
         catchId={opened()?.caught ?? null}
@@ -372,12 +394,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         }}
       />
 
-      {/* A fight that has been won or lost says so rather than leaving
-          a line of text under a field that is no longer moving. It
-          opens the moment the engine settles it, and closing it leaves
-          the player on the finished field rather than walking them out
-          — the prize is already recorded either way */}
-      <VerdictDialog
+      {/* A fight that has been won or lost says so over the field. It
+          opens the moment the engine settles it, and Stay and look
+          leaves the player on the finished field rather than walking
+          them out: the prize is already recorded either way */}
+      <ResultsScreen
         verdict={verdict}
         outcome={outcome()}
         spoils={props.spoils?.() ?? null}

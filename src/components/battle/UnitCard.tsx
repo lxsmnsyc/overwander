@@ -6,6 +6,7 @@ import { ABILITY_PILLS } from '../details';
 import { getSpeciesData } from '../../data/species';
 import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
+import { HealthTrack } from './battle-view/plates';
 import { type UnitReading, readHealth, readUnit } from './battle-view/unit-reading';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -120,16 +121,18 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
 
   return (
     <li
-      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line text-left text-xs
-        ${props.tip === true ? 'bg-paper px-3 pt-2 pb-2.5 shadow-float' : 'bg-paper/95 px-2 py-1.5 shadow-pop-sm'}
+      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-card border-2 border-line text-left text-xs
+        ${props.tip === true ? 'bg-paper px-3 pt-2.5 pb-3 shadow-float' : 'bg-paper/95 px-2.5 py-2 shadow-pop-sm'}
         ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
           difference between a party member and the thing killing it is
           usually the level */}
-      <div class="flex items-baseline gap-1 truncate">
-        <span class="text-muted">{m.ow_level({ level: unit().level })}</span>
-        <strong class="truncate">{getSpeciesData(unit().species).name}</strong>
+      <div class="flex items-baseline gap-1.5 truncate">
+        <span class="font-extrabold text-muted">{m.ow_level({ level: unit().level })}</span>
+        <strong class="truncate font-display text-[15px] font-semibold">
+          {getSpeciesData(unit().species).name}
+        </strong>
       </div>
 
       {/* One bar cut in two: what it has left on top, what it is
@@ -138,17 +141,12 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           and the answer to "will it get the move off" is both halves
           at once */}
       <div class="flex items-center gap-1">
-        <div class="grow overflow-hidden rounded-full border border-line-soft bg-line-soft">
-          <div class="h-1.5">
-            <div
-              class={`h-full ${unit().alive ? 'bg-leaf' : 'bg-muted'}`}
-              style={{ width: `${health() * 100}%` }}
-            />
-          </div>
+        <div class="flex grow flex-col gap-0.5">
+          <HealthTrack value={health()} tone={unit().alive ? 'leaf' : 'muted'} class="h-2" />
           {/* The lower half is empty while nothing is being wound up,
               rather than absent: a bar that changed height every time
               its pokemon threw a move would push the card about */}
-          <div class="h-1.5">
+          <div class="h-1.5 overflow-hidden rounded-full bg-line-soft">
             <Show when={view().acting}>
               {(acting) => (
                 <div
@@ -169,7 +167,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             rarely divisible by sixteen — and printed raw it is
             seventeen digits wide, which pushes the bar beside it out
             of the card entirely */}
-        <span class="shrink-0 tabular-nums text-muted">
+        <span class="shrink-0 font-display font-semibold tabular-nums text-muted">
           {Math.max(0, Math.round(unit().health))}
         </span>
       </div>
@@ -178,7 +176,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           moving */}
       <Show when={view().acting}>
         {(acting) => (
-          <Meta class="truncate">
+          <Meta
+            class={`truncate font-extrabold ${
+              acting().channelling ? 'text-arcane-dark' : 'text-gold-dark'
+            }`}
+          >
             {acting().channelling
               ? m.battle_channelling({ move: acting().name })
               : m.battle_casting({ move: acting().name })}
@@ -206,12 +208,12 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
               <li>
                 <MoveTooltip class="block" move={move().move}>
                   <span
-                    class="relative block overflow-hidden rounded border border-line-soft
-                      bg-line-soft px-1 py-0.5"
+                    class="relative block overflow-hidden rounded-[7px] bg-line-soft px-1.5 py-0.5
+                      font-bold"
                   >
                     <span
                       class={`absolute inset-y-0 left-0 ${
-                        move().disabled ? 'bg-muted/30' : 'bg-tide/30'
+                        move().disabled ? 'bg-muted/20' : 'bg-leaf-soft'
                       }`}
                       style={{ width: `${move().ready * 100}%` }}
                     />
@@ -239,7 +241,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
                   description={ability.description}
                 >
                   <span
-                    class={`block truncate rounded border px-1 py-0.5 ${ABILITY_PILLS[ability.kind]}`}
+                    class={`block truncate rounded-full border px-1.5 py-0.5 font-bold ${ABILITY_PILLS[ability.kind]}`}
                   >
                     {ability.name}
                   </span>
@@ -255,8 +257,8 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
               <li>
                 <TooltipHost class="block" kind="item" {...item}>
                   <span
-                    class="block truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5
-                      text-gold-dark"
+                    class="block truncate rounded-full border border-gold/60 bg-gold-soft px-1.5
+                      py-0.5 font-bold text-gold-dark"
                   >
                     {item.name}
                   </span>
@@ -275,7 +277,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             {(status) => (
               <TooltipHost class="inline-flex" kind="status" name={getStatusName(status)}>
                 <span
-                  class="size-2.5 rounded-[2px]"
+                  class="size-3 rounded-[4px]"
                   style={{ 'background-color': STATUS_COLORS[status] }}
                   aria-label={getStatusName(status)}
                   role="img"

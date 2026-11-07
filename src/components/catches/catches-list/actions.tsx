@@ -193,75 +193,71 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
         <span class="mr-1 font-display text-base font-semibold text-leaf-dark tabular-nums">
           {m.catch_selected({ count: count() })}
         </span>
+        <Show when={count() > 0 && props.busy !== true}>
+          <Menu
+            label={m.catch_move_to({ count: count() })}
+            tone="primary"
+            sheet
+            heading={m.catch_move_to({ count: count() })}
+            face={
+              <span class="inline-flex items-center gap-1.5">
+                <BoxIcon class="size-4" aria-hidden="true" />
+                {m.catch_move_to({ count: count() })}
+              </span>
+            }
+            actions={destinations()}
+          />
+        </Show>
+        <Button
+          disabled={props.busy === true || count() === 0}
+          onClick={() => {
+            props.onFavorite(favoriting());
+          }}
+        >
+          {favoriting()
+            ? m.catch_favorite_count({ count: count() })
+            : m.catch_unfavorite_count({ count: count() })}
+        </Button>
+        <Button
+          disabled={props.busy === true || count() === 0}
+          onClick={() => {
+            props.onGuard(guarding());
+          }}
+        >
+          {guarding()
+            ? m.catch_lock_count({ count: count() })
+            : m.catch_unlock_count({ count: count() })}
+        </Button>
+        {/* Two presses, the way the sheet asks: the second says what it
+            is doing and what it pays */}
+        <Button
+          tone={releasing() ? 'danger' : 'caution'}
+          disabled={props.busy === true || going().length === 0}
+          onClick={release}
+        >
+          {releasing()
+            ? m.catch_release_ask({ count: going().length })
+            : m.catch_release_count({ count: going().length })}
+        </Button>
         <Show
           when={releasing()}
           fallback={
-            <>
-              <Show when={count() > 0 && props.busy !== true}>
-                <Menu
-                  label={m.catch_move_to({ count: count() })}
-                  tone="primary"
-                  sheet
-                  heading={m.catch_move_to({ count: count() })}
-                  face={
-                    <span class="inline-flex items-center gap-1.5">
-                      <BoxIcon class="size-4" aria-hidden="true" />
-                      {m.catch_move_to({ count: count() })}
-                    </span>
-                  }
-                  actions={destinations()}
-                />
-              </Show>
-              <Button
-                disabled={props.busy === true || count() === 0}
-                onClick={() => {
-                  props.onFavorite(favoriting());
-                }}
-              >
-                {favoriting()
-                  ? m.catch_favorite_count({ count: count() })
-                  : m.catch_unfavorite_count({ count: count() })}
-              </Button>
-              <Button
-                disabled={props.busy === true || count() === 0}
-                onClick={() => {
-                  props.onGuard(guarding());
-                }}
-              >
-                {guarding()
-                  ? m.catch_lock_count({ count: count() })
-                  : m.catch_unlock_count({ count: count() })}
-              </Button>
-              {/* Two presses, the way the sheet asks: the second says
-                  what it is doing and what it pays */}
-              <Button
-                tone="caution"
-                disabled={props.busy === true || going().length === 0}
-                onClick={release}
-              >
-                {m.catch_release_count({ count: going().length })}
-              </Button>
-              <Button tone="quiet" disabled={count() === 0} onClick={props.onClear}>
-                {m.catch_clear()}
-              </Button>
-            </>
+            <Button tone="quiet" disabled={count() === 0} onClick={props.onClear}>
+              {m.catch_clear()}
+            </Button>
           }
         >
           <Button
-            tone="danger"
-            disabled={props.busy === true || going().length === 0}
-            onClick={release}
-          >
-            {m.catch_release_ask({ count: going().length })}
-          </Button>
-          <Button
+            tone="quiet"
             onClick={() => {
               setReleasing(false);
             }}
           >
             {m.catch_keep_them()}
           </Button>
-          {/* The price, read before the second press */}
+        </Show>
+        {/* The price, read before the second press */}
+        <Show when={releasing() && going().length > 0}>
           <For each={candyPiles(going())}>
             {([family, paid]) => (
               <Badge tone="gold">

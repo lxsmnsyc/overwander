@@ -571,6 +571,7 @@ export function AuctionBoard(
                   class="block size-full"
                   trigger={<span class="block size-full" />}
                   title={titleCatch(lots()?.get(entry().id))}
+                  quietTitle
                   kind={m.auction_kind_lot()}
                   footer={(close) => (
                     <>

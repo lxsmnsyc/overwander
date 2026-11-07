@@ -1,5 +1,5 @@
 import { For, type JSX, Show } from 'solid-js';
-import { Species } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
 import { isEgg } from '../../../model/egg';
 import { isShiny } from '../../../model/caught-record';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
@@ -41,19 +41,22 @@ export default function PickedTray(props: { chosen: CatchOption[] }): JSX.Elemen
         <ul class="m-0 flex list-none flex-row flex-wrap gap-1 p-0">
           <For each={shown()}>
             {(option) => (
-              <li
-                class="relative size-7 rounded-chip border-2 border-leaf/40 bg-paper"
-                role="img"
-                aria-label={describeCatch(option.caught)}
-                title={describeCatch(option.caught)}
-              >
-                <AnimatedSprite
-                  species={isEgg(option.caught) ? Species.Egg : option.caught.species}
-                  shiny={isShiny(option.caught)}
-                  direction="DownLeft"
-                  still
-                  fill
-                />
+              <li class="relative size-7 rounded-chip border-2 border-leaf/40 bg-paper">
+                <span
+                  role="img"
+                  aria-label={describeCatch(option.caught)}
+                  title={describeCatch(option.caught)}
+                  class="absolute inset-0"
+                >
+                  <AnimatedSprite
+                    species={isEgg(option.caught) ? Species.Egg : option.caught.species}
+                    shiny={isShiny(option.caught)}
+                    female={!isEgg(option.caught) && option.caught.gender === Genders.Female}
+                    direction="DownLeft"
+                    still
+                    fill
+                  />
+                </span>
               </li>
             )}
           </For>

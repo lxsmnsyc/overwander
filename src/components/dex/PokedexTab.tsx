@@ -390,7 +390,8 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
       <div class="flex min-w-0 grow flex-col gap-2.5">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
           <TextField
-            class="min-w-0 grow"
+            // As tall as the filter track beside it, as the board draws it
+            class="min-w-0 grow [&_input]:h-10"
             kind="search"
             label={m.dex_find()}
             quietLabel

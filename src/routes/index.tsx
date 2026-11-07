@@ -15,7 +15,7 @@ import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
-import InventoryList, { BagHint } from '../components/items/inventory-list';
+import BagDialog from '../components/items/inventory-list';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
@@ -193,22 +193,13 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             </DialogActions>
           </Dialog>
 
-          <Dialog
+          <BagDialog
             isOpen={showing(GameDialog.Inventory)}
             onClose={close}
-            width="wide"
-            terse
-            aside={<BagHint />}
+            player={props.user.uid}
             title={TITLES[GameDialog.Inventory]()}
             description={DESCRIPTIONS[GameDialog.Inventory]()}
-          >
-            <BattleData>
-              <InventoryList player={props.user.uid} />
-            </BattleData>
-            <DialogActions>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
+          />
 
           {/* What the game owes them, which is a shelf rather than an
               announcement: nothing is theirs until they take it */}

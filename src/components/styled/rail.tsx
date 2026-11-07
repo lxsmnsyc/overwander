@@ -1,5 +1,5 @@
 import type { JSX, ParentProps } from 'solid-js';
-import { Tab } from 'terracotta';
+import { Tab, TabList } from 'terracotta';
 
 /**
  * A rail: the column of places down the left of a sheet (boxes,
@@ -69,5 +69,14 @@ export function RailTab(props: ParentProps<{ value: number; class?: string }>): 
     >
       {props.children}
     </Tab>
+  );
+}
+
+/** The rail as a tab list, for rows that are `RailTab`s */
+export function RailTabs(props: ParentProps<{ label: string; class?: string }>): JSX.Element {
+  return (
+    <TabList aria-label={props.label} class={`${RAIL} ${props.class ?? ''}`}>
+      {props.children}
+    </TabList>
   );
 }

@@ -36,7 +36,7 @@ export type { MenuAction, MenuProps } from './menu';
 export { LIST_PAGE, createPager } from './pager';
 export type { Pager } from './pager';
 export { default as RadioGroup } from './radio-group';
-export { RAIL, RailCount, RailTab, railRow } from './rail';
+export { RAIL, RailCount, RailTab, RailTabs, railRow } from './rail';
 export { default as Segmented } from './segmented';
 export type { SegmentedOption, SegmentedProps } from './segmented';
 export { CARD, CARD_TITLE, riseAfter, tint } from './card';

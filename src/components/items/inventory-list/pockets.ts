@@ -11,7 +11,7 @@ export const ALL_ITEMS = -1;
 export const CANDIES = -2;
 
 /** An item's type, or null for one the registry does not know */
-export function typeOf(item: Items): ItemTypes | null {
+export function getItemType(item: Items): ItemTypes | null {
   try {
     return getItemData(item).type;
   } catch {
@@ -67,3 +67,27 @@ export function relicVerb(item: Items, named: string): string {
   }
   return isUsable(item) ? m.item_cell_verb({ verb: m.catch_use(), item: named }) : named;
 }
+
+/**
+ * Each pocket's colour, so a pocket is found by colour as a box is.
+ * Drawn from the theme where a token means the same thing (medicine is
+ * health, a ball a catch); the rest share the box palette
+ */
+export const POCKET_TONES: Record<ItemTypes, string> = {
+  [ItemTypes.Medicine]: 'var(--color-leaf)',
+  [ItemTypes.PokeBall]: 'var(--color-ember)',
+  [ItemTypes.Berry]: 'var(--color-gold)',
+  [ItemTypes.Held]: 'var(--color-tide)',
+  [ItemTypes.Machine]: 'var(--color-arcane)',
+  [ItemTypes.KeyItem]: '#5e7291',
+  [ItemTypes.Evolution]: '#2f8f8a',
+  [ItemTypes.Valuable]: '#c4497e',
+  [ItemTypes.Training]: '#e2702b',
+  [ItemTypes.Fossil]: '#94643a',
+};
+
+/** The colour of All, which is every pocket at once */
+export const ALL_TONE = 'var(--color-line)';
+
+/** The colour of the candy jar, the gold of its tray */
+export const CANDY_TONE = 'var(--color-gold)';

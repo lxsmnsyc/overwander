@@ -1614,6 +1614,42 @@
   "item_bag_empty": "No llevas nada.",
   "item_use_on": "Usar en",
   "item_use_on_empty": "No tienes nada en lo que usarlo.",
+  "item_pocket_stacks": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} tipo",
+        "countPlural=*": "{count} tipos"
+      }
+    }
+  ],
+  "item_pocket_piles": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} montón",
+        "countPlural=*": "{count} montones"
+      }
+    }
+  ],
+  "item_press_note": "Pulsa un objeto para verlo aquí",
+  "item_panel_sells": "Se vende por {price}",
+  "item_panel_helps": "Le sirve a",
+  "item_panel_helps_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "1 de tus Pokémon",
+        "countPlural=*": "{count} de tus Pokémon"
+      }
+    }
+  ],
+  "item_panel_helps_none": "Ahora no le sirve a ninguno de los tuyos.",
+  "item_panel_use": "Usar en…",
+  "item_panel_close": "Guardar {item}",
   "item_bag_loading": "Mirando en la Mochila…",
   "item_picker_empty": "No hay nada en la Mochila para esto.",
   "item_picker_less": "Uno menos",

@@ -1461,6 +1461,42 @@
   "item_bag_empty": "Carrying nothing.",
   "item_use_on": "Use it on",
   "item_use_on_empty": "You have nothing to use it on.",
+  "item_pocket_stacks": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} stack",
+        "countPlural=*": "{count} stacks"
+      }
+    }
+  ],
+  "item_pocket_piles": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} pile",
+        "countPlural=*": "{count} piles"
+      }
+    }
+  ],
+  "item_press_note": "Press an item to see it here",
+  "item_panel_sells": "Sells for {price}",
+  "item_panel_helps": "Helps",
+  "item_panel_helps_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "1 of your pokemon",
+        "countPlural=*": "{count} of your pokemon"
+      }
+    }
+  ],
+  "item_panel_helps_none": "None of yours right now.",
+  "item_panel_use": "Use it on…",
+  "item_panel_close": "Put {item} back",
   "item_bag_loading": "Looking through the bag…",
   "item_picker_empty": "Nothing in the bag for this.",
   "item_picker_less": "One less",

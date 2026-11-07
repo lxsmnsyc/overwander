@@ -27,6 +27,8 @@ export interface CandyPile {
 
 export interface CandyGridProps {
   piles: CandyPile[];
+  /** Whether the tray takes the whole width it is given, as the bag's does */
+  fill?: boolean;
 }
 
 export default function CandyGrid(props: CandyGridProps): JSX.Element {
@@ -46,10 +48,14 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
     return slots;
   };
 
+  /** A square's shape: wider than tall in a tray that fills its column */
+  const square = (): string =>
+    props.fill === true ? 'aspect-square sm:aspect-[3/2]' : 'aspect-square';
+
   return (
-    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
+    <div class={`mx-auto flex w-full flex-col gap-2 ${props.fill === true ? '' : 'max-w-lg'}`}>
       <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-gold bg-parchment p-1.5
+        class="grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-gold bg-gold-soft/40 p-2
           shadow-pop"
       >
         {/* `Index` rather than `For`, as the bag's tray does: the piles
@@ -69,8 +75,8 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
                   family: getFamilyName(pile().family),
                   count: pile().count,
                 })}
-                class="relative flex aspect-square w-full items-center justify-center rounded-lg
-                    border-2 border-line bg-paper p-1"
+                class={`relative flex w-full items-center justify-center rounded-button border-2
+                  border-line bg-paper p-1 ${square()}`}
               >
                 {/* Laid over the square rather than in it, so a
                       narrow square is not stretched taller than it is
@@ -79,8 +85,9 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
                   <CandySprite family={pile().family} fill label="" />
                 </span>
                 <span
-                  class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border
-                      border-line bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+                  class="pointer-events-none absolute right-1 bottom-1 inline-flex h-[18px] min-w-5
+                    items-center justify-center rounded-full bg-ink px-1.5 font-display text-[11px]
+                    font-semibold text-paper tabular-nums"
                 >
                   {pile().count}
                 </span>
@@ -94,7 +101,7 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
           {() => (
             <span
               aria-hidden="true"
-              class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+              class={`w-full rounded-button border-2 border-dashed border-gold/40 ${square()}`}
             />
           )}
         </For>

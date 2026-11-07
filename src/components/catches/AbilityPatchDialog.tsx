@@ -45,11 +45,17 @@ export interface AbilityPatchDialogProps {
 }
 
 const OPTION =
-  'flex cursor-pointer items-center justify-between gap-2 rounded-xl border-2 px-3 py-2 text-sm' +
-  ' shadow-pop-sm transition-colors border-line bg-paper hover:border-tide' +
-  ' aria-checked:border-leaf aria-checked:bg-leaf-soft focus-visible:outline-2' +
-  ' focus-visible:outline-offset-2 focus-visible:outline-tide aria-disabled:cursor-not-allowed' +
-  ' aria-disabled:opacity-55 aria-disabled:hover:border-line';
+  'relative flex cursor-pointer items-center justify-between gap-2 rounded-card border-2' +
+  ' border-line bg-paper px-3 py-2.5 pr-9 text-sm shadow-pop-sm' +
+  ' transition-[border-color,background-color,translate] duration-(--motion-quick) ease-spring' +
+  ' hover:-translate-y-0.5 hover:border-tide aria-checked:border-leaf aria-checked:bg-leaf-soft' +
+  ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide' +
+  ' aria-disabled:cursor-not-allowed aria-disabled:opacity-55 aria-disabled:hover:border-line';
+
+/** The tick in a chosen card's corner */
+const TICK =
+  'absolute top-2 right-2 flex size-5 items-center justify-center rounded-full bg-leaf' +
+  ' text-[11px] font-black text-on-accent';
 
 /** One ability as the sheet draws it: its name, and what it does */
 function AbilityLine(props: { ability: Abilities }): JSX.Element {
@@ -198,12 +204,18 @@ function PatchBody(
                     setChosen(picked);
                   }
                 }}
-                class="flex flex-col gap-2"
+                class="grid gap-2 sm:grid-cols-2"
               >
                 <For each={given()}>
                   {(ability, at) => (
                     <RadioGroupOption value={at()} class={OPTION}>
                       <AbilityLine ability={ability} />
+                      <span
+                        aria-hidden="true"
+                        class={`${TICK} ${chosen() === at() ? '' : 'opacity-0'}`}
+                      >
+                        ✓
+                      </span>
                     </RadioGroupOption>
                   )}
                 </For>

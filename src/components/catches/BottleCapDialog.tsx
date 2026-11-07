@@ -142,6 +142,7 @@ function CapBody(
         fallback={<Note>{m.catch_cap_all_perfect()}</Note>}
       >
         <RadioGroup
+          cards
           label={m.catch_cap_stat()}
           value={chosen()}
           options={options()}

@@ -274,6 +274,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         return;
       }
       event.preventDefault();
+      // A docked inspector is the nearest layer, so it closes first
+      if (inspected() != null) {
+        setInspected(null);
+        return;
+      }
       askToLeave();
     };
 

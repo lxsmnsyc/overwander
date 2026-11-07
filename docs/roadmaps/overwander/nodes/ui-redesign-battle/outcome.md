@@ -40,7 +40,7 @@
 - The canvas draws no ring round a picked unit (the board's white outline). The canvas is out of scope, so the inspector is the only sign of a pick.
 - The boss banner reads the boss unit alone. The old wide meter summed the boss's side, so it rose each time an Alpha's copy or a Totem's ally joined.
 - The countdown's `role="status"` moved from a full-field wrapper to the ring. The base layer draws every `[role='status']` as a panel, and the old countdown drew a white box across the field.
-- Escape still leaves while the inspector is open, as before. Closing the inspector is its × button.
+- Escape closes a docked inspector first, then asks to leave as before.
 - The board's speeds and Leave are plain white buttons; Leave keeps the kit's ghost `Button` (it was the green primary before).
 
 ## Stubs left

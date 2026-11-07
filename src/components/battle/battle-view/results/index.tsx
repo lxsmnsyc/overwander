@@ -149,7 +149,8 @@ function ResultsBody(
   return (
     <>
       {/* Focusable, so the dialog's first focus lands on the word at the
-          top: landing on the buttons scrolled a phone's column past it */}
+          top: landing on the buttons scrolled a phone's column past it.
+          Terracotta's first focus skips tabindex -1, so it stays 0 */}
       <DialogTitle
         tabIndex={0}
         class="motion-crossfade m-0 outline-none text-center font-display text-5xl font-bold tracking-[0.02em]

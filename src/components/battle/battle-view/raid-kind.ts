@@ -55,12 +55,35 @@ function describeKindName(kind: RaidKind, tera: Types): string {
   }
 }
 
+/**
+ * Whether a `#rrggbb` fill is light enough that white words on it are
+ * hard to read (Electric, Ice, Normal), by its relative luminance
+ */
+function isLightFill(color: string): boolean {
+  const channels: number[] = [];
+
+  for (let at = 1; at < 7; at += 2) {
+    const value = Number.parseInt(color.slice(at, at + 2), 16) / 255;
+    channels.push(value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+  }
+  const luminance = 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+
+  // Where dark ink and white words on the fill have equal contrast
+  return luminance > 0.179;
+}
+
 export function describeKind(kind: RaidKind, tera: Types): KindBadge {
-  return {
-    label: describeKindName(kind, tera),
-    tone: KIND_TONES[kind],
-    color: kind === RaidKind.Tera && tera !== Types.Unknown ? TYPE_COLORS[tera] : undefined,
-  };
+  if (kind === RaidKind.Tera && tera !== Types.Unknown) {
+    const color = TYPE_COLORS[tera];
+
+    return {
+      label: describeKindName(kind, tera),
+      // A type's own fill takes dark words when it is light
+      tone: isLightFill(color) ? 'text-on-gold' : 'text-on-accent',
+      color,
+    };
+  }
+  return { label: describeKindName(kind, tera), tone: KIND_TONES[kind] };
 }
 
 /**

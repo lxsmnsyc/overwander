@@ -289,7 +289,7 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
       let crossed: number | null = null;
 
       for (const tick of BOSS_TICKS) {
-        if (health < tick && !passed.has(tick)) {
+        if (health <= tick && !passed.has(tick)) {
           passed.add(tick);
           crossed = tick;
         }
@@ -401,7 +401,11 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
                 )}
               </Show>
 
-              {/* Said once as the boss passes a tick, under the banner */}
+              {/* Said once as the boss passes a tick, under the banner. The
+                  region stays mounted so a screen reader hears each one */}
+              <span class="sr-only" role="status">
+                {callout()?.text ?? ''}
+              </span>
               <Show when={callout()} keyed>
                 {(said) => (
                   <span
@@ -409,7 +413,7 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
                       rounded-none border-0 bg-transparent p-0 text-center font-display text-2xl font-bold
                       text-white shadow-none [paint-order:stroke_fill]
                       [-webkit-text-stroke:4px_var(--color-shade)] sm:mt-14 sm:text-[28px]"
-                    role="status"
+                    aria-hidden="true"
                     data-at={said.at}
                   >
                     {said.text}

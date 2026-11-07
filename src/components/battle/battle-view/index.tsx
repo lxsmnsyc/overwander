@@ -1,4 +1,12 @@
-import { type JSX, Show, createResource, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  type JSX,
+  Show,
+  createMemo,
+  createResource,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import type Unit from '../../../battle/unit';
 import type { CandyEarned } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
@@ -174,20 +182,31 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return m.battle_victory_raid();
   };
 
-  /** The fight's contributions and its sides, both only once the battle has settled */
-  const contributions = (): Contribution[] => {
+  /**
+   * The fight's contributions and its sides, both only once the battle
+   * has settled. A settled battle no longer changes, so each is read
+   * once and kept: the watch still ticks `revision` while the view is
+   * open, and fresh rows every tick would remount the results' cards
+   */
+  const contributions = createMemo<Contribution[]>((last) => {
     revision();
     const built = instance();
 
-    return built == null || !built.battle.settled ? [] : readContributions(built);
-  };
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+    return last.length > 0 ? last : readContributions(built);
+  }, []);
 
-  const sides = (): SideSummary[] => {
+  const sides = createMemo<SideSummary[]>((last) => {
     revision();
     const built = instance();
 
-    return built == null || !built.battle.settled ? [] : readSides(built);
-  };
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+    return last.length > 0 ? last : readSides(built);
+  }, []);
 
   /**
    * Who the rows belong to, by nickname. Read once when the verdict

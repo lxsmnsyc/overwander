@@ -31,14 +31,16 @@ const DOCK = {
   enter: 'motion-crossfade transition-[opacity,translate] duration-(--motion-move) ease-spring',
   enterFrom:
     'opacity-0 translate-y-full sm:translate-x-[calc(100%+1rem)] sm:translate-y-0' +
-    ' in-[.reduce-motion]:translate-x-0 in-[.reduce-motion]:translate-y-0',
+    ' in-[.reduce-motion]:translate-x-0 in-[.reduce-motion]:translate-y-0' +
+    ' sm:in-[.reduce-motion]:translate-x-0',
   enterTo: 'opacity-100 translate-x-0 translate-y-0',
   entered: 'opacity-100',
   leave: 'motion-crossfade transition-[opacity,translate] duration-(--motion-move-exit) ease-exit',
   leaveFrom: 'opacity-100 translate-x-0 translate-y-0',
   leaveTo:
     'opacity-0 translate-y-full sm:translate-x-[calc(100%+1rem)] sm:translate-y-0' +
-    ' in-[.reduce-motion]:translate-x-0 in-[.reduce-motion]:translate-y-0',
+    ' in-[.reduce-motion]:translate-x-0 in-[.reduce-motion]:translate-y-0' +
+    ' sm:in-[.reduce-motion]:translate-x-0',
 } as const;
 
 /** What a move's row says on its right: ready, the seconds left, or off */

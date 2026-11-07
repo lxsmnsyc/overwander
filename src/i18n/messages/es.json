@@ -394,7 +394,7 @@
   "battle_callout_stagger": "¡Aturdido!",
   "battle_callout_kind": "¡Vuelven los suyos!",
   "battle_callout_ally": "¡Llama a un aliado!",
-  "battle_move_ready": "lista",
+  "battle_move_ready": "listo",
   "battle_move_seconds": "{seconds} s",
   "battle_move_off": "bloqueado",
   "battle_health_of": "{health}/{max}",

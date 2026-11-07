@@ -1,28 +1,12 @@
-// The battle keys its statuses and moves by const-enum members, which
-// Object.keys hands back as strings; the assertions below put the enum
-// type back on them
-// oxlint-disable typescript/no-unsafe-type-assertion
 import { For, Index, type JSX, Show, createMemo } from 'solid-js';
-import type { ProgressData } from '../../battle/events';
-import { castShownAs } from '../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../battle/unit';
-import { Stats } from '../../data/constants/stats';
-import type Abilities from '../../data/ids/abilities';
-import type { Items } from '../../data/ids/items';
-import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getStatusName } from '../../model/health';
-import {
-  ABILITY_PILLS,
-  type AbilityKind,
-  abilityKind,
-  detailAbility,
-  detailItem,
-} from '../details';
-import { getMoveData } from '../../data/moves';
+import { ABILITY_PILLS } from '../details';
 import { getSpeciesData } from '../../data/species';
 import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
+import { type UnitReading, readHealth, readUnit } from './battle-view/unit-reading';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -108,22 +92,6 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.PowerShifted]: '#d69a5a',
 };
 
-/**
- * How far along a timed thing is, as a fraction of itself. Everything
- * the engine times — a cooldown coming back, a move being wound up —
- * counts up to its own duration, so they are all read the same way.
- * Nothing timed at all is finished by definition: a move that is not
- * cooling is a move that can be thrown now
- */
-function fractionOf(progress: ProgressData | undefined): number {
-  if (progress == null) {
-    return 1;
-  }
-  return progress.duration <= 0
-    ? 1
-    : Math.min(1, Math.max(0, progress.progress / progress.duration));
-}
-
 export interface UnitCardProps {
   unit: Unit;
   /**
@@ -141,95 +109,14 @@ export interface UnitCardProps {
 }
 
 export default function UnitCard(props: UnitCardProps): JSX.Element {
-  /**
-   * One reading of the unit, recomputed only when that unit moved
-   */
-  const view = createMemo(() => {
-    const unit = props.unit;
-    // The one thing being cast or channelled, read as a picture of
-    // this instant rather than as the engine's own object: the state
-    // is mutated in place and swapped out under us, and a card holding
-    // the object would be showing a cast that finished a second ago
-    const acting = unit.casting ?? unit.channeling;
-
-    const statuses: Statuses[] = [];
-
-    for (const status of Object.keys(unit.status) as unknown as Statuses[]) {
-      if (unit.status[status] != null) {
-        statuses.push(status);
-      }
-    }
-
-    // Reduced here in the memo, because a `For` row reads its item once
-    // and a cooldown read in the markup would never move
-    const moves: { move: Moves; name: string; disabled: boolean; ready: number }[] = [];
-
-    for (const move of Object.values(unit.moves)) {
-      // The plain swing every unit is fielded with is not one of its moves
-      if (move.move === Moves.Attack) {
-        continue;
-      }
-      moves.push({
-        move: move.move,
-        name: getMoveData(move.move).name,
-        disabled: move.disabled,
-        ready: fractionOf(move.cooldown),
-      });
-    }
-
-    // Only the enabled half: a suppressed ability or an eaten item is
-    // one the pokemon no longer has
-    const abilities: { name: string; description: string; kind: AbilityKind }[] = [];
-
-    for (const key of Object.keys(unit.abilities)) {
-      const ability: Abilities = Number(key);
-
-      if (unit.abilities[ability] === true) {
-        abilities.push({ ...detailAbility(ability), kind: abilityKind(unit.species, ability) });
-      }
-    }
-
-    const items: { name: string; description: string }[] = [];
-
-    for (const key of Object.keys(unit.items)) {
-      const item: Items = Number(key);
-
-      if (unit.items[item] === true) {
-        items.push(detailItem(item));
-      }
-    }
-
-    return {
-      at: props.revision(),
-      unit,
-      maxHealth: unit.checkStat(Stats.HP, 0),
-      statuses,
-      moves,
-      abilities,
-      items,
-      /**
-       * What it is in the middle of doing, if anything. A move being
-       * wound up is the one thing on a card that says what is about
-       * to happen rather than what has already happened
-       */
-      acting:
-        acting == null
-          ? null
-          : {
-              name: getMoveData(castShownAs(unit, acting)).name,
-              channelling: unit.channeling != null,
-              done: fractionOf(acting.time),
-            },
-    };
+  /** One reading of the unit, recomputed only when that unit moved */
+  const view = createMemo((): UnitReading => {
+    props.revision();
+    return readUnit(props.unit);
   });
 
   const unit = (): Unit => view().unit;
-
-  const health = (): number => {
-    const max = view().maxHealth;
-
-    return max <= 0 ? 0 : Math.max(0, Math.min(1, unit().health / max));
-  };
+  const health = (): number => readHealth(view());
 
   return (
     <li

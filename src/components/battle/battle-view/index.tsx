@@ -13,11 +13,13 @@ import createBattleWatch, { type Outcome } from '../../../game/battle/watch';
 import BattleField from '../BattleField';
 import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
+import Countdown from './Countdown';
+import LeaveDialog from './LeaveDialog';
 import VerdictDialog from './VerdictDialog';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
-import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
+import { Note, Status, useToast } from '../../styled';
 import type { ActiveBattle, PendingReward, Spoils } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -334,23 +336,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         </Show>
 
         {/* Three seconds to look at the field before anything happens
-            in it. It is drawn over the middle of the fight because the
-            fight is what it is counting down to */}
-        <Show when={counting()}>
-          {(left) => (
-            <div
-              class="pointer-events-none absolute inset-0 flex items-center justify-center"
-              role="status"
-            >
-              <span
-                class="rounded-full border-4 border-tide bg-paper/90 px-6 py-3 text-4xl
-                  font-extrabold tabular-nums shadow-pop backdrop-blur-sm"
-              >
-                {left()}
-              </span>
-            </div>
-          )}
-        </Show>
+            in it */}
+        <Countdown left={counting()} />
 
         {/* Anything that went wrong writing the result down. It is not
             the verdict — that has a dialog of its own — so it sits out
@@ -376,32 +363,14 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         }}
       />
 
-      {/* Walking out of a live fight is confirmed first, because it
-          cannot be walked back: a grunt's fight is conceded on the
-          way out, and a raid holds the party until it settles */}
-      <Dialog
+      <LeaveDialog
         isOpen={leaving()}
-        onClose={() => {
+        said={leavingSaid()}
+        onLeave={leave}
+        onStay={() => {
           setLeaving(false);
         }}
-        title={m.battle_leave_title()}
-        description={m.battle_leave_description()}
-        terse
-      >
-        <p class="text-center">{leavingSaid()}</p>
-        <DialogActions>
-          <Button tone="primary" onClick={leave}>
-            {m.battle_leave_anyway()}
-          </Button>
-          <Button
-            onClick={() => {
-              setLeaving(false);
-            }}
-          >
-            {m.battle_keep_fighting()}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      />
 
       {/* A fight that has been won or lost says so rather than leaving
           a line of text under a field that is no longer moving. It

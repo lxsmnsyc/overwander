@@ -2,6 +2,7 @@ import type { JSX, Resource } from 'solid-js';
 import { EGG_HATCH_STEPS } from '../../../../model/egg';
 import { type SpeciesData, getFamilyName } from '../../../../data/species';
 import { failed, readable } from '../../../app/resource-reads';
+import { formatNumber } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /** One fact as a tile: a word over a number */
@@ -64,7 +65,7 @@ export default function Facts(props: { data: SpeciesData; candy: Resource<number
       />
       <Tile
         label={m.dex_tile_hatch()}
-        value={EGG_HATCH_STEPS.toLocaleString()}
+        value={formatNumber(EGG_HATCH_STEPS)}
         said={m.dex_hatch_steps({ count: EGG_HATCH_STEPS })}
       />
     </div>

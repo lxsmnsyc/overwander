@@ -15,7 +15,7 @@ import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
-import InventoryList, { BagHint } from '../components/items/InventoryList';
+import InventoryList, { BagHint } from '../components/items/inventory-list';
 import LoginForm from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';

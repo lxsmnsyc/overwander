@@ -3,139 +3,49 @@ import {
   type JSX,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
 } from 'solid-js';
-import { type CandyStack, getCandies } from '../../auth/candy';
-import { getCaught } from '../../auth/caught';
-import { capAsksForStat } from '../../data/items/bottle-caps';
-import {
-  ItemFlags,
-  ItemTypes,
-  type Items,
-  getMachineMove,
-  isMachineItem,
-} from '../../data/ids/items';
-import type { Moves } from '../../data/ids/moves';
-import { isAbilityPatch } from '../../data/items/ability-items';
-import { isPPItem } from '../../data/items/vitamins';
-import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import { getLocalOffset } from '../../model/local-time';
-import useEscapeRope from '../../auth/escape-rope';
-import { hostMythicalRaid } from '../../auth/raids';
-import { isEscapeRope } from '../../data/items/escape-rope';
-import { getRaidSpecies } from '../../data/items/raid-items';
-import { getItemData } from '../../data/items';
-import { ITEM_TYPE_ORDER } from '../../data/items/names';
-import CatchPicker from '../catches/catch-picker';
-import AbilityPatchDialog from '../catches/AbilityPatchDialog';
-import IncreasePPDialog from '../catches/IncreasePPDialog';
-import BottleCapDialog from '../catches/BottleCapDialog';
-import { askTeachings } from '../forms/teach-move';
-import CandyGrid, { type CandyPile } from './CandyGrid';
-import ItemGrid, { type ItemCell } from './ItemGrid';
-import { describeItem } from '../details';
-import spendItemOn, { isUsableOn } from '../../game/items/use-item';
-import { getLevelMovesBetween } from '../../model/level-moves';
-import spentToast, { playSpentCue } from './spent-toast';
-import { GameDialog, useGame } from '../app/game-context';
-import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
-import settings, { setSetting } from '../app/settings';
-import { failed, readable } from '../app/resource-reads';
-import describeFailure from '../../i18n/refusals';
-import { m } from '../../i18n/paraglide/messages.js';
+import type { CandyStack } from '../../../auth/candy';
+import { getCaught } from '../../../auth/caught';
+import { capAsksForStat } from '../../../data/items/bottle-caps';
+import { type ItemTypes, type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
+import type { Moves } from '../../../data/ids/moves';
+import { isAbilityPatch } from '../../../data/items/ability-items';
+import { isPPItem } from '../../../data/items/vitamins';
+import type { InventoryEntry } from '../../../auth/inventory';
+import { getLocalOffset } from '../../../model/local-time';
+import useEscapeRope from '../../../auth/escape-rope';
+import { hostMythicalRaid } from '../../../auth/raids';
+import { isEscapeRope } from '../../../data/items/escape-rope';
+import { ITEM_TYPE_ORDER } from '../../../data/items/names';
+import CatchPicker from '../../catches/catch-picker';
+import AbilityPatchDialog from '../../catches/AbilityPatchDialog';
+import IncreasePPDialog from '../../catches/IncreasePPDialog';
+import BottleCapDialog from '../../catches/BottleCapDialog';
+import { askTeachings } from '../../forms/teach-move';
+import CandyGrid, { type CandyPile } from '../CandyGrid';
+import ItemGrid, { type ItemCell } from '../ItemGrid';
+import { describeItem } from '../../details';
+import spendItemOn, { isUsableOn } from '../../../game/items/use-item';
+import { getLevelMovesBetween } from '../../../model/level-moves';
+import spentToast, { playSpentCue } from '../spent-toast';
+import { GameDialog, useGame } from '../../app/game-context';
+import { Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../../styled';
+import settings, { setSetting } from '../../app/settings';
+import { failed, readable } from '../../app/resource-reads';
+import describeFailure from '../../../i18n/refusals';
+import { ALL_ITEMS, CANDIES, POCKET_NAMES, isRelic, isUsable, relicVerb, typeOf } from './pockets';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface InventoryListProps {
   player: string;
 }
 
-/** The items tab that holds every type at once, beside one tab per type */
-const ALL_ITEMS = -1;
-
-/** The candy pocket, numbered past the item types like `ALL_ITEMS` */
-const CANDIES = -2;
-
-/** An item's type, or null for one the registry does not know */
-function typeOf(item: Items): ItemTypes | null {
-  try {
-    return getItemData(item).type;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Whether this is a thing that gets spent on a pokemon — a remedy, a
- * cap, a machine. Everything else in the bag is held, sold or carried
- * until somebody asks for it, and has nothing to press.
- *
- * A relic is `Usable` too but goes nowhere near a pokemon, so it is
- * kept out of this one and answered by `isRelic` instead
- */
-function isUsable(item: Items): boolean {
-  try {
-    return (getItemData(item).flags & ItemFlags.Usable) !== 0;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Whether pressing it opens a raid rather than asking for a pokemon.
- * A relic is spent on a place, not on anything the bag could pick
- */
-function isRelic(item: Items): boolean {
-  return getRaidSpecies(item) != null;
-}
-
 /** How many different things a pocket holds, beside its name */
 function Count(props: { of: number }): JSX.Element {
   return <span class="ml-2 text-xs font-normal tabular-nums opacity-80">{props.of}</span>;
-}
-
-/** What each pocket of the bag is called: plural, since a pocket names a shelf */
-const POCKET_NAMES: Record<ItemTypes, () => string> = {
-  [ItemTypes.Medicine]: m.item_pocket_medicine,
-  [ItemTypes.PokeBall]: m.item_pocket_balls,
-  [ItemTypes.Berry]: m.item_pocket_berries,
-  [ItemTypes.Held]: m.item_pocket_held,
-  [ItemTypes.Machine]: m.item_pocket_machines,
-  [ItemTypes.KeyItem]: m.item_pocket_key,
-  [ItemTypes.Evolution]: m.item_pocket_evolution,
-  [ItemTypes.Valuable]: m.item_pocket_valuables,
-  [ItemTypes.Training]: m.item_pocket_training,
-  [ItemTypes.Fossil]: m.item_pocket_fossils,
-};
-
-/** What pressing this square is announced as doing, with the item named */
-function relicVerb(item: Items, named: string): string {
-  if (isRelic(item)) {
-    return m.item_open_raid_with({ item: named });
-  }
-  if (isEscapeRope(item)) {
-    return m.item_climb_out_with({ item: named });
-  }
-  return isUsable(item) ? m.item_cell_verb({ verb: m.catch_use(), item: named }) : named;
-}
-
-/** What the bag's pockets hold and what pressing does, for the dialog's title bar */
-export function BagHint(): JSX.Element {
-  return (
-    <Hint title={m.item_bag_help()}>
-      <HintList>
-        <li>{m.item_bag_help_use()}</li>
-        <li>{m.item_bag_help_medicine()}</li>
-        <li>{m.item_bag_help_held()}</li>
-        <li>{m.item_bag_help_machines()}</li>
-        <li>{m.item_bag_help_training()}</li>
-        <li>{m.item_bag_help_fossils()}</li>
-        <li>{m.item_bag_help_candies()}</li>
-      </HintList>
-    </Hint>
-  );
 }
 
 /**
@@ -157,7 +67,7 @@ interface Teaching {
  * `Suspense` written there and land on the boundary around the whole
  * page, so the reading half is its own component
  */
-function BagBody(
+export default function BagBody(
   props: InventoryListProps & {
     items: Resource<InventoryEntry[]>;
     candies: Resource<CandyStack[]>;
@@ -168,7 +78,7 @@ function BagBody(
   const toast = useToast();
   /**
    * What has been chosen to spend, while the pokemon to spend it on is
-   * being picked. The bag asks in that order — item, then pokemon —
+   * being picked. The bag asks in that order (item, then pokemon)
    * because that is the order the player is thinking in
    */
   const [using, setUsing] = createSignal<Items | null>(null);
@@ -373,8 +283,8 @@ function BagBody(
    *
    * The bag used to hand the pair to the catch sheet and let it do the
    * spending, which meant every potion opened a whole screen about the
-   * pokemon it was spent on. The two items that ask a question back —
-   * a machine, a bottle — ask it here instead
+   * pokemon it was spent on. The two items that ask a question back
+   * (a machine, a bottle) ask it here instead
    */
   const spend = (catchId: string, item: Items): void => {
     const move = isMachineItem(item) ? getMachineMove(item) : null;
@@ -555,28 +465,5 @@ function BagBody(
         }}
       />
     </>
-  );
-}
-
-/**
- * What the player carries. The stacks are read one component down,
- * under this boundary, so a bag still arriving replaces the list
- * rather than the panel it is drawn in
- */
-export default function InventoryList(props: InventoryListProps): JSX.Element {
-  const [items, { refetch }] = createResource(() => props.player, getInventory);
-  const [candies] = createResource(() => props.player, getCandies);
-
-  return (
-    <Suspense fallback={<Note>{m.item_bag_loading()}</Note>}>
-      <BagBody
-        {...props}
-        items={items}
-        candies={candies}
-        onSpent={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
   );
 }

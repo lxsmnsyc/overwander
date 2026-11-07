@@ -345,7 +345,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           the tray was given, so an icon in the flow would stretch a
           narrow square taller than it is wide */}
       <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-        <ItemSprite item={cell.item} fill label="" />
+        {/* A square as tall as the square's inside: the icon fills a
+            width, so a wide square would draw it larger than a plain one */}
+        <span class="aspect-square h-full max-w-full">
+          <ItemSprite item={cell.item} fill label="" />
+        </span>
       </span>
       {/* How many, in the corner the games put it in */}
       <Show when={cell.amount != null}>

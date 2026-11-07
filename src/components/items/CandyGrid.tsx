@@ -82,7 +82,11 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
                       narrow square is not stretched taller than it is
                       wide */}
                 <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-                  <CandySprite family={pile().family} fill label="" />
+                  {/* Square, and as tall as the square's inside, so a wide
+                      square draws the candy no larger than a plain one */}
+                  <span class="aspect-square h-full max-w-full">
+                    <CandySprite family={pile().family} fill label="" />
+                  </span>
                 </span>
                 <span
                   class="pointer-events-none absolute right-1 bottom-1 inline-flex h-[18px] min-w-5

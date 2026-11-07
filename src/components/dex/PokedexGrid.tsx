@@ -232,13 +232,18 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
                         : 'inset-x-1.5 top-3 bottom-1'
                     }`}
                   >
-                    <AnimatedSprite
-                      species={entry().species}
-                      direction="DownLeft"
-                      still
-                      fill
-                      class={entry().caught ? '' : SILHOUETTE}
-                    />
+                    {/* The sprite fits a square box by its share of it, so a
+                        wide square would stretch it: it is drawn in a square
+                        as tall as the room */}
+                    <span class="flex aspect-square h-full max-w-full items-center justify-center">
+                      <AnimatedSprite
+                        species={entry().species}
+                        direction="DownLeft"
+                        still
+                        fill
+                        class={entry().caught ? '' : SILHOUETTE}
+                      />
+                    </span>
                   </span>
                 </Show>
               </button>

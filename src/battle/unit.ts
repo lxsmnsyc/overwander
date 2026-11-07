@@ -4,7 +4,7 @@ import type { Stats } from '../data/constants/stats';
 import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
-import type { Items } from '../data/ids/items';
+import type { Balls, Items } from '../data/ids/items';
 import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves';
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
@@ -129,6 +129,12 @@ export default class Unit {
    * reads it
    */
   shiny = false;
+
+  /**
+   * The ball it sits in, copied off its record for its side's plate.
+   * Unset for anything with no record behind it. No mechanic reads it
+   */
+  ball?: Balls;
 
   /**
    * Whether it carries the Gigantamax Factor, copied off its record:

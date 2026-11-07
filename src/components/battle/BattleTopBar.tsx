@@ -158,7 +158,11 @@ function SidePlate(props: { side: SideStanding; mirrored: boolean; class?: strin
         <span class="truncate font-display text-[15px] font-semibold sm:text-lg">
           {props.side.label}
         </span>
-        <StandingCount standing={props.side.standing} total={props.side.total} />
+        <StandingCount
+          balls={props.side.balls}
+          standing={props.side.standing}
+          total={props.side.total}
+        />
       </div>
       <HealthTrack
         value={props.side.health}

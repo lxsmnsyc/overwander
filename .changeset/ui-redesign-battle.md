@@ -4,7 +4,7 @@
 
 The battle view moves its furniture to the corners of the field.
 
-- Your side stands on a plate at the top left and the other side on a mirrored plate at the top right. Each counts its pokemon as balls, grey once one is out.
+- Your side stands on a plate at the top left and the other side on a mirrored plate at the top right. Each counts its pokemon as the balls they were caught in, grey once one is out.
 - A health bar that drops leaves a gold trail behind it, which drains away once the hits stop.
 - The fight's name is on a nameplate at the top centre. A replay's speeds sit under it, and on a phone one button steps through them.
 - Leave is in the bottom right, still confirmed while the fight is live.

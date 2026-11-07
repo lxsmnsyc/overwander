@@ -5,6 +5,7 @@ import type Unit from '../../../battle/unit';
 import { Stats } from '../../../data/constants/stats';
 import type { Types } from '../../../data/constants/types';
 import Abilities from '../../../data/ids/abilities';
+import { Balls } from '../../../data/ids/items';
 import type { Species } from '../../../data/ids/species';
 import { getSpeciesData } from '../../../data/species';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -22,6 +23,12 @@ export const STANDING_EVENTS = [
   BattleEvents.TeamAddUnit,
 ] as const;
 
+/** One pokemon on a side's plate */
+export interface BallPip {
+  ball: Balls;
+  up: boolean;
+}
+
 /** How one side of the fight stands */
 export interface SideStanding {
   label: string;
@@ -29,6 +36,8 @@ export interface SideStanding {
   health: number;
   standing: number;
   total: number;
+  /** Each pokemon on the side in order: the ball it sits in, and whether it still stands */
+  balls: BallPip[];
   /** The reader's own side, or the first side for a spectator */
   friendly: boolean;
 }
@@ -56,8 +65,11 @@ function readSide(units: Unit[], label: string, friendly: boolean): SideStanding
   let health = 0;
   let most = 0;
   let standing = 0;
+  const balls: BallPip[] = [];
 
   for (const unit of units) {
+    // Anything with no record behind it (a boss, a wild pokemon) is drawn in a Poke Ball
+    balls.push({ ball: unit.ball ?? Balls.PokeBall, up: unit.alive });
     health += Math.max(0, unit.health);
     most += Math.max(1, unit.checkStat(Stats.HP, 0));
     if (unit.alive) {
@@ -69,6 +81,7 @@ function readSide(units: Unit[], label: string, friendly: boolean): SideStanding
     health: most <= 0 ? 0 : Math.min(1, health / most),
     standing,
     total: units.length,
+    balls,
     friendly,
   };
 }

@@ -5,7 +5,7 @@ import type { TeamSnapshotRecord } from '../../auth/teams';
 import { BattleModes } from '../../battle/battle';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
-import { Items } from '../../data/ids/items';
+import { Balls, Items } from '../../data/ids/items';
 import { getSpeciesData } from '../../data/species';
 import { RaidKind } from '../../model/raid-record';
 import { BOSS_ALLIANCE } from '../../overworld/raid';
@@ -69,6 +69,16 @@ const DUEL_SIZE = 3;
 /** A record id, so Open sheet is offered on the reader's own pokemon */
 const DEMO_CATCH = 'demo-catch';
 
+/** The balls the duel's parties sit in, so each plate shows a mix */
+const DEMO_BALLS: Balls[] = [
+  Balls.UltraBall,
+  Balls.DuskBall,
+  Balls.LuxuryBall,
+  Balls.GreatBall,
+  Balls.QuickBall,
+  Balls.PremierBall,
+];
+
 /** How long after the field is drawn the inspector docks and the results open */
 const INSPECT_AFTER = 1200;
 const VERDICT_AFTER = 9000;
@@ -82,8 +92,12 @@ function stageDuel(seed: string): RaidBattle {
   for (const [at, team] of rolled.slice(1, 3).entries()) {
     const catches = [];
 
-    for (const caught of team.catches.slice(0, DUEL_SIZE)) {
-      catches.push({ ...caught, caught: at === 0 ? DEMO_CATCH : '' });
+    for (const [slot, caught] of team.catches.slice(0, DUEL_SIZE).entries()) {
+      catches.push({
+        ...caught,
+        caught: at === 0 ? DEMO_CATCH : '',
+        ball: DEMO_BALLS[(at * DUEL_SIZE + slot) % DEMO_BALLS.length],
+      });
     }
     teams.push({ player: `demo-${at + 1}`, alliance: at, catches });
   }

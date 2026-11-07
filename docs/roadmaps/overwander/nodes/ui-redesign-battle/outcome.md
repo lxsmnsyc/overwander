@@ -5,7 +5,7 @@
 - **Battle view** on the approved "Battle" and "Raid" boards (`docs/design/field-kit/Battle.dc.html`, `Raid.dc.html`). The field (`battle-canvas.tsx`, the lit scene, move visuals) is untouched. What the battle sends and reads (`createBattleWatch`, rewards, leaving, replay) is unchanged.
 - **Frame**: every piece of chrome sits in a frame capped at 16:9 of the screen's height (`max-w-[calc(100dvh*16/9)]`, `@container`), the same rule as the overworld HUD. Width caps are in `cqw` of that frame.
 - **Top bar** (`BattleTopBar.tsx`), for two sides:
-  - Your side on a glass plate at the top left, the other side mirrored at the top right: the name in Fredoka, ball pips for the count (grey when out; words past 8 pokemon), and the health track. A spectator sees "Side 1" and "Side 2". The count and the percent stay for a screen reader.
+  - Your side on a glass plate at the top left, the other side mirrored at the top right: the name in Fredoka, ball pips for the count, each the item sprite of the ball that pokemon sits in (grey when out; words past 8 pokemon), and the health track. A spectator sees "Side 1" and "Side 2". The count and the percent stay for a screen reader.
   - A tide nameplate at the top centre with the title, or Replay with its Awards nothing chip. A replay's speeds are a glass group of three under it.
   - Leave at the bottom right, still confirmed by the leave dialog.
 - **Damage trail** on every health track (`HealthTrack` in `battle-view/plates.tsx`): a gold ghost holds the old width and drains to the new one 300ms after the hits stop. Two CSS width transitions, no timers.
@@ -54,6 +54,12 @@ A fresh review of the branch found these, all fixed in one commit:
 - A Tera badge on a light type colour gets dark words, by the fill's luminance.
 - es `battle_move_ready` is "listo" (a move is masculine).
 - Kept: the results title stays `tabIndex={0}`. Terracotta's first focus skips `tabindex="-1"`, so `-1` would undo the phone scroll fix.
+
+## Ball pips (after review)
+
+- The pips were CSS circles that did not read as a ball. Each is now the ball's item sprite, the ball the catch sits in.
+- Outside the owned paths: `CatchSnapshot.ball` (optional, `src/model/catch-snapshot.ts`), set by `createCatchSnapshot` and read back by `asCatchSnapshot` and `previewSnapshot`; `Unit.ball` (`src/battle/unit.ts`, no mechanic reads it), set in `addUnit` (`src/overworld/raid/battle.ts`). No migration: a snapshot written before the field, a boss and a called ally draw as a Poke Ball.
+- `SideStanding.balls` lists each unit's ball and whether it stands. The demo duel puts its parties in six different balls.
 
 ## Stubs left
 

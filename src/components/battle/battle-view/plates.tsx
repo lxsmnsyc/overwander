@@ -1,5 +1,8 @@
 import { Index, type JSX, Show } from 'solid-js';
 import { m } from '../../../i18n/paraglide/messages.js';
+import { BALL_ITEMS } from '../../../data/ids/items';
+import ItemSprite from '../../items/ItemSprite';
+import type { BallPip } from './standing';
 
 /**
  * The pieces every battle plate is built from: the glass the plates
@@ -89,32 +92,36 @@ export function HealthTrack(props: HealthTrackProps): JSX.Element {
 export const MOST_PIPS = 8;
 
 /**
- * One ball a pokemon, grey once it is out. The count is said to a
- * screen reader in words
+ * How large a ball's square is on a plate. The ball fills about half
+ * of its item square, so the square is drawn larger and pulled in by
+ * a negative margin to keep the plate's row its old height
  */
-export function BallPips(props: { standing: number; total: number; class?: string }): JSX.Element {
-  const pips = (): boolean[] => {
-    const all: boolean[] = [];
+const PIP_SIZE = 28;
 
-    for (let at = 0; at < props.total; at++) {
-      all.push(at < props.standing);
-    }
-    return all;
-  };
-
+/**
+ * One ball a pokemon, the one it sits in, greyed once it is out. The
+ * count is said to a screen reader in words
+ */
+export function BallPips(props: {
+  balls: BallPip[];
+  standing: number;
+  total: number;
+  class?: string;
+}): JSX.Element {
   return (
     <span
       class={`flex shrink-0 items-center gap-1 ${props.class ?? ''}`}
       role="img"
       aria-label={m.battle_standing({ standing: props.standing, total: props.total })}
     >
-      <Index each={pips()}>
-        {(up) => (
-          <span
-            class={`box-border size-3.5 rounded-full border-2 ${
-              up()
-                ? 'border-ink bg-white shadow-[inset_0_-6px_0_0_var(--color-ember)]'
-                : 'border-muted bg-line'
+      <Index each={props.balls}>
+        {(pip) => (
+          <ItemSprite
+            item={BALL_ITEMS[pip().ball]}
+            size={PIP_SIZE}
+            label=""
+            class={`-m-1.5 transition-[opacity,filter] duration-(--motion-move) ${
+              pip().up ? '' : 'opacity-45 grayscale'
             }`}
           />
         )}
@@ -124,7 +131,11 @@ export function BallPips(props: { standing: number; total: number; class?: strin
 }
 
 /** A side's count, as pips where they fit and in words where they do not */
-export function StandingCount(props: { standing: number; total: number }): JSX.Element {
+export function StandingCount(props: {
+  balls: BallPip[];
+  standing: number;
+  total: number;
+}): JSX.Element {
   return (
     <Show
       when={props.total <= MOST_PIPS}
@@ -134,7 +145,7 @@ export function StandingCount(props: { standing: number; total: number }): JSX.E
         </span>
       }
     >
-      <BallPips standing={props.standing} total={props.total} />
+      <BallPips balls={props.balls} standing={props.standing} total={props.total} />
     </Show>
   );
 }

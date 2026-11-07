@@ -1,7 +1,7 @@
 // The battle keys its statuses by const-enum members, which Object.keys
 // hands back as strings; the assertion below puts the enum type back
 // oxlint-disable typescript/no-unsafe-type-assertion
-import type { ProgressData } from '../../../battle/events';
+import { type EffectCause, EffectType, type ProgressData } from '../../../battle/events';
 import { castShownAs } from '../../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../../battle/unit';
 import { Stats } from '../../../data/constants/stats';
@@ -29,6 +29,23 @@ export interface MoveReading {
   left: number;
 }
 
+/**
+ * Where a held item stands: in hand and working, in hand but stopped
+ * (Embargo, Magic Room, Klutz), used up by its holder, or taken by
+ * something else
+ */
+export type ItemState = 'held' | 'stopped' | 'used' | 'lost';
+
+/** One item the unit started with or picked up, gone or not */
+export interface ItemReading {
+  item: Items;
+  name: string;
+  description: string;
+  state: ItemState;
+  /** What took a lost item: a move, an ability or an item, by name */
+  by: string | null;
+}
+
 /** What the unit is winding up, if anything */
 export interface ActingReading {
   name: string;
@@ -43,7 +60,7 @@ export interface UnitReading {
   statuses: Statuses[];
   moves: MoveReading[];
   abilities: { name: string; description: string; kind: AbilityKind }[];
-  items: { name: string; description: string }[];
+  items: ItemReading[];
   acting: ActingReading | null;
 }
 
@@ -66,6 +83,34 @@ export function readFraction(progress: ProgressData | undefined): number {
 /** Milliseconds a timed thing has left to run */
 function readLeft(progress: ProgressData | undefined): number {
   return progress == null ? 0 : Math.max(0, progress.duration - progress.progress);
+}
+
+/**
+ * How an item left the unit. Its own spend (a berry eaten, a gem
+ * used, a berry chewed again) is used up; anything else, its own
+ * Fling or Trick included, names what took it
+ */
+function readRemoval(
+  unit: Unit,
+  item: Items,
+  cause: EffectCause,
+): Pick<ItemReading, 'state' | 'by'> {
+  switch (cause.type) {
+    case EffectType.Item:
+      return cause.item === item && cause.unit === unit
+        ? { state: 'used', by: null }
+        : { state: 'lost', by: detailItem(cause.item).name };
+    case EffectType.Move:
+      return { state: 'lost', by: getMoveData(cause.move).name };
+    case EffectType.Ability:
+      // Its own ability eating its own berry (Cud Chew) is a use; a
+      // foe's (Pickpocket, Magician) is a theft
+      return cause.unit === unit
+        ? { state: 'used', by: null }
+        : { state: 'lost', by: detailAbility(cause.ability).name };
+    default:
+      return { state: 'lost', by: null };
+  }
 }
 
 export function readUnit(unit: Unit): UnitReading {
@@ -111,14 +156,29 @@ export function readUnit(unit: Unit): UnitReading {
     }
   }
 
-  const items: UnitReading['items'] = [];
+  // Every item the unit has held this fight. A removed item keeps its
+  // key with no value, so a lost one stays in the tray
+  const items: ItemReading[] = [];
 
   for (const key of Object.keys(unit.items)) {
     const item: Items = Number(key);
+    const held = unit.items[item];
 
-    if (unit.items[item] === true) {
-      items.push(detailItem(item));
+    if (held != null) {
+      items.push({
+        item,
+        ...detailItem(item),
+        state: held && unit.hasItem(item) ? 'held' : 'stopped',
+        by: null,
+      });
+      continue;
     }
+    const cause = unit.removedItems.get(item);
+
+    if (cause == null) {
+      continue;
+    }
+    items.push({ item, ...detailItem(item), ...readRemoval(unit, item, cause) });
   }
 
   return {

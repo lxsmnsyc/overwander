@@ -61,6 +61,13 @@ A fresh review of the branch found these, all fixed in one commit:
 - Outside the owned paths: `CatchSnapshot.ball` (optional, `src/model/catch-snapshot.ts`), set by `createCatchSnapshot` and read back by `asCatchSnapshot` and `previewSnapshot`; `Unit.ball` (`src/battle/unit.ts`, no mechanic reads it), set in `addUnit` (`src/overworld/raid/battle.ts`). No migration: a snapshot written before the field, a boss and a called ally draw as a Poke Ball.
 - `SideStanding.balls` lists each unit's ball and whether it stands. The demo duel puts its parties in six different balls.
 
+## Item tray (after review)
+
+- Abilities and items were one row of pills. They are two rows now: Abilities as pills, Items as a tray of item icons (`battle-view/ItemTray.tsx`), on the inspector (40px squares) and the hover card (30px).
+- Each square is in one of four states: held, stopped (in hand but switched off: Embargo, Magic Room, Klutz, read through `unit.hasItem`), used (its own spend, or its own ability eating it again), lost (anything else, struck through, the card naming the move, ability or item that took it).
+- Outside the owned paths: `Unit.removedItems` (`src/battle/unit.ts`), a map from item to the `EffectCause` that removed it, set and cleared in `src/battle/mechanics/item.ts`. No mechanic reads it.
+- `test/battle/item-tray-reading.test.ts` covers held, used, Knock Off and Trick. The demo board's `items=1` stages used, lost and held (stopped on your own side).
+
 ## Stubs left
 
 - None.

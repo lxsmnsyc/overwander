@@ -3,6 +3,8 @@ import { type JSX, Show, createEffect, createResource, createSignal, onCleanup }
 import type { Profile } from '../../auth/profile';
 import type { TeamSnapshotRecord } from '../../auth/teams';
 import { BattleModes } from '../../battle/battle';
+import { EffectType } from '../../battle/events';
+import { Moves } from '../../data/ids/moves';
 import type Unit from '../../battle/unit';
 import { Stats } from '../../data/constants/stats';
 import { Balls, Items } from '../../data/ids/items';
@@ -33,6 +35,7 @@ import { readSides } from '../battle/battle-view/summary';
  * - `replay=1`, `spectate=1`
  * - `count=3`: hold the countdown at that number
  * - `inspect=own|foe`: dock the inspector on that side's first pokemon
+ * - `items=1`: with `inspect`, give that pokemon a used, a lost and a held item (switched off on your own)
  * - `verdict=won|lost|draw`: open the results once the field is drawn
  * - `boss=0.4`: set the boss's health to that share once it starts
  * - `seat=held|freed`: the seat line among the rewards
@@ -120,6 +123,39 @@ function stageRaid(seed: string, kind: RaidKind): RaidBattle {
   );
 }
 
+/**
+ * Give a pokemon a tray that shows the states the tray draws: a berry
+ * it ate, an item the other side knocked off, and one still held.
+ * Whatever it held before is put down first, for the room. An own
+ * pokemon's held item is switched off as well, so it is drawn as stopped
+ */
+function stageItems(unit: Unit, foe: Unit | null, stopped: boolean): void {
+  const by = foe ?? unit;
+
+  for (const key of Object.keys(unit.items)) {
+    const item: Items = Number(key);
+
+    if (unit.items[item] != null) {
+      unit.removeItem(item, { type: EffectType.None });
+    }
+  }
+  unit.removedItems.clear();
+
+  unit.addItem(Items.SitrusBerry);
+  unit.removeItem(
+    Items.SitrusBerry,
+    { type: EffectType.Item, item: Items.SitrusBerry, unit },
+    true,
+  );
+  unit.addItem(Items.LifeOrb);
+  unit.removeItem(Items.LifeOrb, { type: EffectType.Move, move: Moves.KnockOff, unit: by });
+  unit.addItem(Items.Leftovers);
+
+  if (stopped) {
+    unit.disableItem(Items.Leftovers);
+  }
+}
+
 /** The first pokemon on the reader's side, or on the other side */
 function findUnit(built: RaidBattle, own: boolean): Unit | null {
   for (const alliance of built.battle.alliances) {
@@ -153,6 +189,7 @@ function Stage(): JSX.Element {
     spectate?: string;
     count?: string;
     inspect?: string;
+    items?: string;
     verdict?: string;
     boss?: string;
     seat?: string;
@@ -202,7 +239,12 @@ function Stage(): JSX.Element {
     if (params.inspect != null) {
       timers.push(
         setTimeout(() => {
-          setInspected(findUnit(built, params.inspect === 'own'));
+          const unit = findUnit(built, params.inspect === 'own');
+
+          if (unit != null && params.items === '1') {
+            stageItems(unit, findUnit(built, params.inspect !== 'own'), params.inspect === 'own');
+          }
+          setInspected(unit);
         }, INSPECT_AFTER),
       );
     }

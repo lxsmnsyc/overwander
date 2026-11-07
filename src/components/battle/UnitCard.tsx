@@ -7,6 +7,7 @@ import { getSpeciesData } from '../../data/species';
 import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
 import { HealthTrack } from './battle-view/plates';
+import ItemTray from './battle-view/ItemTray';
 import { type UnitReading, readHealth, readUnit } from './battle-view/unit-reading';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -35,6 +36,9 @@ import { m } from '../../i18n/paraglide/messages.js';
  * a family resemblance for the rest: fire is what burns, water is
  * what drowses, poison is purple wherever it comes from
  */
+/** How large an item's square is on the hover card */
+const CARD_ITEM = 30;
+
 export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Burned]: '#e2703a',
   [Statuses.Frozen]: '#79c6e8',
@@ -251,22 +255,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           </For>
         </ul>
 
-        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-          <For each={view().items} fallback={<Meta>{m.battle_no_item()}</Meta>}>
-            {(item) => (
-              <li>
-                <TooltipHost class="block" kind="item" {...item}>
-                  <span
-                    class="block truncate rounded-full border border-gold/60 bg-gold-soft px-1.5
-                      py-0.5 font-bold text-gold-dark"
-                  >
-                    {item.name}
-                  </span>
-                </TooltipHost>
-              </li>
-            )}
-          </For>
-        </ul>
+        <ItemTray items={view().items} size={CARD_ITEM} />
       </div>
 
       {/* And whatever is stuck to it, as colours, each named in a

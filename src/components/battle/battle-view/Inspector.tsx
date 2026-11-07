@@ -9,6 +9,7 @@ import MoveTooltip from '../../moves/MoveTooltip';
 import { Button, CloseButton, Meta, TooltipHost } from '../../styled';
 import { STATUS_COLORS } from '../UnitCard';
 import followUnit from './follow-unit';
+import ItemTray from './ItemTray';
 import { GLASS, HealthTrack, LABEL } from './plates';
 import { type MoveReading, type UnitReading, readHealth, readUnit } from './unit-reading';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -20,6 +21,9 @@ import { m } from '../../../i18n/paraglide/messages.js';
  * stuck to it. Open sheet goes on to its catch sheet. On a phone it is
  * a sheet across the foot of the screen instead.
  */
+
+/** How large an item's square is in the inspector */
+const INSPECTOR_ITEM = 40;
 
 /**
  * The dock's way in and out: it slides in from past the right edge on
@@ -169,7 +173,7 @@ function InspectorBody(props: {
           </Index>
         </ul>
 
-        <div class={LABEL}>{m.battle_inspect_traits()}</div>
+        <div class={LABEL}>{m.battle_inspect_abilities()}</div>
         <div class="flex flex-wrap gap-1">
           <For each={view().abilities} fallback={<Meta>{m.battle_no_ability()}</Meta>}>
             {(ability) => (
@@ -188,19 +192,10 @@ function InspectorBody(props: {
               </TooltipHost>
             )}
           </For>
-          <For each={view().items} fallback={<Meta>{m.battle_no_item()}</Meta>}>
-            {(item) => (
-              <TooltipHost class="inline-flex" kind="item" {...item}>
-                <span
-                  class="inline-flex h-6 items-center rounded-full border border-gold/60
-                    bg-gold-soft px-2.5 text-[11px] font-extrabold text-gold-dark"
-                >
-                  {item.name}
-                </span>
-              </TooltipHost>
-            )}
-          </For>
         </div>
+
+        <div class={LABEL}>{m.battle_inspect_items()}</div>
+        <ItemTray items={view().items} size={INSPECTOR_ITEM} />
 
         <Show when={view().statuses.length > 0}>
           <ul class="m-0 flex list-none flex-row flex-wrap gap-x-3 gap-y-1 p-0">

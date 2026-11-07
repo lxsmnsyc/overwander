@@ -664,6 +664,14 @@ export default class Unit {
   consumed = new Set<Items>();
 
   /**
+   * What took each item that left the unit during the battle, and
+   * stays gone: its own use, a Knock Off, a Thief, a Trick. Like
+   * `consumed` the battle decides nothing by it; the battle view draws
+   * a lost item with it. An item that comes back is struck off
+   */
+  removedItems = new Map<Items, EffectCause>();
+
+  /**
    * The coins this unit's Pay Days scattered. Nothing in the battle
    * spends them; the fight reports them afterwards and the settle
    * pays them out

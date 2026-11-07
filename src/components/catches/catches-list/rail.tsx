@@ -1,7 +1,7 @@
 import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
 import { BOX_LIMIT } from '../../../model/box-record';
 import { ClockIcon, GripIcon, PlusIcon, SearchIcon } from '../../icons';
-import { Meta } from '../../styled';
+import { RAIL, RailCount, railRow } from '../../styled';
 import BoxForm from './box-form';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -23,6 +23,11 @@ export interface RailBox {
   name: string;
   tone: string;
   count: number;
+  /**
+   * How many squares the box spans, for the meter under a made box: the
+   * whole rows it fills, and never less than one box's worth
+   */
+  size?: number;
 }
 
 export interface BoxRailProps {
@@ -109,15 +114,20 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
     return order;
   };
 
+  /** How a row is drawn: lit as a drop, current, or at rest */
   const look = (box: RailBox): string => {
     if ((props.dragging || moving() != null) && over() === box.id) {
-      return 'border-dashed border-leaf bg-leaf-soft';
+      return `${railRow(false)} !border-dashed !border-leaf !bg-leaf-soft`;
     }
     if (props.current === box.id) {
-      return 'border-tide bg-tide-soft shadow-pop-sm';
+      return railRow(true);
     }
-    return props.dragging ? 'border-dashed border-line' : 'border-transparent hover:bg-line-soft';
+    return props.dragging ? `${railRow(false)} md:!border-dashed md:!border-line` : railRow(false);
   };
+
+  /** How full a made box is, as a share of its squares */
+  const fill = (box: RailBox): number =>
+    box.size == null || box.size <= 0 ? 0 : Math.min(1, box.count / box.size);
 
   /** What the hint at the foot of the rail says */
   const hint = (): string | null => {
@@ -131,15 +141,11 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
   };
 
   return (
-    <nav
-      aria-label={m.panel_boxes()}
-      class="flex shrink-0 gap-1.5 overflow-x-auto pb-1 sm:w-60 sm:flex-col sm:self-stretch
-        sm:overflow-x-visible sm:rounded-2xl sm:bg-line-soft/60 sm:p-3"
-    >
+    <nav aria-label={m.panel_boxes()} class={`${RAIL} md:w-[14.75rem]`}>
       {/* Above Default, so a long list is found by name rather than scrolled */}
       <label
-        class="mb-1 hidden items-center gap-1.5 rounded-xl border-2 border-line bg-paper px-2.5
-          py-1.5 sm:flex"
+        class="mb-1.5 hidden h-10 shrink-0 items-center gap-2 rounded-button border-2 border-line
+          bg-paper px-2.5 transition-colors hover:border-tide md:flex"
       >
         <SearchIcon class="size-4 shrink-0 text-muted" aria-hidden="true" />
         <span class="sr-only">{m.catch_rail_find()}</span>
@@ -150,80 +156,88 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
           onInput={(event) => {
             setFind(event.currentTarget.value);
           }}
-          class="min-w-0 grow border-0 bg-transparent text-sm font-bold outline-none"
+          class="min-w-0 grow border-0 bg-transparent text-sm outline-none"
         />
       </label>
 
       <For each={shown()}>
         {(box) => (
-          <button
-            type="button"
-            aria-current={props.current === box.id ? 'page' : undefined}
-            class={`group flex shrink-0 cursor-pointer items-center justify-between gap-2
-              rounded-full border-2 px-3 py-1.5 text-left text-sm font-extrabold text-ink
-              transition-colors sm:min-h-11 sm:shrink sm:rounded-xl sm:pl-1.5 ${look(box)}`}
-            // Only the player's own boxes move: Default is always first
-            draggable={box.id != null}
-            onDragStart={(event) => {
-              if (box.id == null) {
-                return;
-              }
-              event.dataTransfer?.setData(BOX_DRAG, box.id);
-              setMoving(box.id);
-            }}
-            onDragEnd={() => {
-              setMoving(null);
-              setOver(undefined);
-            }}
-            onClick={() => {
-              props.onChoose(box.id);
-            }}
-            onDragOver={(event) => {
-              // A box is put down only among the player's own
-              if (moving() != null && box.id == null) {
-                return;
-              }
-              event.preventDefault();
-              setOver(box.id);
-            }}
-            onDragLeave={() => {
-              setOver((at) => (at === box.id ? undefined : at));
-            }}
-            onDrop={(event) => {
-              event.preventDefault();
-              setOver(undefined);
-              const carried = moving();
-
-              if (carried != null) {
-                setMoving(null);
-                if (box.id != null && box.id !== carried) {
-                  props.onArrange(reordered(carried, box.id));
+          <div class="flex shrink-0 flex-col md:shrink">
+            <button
+              type="button"
+              aria-current={props.current === box.id ? 'page' : undefined}
+              class={look(box)}
+              // Only the player's own boxes move: Default is always first
+              draggable={box.id != null}
+              onDragStart={(event) => {
+                if (box.id == null) {
+                  return;
                 }
-                return;
-              }
-              props.onDrop(box.id);
-            }}
-          >
-            <span class="flex min-w-0 items-center gap-2">
+                event.dataTransfer?.setData(BOX_DRAG, box.id);
+                setMoving(box.id);
+              }}
+              onDragEnd={() => {
+                setMoving(null);
+                setOver(undefined);
+              }}
+              onClick={() => {
+                props.onChoose(box.id);
+              }}
+              onDragOver={(event) => {
+                // A box is put down only among the player's own
+                if (moving() != null && box.id == null) {
+                  return;
+                }
+                event.preventDefault();
+                setOver(box.id);
+              }}
+              onDragLeave={() => {
+                setOver((at) => (at === box.id ? undefined : at));
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                setOver(undefined);
+                const carried = moving();
+
+                if (carried != null) {
+                  setMoving(null);
+                  if (box.id != null && box.id !== carried) {
+                    props.onArrange(reordered(carried, box.id));
+                  }
+                  return;
+                }
+                props.onDrop(box.id);
+              }}
+            >
               {/* The grip, on the boxes that can be moved, and its room kept on Default */}
-              <span class="hidden w-4 shrink-0 text-line sm:block">
+              <span class="hidden w-3 shrink-0 text-line md:block">
                 <Show when={box.id != null}>
-                  <GripIcon class="size-4 cursor-grab group-hover:text-muted" aria-hidden="true" />
+                  <GripIcon
+                    class="size-3.5 cursor-grab group-hover:text-muted"
+                    aria-hidden="true"
+                  />
                 </Show>
               </span>
-              <span class="size-3 shrink-0 rounded-[4px]" style={{ background: box.tone }} />
-              <span class="truncate">{box.name}</span>
-            </span>
-            <span
-              class={`shrink-0 rounded-full border-2 px-2 text-xs font-black tabular-nums ${
-                props.counting && box.count > 0
-                  ? 'border-line bg-tide-soft text-tide-dark'
-                  : 'border-line-soft bg-paper text-muted'
-              }`}
-            >
-              {box.count}
-            </span>
-          </button>
+              <span class="size-3.5 shrink-0 rounded-[5px]" style={{ background: box.tone }} />
+              <span class="min-w-0 truncate">{box.name}</span>
+              <RailCount lit={props.counting && box.count > 0}>{box.count}</RailCount>
+            </button>
+            {/* How full a made box is, in its own colour. Default keeps
+                no squares, so it has nothing to fill */}
+            <Show when={box.id != null && box.size != null}>
+              <span
+                aria-hidden="true"
+                class="mx-2.5 mt-0.5 mb-1.5 ml-[2.125rem] hidden h-1 overflow-hidden rounded-full
+                  bg-line-soft md:block"
+              >
+                <span
+                  class="block h-full rounded-full transition-[width] duration-(--motion-move)
+                    ease-settle"
+                  style={{ width: `${fill(box) * 100}%`, background: box.tone }}
+                />
+              </span>
+            </Show>
+          </div>
         )}
       </For>
 
@@ -232,14 +246,14 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
         type="button"
         aria-label={m.catch_box_new()}
         class="flex shrink-0 cursor-pointer items-center justify-center rounded-full border-2
-          border-dashed border-line bg-paper px-3 text-tide-dark sm:hidden"
+          border-dashed border-line bg-paper px-3 text-tide-dark md:hidden"
         onClick={props.onStartMake}
       >
         <PlusIcon class="size-4" aria-hidden="true" />
       </button>
 
       <Show when={props.making}>
-        <div class="flex w-64 shrink-0 flex-col gap-1 sm:w-auto">
+        <div class="flex w-64 shrink-0 flex-col gap-1 md:mt-1 md:w-auto">
           <BoxForm
             heading={
               props.makingWith > 0
@@ -254,38 +268,32 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
         </div>
       </Show>
 
-      <div class="hidden grow sm:block" />
-
       <Show when={props.letGo > 0}>
         <button
           type="button"
           aria-current={props.showingLetGo ? 'page' : undefined}
-          class={`flex shrink-0 cursor-pointer items-center justify-between gap-2 rounded-xl
-            border-2 px-3 py-1.5 text-sm font-extrabold text-muted sm:min-h-11 ${
-              props.showingLetGo
-                ? 'border-tide bg-tide-soft text-ink'
-                : 'border-transparent hover:bg-line-soft'
-            }`}
+          class={`${railRow(props.showingLetGo)} ${props.showingLetGo ? '' : 'text-muted'} md:mt-1`}
           onClick={props.onLetGo}
         >
-          <span class="flex items-center gap-2">
-            <ClockIcon class="size-4" aria-hidden="true" />
-            {m.catch_let_go_title()}
-          </span>
-          <span class="tabular-nums">{props.letGo}</span>
+          <span class="hidden w-3 shrink-0 md:block" />
+          <ClockIcon class="size-3.5 shrink-0" aria-hidden="true" />
+          <span class="truncate">{m.catch_let_go_title()}</span>
+          <RailCount>{props.letGo}</RailCount>
         </button>
       </Show>
 
-      <Show when={hint()}>
-        {(said) => (
-          <Meta class={`hidden px-3 sm:block ${props.picked > 0 ? 'text-leaf-dark' : ''}`}>
-            {said()}
-          </Meta>
-        )}
-      </Show>
-      <Meta class="hidden px-3 sm:block">
-        {m.catch_rail_used({ count: made(), max: BOX_LIMIT })}
-      </Meta>
+      <div class="mt-auto hidden flex-col gap-1 px-1 pt-3 md:flex">
+        <Show when={hint()}>
+          {(said) => (
+            <span class={`text-xs ${props.picked > 0 ? 'text-leaf-dark' : 'text-muted'}`}>
+              {said()}
+            </span>
+          )}
+        </Show>
+        <span class="text-[10px] font-extrabold tracking-[0.12em] text-muted uppercase">
+          {m.catch_rail_used({ count: made(), max: BOX_LIMIT })}
+        </span>
+      </div>
     </nav>
   );
 }

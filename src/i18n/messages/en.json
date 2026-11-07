@@ -988,6 +988,7 @@
   "catch_grid_no_match": "None of them match that.",
   "catch_box_put_in_slot": "Put them in slot {slot}",
   "catch_box_put_here": "Put here",
+  "catch_box_drop_here": "Drop here",
   "catch_box_label": "Box of pokemon, {filled} of {count} squares filled.",
   "catch_evolution_none": "No evolutions or forms",
   "catch_evolves_into": "Evolves into",
@@ -1041,6 +1042,18 @@
   "catch_picker_search_all": "Search every box",
   "catch_picker_search_box": "Search {name}",
   "catch_picker_picks_stay": "Picks made in other boxes stay picked while you look at this one.",
+  "catch_picked": "Picked",
+  "catch_picked_more": "+{count} more",
+  "catch_picked_from": [
+    {
+      "declarations": ["input boxes", "local boxesPlural = boxes: plural"],
+      "selectors": ["boxesPlural"],
+      "match": {
+        "boxesPlural=one": "From 1 box. Picks stay while you look in other boxes.",
+        "boxesPlural=*": "From {boxes} boxes. Picks stay while you look in other boxes."
+      }
+    }
+  ],
   "catch_picker_theirs_note": "What this trainer has caught.",
   "catch_picker_choose_many": "Choose from your pokemon.",
   "catch_picker_choose_up_to": "Choose from your pokemon — up to {count} of them.",

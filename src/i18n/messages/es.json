@@ -1015,6 +1015,7 @@
   "catch_grid_no_match": "Ninguno coincide.",
   "catch_box_put_in_slot": "Ponerlos en la casilla {slot}",
   "catch_box_put_here": "Poner aquí",
+  "catch_box_drop_here": "Suelta aquí",
   "catch_box_label": "Caja de Pokémon, {filled} de {count} casillas ocupadas.",
   "catch_evolution_none": "Sin evoluciones ni formas",
   "catch_evolves_into": "Evoluciona a",
@@ -1068,6 +1069,18 @@
   "catch_picker_search_all": "Buscar en todas las cajas",
   "catch_picker_search_box": "Buscar en {name}",
   "catch_picker_picks_stay": "Lo que elegiste en otras cajas sigue elegido mientras miras esta.",
+  "catch_picked": "Elegidos",
+  "catch_picked_more": "+{count} más",
+  "catch_picked_from": [
+    {
+      "declarations": ["input boxes", "local boxesPlural = boxes: plural"],
+      "selectors": ["boxesPlural"],
+      "match": {
+        "boxesPlural=one": "De 1 caja. Lo elegido sigue elegido mientras miras otras cajas.",
+        "boxesPlural=*": "De {boxes} cajas. Lo elegido sigue elegido mientras miras otras cajas."
+      }
+    }
+  ],
   "catch_picker_theirs_note": "Lo que ha capturado este Entrenador.",
   "catch_picker_choose_many": "Elige entre tus Pokémon.",
   "catch_picker_choose_up_to": "Elige entre tus Pokémon, hasta {count}.",

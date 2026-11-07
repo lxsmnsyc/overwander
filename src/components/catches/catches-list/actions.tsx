@@ -181,85 +181,87 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
   };
 
   return (
+    // A green band across the whole sheet under the title: it pays the
+    // bar row's padding back so it reaches both edges
     <div
-      class="flex w-full min-w-0 flex-col gap-1.5 rounded-xl border-2 border-leaf/40 bg-leaf-soft
-        px-3 py-2"
+      class="motion-crossfade -mx-4 -my-2 flex min-w-0 grow basis-full flex-col gap-1 border-y-2
+        border-leaf/25 bg-leaf-soft px-4 py-2.5 sm:-mx-5 sm:px-5
+        animate-[rise-in_var(--motion-base)_var(--ease-spring)_backwards]"
     >
       {/* Wraps on a phone rather than scrolling an action off the end */}
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <span class="text-base font-black text-leaf-dark tabular-nums">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="mr-1 font-display text-base font-semibold text-leaf-dark tabular-nums">
           {m.catch_selected({ count: count() })}
         </span>
-        <div class="flex flex-wrap items-center justify-end gap-2">
-          <Show when={count() > 0 && props.busy !== true}>
-            <Menu
-              label={m.catch_move_to({ count: count() })}
-              tone="accent"
-              sheet
-              heading={m.catch_move_to({ count: count() })}
-              face={
-                <span class="inline-flex items-center gap-1.5">
-                  <BoxIcon class="size-4" aria-hidden="true" />
-                  {m.catch_move_to({ count: count() })}
-                </span>
-              }
-              actions={destinations()}
-            />
-          </Show>
-          <Button
-            disabled={props.busy === true || count() === 0}
-            onClick={() => {
-              props.onFavorite(favoriting());
-            }}
-          >
-            {favoriting()
-              ? m.catch_favorite_count({ count: count() })
-              : m.catch_unfavorite_count({ count: count() })}
-          </Button>
-          <Button
-            disabled={props.busy === true || count() === 0}
-            onClick={() => {
-              props.onGuard(guarding());
-            }}
-          >
-            {guarding()
-              ? m.catch_lock_count({ count: count() })
-              : m.catch_unlock_count({ count: count() })}
-          </Button>
-          {/* Two presses, the way the sheet asks: the second says what
-              it is doing and what it pays */}
-          <Button
-            tone={releasing() ? 'danger' : 'caution'}
-            disabled={props.busy === true || going().length === 0}
-            onClick={release}
-          >
-            {releasing()
-              ? m.catch_release_ask({ count: going().length })
-              : m.catch_release_count({ count: going().length })}
-          </Button>
-          <Show
-            when={releasing()}
-            fallback={
+        <Show
+          when={releasing()}
+          fallback={
+            <>
+              <Show when={count() > 0 && props.busy !== true}>
+                <Menu
+                  label={m.catch_move_to({ count: count() })}
+                  tone="primary"
+                  sheet
+                  heading={m.catch_move_to({ count: count() })}
+                  face={
+                    <span class="inline-flex items-center gap-1.5">
+                      <BoxIcon class="size-4" aria-hidden="true" />
+                      {m.catch_move_to({ count: count() })}
+                    </span>
+                  }
+                  actions={destinations()}
+                />
+              </Show>
+              <Button
+                disabled={props.busy === true || count() === 0}
+                onClick={() => {
+                  props.onFavorite(favoriting());
+                }}
+              >
+                {favoriting()
+                  ? m.catch_favorite_count({ count: count() })
+                  : m.catch_unfavorite_count({ count: count() })}
+              </Button>
+              <Button
+                disabled={props.busy === true || count() === 0}
+                onClick={() => {
+                  props.onGuard(guarding());
+                }}
+              >
+                {guarding()
+                  ? m.catch_lock_count({ count: count() })
+                  : m.catch_unlock_count({ count: count() })}
+              </Button>
+              {/* Two presses, the way the sheet asks: the second says
+                  what it is doing and what it pays */}
+              <Button
+                tone="caution"
+                disabled={props.busy === true || going().length === 0}
+                onClick={release}
+              >
+                {m.catch_release_count({ count: going().length })}
+              </Button>
               <Button tone="quiet" disabled={count() === 0} onClick={props.onClear}>
                 {m.catch_clear()}
               </Button>
-            }
+            </>
+          }
+        >
+          <Button
+            tone="danger"
+            disabled={props.busy === true || going().length === 0}
+            onClick={release}
           >
-            <Button
-              tone="quiet"
-              onClick={() => {
-                setReleasing(false);
-              }}
-            >
-              {m.catch_keep_them()}
-            </Button>
-          </Show>
-        </div>
-      </div>
-
-      {/* The price, read before the second press */}
-      <Show when={releasing() && going().length > 0}>
-        <div class="flex flex-wrap items-center justify-end gap-2">
+            {m.catch_release_ask({ count: going().length })}
+          </Button>
+          <Button
+            onClick={() => {
+              setReleasing(false);
+            }}
+          >
+            {m.catch_keep_them()}
+          </Button>
+          {/* The price, read before the second press */}
           <For each={candyPiles(going())}>
             {([family, paid]) => (
               <Badge tone="gold">
@@ -271,18 +273,20 @@ export default function CatchActions(props: CatchActionsProps): JSX.Element {
           {/* The half a player forgets: a released pokemon hands back
               whatever it was carrying, and there is no undoing either */}
           <Show when={holding(going()) > 0}>
-            <Meta>{m.catch_release_items({ count: holding(going()) })}</Meta>
+            <Meta class="text-xs">{m.catch_release_items({ count: holding(going()) })}</Meta>
           </Show>
-        </div>
-      </Show>
-
-      {/* Which of the picked ones Release will step over, and why. The
-          other buttons take them all, so this is about Release alone */}
-      <Show when={tally(props.chosen) !== ''}>
-        <Meta class="text-right">
-          {m.catch_release_held({ count: count() - going().length, reasons: tally(props.chosen) })}
-        </Meta>
-      </Show>
+        </Show>
+        {/* Which of the picked ones Release will step over, and why. The
+            other buttons take them all, so this is about Release alone */}
+        <Show when={tally(props.chosen) !== ''}>
+          <Meta class="ml-auto text-xs">
+            {m.catch_release_held({
+              count: count() - going().length,
+              reasons: tally(props.chosen),
+            })}
+          </Meta>
+        </Show>
+      </div>
     </div>
   );
 }

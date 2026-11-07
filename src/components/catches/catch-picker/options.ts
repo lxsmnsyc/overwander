@@ -156,6 +156,8 @@ interface CatchPickerCommonProps {
   fill?: boolean;
   /** A line under the search about what it found */
   results?: JSX.Element;
+  /** A word about the order, at the end of the line under the search */
+  orderNote?: string;
   /** What stands over a box the player made while it is empty */
   emptyCard?: JSX.Element;
   /** What the search says it looks through, where the caller knows better */

@@ -25,12 +25,14 @@ import { useGame } from '../../app/game-context';
 import createClientSignal from '../../app/client-signal';
 import { answered } from '../../app/resource-reads';
 import { BoxIcon, PlusIcon, SelectIcon, SwapIcon } from '../../icons';
-import { Button, Dialog, DialogActions, Meta, Select, useToast } from '../../styled';
-import type { BoxView } from '../CatchBox';
+import { Button, Dialog, DialogActions, Meta, Segmented, Select, useToast } from '../../styled';
+import settings from '../../app/settings';
+import { type BoxView, boxSizeOf } from '../CatchBox';
 import { type QueryControls, parseControls, withControl } from '../../../core/query';
 import CatchActions from './actions';
 import BoxHeading from './heading';
 import BoxRail, { type RailBox } from './rail';
+import PickedTray from './picked-tray';
 import ReleasedList, { createReleased } from './released';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -162,10 +164,26 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
     ];
 
     for (const [id, box] of made()) {
-      listed.push({ id, name: box.name, tone: boxTone(box.colour), count: count(id) });
+      listed.push({
+        id,
+        name: box.name,
+        tone: boxTone(box.colour),
+        count: count(id),
+        size: sizeBox(tally().spans.get(id) ?? 0),
+      });
     }
     return listed;
   });
+
+  /**
+   * How many squares a made box has: the whole rows its pokemon reach,
+   * and never less than one box's worth
+   */
+  function sizeBox(span: number): number {
+    const columns = settings().boxColumns;
+
+    return Math.max(boxSizeOf(columns), Math.ceil(span / columns) * columns);
+  }
 
   /** Every box with how many it holds, whatever the search, for the Move menu */
   const held = createMemo<RailBox[]>(() => {
@@ -547,44 +565,25 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
   /** This box or every box, beside the search */
   const scope = (): JSX.Element => (
     <Show when={mine() && made().length > 0}>
-      <div
-        role="radiogroup"
-        aria-label={m.catch_where_to_search()}
-        class="flex shrink-0 gap-0.5 rounded-xl bg-line-soft p-0.5"
-      >
-        <button
-          type="button"
-          role="radio"
-          aria-checked={!everywhere()}
-          class={`cursor-pointer rounded-lg px-3 py-1 text-sm font-extrabold ${
-            everywhere() ? 'text-muted' : 'bg-paper text-ink shadow-pop-sm'
-          }`}
-          onClick={() => {
-            setEverywhere(false);
-          }}
-        >
-          {m.catch_this_box()}
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={everywhere()}
-          class={`cursor-pointer rounded-lg px-3 py-1 text-sm font-extrabold ${
-            everywhere() ? 'bg-paper text-ink shadow-pop-sm' : 'text-muted'
-          }`}
-          onClick={() => {
-            setEverywhere(true);
+      <Segmented
+        label={m.catch_where_to_search()}
+        value={everywhere()}
+        options={[
+          { value: false, label: m.catch_this_box() },
+          { value: true, label: m.catch_picker_all_boxes() },
+        ]}
+        onChange={(all) => {
+          setEverywhere(all);
+          if (all) {
             setLookingBack(false);
-          }}
-        >
-          {m.catch_picker_all_boxes()}
-        </button>
-      </div>
+          }
+        }}
+      />
     </Show>
   );
 
   const body = (): JSX.Element => (
-    <div class="flex w-full flex-col gap-4 sm:flex-row sm:items-stretch">
+    <div class="flex w-full flex-col gap-3 md:flex-row md:items-stretch md:gap-5">
       <Show when={mine()}>
         <BoxRail
           boxes={rail()}
@@ -617,7 +616,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
         />
       </Show>
 
-      <div class="flex min-w-0 grow flex-col gap-3">
+      <div class="flex min-w-0 grow flex-col gap-2.5">
         <Show when={lookingBack()}>
           <ReleasedList released={released} />
         </Show>
@@ -693,6 +692,11 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             placeholder={placeholder()}
             fill
             say={viewSay}
+            orderNote={
+              slotted() && (tally().counts.get(current() ?? '') ?? 0) > 0
+                ? m.catch_slot_order_note()
+                : undefined
+            }
             results={
               <Show when={counting()}>
                 <div class="flex flex-wrap items-center justify-between gap-2">
@@ -716,7 +720,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
                   }}
                 />
                 <Button
-                  class="shrink-0"
+                  class="size-10 shrink-0 justify-center px-0"
                   label={controls().descending ? m.catch_highest_first() : m.catch_lowest_first()}
                   disabled={sortValue() === ''}
                   onClick={() => {
@@ -772,8 +776,9 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
             }
             {...mode()}
           />
-          <Show when={slotted() && (tally().counts.get(current() ?? '') ?? 0) > 0}>
-            <Meta>{m.catch_slot_order_note()}</Meta>
+          {/* Proposal, approved: what is picked across every box, under the box */}
+          <Show when={selecting()}>
+            <PickedTray chosen={chosen()} />
           </Show>
         </Show>
       </div>
@@ -785,7 +790,7 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
       <Dialog
         isOpen={props.isOpen}
         onClose={props.onClose}
-        width="broad"
+        width="sheet"
         title={m.panel_boxes()}
         lead={<BoxIcon class="size-5 text-on-accent" aria-hidden="true" />}
         description={summary()}

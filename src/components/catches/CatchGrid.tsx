@@ -60,6 +60,12 @@ export interface CatchGridProps {
   /** A line under the search about what it found */
   results?: JSX.Element;
   /**
+   * A word about the box's order, at the right end of the line that
+   * says where in the box the player is: a box kept in slots says it
+   * keeps its gaps
+   */
+  orderNote?: string;
+  /**
    * What stands over a box with nothing in it yet but its squares: a
    * box the player made is drawn empty, slots and all, with this on
    * top saying how to fill it
@@ -182,7 +188,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
   const lead = children(() => props.lead?.());
 
   return (
-    <div class="flex w-full flex-col gap-3">
+    <div class="flex w-full flex-col gap-2.5">
       {/* Always drawn, however short the box is: a search that hides
           itself under a handful of pokemon takes its own box away when
           it narrows far enough */}
@@ -227,8 +233,13 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
       >
         {/* Above the box: five rows of squares fill a laptop screen,
             and a line under them is a line a player has to scroll to */}
-        <Show when={where()}>
-          {(said) => <Meta class="font-extrabold tabular-nums">{said()}</Meta>}
+        <Show when={where() != null || props.orderNote != null}>
+          <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 text-xs">
+            <Meta class="text-xs tabular-nums">{where()}</Meta>
+            <Show when={props.orderNote}>
+              {(said) => <Meta class="min-w-0 flex-1 basis-60 text-right text-xs">{said()}</Meta>}
+            </Show>
+          </div>
         </Show>
         <div class="relative">
           <CatchBox
@@ -256,8 +267,9 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
             {(card) => (
               <div class="pointer-events-none absolute inset-0 flex items-center justify-center p-4">
                 <div
-                  class="pointer-events-auto flex max-w-sm flex-col gap-1.5 rounded-2xl border-2
-                  border-line bg-paper px-6 py-5 text-center shadow-pop"
+                  class="motion-crossfade pointer-events-auto flex max-w-sm flex-col gap-1.5
+                    rounded-card border-2 border-line bg-paper px-6 py-5 text-center shadow-float
+                    animate-[rise-in_var(--motion-base)_var(--ease-settle)_backwards]"
                 >
                   {card()}
                 </div>

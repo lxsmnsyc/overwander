@@ -15,6 +15,7 @@ import { getMaxHealth, getStats, isFainted } from '../../model/health';
 import getSigil from '../../data/constants/sigil';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';
 import { MAX_IV_STARS, Stats, getIVStars } from '../../data/constants/stats';
+import { TYPE_COLORS, TYPE_NAMES } from '../../data/constants/types';
 import type { Items } from '../../data/ids/items';
 import { NATURE_NAMES } from '../../data/ids/text';
 import { getSpeciesData } from '../../data/species';
@@ -25,7 +26,7 @@ import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import MoveTooltip from '../moves/MoveTooltip';
 import ItemCard from '../items/ItemCard';
 import ItemSprite from '../items/ItemSprite';
-import { Button, HoverCard, Meta, TooltipHost } from '../styled';
+import { Button, HoverCard, Meta, TooltipHost, tint } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -42,7 +43,7 @@ import { m } from '../../i18n/paraglide/messages.js';
  * How big the held-item pictures are drawn. Small enough that a full
  * column of them still fits the card's third
  */
-const ITEM_SPRITE = 24;
+const ITEM_SPRITE = 22;
 
 /**
  * How big the type sigils are drawn. They share a line with words, so
@@ -113,59 +114,72 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
   return (
     // No frame of its own: it is shown inside a window that already
     // has one, and two borders around one pokemon reads as two cards
-    <div class={`flex w-full flex-col gap-1.5 text-left text-xs ${props.class ?? ''}`}>
+    <div class={`flex w-full flex-col gap-2 text-left text-xs ${props.class ?? ''}`}>
       {/* The two rolls it was made from, one at each end: how well it
           rolled, and the mark that says which individual it is. Two of
-          the same species with the same sigil are the same pokemon.
-          An egg has neither yet */}
+          the same species with the same sigil are the same pokemon. An
+          egg has neither yet */}
       <Show when={!egg()}>
         <div class="flex items-center justify-between gap-1">
           <span
             role="img"
             aria-label={m.catch_stars({ stars: getIVStars(caught().ivs), max: MAX_IV_STARS })}
-            class="shrink-0 tracking-[0.2em] text-gold"
+            class="shrink-0 text-sm tracking-[0.1em] text-gold"
           >
             {stars()}
           </span>
-          <Meta class="shrink-0 font-mono tracking-[0.15em]">
+          <Meta class="shrink-0 font-mono tracking-[0.15em] text-arcane-dark">
             {getSigil(caught().individualValue, caught().traitValue)}
           </Meta>
         </div>
       </Show>
 
-      {/* What its owner calls it, behind the marks the square says in
-          its corners: a card read at a glance should answer "is it
-          shiny, is it shadowed, is it kept, is it put away" without
-          being read through. Centred rather than sat on a baseline,
-          since a mark is a picture and a picture has no baseline to
-          share with the words beside it */}
-      <div class="flex min-w-0 items-center gap-1">
+      {/* Its name behind the marks the square says in its corners, then
+          how far along it is, which one it is and how it is inclined. A
+          mark is a picture, so the row is centred rather than set on a
+          baseline */}
+      <div class="flex min-w-0 items-center gap-1.5">
         <Show when={!egg() && isShiny(caught())}>
-          <SparklesIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+          <SparklesIcon aria-hidden="true" class="size-4 shrink-0 text-arcane" />
         </Show>
         <Show when={!egg() && isShadow(caught())}>
-          <MoonIcon aria-hidden="true" class="size-3.5 shrink-0 text-arcane" />
+          <MoonIcon aria-hidden="true" class="size-4 shrink-0 text-arcane" />
         </Show>
         <Show when={!egg() && isPurified(caught())}>
-          <SunIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+          <SunIcon aria-hidden="true" class="size-4 shrink-0 text-gold" />
         </Show>
         <Show when={isFavorite(caught())}>
-          <StarIcon aria-hidden="true" class="size-3.5 shrink-0 text-gold" />
+          <StarIcon aria-hidden="true" class="size-4 shrink-0 text-gold" />
         </Show>
         <Show when={isGuarded(caught())}>
-          <LockIcon aria-hidden="true" class="size-3.5 shrink-0 text-tide" />
+          <LockIcon aria-hidden="true" class="size-4 shrink-0 text-muted" />
         </Show>
-        <strong class="min-w-0 truncate">{egg() ? m.ui_egg() : getCatchName(caught())}</strong>
+        <strong class="min-w-0 truncate font-display text-lg leading-tight font-semibold">
+          {egg() ? m.ui_egg() : getCatchName(caught())}
+        </strong>
+        <Show when={!egg()}>
+          <span class="flex min-w-0 shrink items-center gap-1 text-xs text-muted">
+            <span class="shrink-0">{m.catch_level({ level: caught().level })}</span>
+            <Show when={GENDER_MARKS[caught().gender] !== ''}>
+              <span aria-hidden="true">·</span>
+              <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]()}>
+                {GENDER_MARKS[caught().gender]}
+              </span>
+            </Show>
+            <span aria-hidden="true">·</span>
+            <span class="truncate">{NATURE_NAMES[caught().nature]}</span>
+          </span>
+        </Show>
       </div>
 
-      {/* An egg says nothing about what is inside it — that is the
-          finder's to discover — so the rest of the card is what the
-          walk has come to */}
+      {/* An egg says nothing about what is inside it (that is the
+          finder's to discover), so the rest of the card is what the walk
+          has come to */}
       <Show
         when={!egg()}
         fallback={
           <>
-            <div class="h-1.5 overflow-hidden rounded-full border border-line-soft bg-line-soft">
+            <div class="h-2 overflow-hidden rounded-full bg-line-soft">
               <div class="h-full bg-gold" style={{ width: `${hatching() * 100}%` }} />
             </div>
             <Meta>
@@ -174,45 +188,41 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           </>
         }
       >
-        {/* What it brings to a fight: what it fights as, then how far
-            along it is, which one it is, and how it is inclined. The
-            species is not named again, since the line above has just
-            said it */}
-        <div class="flex items-center gap-1">
-          <span class="flex shrink-0 items-center gap-0.5">
-            <For each={getSpeciesData(caught().species).types}>
-              {(type) => <TypeBadge type={type} size={TYPE_SIGIL} />}
-            </For>
-          </span>
-          <span class="shrink-0 text-muted">{m.catch_level({ level: caught().level })}</span>
-          <Show when={GENDER_MARKS[caught().gender] !== ''}>
-            <span class="shrink-0" role="img" aria-label={GENDER_LABELS[caught().gender]()}>
-              {GENDER_MARKS[caught().gender]}
-            </span>
-          </Show>
-          <span class="truncate">{NATURE_NAMES[caught().nature]}</span>
+        {/* What it fights as, each type a pill washed in its colour */}
+        <div class="flex flex-wrap items-center gap-1">
+          <For each={getSpeciesData(caught().species).types}>
+            {(type) => (
+              <span
+                class="inline-flex h-[22px] items-center gap-1 rounded-full pr-2 pl-1 text-[11px]
+                  font-extrabold text-ink"
+                style={{ background: tint(TYPE_COLORS[type], 22) }}
+              >
+                <TypeBadge type={type} size={TYPE_SIGIL} />
+                {TYPE_NAMES[type]}
+              </span>
+            )}
+          </For>
         </div>
 
-        <div class="flex items-center gap-1">
-          <div class="h-1.5 grow overflow-hidden rounded-full border border-line-soft bg-line-soft">
+        <div class="flex items-center gap-1.5">
+          <div class="h-2 grow overflow-hidden rounded-full bg-line-soft">
             <div
-              class={`h-full ${isFainted(caught()) ? 'bg-muted' : 'bg-leaf'}`}
+              class={`h-full rounded-full ${isFainted(caught()) ? 'bg-muted' : 'bg-leaf'}`}
               style={{ width: `${health() * 100}%` }}
             />
           </div>
-          <span class="shrink-0 tabular-nums text-muted">
+          <span class="shrink-0 font-display text-xs font-semibold tabular-nums">
             {Math.max(0, Math.round(caught().health))}/{getMaxHealth(caught())}
           </span>
           {/* What it is still carrying from its last fight */}
           <StatusSquares statuses={caught().statuses} />
         </div>
 
-        {/* Three columns, because they answer three different
-            questions and one stack of pills reads as a single list of
-            words */}
-        <div class="grid grid-cols-3 gap-1">
-          {/* The name is all that fits in a third of a card; what a
-              move or an ability does is on the card over it */}
+        {/* Three columns, because they answer three different questions
+            and one stack of pills reads as a single list of words */}
+        <div class="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto] gap-1.5 text-[11px] font-bold">
+          {/* The name is all that fits; what a move or an ability does is
+              on the card over it */}
           <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
             <For each={caught().moves} fallback={<Meta>{m.catch_no_move()}</Meta>}>
               {(move) => (
@@ -223,7 +233,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                     points={getMovePoints(caught(), move)}
                     speed={getStats(caught())[Stats.Speed]}
                   >
-                    <span class="block truncate rounded border border-line-soft bg-line-soft px-1 py-0.5">
+                    <span class="block truncate py-px hover:text-tide-dark">
                       {describeMove(move)}
                     </span>
                   </MoveTooltip>
@@ -232,13 +242,13 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             </For>
           </ul>
 
-          <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
+          <ul class="m-0 flex list-none flex-col gap-1 p-0">
             <For each={caught().abilities} fallback={<Meta>{m.catch_no_ability()}</Meta>}>
               {(ability) => (
                 <li>
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
                     <span
-                      class={`block truncate rounded border px-1 py-0.5 ${
+                      class={`block truncate rounded-full border px-2 py-0.5 ${
                         ABILITY_PILLS[abilityKind(caught().species, ability)]
                       }`}
                     >
@@ -250,12 +260,9 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
             </For>
           </ul>
 
-          {/* Pictures rather than names, two to a row: a held item is
-              one square, and the column beside it is already two of
-              words. Only what is held is drawn — a pokemon carries one
-              thing, and a tray of empty squares beside it said nothing
-              eight times over */}
-          <ul class="m-0 grid list-none grid-cols-2 gap-0.5 p-0">
+          {/* Pictures rather than names, two to a row: a held item is one
+              square, and the columns beside it are already two of words */}
+          <ul class="m-0 grid list-none grid-cols-[28px_28px] content-start gap-1 p-0">
             <Index each={slots()}>
               {(_, at) => (
                 <li class="contents">
@@ -268,8 +275,9 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                         type="button"
                         disabled={props.owned !== true}
                         aria-label={m.catch_give_item()}
-                        class={`flex aspect-square items-center justify-center rounded border
-                          border-dashed border-line-soft bg-paper/40 text-muted ${
+                        class={`flex size-7 items-center justify-center rounded-chip border-2
+                          border-dashed border-line bg-transparent text-muted shadow-none
+                          active:translate-y-0 ${
                             props.owned === true
                               ? 'cursor-pointer hover:border-tide hover:text-tide-dark'
                               : ''
@@ -304,8 +312,8 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                       )}
                       trigger={
                         <span
-                          class="flex aspect-square w-full items-center justify-center rounded
-                            border border-line-soft bg-paper/60"
+                          class="flex size-7 items-center justify-center rounded-chip border-2
+                            border-gold/60 bg-gold-soft"
                         >
                           <ItemSprite item={caught().items[at]} size={ITEM_SPRITE} label="" />
                         </span>

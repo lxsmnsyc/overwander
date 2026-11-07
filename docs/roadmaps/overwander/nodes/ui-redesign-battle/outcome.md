@@ -43,6 +43,18 @@
 - Escape closes a docked inspector first, then asks to leave as before.
 - The board's speeds and Leave are plain white buttons; Leave keeps the kit's ghost `Button` (it was the green primary before).
 
+## Review fixes
+
+A fresh review of the branch found these, all fixed in one commit:
+
+- The results' team cards and podium remounted 4 times a second, because the watch ticks `revision` every 250ms after the fight settles and `readSides` built new rows each tick. `sides` and `contributions` are now memos read once the battle settles. The demo board reads them once and has no poll, so the captures did not show it.
+- Reduce motion did not stop the inspector's desktop slide: `sm:translate-x-[...]` outranked `in-[.reduce-motion]:translate-x-0`. Both strings now carry `sm:in-[.reduce-motion]:translate-x-0`.
+- The countdown and the raid callout held `role="status"` on elements remounted per message. Each now has one `sr-only` region that stays mounted, and the drawn ring and callout are `aria-hidden`.
+- Callouts fired on `health < tick`; the engine acts on `<=`, so they now do too.
+- A Tera badge on a light type colour gets dark words, by the fill's luminance.
+- es `battle_move_ready` is "listo" (a move is masculine).
+- Kept: the results title stays `tabIndex={0}`. Terracotta's first focus skips `tabindex="-1"`, so `-1` would undo the phone scroll fix.
+
 ## Stubs left
 
 - None.

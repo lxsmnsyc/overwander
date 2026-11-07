@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-box-dex-bag
 title: Redesign the box, the Pokedex and the bag
-status: active
+status: done
 priority: must
 type: feature
 outline: false
@@ -79,21 +79,21 @@ Decided here, at 390x844: every screen is one column. Boxes keeps its chip row o
 
 ## Steps
 
-- [ ] Split any file past reading in one sitting first (`component-layout` skill), behaviour unchanged, as its own commit. `catches-list/index.tsx`, `CatchBox.tsx`, `catch-picker/box.tsx`, `InventoryPicker.tsx`, `InventoryList.tsx` and `dex-entry-dialog/body.tsx` are the candidates.
-- [ ] Build Boxes to its board, with the two proposals.
-- [ ] Build the Bag, with the detail panel.
-- [ ] Build the Pokedex and the forms dialog, with the two proposals.
-- [ ] Build the dex entry.
-- [ ] Restyle the picker and the three item dialogs.
-- [ ] Build the phone layouts above.
-- [ ] Capture desktop (1280x720) and phone (390x844), light and dark, against `pnpm dev` and the dev database: Boxes browsing, selecting with the release question, all-boxes search, an empty made box, the let-go list; the Bag in All, a type pocket, Candies, with the detail panel; the Pokedex with a found number and the forms dialog; a met and an unmet dex entry; the picker from Use it on; each item dialog. Compare each desktop shot with its board and fix differences.
+- [x] Split any file past reading in one sitting first (`component-layout` skill), behaviour unchanged, as its own commit. `catches-list/index.tsx`, `CatchBox.tsx`, `catch-picker/box.tsx`, `InventoryPicker.tsx`, `InventoryList.tsx` and `dex-entry-dialog/body.tsx` are the candidates.
+- [x] Build Boxes to its board, with the two proposals.
+- [x] Build the Bag, with the detail panel.
+- [x] Build the Pokedex and the forms dialog, with the two proposals.
+- [x] Build the dex entry.
+- [x] Restyle the picker and the three item dialogs.
+- [x] Build the phone layouts above.
+- [x] Capture desktop (1280x720) and phone (390x844), light and dark, against `pnpm dev` and the dev database: Boxes browsing, selecting with the release question, all-boxes search, an empty made box, the let-go list; the Bag in All, a type pocket, Candies, with the detail panel; the Pokedex with a found number and the forms dialog; a met and an unmet dex entry; the picker from Use it on; each item dialog. Compare each desktop shot with its board and fix differences.
 
 ## Acceptance
 
-- [ ] Every item in `log.md` is ticked: none is lost.
-- [ ] Desktop matches the four boards in light and dark; reduce motion fades.
+- [x] Every item in `log.md` is ticked: none is lost.
+- [x] Desktop matches the four boards in light and dark; reduce motion fades.
 - [ ] Screens that share the pieces (gifts, auctions, trades, team picks, NPC forms, buddy) still work and look right with the restyled grid, card and picker: capture each once.
-- [ ] Changeset `minor`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers).
+- [x] Changeset `minor`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test` (2 workers).
 
 ## Sizing
 

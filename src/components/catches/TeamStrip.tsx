@@ -65,6 +65,7 @@ export default function TeamStrip(props: TeamStripProps): JSX.Element {
             class="block size-full"
             trigger={<span class="block size-full" />}
             title={titleCatch(recordOf(entry().id)?.[1])}
+            quietTitle
             kind={m.battle_kind_pokemon()}
           >
             <Show when={recordOf(entry().id)}>{(found) => <CatchCard caught={found()[1]} />}</Show>

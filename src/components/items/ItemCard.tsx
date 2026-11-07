@@ -2,6 +2,7 @@ import { type JSX, Show } from 'solid-js';
 import type { Items } from '../../data/ids/items';
 import { detailItem } from '../details';
 import { Detail } from '../styled';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -32,7 +33,7 @@ export default function ItemCard(props: ItemCardProps): JSX.Element {
       <p class="m-0 text-xs leading-snug text-muted">{detail().description}</p>
       <Show when={props.carried != null}>
         <div class="border-t-2 border-line-soft pt-1.5 text-xs">
-          <Detail label={m.item_amount_in_bag()}>{props.carried}</Detail>
+          <Detail label={m.item_amount_in_bag()}>{formatNumber(props.carried ?? 0)}</Detail>
         </div>
       </Show>
     </div>

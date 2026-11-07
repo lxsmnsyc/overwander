@@ -671,6 +671,7 @@ export default function PickerBox(
         onPlace={slotted() ? props.onPlace : undefined}
         placeLabel={props.placeLabel}
         results={props.results}
+        orderNote={props.orderNote}
         emptyCard={slotted() ? props.emptyCard : undefined}
         onDragStart={props.onDragStart}
         onDropOn={props.onDropOn}
@@ -686,6 +687,8 @@ export default function PickerBox(
                 trigger={<span class="block size-full" />}
                 title={titleCatch(option().caught)}
                 kind={m.battle_kind_pokemon()}
+                // The card heads itself with the name, large
+                quietTitle
                 footer={
                   <>
                     <Button

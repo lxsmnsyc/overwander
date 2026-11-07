@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pokedex</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55)}
+.sheet{position:absolute;left:170px;top:36px;width:940px;height:650px;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);display:flex;flex-direction:column;box-sizing:border-box;animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+.plate{position:absolute;left:24px;top:-17px;height:34px;padding:0 16px 0 12px;border-radius:999px;background:#2360C8;color:#fff;display:flex;align-items:center;gap:8px;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;box-shadow:0 3px 0 0 #163F86}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.on{background:#E3ECFA;border-color:#2360C8;color:#163F86}
+.btn.quiet{border-color:transparent;background:transparent;box-shadow:none}
+.btn[disabled]{opacity:.45;cursor:default;transform:none}
+.label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F}
+.input{height:40px;box-sizing:border-box;border:2px solid #C3D2E8;border-radius:12px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:13px;color:#52627F}
+.tile{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8;min-width:96px;box-sizing:border-box}
+.tile b{font-family:Fredoka,sans-serif;font-weight:600;font-size:24px;line-height:1}
+.region{display:flex;flex-direction:column;gap:4px;padding:7px 10px;border-radius:12px;border:2px solid transparent;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;color:#14203A;text-align:left;width:100%}
+.region:hover{background:#F4F7FC}
+.region.current{border-color:#2360C8;background:#EEF4FC}
+.track{height:5px;border-radius:3px;background:#E7EEF8;overflow:hidden}
+.track span{display:block;height:100%;border-radius:3px;background:#1E8F52}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.sq{position:relative;height:76px;border-radius:12px;background:#fff;border:2px solid #C3D2E8;box-sizing:border-box;cursor:pointer;font-family:Nunito,sans-serif;padding:0;transition:transform 140ms cubic-bezier(.34,1.56,.64,1),border-color 140ms}
+.sq:hover{transform:translateY(-2px);border-color:#2360C8}
+.sq.unmet{background:#DDE6F3;border-color:#C9D5E8}
+.sq.found{border-color:#F2B33D;box-shadow:0 0 0 3px #F2B33D66}
+.mon{position:absolute;left:50%;top:10px;width:44px;height:44px;margin-left:-22px;border-radius:14px}
+.no{position:absolute;left:6px;bottom:4px;font-family:Fredoka,sans-serif;font-weight:600;font-size:11px;color:#52627F}
+.star{position:absolute;right:6px;top:4px;color:#C98A0A;font-size:11px}
+.dock{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:2px solid #E7EEF8}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="sheet" role="dialog" aria-label="Pokedex">
+<div class="plate"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="3"></rect><circle cx="12" cy="10" r="3"></circle><path d="M9 17h6"></path></svg>Pokedex</div>
+
+<div style="display: flex; flex: 1 1 auto; min-height: 0; padding-top: 22px">
+<!-- Regions, each a way into the dex with how much of it is caught -->
+<nav style="width: 220px; flex: 0 0 220px; display: flex; flex-direction: column; gap: 10px; padding: 12px 12px 12px 16px; box-sizing: border-box; border-right: 2px solid #E7EEF8" aria-label="Regions">
+<div style="display: flex; gap: 6px">
+<div class="tile" style="border-color: #C9DAF5; min-width: 0; flex: 1"><b style="color: #2360C8">412</b><span class="label" style="font-size: 10px">seen</span></div>
+<div class="tile" style="border-color: #BFE3CC; min-width: 0; flex: 1"><b style="color: #1E8F52">268</b><span class="label" style="font-size: 10px">caught</span></div>
+</div>
+<span style="font-size: 12px; color: #52627F; margin-top: -4px">of 1,025</span>
+<div style="display: flex; flex-direction: column; gap: 2px; overflow: hidden">
+<sc-for list="{{ regions }}" as="r" hint-placeholder-count="9">
+<button class="{{ r.cls }}" onClick="{{ r.pick }}" aria-label="{{ r.aria }}"><span style="display: flex; align-items: baseline; gap: 6px; width: 100%"><span style="font-weight: 800; font-size: 14px">{{ r.name }}</span><sc-if value="{{ r.done }}" hint-placeholder-val="{{ false }}"><span style="color: #C98A0A; font-size: 12px">★</span></sc-if><span style="margin-left: auto; font-family: Fredoka, sans-serif; font-size: 12px; color: #52627F">{{ r.seen }}</span></span><span class="track" style="width: 100%"><span style="width: {{ r.caught }}"></span></span></button>
+</sc-for>
+</div>
+</nav>
+
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 12px 20px">
+<div style="display: flex; gap: 8px; align-items: center">
+<div class="input" style="flex: 1 1 auto"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>A number, or the name of one you have met</div>
+<div role="radiogroup" aria-label="Show" style="display: flex; padding: 3px; border-radius: 12px; background: #E7EEF8; gap: 2px">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="3"><button class="{{ f.cls }}" style="height: 34px" onClick="{{ f.pick }}">{{ f.name }}</button></sc-for>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 10px">
+<button class="btn" aria-label="Earlier" style="width: 40px; padding: 0; justify-content: center">‹</button>
+<span style="flex: 1; text-align: center; font-family: Fredoka, sans-serif; font-weight: 600; font-size: 16px">{{ range }}</span>
+<button class="btn" aria-label="Later" style="width: 40px; padding: 0; justify-content: center">›</button>
+</div>
+
+<div class="grid">
+<sc-for list="{{ squares }}" as="s" hint-placeholder-count="30">
+<button class="{{ s.cls }}" aria-label="{{ s.aria }}">
+<sc-if value="{{ s.shown }}" hint-placeholder-val="{{ true }}"><span class="mon" style="background: {{ s.color }}"></span></sc-if>
+<sc-if value="{{ s.multi }}" hint-placeholder-val="{{ false }}"><span class="star" style="color: #2360C8">◫</span></sc-if>
+<span class="no">{{ s.no }}</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; gap: 14px; font-size: 12px; color: #52627F"><span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #F0584A; vertical-align: -1px"></span> caught</span><span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #14203A; vertical-align: -1px"></span> seen</span><span><span style="display: inline-block; width: 10px; height: 10px; border-radius: 3px; background: #DDE6F3; border: 1px solid #C9D5E8; vertical-align: -1px"></span> not met</span><sc-if value="{{ proposals }}" hint-placeholder-val="{{ false }}"><span style="color: #2360C8">◫ has forms</span></sc-if></div>
+</div>
+</div>
+
+<div class="dock">
+<button class="btn">Close</button>
+<span style="font-size: 13px; color: #52627F">Press a square to open its entry</span>
+<button class="{{ propCls }}" style="margin-left: auto" onClick="{{ toggleProps }}">Show proposals</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { region: 0, filter: 0, props: false }; }
+  renderVals() {
+    const s = this.state;
+    const defs = [['Kanto', 151, 151, 1], ['Johto', 98, 100, 0.71], ['Hoenn', 64, 135, 0.3], ['Sinnoh', 40, 107, 0.2], ['Unova', 30, 156, 0.12], ['Kalos', 14, 72, 0.08], ['Alola', 9, 88, 0.05], ['Galar', 4, 96, 0.02], ['Paldea', 2, 120, 0.01]];
+    const regions = defs.map((r, i) => ({
+      name: r[0], seen: r[1] + '/' + r[2], caught: Math.round(r[3] * 100) + '%',
+      done: s.props && r[3] === 1,
+      aria: r[0] + ', ' + r[1] + ' of ' + r[2] + ' seen',
+      cls: i === s.region ? 'region current' : 'region',
+      pick: () => this.setState({ region: i }),
+    }));
+    const filters = ['All', 'Caught', 'Missing'].map((n, i) => ({ name: n, cls: i === s.filter ? 'btn' : 'btn quiet', pick: () => this.setState({ filter: i }) }));
+    const palette = ['#36B26F', '#F0584A', '#2360C8', '#F7C969', '#7A63C9', '#E94B6A', '#2BA3A3', '#F59A3B'];
+    const squares = [];
+    for (let i = 0; i < 30; i++) {
+      const state = i % 9 === 7 ? 'unmet' : i % 5 === 3 ? 'seen' : 'caught';
+      const no = '#' + String(i + 1).padStart(3, '0');
+      squares.push({
+        cls: 'sq' + (state === 'unmet' ? ' unmet' : '') + (i === 24 ? ' found' : ''),
+        shown: state !== 'unmet',
+        color: state === 'seen' ? '#14203A' : palette[i % palette.length],
+        no,
+        multi: s.props && (i === 2 || i === 5 || i === 25),
+        aria: no + ' ' + (state === 'unmet' ? 'not met' : state),
+      });
+    }
+    return {
+      regions, filters, squares,
+      range: '#001 – #030 · Kanto',
+      proposals: s.props,
+      propCls: s.props ? 'btn on' : 'btn',
+      toggleProps: () => this.setState({ props: !s.props }),
+    };
+  }
+}
+</script>
+</body>
+</html>

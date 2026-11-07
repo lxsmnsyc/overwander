@@ -5,7 +5,8 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
-import { Button, Detail, HoverCard, Meta, Note, Row, Search, TooltipHost } from '../styled';
+import { Button, Detail, HoverCard, Note, Row, Search, TooltipHost } from '../styled';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -70,6 +71,19 @@ export interface ItemCell {
    * picked
    */
   selected?: boolean;
+  /**
+   * Whether this is the square whose details are open beside the tray:
+   * ringed in tide, the colour of what is being looked at
+   */
+  current?: boolean;
+  /**
+   * Whether pressing the square opens its details in a panel, and
+   * whether that panel is open now. Left out on a tray whose press does
+   * the thing itself, where the square is a toggle instead
+   */
+  expanded?: boolean;
+  /** The id of the panel the square opens, while it is open */
+  controls?: string;
   /**
    * Why this one cannot be pressed, or nothing when it can. The square
    * stays on the tray either way — a vendor's crate lists what he
@@ -152,6 +166,22 @@ export interface ItemGridProps {
   query?: string;
   onQuery?: (typed: string) => void;
   onPress?: (item: Items) => void;
+  /**
+   * Whether the tray takes the whole width it is given, its squares
+   * wider than tall, for a screen that is nothing but the tray (the bag)
+   */
+  fill?: boolean;
+}
+
+/** How a square's frame reads: taken, looked at, or at rest */
+function pickCellTone(cell: ItemCell): string {
+  if (cell.selected === true) {
+    return 'border-leaf bg-leaf-soft';
+  }
+  if (cell.current === true) {
+    return 'border-tide bg-tide-soft ring-3 ring-tide/20';
+  }
+  return 'border-line bg-paper';
 }
 
 export default function ItemGrid(props: ItemGridProps): JSX.Element {
@@ -265,7 +295,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const aside = (cell: ItemCell): JSX.Element => (
     <>
       <Show when={cell.carried ?? cell.amount}>
-        {(held) => <Detail label={m.item_amount_in_bag()}>{held()}</Detail>}
+        {(held) => <Detail label={m.item_amount_in_bag()}>{formatNumber(held())}</Detail>}
       </Show>
       {cell.card?.()}
     </>
@@ -278,7 +308,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         ? describeItem(cell.item)
         : m.item_cell_verb({ verb: props.verb, item: describeItem(cell.item) });
     const counted =
-      cell.amount == null ? named : m.item_cell_carried({ label: named, count: cell.amount });
+      cell.amount == null
+        ? named
+        : m.item_cell_carried({ label: named, count: formatNumber(cell.amount) });
 
     return cell.blocked == null
       ? counted
@@ -294,39 +326,48 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       type="button"
       disabled={props.disabled === true || cell.blocked != null}
       aria-label={cell.said ?? sayCell(cell)}
-      aria-pressed={cell.selected === true}
+      aria-pressed={cell.expanded == null ? cell.selected === true : undefined}
+      aria-expanded={cell.expanded}
+      aria-controls={cell.controls}
+      // Found again by the panel it opened, to hand focus back on close
+      data-item={cell.item}
       onClick={() => {
         press(cell);
       }}
-      class={`relative flex aspect-square w-full items-center justify-center rounded-lg border-2
-        p-1 transition-colors disabled:cursor-not-allowed ${
-          cell.selected === true
-            ? 'border-leaf bg-leaf-soft'
-            : 'border-line bg-paper hover:bg-line-soft'
-        } ${handOf(cell)}`}
+      class={`relative flex w-full items-center justify-center rounded-button border-2 p-1
+        transition-[translate,border-color,background-color] duration-(--motion-quick) ease-spring
+        enabled:hover:-translate-y-0.5 enabled:hover:border-tide disabled:cursor-not-allowed ${
+          props.fill === true ? 'aspect-square sm:aspect-[3/2]' : 'aspect-square'
+        } ${pickCellTone(cell)} ${handOf(cell)}`}
     >
       {/* Laid over the square rather than inside it: the picture is a
           fixed number of pixels and the square is a sixth of whatever
           the tray was given, so an icon in the flow would stretch a
           narrow square taller than it is wide */}
       <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-        <ItemSprite item={cell.item} fill label="" />
+        {/* A square as tall as the square's inside: the icon fills a
+            width, so a wide square would draw it larger than a plain one */}
+        <span class="aspect-square h-full max-w-full">
+          <ItemSprite item={cell.item} fill label="" />
+        </span>
       </span>
       {/* How many, in the corner the games put it in */}
       <Show when={cell.amount != null}>
         <span
-          class="pointer-events-none absolute right-0.5 bottom-0.5 rounded-full border border-line
-            bg-paper px-1 text-[10px] leading-tight font-bold text-ink"
+          class="pointer-events-none absolute right-1 bottom-1 inline-flex h-[18px] min-w-5
+            items-center justify-center rounded-full bg-ink px-1.5 font-display text-[11px]
+            font-semibold text-paper tabular-nums"
         >
-          {cell.amount}
+          {formatNumber(cell.amount ?? 0)}
         </span>
       </Show>
       {/* And the asking price, where there is one */}
       <Show when={cell.note} keyed>
         {(note) => (
           <span
-            class="pointer-events-none absolute top-0.5 left-0.5 max-w-full truncate rounded-full
-              border border-gold bg-gold-soft px-1 text-[10px] leading-tight font-bold text-gold-dark"
+            class="pointer-events-none absolute top-1 left-1 max-w-[calc(100%-0.5rem)] truncate
+              rounded-full border border-gold bg-gold-soft px-1.5 font-display text-[11px]
+              leading-tight font-semibold text-gold-dark"
           >
             {note}
           </span>
@@ -336,7 +377,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   );
 
   return (
-    <div class="mx-auto flex w-full max-w-lg flex-col gap-2">
+    <div class={`mx-auto flex w-full flex-col gap-2.5 ${props.fill === true ? '' : 'max-w-lg'}`}>
       {/* What narrows the tray stands above it, and is drawn whatever
           the tray holds — a bag that grew a search box once it passed
           eight things was a screen that changed shape as the player
@@ -363,7 +404,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       </Show>
 
       <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-xl border-4 border-tide bg-parchment p-1.5
+        class="grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide bg-parchment p-2
           shadow-pop"
       >
         {/* `Index`, not `For`: callers rebuild the cell objects every
@@ -420,7 +461,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           {() => (
             <span
               aria-hidden="true"
-              class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+              class={`w-full rounded-button border-2 border-dashed border-line-soft ${
+                props.fill === true ? 'aspect-square sm:aspect-[3/2]' : 'aspect-square'
+              }`}
             />
           )}
         </For>
@@ -437,7 +480,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
           >
             <ArrowLeftIcon class="size-4" aria-hidden="true" />
           </Button>
-          <Meta>{m.pager_page({ page: page() + 1, pages: pages() })}</Meta>
+          <span class="font-display text-sm font-semibold tabular-nums">
+            {m.pager_page({ page: page() + 1, pages: pages() })}
+          </span>
           <Button
             label={m.pager_next()}
             disabled={page() >= pages() - 1}

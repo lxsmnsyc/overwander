@@ -988,6 +988,7 @@
   "catch_grid_no_match": "None of them match that.",
   "catch_box_put_in_slot": "Put them in slot {slot}",
   "catch_box_put_here": "Put here",
+  "catch_box_drop_here": "Drop here",
   "catch_box_label": "Box of pokemon, {filled} of {count} squares filled.",
   "catch_evolution_none": "No evolutions or forms",
   "catch_evolves_into": "Evolves into",
@@ -1041,6 +1042,18 @@
   "catch_picker_search_all": "Search every box",
   "catch_picker_search_box": "Search {name}",
   "catch_picker_picks_stay": "Picks made in other boxes stay picked while you look at this one.",
+  "catch_picked": "Picked",
+  "catch_picked_more": "+{count} more",
+  "catch_picked_from": [
+    {
+      "declarations": ["input boxes", "local boxesPlural = boxes: plural"],
+      "selectors": ["boxesPlural"],
+      "match": {
+        "boxesPlural=one": "From 1 box. Picks stay while you look in other boxes.",
+        "boxesPlural=*": "From {boxes} boxes. Picks stay while you look in other boxes."
+      }
+    }
+  ],
   "catch_picker_theirs_note": "What this trainer has caught.",
   "catch_picker_choose_many": "Choose from your pokemon.",
   "catch_picker_choose_up_to": "Choose from your pokemon — up to {count} of them.",
@@ -1448,6 +1461,42 @@
   "item_bag_empty": "Carrying nothing.",
   "item_use_on": "Use it on",
   "item_use_on_empty": "You have nothing to use it on.",
+  "item_pocket_stacks": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} stack",
+        "countPlural=*": "{count} stacks"
+      }
+    }
+  ],
+  "item_pocket_piles": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} pile",
+        "countPlural=*": "{count} piles"
+      }
+    }
+  ],
+  "item_press_note": "Press an item to see it here",
+  "item_panel_sells": "Sells for {price}",
+  "item_panel_helps": "Helps",
+  "item_panel_helps_count": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "1 of your pokemon",
+        "countPlural=*": "{count} of your pokemon"
+      }
+    }
+  ],
+  "item_panel_helps_none": "None of yours right now.",
+  "item_panel_use": "Use it on…",
+  "item_panel_close": "Put {item} back",
   "item_bag_loading": "Looking through the bag…",
   "item_picker_empty": "Nothing in the bag for this.",
   "item_picker_less": "One less",
@@ -1475,6 +1524,7 @@
   "dex_entry_caught": "{number} {name}, caught",
   "dex_entry_seen": "{number} {name}, seen",
   "dex_entry_unmet": "{number}, not yet met",
+  "dex_entry_forms": "{label}, comes in forms",
   "dex_grid_label": "Pokedex, {count} species on this page.",
   "dex_forms_label": "Forms, {count} of them.",
   "dex_forms_found": "{found} of {count} found",
@@ -1501,6 +1551,21 @@
   "dex_of": "of {count}",
   "dex_region_label": "{region}: {seen} of {total} seen, {caught} caught",
   "dex_find": "Find",
+  "dex_tile_seen": "Seen",
+  "dex_tile_caught": "Caught",
+  "dex_regions": "Regions",
+  "dex_key_caught": "caught",
+  "dex_key_seen": "seen",
+  "dex_key_unmet": "not met",
+  "dex_key_forms": "has forms",
+  "dex_press_note": "Press a square to open its entry",
+  "dex_tile_height": "Height",
+  "dex_tile_weight": "Weight",
+  "dex_tile_candy": "Candy",
+  "dex_tile_hatch": "Hatches in",
+  "dex_total_label": "Total",
+  "dex_ability_hidden": "{name} · hidden",
+  "dex_ability_signature": "{name} · signature",
   "dex_find_placeholder": "A number, or the name of one you have met",
   "dex_show": "Show",
   "dex_earlier": "Earlier pokemon",

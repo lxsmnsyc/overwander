@@ -2,6 +2,7 @@ import { For, type JSX, Show } from 'solid-js';
 import { RadioGroup, RadioGroupOption } from 'terracotta';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
+import { TYPE_COLORS } from '../../data/constants/types';
 import MoveCategorySprite from '../sprites/MoveCategorySprite';
 import { Sigil } from '../sprites/TypeBadge';
 import MoveTooltip from '../moves/MoveTooltip';
@@ -31,7 +32,7 @@ const CATEGORY_SIZE = 45;
 export function MoveLabel(props: { move: Moves }): JSX.Element {
   return (
     <span class="flex min-w-0 grow items-center gap-2 text-left">
-      <span class="grow truncate font-medium">{getMoveData(props.move).name}</span>
+      <span class="grow truncate font-bold">{getMoveData(props.move).name}</span>
       <Sigil type={getMoveData(props.move).type} size={MARK_SIZE} />
       <MoveCategorySprite category={getMoveData(props.move).category} size={CATEGORY_SIZE} />
     </span>
@@ -54,12 +55,18 @@ export function MoveLine(props: { move: Moves }): JSX.Element {
   );
 }
 
+/**
+ * A move as the catch sheet's move card: a keyline card with the type's
+ * colour down its left edge, lifting under the pointer
+ */
 const OPTION =
-  'flex cursor-pointer items-center justify-between gap-2 rounded-xl border-2 px-3 py-2 text-sm' +
-  ' shadow-pop-sm transition-colors border-line bg-paper hover:border-tide' +
-  ' aria-checked:border-leaf aria-checked:bg-leaf-soft focus-visible:outline-2' +
-  ' focus-visible:outline-offset-2 focus-visible:outline-tide aria-disabled:cursor-not-allowed' +
-  ' aria-disabled:opacity-55 aria-disabled:hover:border-line';
+  'relative flex min-h-10 cursor-pointer items-center justify-between gap-2 overflow-hidden' +
+  ' rounded-[10px] border-2 border-line bg-paper py-1 pr-2 pl-3.5 text-sm' +
+  ' transition-[translate,box-shadow,border-color,background-color] duration-(--motion-quick)' +
+  ' ease-spring hover:-translate-y-0.5 hover:shadow-pop-sm aria-checked:border-leaf' +
+  ' aria-checked:bg-leaf-soft focus-visible:outline-2 focus-visible:outline-offset-2' +
+  ' focus-visible:outline-tide aria-disabled:cursor-not-allowed aria-disabled:opacity-55' +
+  ' aria-disabled:hover:translate-y-0 aria-disabled:hover:shadow-none';
 
 export interface MovePickerProps {
   moves: Moves[];
@@ -105,6 +112,11 @@ export default function MovePicker(props: MovePickerProps): JSX.Element {
             disabled={props.refused?.(move, at()) != null}
             class={OPTION}
           >
+            <span
+              aria-hidden="true"
+              class="absolute inset-y-0 left-0 w-1.5"
+              style={{ background: TYPE_COLORS[getMoveData(move).type] }}
+            />
             <MoveLine move={move} />
             {/* The reason it is refused, or — where it is not — whatever
                 the caller has to say about it */}

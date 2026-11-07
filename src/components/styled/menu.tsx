@@ -72,8 +72,11 @@ export interface MenuProps {
   face?: JSX.Element;
   /** A word over the entries, saying what picking one does */
   heading?: string;
-  /** `accent` draws the button solid blue, for the act a bar is built around */
-  tone?: 'accent';
+  /**
+   * `accent` draws the button solid blue, for the act a bar is built
+   * around; `primary` solid green, for the act a green bar offers first
+   */
+  tone?: 'accent' | 'primary';
   /**
    * Whether a phone gets the entries as a sheet up from the bottom of
    * the screen rather than a list hung from the button: a list of
@@ -98,6 +101,9 @@ export default function Menu(props: MenuProps): JSX.Element {
   const look = (): string => {
     if (props.tone === 'accent') {
       return 'border-tide-dark bg-tide font-black text-on-accent hover:bg-tide-dark';
+    }
+    if (props.tone === 'primary') {
+      return 'border-leaf-dark bg-leaf font-black text-on-accent hover:brightness-110';
     }
     return props.face == null
       ? 'border-line bg-paper font-bold hover:border-tide hover:text-tide-dark'

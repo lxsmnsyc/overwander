@@ -3,138 +3,76 @@ import {
   type JSX,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
+  createUniqueId,
 } from 'solid-js';
-import { type CandyStack, getCandies } from '../../auth/candy';
-import { getCaught } from '../../auth/caught';
-import { capAsksForStat } from '../../data/items/bottle-caps';
+import type { CandyStack } from '../../../auth/candy';
+import { getCaught } from '../../../auth/caught';
+import { capAsksForStat } from '../../../data/items/bottle-caps';
+import { type ItemTypes, type Items, getMachineMove, isMachineItem } from '../../../data/ids/items';
+import type { Moves } from '../../../data/ids/moves';
+import { isAbilityPatch } from '../../../data/items/ability-items';
+import { isPPItem } from '../../../data/items/vitamins';
+import type { InventoryEntry } from '../../../auth/inventory';
+import { getLocalOffset } from '../../../model/local-time';
+import useEscapeRope from '../../../auth/escape-rope';
+import { hostMythicalRaid } from '../../../auth/raids';
+import { isEscapeRope } from '../../../data/items/escape-rope';
+import { ITEM_TYPE_ORDER } from '../../../data/items/names';
+import CatchPicker from '../../catches/catch-picker';
+import AbilityPatchDialog from '../../catches/AbilityPatchDialog';
+import IncreasePPDialog from '../../catches/IncreasePPDialog';
+import BottleCapDialog from '../../catches/BottleCapDialog';
+import { askTeachings } from '../../forms/teach-move';
+import CandyGrid, { type CandyPile } from '../CandyGrid';
+import ItemGrid, { type ItemCell } from '../ItemGrid';
+import { describeItem } from '../../details';
+import spendItemOn, { isUsableOn } from '../../../game/items/use-item';
+import { getLevelMovesBetween } from '../../../model/level-moves';
+import spentToast, { playSpentCue } from '../spent-toast';
+import { GameDialog, useGame } from '../../app/game-context';
+import { Note, RailCount, RailTab, RailTabs, TabGroup, TabPane, useToast } from '../../styled';
+import DetailPanel from './DetailPanel';
+import settings, { setSetting } from '../../app/settings';
+import { failed, readable } from '../../app/resource-reads';
+import describeFailure from '../../../i18n/refusals';
 import {
-  ItemFlags,
-  ItemTypes,
-  type Items,
-  getMachineMove,
-  isMachineItem,
-} from '../../data/ids/items';
-import type { Moves } from '../../data/ids/moves';
-import { isAbilityPatch } from '../../data/items/ability-items';
-import { isPPItem } from '../../data/items/vitamins';
-import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import { getLocalOffset } from '../../model/local-time';
-import useEscapeRope from '../../auth/escape-rope';
-import { hostMythicalRaid } from '../../auth/raids';
-import { isEscapeRope } from '../../data/items/escape-rope';
-import { getRaidSpecies } from '../../data/items/raid-items';
-import { getItemData } from '../../data/items';
-import { ITEM_TYPE_ORDER } from '../../data/items/names';
-import CatchPicker from '../catches/catch-picker';
-import AbilityPatchDialog from '../catches/AbilityPatchDialog';
-import IncreasePPDialog from '../catches/IncreasePPDialog';
-import BottleCapDialog from '../catches/BottleCapDialog';
-import { askTeachings } from '../forms/teach-move';
-import CandyGrid, { type CandyPile } from './CandyGrid';
-import ItemGrid, { type ItemCell } from './ItemGrid';
-import { describeItem } from '../details';
-import spendItemOn, { isUsableOn } from '../../game/items/use-item';
-import { getLevelMovesBetween } from '../../model/level-moves';
-import spentToast, { playSpentCue } from './spent-toast';
-import { GameDialog, useGame } from '../app/game-context';
-import { Hint, HintList, Note, TabBar, TabButton, TabGroup, TabPane, useToast } from '../styled';
-import settings, { setSetting } from '../app/settings';
-import { failed, readable } from '../app/resource-reads';
-import describeFailure from '../../i18n/refusals';
-import { m } from '../../i18n/paraglide/messages.js';
+  ALL_ITEMS,
+  ALL_TONE,
+  CANDIES,
+  CANDY_TONE,
+  POCKET_NAMES,
+  POCKET_TONES,
+  getItemType,
+  isRelic,
+  isUsable,
+} from './pockets';
+import { formatNumber } from '../../../i18n/format';
+import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface InventoryListProps {
   player: string;
-}
-
-/** The items tab that holds every type at once, beside one tab per type */
-const ALL_ITEMS = -1;
-
-/** The candy pocket, numbered past the item types like `ALL_ITEMS` */
-const CANDIES = -2;
-
-/** An item's type, or null for one the registry does not know */
-function typeOf(item: Items): ItemTypes | null {
-  try {
-    return getItemData(item).type;
-  } catch {
-    return null;
-  }
+  /** The item whose details are docked beside the tray, if any */
+  chosen: Items | null;
+  onChoose: (item: Items | null) => void;
 }
 
 /**
- * Whether this is a thing that gets spent on a pokemon — a remedy, a
- * cap, a machine. Everything else in the bag is held, sold or carried
- * until somebody asks for it, and has nothing to press.
- *
- * A relic is `Usable` too but goes nowhere near a pokemon, so it is
- * kept out of this one and answered by `isRelic` instead
+ * A pocket's row, a little shorter than a box's: the bag can hold twelve
+ * pockets, and all of them stand beside the tray on a laptop
  */
-function isUsable(item: Items): boolean {
-  try {
-    return (getItemData(item).flags & ItemFlags.Usable) !== 0;
-  } catch {
-    return false;
-  }
-}
+const POCKET_ROW = 'md:!min-h-9 md:!py-1';
 
-/**
- * Whether pressing it opens a raid rather than asking for a pokemon.
- * A relic is spent on a place, not on anything the bag could pick
- */
-function isRelic(item: Items): boolean {
-  return getRaidSpecies(item) != null;
-}
-
-/** How many different things a pocket holds, beside its name */
-function Count(props: { of: number }): JSX.Element {
-  return <span class="ml-2 text-xs font-normal tabular-nums opacity-80">{props.of}</span>;
-}
-
-/** What each pocket of the bag is called: plural, since a pocket names a shelf */
-const POCKET_NAMES: Record<ItemTypes, () => string> = {
-  [ItemTypes.Medicine]: m.item_pocket_medicine,
-  [ItemTypes.PokeBall]: m.item_pocket_balls,
-  [ItemTypes.Berry]: m.item_pocket_berries,
-  [ItemTypes.Held]: m.item_pocket_held,
-  [ItemTypes.Machine]: m.item_pocket_machines,
-  [ItemTypes.KeyItem]: m.item_pocket_key,
-  [ItemTypes.Evolution]: m.item_pocket_evolution,
-  [ItemTypes.Valuable]: m.item_pocket_valuables,
-  [ItemTypes.Training]: m.item_pocket_training,
-  [ItemTypes.Fossil]: m.item_pocket_fossils,
-};
-
-/** What pressing this square is announced as doing, with the item named */
-function relicVerb(item: Items, named: string): string {
-  if (isRelic(item)) {
-    return m.item_open_raid_with({ item: named });
-  }
-  if (isEscapeRope(item)) {
-    return m.item_climb_out_with({ item: named });
-  }
-  return isUsable(item) ? m.item_cell_verb({ verb: m.catch_use(), item: named }) : named;
-}
-
-/** What the bag's pockets hold and what pressing does, for the dialog's title bar */
-export function BagHint(): JSX.Element {
+/** A pocket's colour, as a square on its row */
+function PocketDot(props: { tone: string }): JSX.Element {
   return (
-    <Hint title={m.item_bag_help()}>
-      <HintList>
-        <li>{m.item_bag_help_use()}</li>
-        <li>{m.item_bag_help_medicine()}</li>
-        <li>{m.item_bag_help_held()}</li>
-        <li>{m.item_bag_help_machines()}</li>
-        <li>{m.item_bag_help_training()}</li>
-        <li>{m.item_bag_help_fossils()}</li>
-        <li>{m.item_bag_help_candies()}</li>
-      </HintList>
-    </Hint>
+    <span
+      aria-hidden="true"
+      class="size-4 shrink-0 rounded-[5px] md:size-[22px] md:rounded-[7px]"
+      style={{ background: props.tone }}
+    />
   );
 }
 
@@ -157,7 +95,7 @@ interface Teaching {
  * `Suspense` written there and land on the boundary around the whole
  * page, so the reading half is its own component
  */
-function BagBody(
+export default function BagBody(
   props: InventoryListProps & {
     items: Resource<InventoryEntry[]>;
     candies: Resource<CandyStack[]>;
@@ -166,9 +104,13 @@ function BagBody(
 ): JSX.Element {
   const game = useGame();
   const toast = useToast();
+  /** The docked panel's id, which the square that opened it points at */
+  const panelId = createUniqueId();
+  /** The tray and its pockets, where a square is found to hand focus back to */
+  let shelves: HTMLDivElement | undefined;
   /**
    * What has been chosen to spend, while the pokemon to spend it on is
-   * being picked. The bag asks in that order — item, then pokemon —
+   * being picked. The bag asks in that order (item, then pokemon)
    * because that is the order the player is thinking in
    */
   const [using, setUsing] = createSignal<Items | null>(null);
@@ -284,15 +226,20 @@ function BagBody(
     const cells: ItemCell[] = [];
 
     for (const entry of readable(props.items) ?? []) {
-      if (type != null && typeOf(entry.item) !== type) {
+      if (type != null && getItemType(entry.item) !== type) {
         continue;
       }
       cells.push({
         item: entry.item,
         amount: entry.amount,
+        current: entry.item === props.chosen,
+        // A press opens the panel rather than spending it, so the square
+        // says what it is and the panel's button says what it does
+        expanded: entry.item === props.chosen,
+        controls: entry.item === props.chosen ? panelId : undefined,
         said: m.item_cell_carried({
-          label: relicVerb(entry.item, describeItem(entry.item)),
-          count: entry.amount,
+          label: describeItem(entry.item),
+          count: formatNumber(entry.amount),
         }),
       });
     }
@@ -304,7 +251,7 @@ function BagBody(
     const held = new Set<ItemTypes | null>();
 
     for (const entry of readable(props.items) ?? []) {
-      held.add(typeOf(entry.item));
+      held.add(getItemType(entry.item));
     }
     const order: ItemTypes[] = [];
 
@@ -373,8 +320,8 @@ function BagBody(
    *
    * The bag used to hand the pair to the catch sheet and let it do the
    * spending, which meant every potion opened a whole screen about the
-   * pokemon it was spent on. The two items that ask a question back —
-   * a machine, a bottle — ask it here instead
+   * pokemon it was spent on. The two items that ask a question back
+   * (a machine, a bottle) ask it here instead
    */
   const spend = (catchId: string, item: Items): void => {
     const move = isMachineItem(item) ? getMachineMove(item) : null;
@@ -423,61 +370,178 @@ function BagBody(
       });
   };
 
+  /**
+   * Put focus back on the square whose panel was just closed, so a
+   * keyboard is left where it was rather than at the top of the page.
+   * Only the open pocket's square is drawn, and so only it has a box
+   */
+  const refocus = (item: Items): void => {
+    for (const square of shelves?.querySelectorAll<HTMLElement>(`[data-item="${item}"]`) ?? []) {
+      if (square.offsetParent != null) {
+        square.focus();
+        return;
+      }
+    }
+  };
+
+  /** A square pressed docks its item beside the tray; pressed again, it goes back */
+  const choose = (item: Items): void => {
+    props.onChoose(props.chosen === item ? null : item);
+  };
+
+  /** The stack whose details are docked, while it is still carried */
+  const docked = (): InventoryEntry | undefined => {
+    for (const entry of readable(props.items) ?? []) {
+      if (entry.item === props.chosen) {
+        return entry;
+      }
+    }
+    return undefined;
+  };
+
+  // A stack spent to nothing takes its details with it
+  createEffect(() => {
+    if (props.chosen != null && readable(props.items) != null && docked() == null) {
+      props.onChoose(null);
+    }
+  });
+
+  /** What the panel's button does, or nothing for an item with no use from the bag */
+  const verbFor = (item: Items): string | null => {
+    if (isRelic(item)) {
+      return m.item_open_raid_with({ item: describeItem(item) });
+    }
+    if (isEscapeRope(item)) {
+      return m.item_climb_out_with({ item: describeItem(item) });
+    }
+    return isUsable(item) ? m.item_panel_use() : null;
+  };
+
+  /** The open pocket's name, over its tray */
+  const shelfName = (): string => {
+    const at = shelf();
+
+    if (at === ALL_ITEMS) {
+      return m.item_pocket_all();
+    }
+    return at === CANDIES ? m.item_pocket_candies() : POCKET_NAMES[at as ItemTypes]();
+  };
+
+  /** How many stacks or piles the open pocket holds */
+  const shelfCount = (): string => {
+    const at = shelf();
+
+    if (at === CANDIES) {
+      return m.item_pocket_piles({ count: piles().length });
+    }
+    return m.item_pocket_stacks({
+      count: at === ALL_ITEMS ? (readable(props.items)?.length ?? 0) : tray(at).length,
+    });
+  };
+
   return (
     <>
-      {/* One level of pockets: a side list from `md` up, a bar that
-          scrolls sideways on a phone */}
+      {/* The pockets down the left from `md` up, a row of chips that
+          scrolls sideways on a phone; the tray beside them; and the item
+          pressed, docked on the right */}
       <TabGroup
         horizontal
         value={shelf()}
         onChange={(value) => {
           setSetting('bagPocket', value);
         }}
-        class="flex flex-col gap-3 md:flex-row md:items-start md:gap-4"
+        class="flex flex-col gap-3 md:flex-row md:items-stretch md:gap-5"
       >
         {/* Wide enough for "Objetos equipables" and its count */}
-        <TabBar class="md:sticky md:top-0 md:w-48 md:shrink-0 md:flex-col md:overflow-visible">
-          <TabButton value={ALL_ITEMS} class="md:justify-between">
-            {m.item_pocket_all()}
-            <Count of={readable(props.items)?.length ?? 0} />
-          </TabButton>
+        <RailTabs label={m.panel_bag()} class="md:w-[13rem]">
+          <RailTab value={ALL_ITEMS} class={POCKET_ROW}>
+            <PocketDot tone={ALL_TONE} />
+            <span class="truncate">{m.item_pocket_all()}</span>
+            <RailCount>{readable(props.items)?.length ?? 0}</RailCount>
+          </RailTab>
           <For each={types()}>
             {(type) => (
-              <TabButton value={type} class="md:justify-between">
-                {POCKET_NAMES[type]()}
-                <Count of={tray(type).length} />
-              </TabButton>
+              <RailTab value={type} class={POCKET_ROW}>
+                <PocketDot tone={POCKET_TONES[type]} />
+                <span class="truncate">{POCKET_NAMES[type]()}</span>
+                <RailCount>{tray(type).length}</RailCount>
+              </RailTab>
             )}
           </For>
-          <span aria-hidden="true" class="mx-2 my-1 hidden h-0.5 bg-line-soft md:block" />
-          <TabButton value={CANDIES} class="md:justify-between">
-            {m.item_pocket_candies()}
-            <Count of={piles().length} />
-          </TabButton>
-        </TabBar>
+          <span
+            aria-hidden="true"
+            class="mx-1 my-1.5 hidden h-0.5 shrink-0 bg-line-soft md:block"
+          />
+          <RailTab value={CANDIES} class={POCKET_ROW}>
+            <PocketDot tone={CANDY_TONE} />
+            <span class="truncate">{m.item_pocket_candies()}</span>
+            <RailCount>{piles().length}</RailCount>
+          </RailTab>
+        </RailTabs>
 
-        <div class="min-w-0 grow">
+        <div ref={shelves} class="flex min-w-0 grow flex-col gap-2.5">
+          <div class="flex items-baseline gap-2.5">
+            <h3 class="m-0 font-display text-xl leading-tight font-semibold">{shelfName()}</h3>
+            <span class="text-[13px] text-muted">{shelfCount()}</span>
+          </div>
           <TabPane value={ALL_ITEMS}>
             <Show
               when={readable(props.items)?.length}
               fallback={<Note>{failed(props.items) ?? m.item_bag_empty()}</Note>}
             >
-              <ItemGrid entries={tray(null)} onPress={press} />
+              <ItemGrid entries={tray(null)} onPress={choose} fill />
             </Show>
           </TabPane>
           <For each={types()}>
             {(type) => (
               <TabPane value={type}>
-                <ItemGrid entries={tray(type)} onPress={press} />
+                <ItemGrid entries={tray(type)} onPress={choose} fill />
               </TabPane>
             )}
           </For>
           <TabPane value={CANDIES}>
-            <Show when={failed(props.candies)} fallback={<CandyGrid piles={piles()} />}>
+            <Show when={failed(props.candies)} fallback={<CandyGrid piles={piles()} fill />}>
               {(refused) => <Note>{refused()}</Note>}
             </Show>
           </TabPane>
         </div>
+
+        {/* Proposal, approved: the item pressed, with its verb */}
+        <Show when={docked()}>
+          {(entry) => (
+            <DetailPanel
+              id={panelId}
+              player={props.player}
+              item={entry().item}
+              amount={entry().amount}
+              pocket={(() => {
+                const type = getItemType(entry().item);
+
+                return type == null ? m.item_pocket_all() : POCKET_NAMES[type]();
+              })()}
+              tone={(() => {
+                const type = getItemType(entry().item);
+
+                return type == null ? ALL_TONE : POCKET_TONES[type];
+              })()}
+              verb={verbFor(entry().item)}
+              // In the order a press checks: a relic and the rope are
+              // spent on a place, so neither has pokemon to help
+              onPokemon={
+                !isRelic(entry().item) && !isEscapeRope(entry().item) && isUsable(entry().item)
+              }
+              onVerb={() => {
+                press(entry().item);
+              }}
+              onClose={() => {
+                const item = entry().item;
+
+                props.onChoose(null);
+                refocus(item);
+              }}
+            />
+          )}
+        </Show>
       </TabGroup>
 
       {/* Which pokemon it goes on, and the last press: the item is spent
@@ -555,28 +619,5 @@ function BagBody(
         }}
       />
     </>
-  );
-}
-
-/**
- * What the player carries. The stacks are read one component down,
- * under this boundary, so a bag still arriving replaces the list
- * rather than the panel it is drawn in
- */
-export default function InventoryList(props: InventoryListProps): JSX.Element {
-  const [items, { refetch }] = createResource(() => props.player, getInventory);
-  const [candies] = createResource(() => props.player, getCandies);
-
-  return (
-    <Suspense fallback={<Note>{m.item_bag_loading()}</Note>}>
-      <BagBody
-        {...props}
-        items={items}
-        candies={candies}
-        onSpent={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-        }}
-      />
-    </Suspense>
   );
 }

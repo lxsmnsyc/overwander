@@ -104,6 +104,11 @@ export interface HoverCardProps extends ParentProps {
   title: JSX.Element;
   /** What kind of thing it is (Move, Item, Help), at the bar's right */
   kind?: string;
+  /**
+   * Whether the bar is for a screen reader alone, for a card whose body
+   * already heads itself with the name (a pokemon's card names it large)
+   */
+  quietTitle?: boolean;
   /** A line at the top of the body, under the bar */
   description?: JSX.Element;
   /**
@@ -582,7 +587,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                   }
                 }}
               >
-                <header class={BAR}>
+                <header class={props.quietTitle === true ? 'sr-only' : BAR}>
                   <strong id={titleId} class="min-w-0 truncate text-sm font-extrabold">
                     {props.title}
                   </strong>

@@ -95,6 +95,7 @@ function PartyRow(props: {
             <HoverCard
               class="block size-full"
               title={titleCatch(caught)}
+              quietTitle
               kind={m.battle_kind_pokemon()}
               trigger={
                 <span

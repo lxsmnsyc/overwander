@@ -34,6 +34,12 @@ export interface FieldFrameProps {
    * `aria-required` by whatever uses this; the star is the visible half
    */
   required?: boolean;
+  /**
+   * Whether the label is read but not drawn, for a lone field whose
+   * placeholder and icon already say what it is for, such as a search
+   * over the grid under it
+   */
+  quietLabel?: boolean;
   class?: string;
   children: (parts: FieldParts) => JSX.Element;
 }
@@ -51,7 +57,10 @@ export function FieldFrame(props: FieldFrameProps): JSX.Element {
 
   return (
     <div class={`flex flex-col gap-1 ${props.class ?? ''}`}>
-      <label for={id} class="text-sm font-semibold text-muted">
+      <label
+        for={id}
+        class={props.quietLabel === true ? 'sr-only' : 'text-sm font-semibold text-muted'}
+      >
         {props.label}
         <Show when={props.required}>
           <span aria-hidden="true" class="text-ember">

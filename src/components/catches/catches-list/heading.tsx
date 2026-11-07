@@ -1,7 +1,7 @@
 import { type JSX, Match, Show, Switch, createSignal } from 'solid-js';
 import type { BoxLayout } from '../../../auth/boxes';
 import { ActionsIcon, PlusIcon } from '../../icons';
-import { Badge, Button, Menu, Meta, Row, Select } from '../../styled';
+import { Badge, Button, Menu, type MenuAction, Meta, Row, Select } from '../../styled';
 import BoxForm from './box-form';
 import type { RailBox } from './rail';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -80,25 +80,76 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
     return options;
   };
 
+  /** What the menu offers, the one that cannot be undone last and apart */
+  const actions = (): MenuAction[] => [
+    {
+      label: m.catch_heading_rename(),
+      onSelect: () => {
+        setAsking('edit');
+      },
+    },
+    {
+      label: m.catch_heading_change_colour(),
+      onSelect: () => {
+        setAsking('colour');
+      },
+    },
+    {
+      label: m.catch_heading_lay_out(),
+      hint: m.catch_heading_lay_out_hint(),
+      separated: true,
+      disabled: props.busy || props.count === 0,
+      onSelect: () => {
+        props.onLayOut('dex');
+      },
+    },
+    {
+      label: m.catch_heading_close_up(),
+      hint: m.catch_heading_close_up_hint(),
+      disabled: props.busy || gaps() === 0,
+      onSelect: () => {
+        props.onLayOut('packed');
+      },
+    },
+    {
+      label: m.catch_heading_move_all({ count: props.count }),
+      disabled: props.busy || props.count === 0,
+      onSelect: () => {
+        setTo(TO_DEFAULT);
+        setAsking('empty');
+      },
+    },
+    {
+      label: m.catch_heading_delete(),
+      tone: 'danger',
+      separated: true,
+      disabled: props.busy,
+      onSelect: () => {
+        setAsking('delete');
+      },
+    },
+  ];
+
   return (
     <div class="flex flex-col gap-2">
-      <div class="flex items-end justify-between gap-3">
-        <div class="flex min-w-0 flex-col gap-0.5">
-          <div class="flex items-center gap-2.5">
-            {/* Default is the box everything starts in, and wears no colour of its own */}
-            <Show when={props.id != null}>
-              <span class="size-4 shrink-0 rounded-[5px]" style={{ background: props.tone }} />
-            </Show>
-            <h3 class="m-0 truncate text-2xl font-black">{props.name}</h3>
-            <Show when={props.id == null}>
-              <Badge tone="tide" class="tracking-wide uppercase">
-                {m.catch_heading_built_in()}
-              </Badge>
-            </Show>
-          </div>
-          <Meta>{fill()}</Meta>
-        </div>
-        <div class="flex shrink-0 items-center gap-2">
+      {/* One line: whose box, how full it is, and what can be done to it */}
+      <div class="flex min-h-10 flex-wrap items-center gap-x-2.5 gap-y-1">
+        {/* Default is the box everything starts in, and wears no colour of its own */}
+        <Show when={props.id != null}>
+          <span class="size-[18px] shrink-0 rounded-[5px]" style={{ background: props.tone }} />
+        </Show>
+        <h3 class="m-0 min-w-0 truncate font-display text-xl leading-tight font-semibold">
+          {props.name}
+        </h3>
+        <Show when={props.id == null}>
+          <Badge tone="tide" class="text-[11px] tracking-wide uppercase">
+            {m.catch_heading_built_in()}
+          </Badge>
+        </Show>
+        <span class="order-last min-w-0 basis-full text-[13px] text-muted sm:order-none sm:basis-0 sm:grow sm:truncate">
+          {fill()}
+        </span>
+        <div class="ml-auto flex shrink-0 items-center gap-2">
           <Show when={props.id != null && props.count === 0 && !props.selecting}>
             <Button tone="accent" disabled={props.busy} onClick={props.onAdd}>
               <PlusIcon class="size-4" aria-hidden="true" />
@@ -109,54 +160,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
             <Menu
               label={m.catch_heading_menu({ name: props.name })}
               icon={ActionsIcon}
-              actions={[
-                {
-                  label: m.catch_heading_rename(),
-                  onSelect: () => {
-                    setAsking('edit');
-                  },
-                },
-                {
-                  label: m.catch_heading_change_colour(),
-                  onSelect: () => {
-                    setAsking('colour');
-                  },
-                },
-                {
-                  label: m.catch_heading_lay_out(),
-                  hint: m.catch_heading_lay_out_hint(),
-                  separated: true,
-                  disabled: props.busy || props.count === 0,
-                  onSelect: () => {
-                    props.onLayOut('dex');
-                  },
-                },
-                {
-                  label: m.catch_heading_close_up(),
-                  hint: m.catch_heading_close_up_hint(),
-                  disabled: props.busy || gaps() === 0,
-                  onSelect: () => {
-                    props.onLayOut('packed');
-                  },
-                },
-                {
-                  label: m.catch_heading_move_all({ count: props.count }),
-                  disabled: props.busy || props.count === 0,
-                  onSelect: () => {
-                    setTo(TO_DEFAULT);
-                    setAsking('empty');
-                  },
-                },
-                {
-                  label: m.catch_heading_delete(),
-                  tone: 'danger',
-                  separated: true,
-                  disabled: props.busy,
-                  onSelect: () => {
-                    setAsking('delete');
-                  },
-                },
-              ]}
+              actions={actions()}
             />
           </Show>
         </div>
@@ -186,7 +190,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
           </div>
         </Match>
         <Match when={asking() === 'empty'}>
-          <Row class="items-end">
+          <Row class="items-end rounded-card border-2 border-line-soft bg-line-soft/40 p-2.5">
             <Select
               label={m.catch_heading_move_all_to({ count: props.count })}
               value={to()}
@@ -217,7 +221,7 @@ export default function BoxHeading(props: BoxHeadingProps): JSX.Element {
         {/* Two presses, since a box is not made back as easily as it is
             lost. What was in it is safe either way */}
         <Match when={asking() === 'delete'}>
-          <Row class="items-center">
+          <Row class="items-center rounded-card border-2 border-ember/30 bg-ember-soft/60 p-2.5">
             <Meta>{m.catch_heading_delete_ask({ name: props.name, count: props.count })}</Meta>
             <Button
               tone="danger"

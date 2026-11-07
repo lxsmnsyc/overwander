@@ -46,15 +46,16 @@ const SQUARES: null[] = Array.from<null>({ length: DEX_PAGE }).fill(null);
  * nobody has met still has a page, and its number is on it
  */
 const SQUARE =
-  'relative aspect-square w-full cursor-pointer rounded-lg border-2 transition-colors' +
-  ' hover:border-tide';
+  'relative w-full cursor-pointer rounded-button border-2 p-0 shadow-none' +
+  ' transition-[translate,border-color,background-color] duration-(--motion-quick) ease-spring' +
+  ' hover:-translate-y-0.5 hover:border-tide active:translate-y-0';
 
 /**
  * What a species met but never kept is drawn as: its own outline, filled
  * flat. A shadow says "you know what shape this is and nothing else",
  * which is exactly what having seen one means
  */
-const SILHOUETTE = '[filter:brightness(0)]';
+export const SILHOUETTE = '[filter:brightness(0)]';
 
 /**
  * One square: a species, and how much of it the player has earned the
@@ -79,6 +80,8 @@ export interface DexEntry {
    * nothing; the letter is what tells them apart
    */
   label?: string;
+  /** Whether the species comes in more than one form, marked in its corner */
+  forms?: boolean;
 }
 
 export interface PokedexGridProps {
@@ -94,6 +97,28 @@ export interface PokedexGridProps {
   label?: string;
   /** A square to ring, for a dex number searched for */
   highlight?: Species | null;
+  /**
+   * Whether the grid takes the whole width it is given, its squares
+   * wider than tall, for the dex itself rather than a dialog of forms
+   */
+  fill?: boolean;
+}
+
+/** Two cards, one behind the other: a species that comes in forms */
+export function FormsMark(props: { class?: string }): JSX.Element {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      aria-hidden="true"
+      class={props.class}
+    >
+      <rect x="2" y="5" width="9" height="9" rx="2" />
+      <path d="M5 2.5h6.5A2.5 2.5 0 0 1 14 5v6.5" />
+    </svg>
+  );
 }
 
 /**
@@ -122,17 +147,22 @@ export function formLabel(species: Species): string {
 export function describeDexEntry(entry: DexEntry): string {
   const marked = entry.label ?? dexLabel(entry.dexNumber);
 
+  let said = m.dex_entry_unmet({ number: marked });
+
   if (entry.caught) {
-    return m.dex_entry_caught({ number: marked, name: entry.name });
+    said = m.dex_entry_caught({ number: marked, name: entry.name });
+  } else if (entry.seen) {
+    said = m.dex_entry_seen({ number: marked, name: entry.name });
   }
-  if (entry.seen) {
-    return m.dex_entry_seen({ number: marked, name: entry.name });
-  }
-  return m.dex_entry_unmet({ number: marked });
+  return entry.forms === true ? m.dex_entry_forms({ label: said }) : said;
 }
 
 export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
   const entryAt = (index: number): DexEntry | undefined => props.entries.at(index);
+
+  /** A square's shape: wider than tall in a grid that fills the dex's column */
+  const shape = (): string =>
+    props.fill === true ? 'aspect-square sm:aspect-[10/7]' : 'aspect-square';
 
   const squares = (): null[] =>
     props.squares == null ? SQUARES : Array.from<null>({ length: props.squares }).fill(null);
@@ -145,8 +175,8 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
     <div
       role="group"
       aria-label={props.label ?? m.dex_grid_label({ count: props.entries.length })}
-      class="mx-auto grid w-full max-w-md grid-cols-6 gap-1.5 rounded-xl border-4 border-tide
-        bg-parchment p-1.5 shadow-pop"
+      class={`mx-auto grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide
+        bg-parchment p-2 shadow-pop ${props.fill === true ? '' : 'max-w-md'}`}
     >
       <Index each={squares()}>
         {(_, index) => (
@@ -155,7 +185,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
             fallback={
               <span
                 aria-hidden="true"
-                class="aspect-square w-full rounded-lg border-2 border-line-soft bg-paper/40"
+                class={`w-full rounded-button border-2 border-dashed border-line-soft ${shape()}`}
               />
             }
           >
@@ -163,14 +193,16 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
               <button
                 type="button"
                 aria-label={describeDexEntry(entry())}
+                // A form's name is cut short in its corner, so it is whole here
+                title={entry().label}
                 // A species nobody has met is a darker square rather
                 // than an empty one: the shape of what is left to find is
                 // most of what a dex is for
-                class={`${SQUARE} ${
+                class={`${SQUARE} ${shape()} ${
                   entry().seen || entry().caught
-                    ? 'border-line bg-paper hover:bg-line-soft'
-                    : 'border-line-soft bg-line-soft/70'
-                } ${entry().species === props.highlight ? 'ring-2 ring-gold ring-offset-1' : ''}`}
+                    ? 'border-line bg-paper'
+                    : 'border-line/70 bg-line-soft'
+                } ${entry().species === props.highlight ? '!border-gold ring-3 ring-gold/40' : ''}`}
                 onClick={() => {
                   props.onOpen(entry().species);
                 }}
@@ -179,21 +211,39 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
                     anything to draw under it: it is the one thing a dex
                     knows about a species nobody has met */}
                 <span
-                  class={`pointer-events-none absolute top-0.5 left-0.5 text-[9px] leading-tight
-                    font-bold ${entry().seen || entry().caught ? 'text-muted' : 'text-muted/70'}`}
+                  class={`pointer-events-none absolute max-w-[calc(100%-0.5rem)] truncate font-display
+                    leading-tight font-semibold ${
+                      props.fill === true
+                        ? 'bottom-1 left-1.5 text-[11px]'
+                        : 'top-0.5 left-1 text-[9px]'
+                    } ${entry().seen || entry().caught ? 'text-muted' : 'text-muted/80'}`}
                 >
                   {entry().label ?? dexLabel(entry().dexNumber)}
                 </span>
+                <Show when={entry().forms === true}>
+                  <FormsMark class="pointer-events-none absolute top-1 right-1 size-3.5 text-tide" />
+                </Show>
 
                 <Show when={entry().seen || entry().caught}>
-                  <span class="pointer-events-none absolute inset-1.5 flex items-center justify-center">
-                    <AnimatedSprite
-                      species={entry().species}
-                      direction="DownLeft"
-                      still
-                      fill
-                      class={entry().caught ? '' : SILHOUETTE}
-                    />
+                  <span
+                    class={`pointer-events-none absolute flex items-center justify-center ${
+                      props.fill === true
+                        ? 'inset-x-1.5 top-1 bottom-4'
+                        : 'inset-x-1.5 top-3 bottom-1'
+                    }`}
+                  >
+                    {/* The sprite fits a square box by its share of it, so a
+                        wide square would stretch it: it is drawn in a square
+                        as tall as the room */}
+                    <span class="flex aspect-square h-full max-w-full items-center justify-center">
+                      <AnimatedSprite
+                        species={entry().species}
+                        direction="DownLeft"
+                        still
+                        fill
+                        class={entry().caught ? '' : SILHOUETTE}
+                      />
+                    </span>
                   </span>
                 </Show>
               </button>

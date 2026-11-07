@@ -1,28 +1,14 @@
-// The battle keys its statuses and moves by const-enum members, which
-// Object.keys hands back as strings; the assertions below put the enum
-// type back on them
-// oxlint-disable typescript/no-unsafe-type-assertion
 import { For, Index, type JSX, Show, createMemo } from 'solid-js';
-import type { ProgressData } from '../../battle/events';
-import { castShownAs } from '../../battle/gimmicks/dynamax/max-moves';
 import type Unit from '../../battle/unit';
-import { Stats } from '../../data/constants/stats';
-import type Abilities from '../../data/ids/abilities';
-import type { Items } from '../../data/ids/items';
-import { Moves } from '../../data/ids/moves';
 import { Statuses } from '../../data/ids/status';
 import { getStatusName } from '../../model/health';
-import {
-  ABILITY_PILLS,
-  type AbilityKind,
-  abilityKind,
-  detailAbility,
-  detailItem,
-} from '../details';
-import { getMoveData } from '../../data/moves';
+import { ABILITY_PILLS } from '../details';
 import { getSpeciesData } from '../../data/species';
 import MoveTooltip from '../moves/MoveTooltip';
 import { Meta, TooltipHost } from '../styled';
+import { HealthTrack } from './battle-view/plates';
+import ItemTray from './battle-view/ItemTray';
+import { type UnitReading, readHealth, readUnit } from './battle-view/unit-reading';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -50,6 +36,9 @@ import { m } from '../../i18n/paraglide/messages.js';
  * a family resemblance for the rest: fire is what burns, water is
  * what drowses, poison is purple wherever it comes from
  */
+/** How large an item's square is on the hover card */
+const CARD_ITEM = 30;
+
 export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.Burned]: '#e2703a',
   [Statuses.Frozen]: '#79c6e8',
@@ -108,22 +97,6 @@ export const STATUS_COLORS: Record<Statuses, string> = {
   [Statuses.PowerShifted]: '#d69a5a',
 };
 
-/**
- * How far along a timed thing is, as a fraction of itself. Everything
- * the engine times — a cooldown coming back, a move being wound up —
- * counts up to its own duration, so they are all read the same way.
- * Nothing timed at all is finished by definition: a move that is not
- * cooling is a move that can be thrown now
- */
-function fractionOf(progress: ProgressData | undefined): number {
-  if (progress == null) {
-    return 1;
-  }
-  return progress.duration <= 0
-    ? 1
-    : Math.min(1, Math.max(0, progress.progress / progress.duration));
-}
-
 export interface UnitCardProps {
   unit: Unit;
   /**
@@ -141,108 +114,29 @@ export interface UnitCardProps {
 }
 
 export default function UnitCard(props: UnitCardProps): JSX.Element {
-  /**
-   * One reading of the unit, recomputed only when that unit moved
-   */
-  const view = createMemo(() => {
-    const unit = props.unit;
-    // The one thing being cast or channelled, read as a picture of
-    // this instant rather than as the engine's own object: the state
-    // is mutated in place and swapped out under us, and a card holding
-    // the object would be showing a cast that finished a second ago
-    const acting = unit.casting ?? unit.channeling;
-
-    const statuses: Statuses[] = [];
-
-    for (const status of Object.keys(unit.status) as unknown as Statuses[]) {
-      if (unit.status[status] != null) {
-        statuses.push(status);
-      }
-    }
-
-    // Reduced here in the memo, because a `For` row reads its item once
-    // and a cooldown read in the markup would never move
-    const moves: { move: Moves; name: string; disabled: boolean; ready: number }[] = [];
-
-    for (const move of Object.values(unit.moves)) {
-      // The plain swing every unit is fielded with is not one of its moves
-      if (move.move === Moves.Attack) {
-        continue;
-      }
-      moves.push({
-        move: move.move,
-        name: getMoveData(move.move).name,
-        disabled: move.disabled,
-        ready: fractionOf(move.cooldown),
-      });
-    }
-
-    // Only the enabled half: a suppressed ability or an eaten item is
-    // one the pokemon no longer has
-    const abilities: { name: string; description: string; kind: AbilityKind }[] = [];
-
-    for (const key of Object.keys(unit.abilities)) {
-      const ability: Abilities = Number(key);
-
-      if (unit.abilities[ability] === true) {
-        abilities.push({ ...detailAbility(ability), kind: abilityKind(unit.species, ability) });
-      }
-    }
-
-    const items: { name: string; description: string }[] = [];
-
-    for (const key of Object.keys(unit.items)) {
-      const item: Items = Number(key);
-
-      if (unit.items[item] === true) {
-        items.push(detailItem(item));
-      }
-    }
-
-    return {
-      at: props.revision(),
-      unit,
-      maxHealth: unit.checkStat(Stats.HP, 0),
-      statuses,
-      moves,
-      abilities,
-      items,
-      /**
-       * What it is in the middle of doing, if anything. A move being
-       * wound up is the one thing on a card that says what is about
-       * to happen rather than what has already happened
-       */
-      acting:
-        acting == null
-          ? null
-          : {
-              name: getMoveData(castShownAs(unit, acting)).name,
-              channelling: unit.channeling != null,
-              done: fractionOf(acting.time),
-            },
-    };
+  /** One reading of the unit, recomputed only when that unit moved */
+  const view = createMemo((): UnitReading => {
+    props.revision();
+    return readUnit(props.unit);
   });
 
   const unit = (): Unit => view().unit;
-
-  const health = (): number => {
-    const max = view().maxHealth;
-
-    return max <= 0 ? 0 : Math.max(0, Math.min(1, unit().health / max));
-  };
+  const health = (): number => readHealth(view());
 
   return (
     <li
-      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-xl border-2 border-line text-left text-xs
-        ${props.tip === true ? 'bg-paper px-3 pt-2 pb-2.5 shadow-float' : 'bg-paper/95 px-2 py-1.5 shadow-pop-sm'}
+      class={`flex w-64 shrink-0 flex-col gap-1.5 rounded-card border-2 border-line text-left text-xs
+        ${props.tip === true ? 'bg-paper px-3 pt-2.5 pb-3 shadow-float' : 'bg-paper/95 px-2.5 py-2 shadow-pop-sm'}
         ${unit().alive ? '' : 'opacity-50 grayscale'}`}
     >
       {/* What it is. The level comes first because in a raid the
           difference between a party member and the thing killing it is
           usually the level */}
-      <div class="flex items-baseline gap-1 truncate">
-        <span class="text-muted">{m.ow_level({ level: unit().level })}</span>
-        <strong class="truncate">{getSpeciesData(unit().species).name}</strong>
+      <div class="flex items-baseline gap-1.5 truncate">
+        <span class="font-extrabold text-muted">{m.ow_level({ level: unit().level })}</span>
+        <strong class="truncate font-display text-[15px] font-semibold">
+          {getSpeciesData(unit().species).name}
+        </strong>
       </div>
 
       {/* One bar cut in two: what it has left on top, what it is
@@ -251,17 +145,12 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           and the answer to "will it get the move off" is both halves
           at once */}
       <div class="flex items-center gap-1">
-        <div class="grow overflow-hidden rounded-full border border-line-soft bg-line-soft">
-          <div class="h-1.5">
-            <div
-              class={`h-full ${unit().alive ? 'bg-leaf' : 'bg-muted'}`}
-              style={{ width: `${health() * 100}%` }}
-            />
-          </div>
+        <div class="flex grow flex-col gap-0.5">
+          <HealthTrack value={health()} tone={unit().alive ? 'leaf' : 'muted'} class="h-2" />
           {/* The lower half is empty while nothing is being wound up,
               rather than absent: a bar that changed height every time
               its pokemon threw a move would push the card about */}
-          <div class="h-1.5">
+          <div class="h-1.5 overflow-hidden rounded-full bg-line-soft">
             <Show when={view().acting}>
               {(acting) => (
                 <div
@@ -282,7 +171,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             rarely divisible by sixteen — and printed raw it is
             seventeen digits wide, which pushes the bar beside it out
             of the card entirely */}
-        <span class="shrink-0 tabular-nums text-muted">
+        <span class="shrink-0 font-display font-semibold tabular-nums text-muted">
           {Math.max(0, Math.round(unit().health))}
         </span>
       </div>
@@ -291,7 +180,11 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           moving */}
       <Show when={view().acting}>
         {(acting) => (
-          <Meta class="truncate">
+          <Meta
+            class={`truncate font-extrabold ${
+              acting().channelling ? 'text-arcane-dark' : 'text-gold-dark'
+            }`}
+          >
             {acting().channelling
               ? m.battle_channelling({ move: acting().name })
               : m.battle_casting({ move: acting().name })}
@@ -319,12 +212,12 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
               <li>
                 <MoveTooltip class="block" move={move().move}>
                   <span
-                    class="relative block overflow-hidden rounded border border-line-soft
-                      bg-line-soft px-1 py-0.5"
+                    class="relative block overflow-hidden rounded-[7px] bg-line-soft px-1.5 py-0.5
+                      font-bold"
                   >
                     <span
                       class={`absolute inset-y-0 left-0 ${
-                        move().disabled ? 'bg-muted/30' : 'bg-tide/30'
+                        move().disabled ? 'bg-muted/20' : 'bg-leaf-soft'
                       }`}
                       style={{ width: `${move().ready * 100}%` }}
                     />
@@ -352,7 +245,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
                   description={ability.description}
                 >
                   <span
-                    class={`block truncate rounded border px-1 py-0.5 ${ABILITY_PILLS[ability.kind]}`}
+                    class={`block truncate rounded-full border px-1.5 py-0.5 font-bold ${ABILITY_PILLS[ability.kind]}`}
                   >
                     {ability.name}
                   </span>
@@ -362,22 +255,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
           </For>
         </ul>
 
-        <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-          <For each={view().items} fallback={<Meta>{m.battle_no_item()}</Meta>}>
-            {(item) => (
-              <li>
-                <TooltipHost class="block" kind="item" {...item}>
-                  <span
-                    class="block truncate rounded border border-line-soft bg-gold-soft px-1 py-0.5
-                      text-gold-dark"
-                  >
-                    {item.name}
-                  </span>
-                </TooltipHost>
-              </li>
-            )}
-          </For>
-        </ul>
+        <ItemTray items={view().items} size={CARD_ITEM} />
       </div>
 
       {/* And whatever is stuck to it, as colours, each named in a
@@ -388,7 +266,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             {(status) => (
               <TooltipHost class="inline-flex" kind="status" name={getStatusName(status)}>
                 <span
-                  class="size-2.5 rounded-[2px]"
+                  class="size-3 rounded-[4px]"
                   style={{ 'background-color': STATUS_COLORS[status] }}
                   aria-label={getStatusName(status)}
                   role="img"

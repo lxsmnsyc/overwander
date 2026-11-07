@@ -1,10 +1,9 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import type Battle from '../../battle/battle';
 import type Biome from '../../data/ids/biome';
 import type Unit from '../../battle/unit';
-import { type BaseEvent, EventPriority } from '../../core/event-emitter';
 import BattleCanvas, { type UnitSpot } from './battle-canvas';
-import { CARD_EVENTS, unitsOf } from './BattleParty';
+import followUnit from './battle-view/follow-unit';
 import UnitCard from './UnitCard';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -37,47 +36,19 @@ export interface BattleFieldProps {
   player: string;
   onReady?: () => void;
   /**
-   * What pressing a pokemon does. Left out where there is nothing to
-   * open — a demo's units stand for no record
+   * What pressing a pokemon does: the battle view docks it in the
+   * inspector. Left out where a press does nothing
    */
   onPick?: (unit: Unit) => void;
 }
 
 export default function BattleField(props: BattleFieldProps): JSX.Element {
   const [hovered, setHovered] = createSignal<{ unit: Unit; at: UnitSpot } | null>(null);
-  /**
-   * A count of everything that changes what the card shows. The engine
-   * mutates units in place, so there is nothing to observe directly —
-   * this is what the card watches instead
-   */
-  const [beat, setBeat] = createSignal(0);
-
-  // Only the pokemon under the pointer is followed: a card nobody is
-  // looking at is a card nobody is reading
-  createEffect(() => {
-    const unit = hovered()?.unit;
-
-    if (unit == null) {
-      return;
-    }
-
-    const battle = props.battle;
-    const bump = (event: BaseEvent): void => {
-      if (unitsOf(event).includes(unit)) {
-        setBeat((count) => count + 1);
-      }
-    };
-
-    for (const event of CARD_EVENTS) {
-      battle.on(event, EventPriority.Post, bump);
-    }
-
-    onCleanup(() => {
-      for (const event of CARD_EVENTS) {
-        battle.off(event, EventPriority.Post, bump);
-      }
-    });
-  });
+  // Only the pokemon under the pointer is followed
+  const beat = followUnit(
+    () => props.battle,
+    () => hovered()?.unit,
+  );
 
   return (
     <>

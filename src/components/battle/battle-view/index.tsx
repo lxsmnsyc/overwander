@@ -1,4 +1,12 @@
-import { type JSX, Show, createResource, createSignal, onCleanup, onMount } from 'solid-js';
+import {
+  type JSX,
+  Show,
+  createMemo,
+  createResource,
+  createSignal,
+  onCleanup,
+  onMount,
+} from 'solid-js';
 import type Unit from '../../../battle/unit';
 import type { CandyEarned } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
@@ -13,11 +21,14 @@ import createBattleWatch, { type Outcome } from '../../../game/battle/watch';
 import BattleField from '../BattleField';
 import BattleTopBar from '../BattleTopBar';
 import CandySprite from '../../sprites/CandySprite';
-import VerdictDialog from './VerdictDialog';
+import Countdown from './Countdown';
+import LeaveDialog from './LeaveDialog';
+import Inspector from './Inspector';
+import ResultsScreen from './results';
 import { type Contribution, type SideSummary, readContributions, readSides } from './summary';
 import CatchDialog from '../../catches/catch-dialog';
 import { getFamilyName } from '../../../data/species';
-import { Button, Dialog, DialogActions, Note, Status, useToast } from '../../styled';
+import { Note, Status, useToast } from '../../styled';
 import type { ActiveBattle, PendingReward, Spoils } from '../../app/game-context';
 import { type Profile, getProfiles } from '../../../auth/profile';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -98,9 +109,12 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
   const [dismissed, setDismissed] = createSignal(false);
   // Whether the player is being asked to confirm walking out of a live fight
   const [leaving, setLeaving] = createSignal(false);
+  /** The pokemon a press docked in the inspector */
+  const [inspected, setInspected] = createSignal<Unit | null>(null);
   /**
-   * The catch sheet a pressed pokemon opened, if it stands for a
-   * record at all: a raid boss belongs to nobody and has none
+   * The catch sheet the inspector's Open sheet opened, which it offers
+   * only for a pokemon that stands for a record: a raid boss belongs to
+   * nobody and has none
    */
   const [opened, setOpened] = createSignal<Unit | null>(null);
   const [speed, setSpeed] = createSignal(1);
@@ -168,20 +182,31 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     return m.battle_victory_raid();
   };
 
-  /** The fight's contributions and its sides, both only once the battle has settled */
-  const contributions = (): Contribution[] => {
+  /**
+   * The fight's contributions and its sides, both only once the battle
+   * has settled. A settled battle no longer changes, so each is read
+   * once and kept: the watch still ticks `revision` while the view is
+   * open, and fresh rows every tick would remount the results' cards
+   */
+  const contributions = createMemo<Contribution[]>((last) => {
     revision();
     const built = instance();
 
-    return built == null || !built.battle.settled ? [] : readContributions(built);
-  };
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+    return last.length > 0 ? last : readContributions(built);
+  }, []);
 
-  const sides = (): SideSummary[] => {
+  const sides = createMemo<SideSummary[]>((last) => {
     revision();
     const built = instance();
 
-    return built == null || !built.battle.settled ? [] : readSides(built);
-  };
+    if (built == null || !built.battle.settled) {
+      return [];
+    }
+    return last.length > 0 ? last : readSides(built);
+  }, []);
 
   /**
    * Who the rows belong to, by nickname. Read once when the verdict
@@ -268,6 +293,11 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         return;
       }
       event.preventDefault();
+      // A docked inspector is the nearest layer, so it closes first
+      if (inspected() != null) {
+        setInspected(null);
+        return;
+      }
       askToLeave();
     };
 
@@ -279,11 +309,10 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
 
   return (
     <section class="flex h-full w-full flex-col overflow-hidden">
-      {/* The field is the page. What each pokemon is — its level, its
-          moves, what it carries, what is stuck to it — is a card that
-          comes up over whichever one the pointer is on, rather than a
-          row of them along each edge: a row lying over each end of the
-          field covered exactly the pokemon a player was watching */}
+      {/* The field is the page. What a pokemon is (its level, moves,
+          items and statuses) is a card over the one under the pointer,
+          and a press docks it in the inspector on the right. The rest
+          of the furniture keeps to the corners */}
       <div class="relative min-h-0 grow">
         <Show
           when={instance()}
@@ -299,12 +328,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
               biome={record()?.biome}
               player={auth.user()?.uid ?? ''}
               onPick={(unit) => {
-                // A pokemon that stands for no record — the raid boss,
-                // and anything a demo or a test builds outright — has
-                // no sheet to open
-                if (unit.caught !== '') {
-                  setOpened(unit);
-                }
+                setInspected(unit);
               }}
               onReady={watch.ready}
             />
@@ -329,32 +353,42 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
                   : undefined
               }
               onLeave={askToLeave}
+              kind={staged()?.kind ?? null}
+              raised={inspected() != null}
             />
           )}
         </Show>
 
-        {/* Three seconds to look at the field before anything happens
-            in it. It is drawn over the middle of the fight because the
-            fight is what it is counting down to */}
-        <Show when={counting()}>
-          {(left) => (
+        {/* The pressed pokemon, docked at the right edge, in the same
+            16:9 frame as the plates */}
+        <Show when={instance()}>
+          {(built) => (
             <div
-              class="pointer-events-none absolute inset-0 flex items-center justify-center"
-              role="status"
+              class="pointer-events-none absolute inset-0 z-20 mx-auto max-w-[calc(100dvh*16/9)]
+                @container"
             >
-              <span
-                class="rounded-full border-4 border-tide bg-paper/90 px-6 py-3 text-4xl
-                  font-extrabold tabular-nums shadow-pop backdrop-blur-sm"
-              >
-                {left()}
-              </span>
+              <Inspector
+                battle={built().battle}
+                unit={inspected()}
+                raid={raiding()}
+                onClose={() => {
+                  setInspected(null);
+                }}
+                onOpenSheet={(unit) => {
+                  setOpened(unit);
+                }}
+              />
             </div>
           )}
         </Show>
 
+        {/* Three seconds to look at the field before anything happens
+            in it */}
+        <Countdown left={counting()} />
+
         {/* Anything that went wrong writing the result down. It is not
-            the verdict — that has a dialog of its own — so it sits out
-            of the way rather than under the field */}
+            the verdict, which has a screen of its own, so it sits out of
+            the way at the foot of the field */}
         <div
           class="pointer-events-none absolute inset-x-0 bottom-3 flex justify-center px-3
           text-center"
@@ -363,10 +397,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         </div>
       </div>
 
-      {/* Pressing a pokemon opens its sheet. Anybody else's — a
-          teammate's in a raid, the other trainer's in a stop — is
-          shown and nothing more, since none of it is the reader's to
-          change */}
+      {/* Open sheet in the inspector opens this. Anybody else's (a
+          teammate's in a raid, the other trainer's in a stop) is shown
+          and nothing more, since none of it is the reader's to change */}
       <CatchDialog
         player={auth.user()?.uid ?? ''}
         catchId={opened()?.caught ?? null}
@@ -376,39 +409,20 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
         }}
       />
 
-      {/* Walking out of a live fight is confirmed first, because it
-          cannot be walked back: a grunt's fight is conceded on the
-          way out, and a raid holds the party until it settles */}
-      <Dialog
+      <LeaveDialog
         isOpen={leaving()}
-        onClose={() => {
+        said={leavingSaid()}
+        onLeave={leave}
+        onStay={() => {
           setLeaving(false);
         }}
-        title={m.battle_leave_title()}
-        description={m.battle_leave_description()}
-        terse
-      >
-        <p class="text-center">{leavingSaid()}</p>
-        <DialogActions>
-          <Button tone="primary" onClick={leave}>
-            {m.battle_leave_anyway()}
-          </Button>
-          <Button
-            onClick={() => {
-              setLeaving(false);
-            }}
-          >
-            {m.battle_keep_fighting()}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      />
 
-      {/* A fight that has been won or lost says so rather than leaving
-          a line of text under a field that is no longer moving. It
-          opens the moment the engine settles it, and closing it leaves
-          the player on the finished field rather than walking them out
-          — the prize is already recorded either way */}
-      <VerdictDialog
+      {/* A fight that has been won or lost says so over the field. It
+          opens the moment the engine settles it, and Stay and look
+          leaves the player on the finished field rather than walking
+          them out: the prize is already recorded either way */}
+      <ResultsScreen
         verdict={verdict}
         outcome={outcome()}
         spoils={props.spoils?.() ?? null}

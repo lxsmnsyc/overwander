@@ -8,7 +8,7 @@ import { BASE_FRIENDSHIP } from '../data/constants/friendship';
 import { defaultSlots } from '../data/constants/slots';
 import { isTeraType } from '../data/species/tera-type';
 import Biome from '../data/ids/biome';
-import { Balls } from '../data/ids/items';
+import { BALL_ITEMS, Balls } from '../data/ids/items';
 import type Abilities from '../data/ids/abilities';
 import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
@@ -118,6 +118,12 @@ export interface CatchSnapshot {
    * bag as the raid starts
    */
   balms?: number;
+  /**
+   * The ball the catch sits in, drawn on its side's plate in a fight.
+   * A boss, a called ally and a snapshot written before the field
+   * existed carry none, and draw as a Poke Ball
+   */
+  ball?: Balls;
 }
 
 /**
@@ -163,7 +169,7 @@ export function previewSnapshot(snapshot: CatchSnapshot): CaughtPokemon {
     lair: null,
     box: null,
     slot: null,
-    ball: Balls.PokeBall,
+    ball: snapshot.ball ?? Balls.PokeBall,
     caughtAt: '',
     locale: '',
     effortValues: snapshot.effortValues,
@@ -205,6 +211,7 @@ export function createCatchSnapshot(id: string, caught: CaughtPokemon): CatchSna
     health: caught.health,
     statuses: caught.statuses,
     friendship: caught.friendship,
+    ball: caught.ball,
   };
 }
 
@@ -254,6 +261,9 @@ export function asCatchSnapshot(value: unknown): CatchSnapshot {
     ...(data.terastallized === true ? { terastallized: true } : {}),
     ...(data.alphaCopy === true ? { alphaCopy: true } : {}),
     ...(typeof data.balms === 'number' && data.balms > 0 ? { balms: Math.floor(data.balms) } : {}),
+    ...(typeof data.ball === 'number' && data.ball in BALL_ITEMS
+      ? { ball: data.ball as Balls }
+      : {}),
   };
 }
 

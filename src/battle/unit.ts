@@ -4,7 +4,7 @@ import type { Stats } from '../data/constants/stats';
 import { Stages, StatsKind, createStatsField } from '../data/constants/stats';
 import { Types } from '../data/constants/types';
 import type Abilities from '../data/ids/abilities';
-import type { Items } from '../data/ids/items';
+import type { Balls, Items } from '../data/ids/items';
 import { type MoveCategories, MoveTargets, type Moves } from '../data/ids/moves';
 import Natures from '../data/ids/natures';
 import { Genders, Species } from '../data/ids/species';
@@ -129,6 +129,12 @@ export default class Unit {
    * reads it
    */
   shiny = false;
+
+  /**
+   * The ball it sits in, copied off its record for its side's plate.
+   * Unset for anything with no record behind it. No mechanic reads it
+   */
+  ball?: Balls;
 
   /**
    * Whether it carries the Gigantamax Factor, copied off its record:
@@ -656,6 +662,14 @@ export default class Unit {
    * so the item comes off the catch record too
    */
   consumed = new Set<Items>();
+
+  /**
+   * What took each item that left the unit during the battle, and
+   * stays gone: its own use, a Knock Off, a Thief, a Trick. Like
+   * `consumed` the battle decides nothing by it; the battle view draws
+   * a lost item with it. An item that comes back is struck off
+   */
+  removedItems = new Map<Items, EffectCause>();
 
   /**
    * The coins this unit's Pay Days scattered. Nothing in the battle

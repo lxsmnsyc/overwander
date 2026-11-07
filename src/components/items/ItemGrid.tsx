@@ -6,6 +6,7 @@ import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
 import { Button, Detail, HoverCard, Note, Row, Search, TooltipHost } from '../styled';
+import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -75,6 +76,14 @@ export interface ItemCell {
    * ringed in tide, the colour of what is being looked at
    */
   current?: boolean;
+  /**
+   * Whether pressing the square opens its details in a panel, and
+   * whether that panel is open now. Left out on a tray whose press does
+   * the thing itself, where the square is a toggle instead
+   */
+  expanded?: boolean;
+  /** The id of the panel the square opens, while it is open */
+  controls?: string;
   /**
    * Why this one cannot be pressed, or nothing when it can. The square
    * stays on the tray either way — a vendor's crate lists what he
@@ -286,7 +295,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
   const aside = (cell: ItemCell): JSX.Element => (
     <>
       <Show when={cell.carried ?? cell.amount}>
-        {(held) => <Detail label={m.item_amount_in_bag()}>{held()}</Detail>}
+        {(held) => <Detail label={m.item_amount_in_bag()}>{formatNumber(held())}</Detail>}
       </Show>
       {cell.card?.()}
     </>
@@ -299,7 +308,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         ? describeItem(cell.item)
         : m.item_cell_verb({ verb: props.verb, item: describeItem(cell.item) });
     const counted =
-      cell.amount == null ? named : m.item_cell_carried({ label: named, count: cell.amount });
+      cell.amount == null
+        ? named
+        : m.item_cell_carried({ label: named, count: formatNumber(cell.amount) });
 
     return cell.blocked == null
       ? counted
@@ -315,7 +326,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       type="button"
       disabled={props.disabled === true || cell.blocked != null}
       aria-label={cell.said ?? sayCell(cell)}
-      aria-pressed={cell.selected === true}
+      aria-pressed={cell.expanded == null ? cell.selected === true : undefined}
+      aria-expanded={cell.expanded}
+      aria-controls={cell.controls}
+      // Found again by the panel it opened, to hand focus back on close
+      data-item={cell.item}
       onClick={() => {
         press(cell);
       }}
@@ -339,7 +354,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             items-center justify-center rounded-full bg-ink px-1.5 font-display text-[11px]
             font-semibold text-paper tabular-nums"
         >
-          {cell.amount}
+          {formatNumber(cell.amount ?? 0)}
         </span>
       </Show>
       {/* And the asking price, where there is one */}

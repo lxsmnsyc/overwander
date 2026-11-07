@@ -6,6 +6,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  createUniqueId,
 } from 'solid-js';
 import type { CandyStack } from '../../../auth/candy';
 import { getCaught } from '../../../auth/caught';
@@ -47,8 +48,8 @@ import {
   getItemType,
   isRelic,
   isUsable,
-  relicVerb,
 } from './pockets';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface InventoryListProps {
@@ -103,6 +104,10 @@ export default function BagBody(
 ): JSX.Element {
   const game = useGame();
   const toast = useToast();
+  /** The docked panel's id, which the square that opened it points at */
+  const panelId = createUniqueId();
+  /** The tray and its pockets, where a square is found to hand focus back to */
+  let shelves: HTMLDivElement | undefined;
   /**
    * What has been chosen to spend, while the pokemon to spend it on is
    * being picked. The bag asks in that order (item, then pokemon)
@@ -228,9 +233,13 @@ export default function BagBody(
         item: entry.item,
         amount: entry.amount,
         current: entry.item === props.chosen,
+        // A press opens the panel rather than spending it, so the square
+        // says what it is and the panel's button says what it does
+        expanded: entry.item === props.chosen,
+        controls: entry.item === props.chosen ? panelId : undefined,
         said: m.item_cell_carried({
-          label: relicVerb(entry.item, describeItem(entry.item)),
-          count: entry.amount,
+          label: describeItem(entry.item),
+          count: formatNumber(entry.amount),
         }),
       });
     }
@@ -361,6 +370,20 @@ export default function BagBody(
       });
   };
 
+  /**
+   * Put focus back on the square whose panel was just closed, so a
+   * keyboard is left where it was rather than at the top of the page.
+   * Only the open pocket's square is drawn, and so only it has a box
+   */
+  const refocus = (item: Items): void => {
+    for (const square of shelves?.querySelectorAll<HTMLElement>(`[data-item="${item}"]`) ?? []) {
+      if (square.offsetParent != null) {
+        square.focus();
+        return;
+      }
+    }
+  };
+
   /** A square pressed docks its item beside the tray; pressed again, it goes back */
   const choose = (item: Items): void => {
     props.onChoose(props.chosen === item ? null : item);
@@ -456,7 +479,7 @@ export default function BagBody(
           </RailTab>
         </RailTabs>
 
-        <div class="flex min-w-0 grow flex-col gap-2.5">
+        <div ref={shelves} class="flex min-w-0 grow flex-col gap-2.5">
           <div class="flex items-baseline gap-2.5">
             <h3 class="m-0 font-display text-xl leading-tight font-semibold">{shelfName()}</h3>
             <span class="text-[13px] text-muted">{shelfCount()}</span>
@@ -487,6 +510,7 @@ export default function BagBody(
         <Show when={docked()}>
           {(entry) => (
             <DetailPanel
+              id={panelId}
               player={props.player}
               item={entry().item}
               amount={entry().amount}
@@ -501,12 +525,19 @@ export default function BagBody(
                 return type == null ? ALL_TONE : POCKET_TONES[type];
               })()}
               verb={verbFor(entry().item)}
-              onPokemon={isUsable(entry().item)}
+              // In the order a press checks: a relic and the rope are
+              // spent on a place, so neither has pokemon to help
+              onPokemon={
+                !isRelic(entry().item) && !isEscapeRope(entry().item) && isUsable(entry().item)
+              }
               onVerb={() => {
                 press(entry().item);
               }}
               onClose={() => {
+                const item = entry().item;
+
                 props.onChoose(null);
+                refocus(item);
               }}
             />
           )}

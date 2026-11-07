@@ -1,5 +1,4 @@
 import { ItemFlags, ItemTypes, type Items } from '../../../data/ids/items';
-import { isEscapeRope } from '../../../data/items/escape-rope';
 import { getRaidSpecies } from '../../../data/items/raid-items';
 import { getItemData } from '../../../data/items';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -56,17 +55,6 @@ export const POCKET_NAMES: Record<ItemTypes, () => string> = {
   [ItemTypes.Training]: m.item_pocket_training,
   [ItemTypes.Fossil]: m.item_pocket_fossils,
 };
-
-/** What pressing this square is announced as doing, with the item named */
-export function relicVerb(item: Items, named: string): string {
-  if (isRelic(item)) {
-    return m.item_open_raid_with({ item: named });
-  }
-  if (isEscapeRope(item)) {
-    return m.item_climb_out_with({ item: named });
-  }
-  return isUsable(item) ? m.item_cell_verb({ verb: m.catch_use(), item: named }) : named;
-}
 
 /**
  * Each pocket's colour, so a pocket is found by colour as a box is.

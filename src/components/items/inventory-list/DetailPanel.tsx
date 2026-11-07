@@ -4,7 +4,7 @@ import type { CaughtPokemon } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
 import type { Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';
-import { Species } from '../../../data/ids/species';
+import { Genders, Species } from '../../../data/ids/species';
 import { isLockLive } from '../../../model/battle-lock';
 import { isShiny } from '../../../model/caught-record';
 import { isEgg } from '../../../model/egg';
@@ -17,6 +17,7 @@ import { detailItem } from '../../details';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { Badge, Button, CloseButton } from '../../styled';
 import ItemSprite from '../ItemSprite';
+import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /** How many of the pokemon it would help are drawn before the count says the rest */
@@ -26,6 +27,8 @@ const HELPED_SHOWN = 6;
 const ART_SIZE = 64;
 
 export interface DetailPanelProps {
+  /** Named by the square that opened it, through `aria-controls` */
+  id: string;
   player: string;
   item: Items;
   amount: number;
@@ -99,6 +102,7 @@ export default function DetailPanel(props: DetailPanelProps): JSX.Element {
 
   return (
     <aside
+      id={props.id}
       aria-label={detailItem(props.item).name}
       class="motion-crossfade fixed inset-x-0 bottom-0 z-40 flex max-h-[62dvh] flex-col gap-2.5
         overflow-y-auto rounded-t-sheet border-t-2 border-line bg-paper px-4 pt-4 pb-5 shadow-sheet
@@ -123,7 +127,7 @@ export default function DetailPanel(props: DetailPanelProps): JSX.Element {
               class="inline-flex h-[22px] shrink-0 items-center rounded-full bg-ink px-2 font-display
                 text-xs font-semibold text-paper tabular-nums"
             >
-              ×{props.amount}
+              ×{formatNumber(props.amount)}
             </span>
             <span class="ml-auto shrink-0">
               <CloseButton
@@ -142,7 +146,7 @@ export default function DetailPanel(props: DetailPanelProps): JSX.Element {
             </span>
             <Show when={sells() > 0}>
               <Badge tone="gold" class="text-xs">
-                {m.item_panel_sells({ price: sells() })}
+                {m.item_panel_sells({ price: m.ui_gold({ amount: formatNumber(sells()) }) })}
               </Badge>
             </Show>
           </div>
@@ -174,6 +178,7 @@ export default function DetailPanel(props: DetailPanelProps): JSX.Element {
                         <AnimatedSprite
                           species={isEgg(record) ? Species.Egg : record.species}
                           shiny={isShiny(record)}
+                          female={!isEgg(record) && record.gender === Genders.Female}
                           direction="DownLeft"
                           still
                           fill

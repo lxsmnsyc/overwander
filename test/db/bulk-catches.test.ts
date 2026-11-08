@@ -53,7 +53,13 @@ beforeEach(async () => {
 /** One of the player's, named by its key, with whatever marks it carries */
 async function put(
   key: string,
-  marks: { favorite?: boolean; guarded?: boolean; lockedAt?: number; items?: Items[] } = {},
+  marks: {
+    favorite?: boolean;
+    guarded?: boolean;
+    lockedAt?: number;
+    egg?: boolean;
+    items?: Items[];
+  } = {},
 ): Promise<string> {
   const id = `bulk-${key}`;
 
@@ -63,6 +69,7 @@ async function put(
     favorite: marks.favorite ?? false,
     guarded: marks.guarded ?? false,
     locked_at: marks.lockedAt ?? 0,
+    egg: marks.egg ?? false,
   })}`;
 
   // What it holds is a table of its own, a row per slot
@@ -143,6 +150,20 @@ describe('letting several go at once', () => {
     expect(outcome.done).toEqual(['bulk-d']);
     expect(outcome.refused).toEqual(['bulk-a', 'bulk-b', 'bulk-c']);
     expect(await remaining()).toEqual(['bulk-a', 'bulk-b', 'bulk-c']);
+  });
+
+  it('steps over an egg, and pays no candy for it', async () => {
+    await put('a', { egg: true });
+    await put('b');
+    await put('c');
+
+    const outcome = await releaseCatches(player.uid, ['bulk-a', 'bulk-b']);
+
+    expect(outcome.done).toEqual(['bulk-b']);
+    expect(outcome.refused).toEqual(['bulk-a']);
+    expect(await remaining()).toEqual(['bulk-a', 'bulk-c']);
+    expect(await candyFor(Species.Pidgey)).toBe(getReleaseCandy({ level: FIXTURE_LEVEL }));
+    expect(await releaseCatch(player.uid, 'bulk-a')).toBe(false);
   });
 
   it('lets go of one that came out of a gift', async () => {

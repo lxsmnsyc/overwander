@@ -1,6 +1,7 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { getReleaseCandy } from '../../../auth/candy';
 import { isFavorite, isGuarded } from '../../../model/caught-record';
+import { isEgg } from '../../../model/egg';
 import type Families from '../../../data/ids/families';
 import { getFamilyName, getSpeciesData } from '../../../data/species';
 import CandySprite from '../../sprites/CandySprite';
@@ -40,11 +41,12 @@ export interface CatchActionsProps {
  * locked one are both marks the player put on the record to stop
  * exactly this; a pokemon in a battle is held while the fight runs
  */
-type HeldBack = 'battle' | 'favorite' | 'locked';
+type HeldBack = 'battle' | 'egg' | 'favorite' | 'locked';
 
 /** How many are held back for each reason, said with the count */
 const HELD_BACK: Record<HeldBack, (inputs: { count: number }) => string> = {
   battle: m.catch_held_battle,
+  egg: m.catch_held_egg,
   favorite: m.catch_held_favorite,
   locked: m.catch_held_locked,
 };
@@ -52,6 +54,9 @@ const HELD_BACK: Record<HeldBack, (inputs: { count: number }) => string> = {
 function heldBack(option: CatchOption): HeldBack | null {
   if (option.fighting) {
     return 'battle';
+  }
+  if (isEgg(option.caught)) {
+    return 'egg';
   }
   if (isFavorite(option.caught)) {
     return 'favorite';

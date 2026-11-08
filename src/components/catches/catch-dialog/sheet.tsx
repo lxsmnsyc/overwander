@@ -877,6 +877,9 @@ export function CatchSheetBody(
       // A player with no pokemon has no way back into the game
       return m.catch_release_blocked_only();
     }
+    if (isEgg(loaded)) {
+      return m.catch_release_blocked_egg();
+    }
     if (isFavorite(loaded)) {
       return m.catch_release_blocked_favorite();
     }

@@ -608,8 +608,11 @@ export interface BulkOutcome {
 
 /**
  * Whether a pokemon may be let go: it is the player's and is not
- * fighting, a favorite or locked. Release cannot be undone, and both
- * marks are a player saying so about this pokemon in particular
+ * fighting, a favorite, locked or an egg. Release cannot be undone, and
+ * both marks are a player saying so about this pokemon in particular.
+ * An egg is held back because a release pays candy for the levels taken
+ * and names the species let go, and an egg has taken none and keeps
+ * what is inside it to itself
  */
 function isReleasable(
   caught: Record<string, unknown> | undefined,
@@ -617,6 +620,7 @@ function isReleasable(
 ): caught is Record<string, unknown> {
   return (
     caught?.owner === uid &&
+    caught.egg !== true &&
     !isCatchLocked(caught) &&
     !isFavoriteRecord(caught) &&
     !isGuardedRecord(caught)
@@ -850,7 +854,7 @@ export async function takeBack(uid: string, catchId: string, now: number): Promi
  * anything a batch would refuse.
  *
  * Resolves false when the catch is not the player's, is fighting, is
- * a favorite, is locked, or is the only pokemon they have
+ * a favorite, is locked, is an egg, or is the only pokemon they have
  */
 export async function releaseCatch(uid: string, catchId: string): Promise<boolean> {
   return (await releaseCatches(uid, [catchId])).done.length > 0;

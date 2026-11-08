@@ -1149,6 +1149,16 @@
       }
     }
   ],
+  "catch_held_egg": [
+    {
+      "declarations": ["input count", "local countPlural = count: plural"],
+      "selectors": ["countPlural"],
+      "match": {
+        "countPlural=one": "{count} huevo",
+        "countPlural=*": "{count} huevos"
+      }
+    }
+  ],
   "catch_held_favorite": [
     {
       "declarations": ["input count", "local countPlural = count: plural"],
@@ -1485,6 +1495,7 @@
   "catch_released_items": "Lo que llevaba ha vuelto a la Mochila.",
   "catch_release_blocked_raid": "Está en una incursión, así que no se puede liberar.",
   "catch_release_blocked_only": "No puedes liberar tu único Pokémon.",
+  "catch_release_blocked_egg": "Un Huevo no se puede liberar. Haz que eclosione antes.",
   "catch_release_blocked_favorite": "Un favorito no se puede liberar. Quítalo primero de favoritos.",
   "catch_release_blocked_locked": "Un Pokémon bloqueado no se puede liberar. Desbloquéalo antes.",
   "catch_name_locked": "Nombrado por su primer Entrenador",

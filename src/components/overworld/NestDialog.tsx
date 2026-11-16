@@ -115,9 +115,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
       <Show when={props.offer}>
         {(offer) => (
           <div class="flex flex-col gap-3">
-            <CounterTerms
-              often={offer().state === 'taken' ? m.ow_used_this_while() : OFTEN[offer().from]()}
-            />
+            <CounterTerms often={offer().state === 'taken' ? undefined : OFTEN[offer().from]()} />
             <Show when={offer().state === 'taken'}>
               <CounterSpent says={AGAIN[offer().from]()} quoted={false} />
             </Show>

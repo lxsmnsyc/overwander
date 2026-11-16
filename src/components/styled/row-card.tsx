@@ -59,7 +59,7 @@ export function RowActions(props: ParentProps): JSX.Element {
   );
 }
 
-export type PillTone = 'leaf' | 'ember' | 'gold' | 'tide' | 'arcane' | 'neutral';
+export type PillTone = 'leaf' | 'ember' | 'gold' | 'tide' | 'arcane' | 'neutral' | 'plain';
 
 const PILLS: Record<PillTone, string> = {
   leaf: 'bg-leaf-soft text-leaf-dark',
@@ -68,6 +68,7 @@ const PILLS: Record<PillTone, string> = {
   tide: 'bg-tide-soft text-tide-dark',
   arcane: 'bg-arcane-soft text-arcane-dark',
   neutral: 'bg-line-soft text-muted',
+  plain: 'bg-line-soft text-ink',
 };
 
 /** How tall a pill is: a row's state, a term beside a heading, a purse */
@@ -86,6 +87,27 @@ export function Pill(
       class={`inline-flex shrink-0 items-center rounded-full font-extrabold whitespace-nowrap ${
         PILL_SIZES[props.size ?? 'small']
       } ${PILLS[props.tone ?? 'neutral']} ${props.class ?? ''}`}
+    >
+      {props.children}
+    </span>
+  );
+}
+
+/** How many a row or a choice holds: a 22px pill that keeps its width for one digit */
+export function CountPill(
+  props: ParentProps<{ look?: 'quiet' | 'lit' | 'hot'; class?: string }>,
+): JSX.Element {
+  const look = (): string => {
+    if (props.look === 'hot') {
+      return 'bg-ember text-on-accent';
+    }
+    return props.look === 'lit' ? 'bg-tide text-on-accent' : 'bg-line-soft text-muted';
+  };
+
+  return (
+    <span
+      class={`inline-flex h-[22px] min-w-[26px] shrink-0 items-center justify-center rounded-full
+        px-1.5 font-display text-xs font-semibold tabular-nums ${look()} ${props.class ?? ''}`}
     >
       {props.children}
     </span>

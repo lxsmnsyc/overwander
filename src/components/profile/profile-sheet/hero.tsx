@@ -5,7 +5,7 @@ import BuddyCard from '../../catches/BuddyCard';
 import { useGame } from '../../app/game-context';
 import { friendActionLabel } from '../../friends/tie';
 import { ActionsIcon } from '../../icons';
-import { Menu, type MenuAction, Note } from '../../styled';
+import { Menu, type MenuAction, Note, Pill } from '../../styled';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { PlayerFace } from '../PlayerPlate';
@@ -87,12 +87,7 @@ export default function ProfileHero(props: { state: ProfileState }): JSX.Element
                     />
                   )}
                 </Show>
-                <span
-                  class="inline-flex items-center rounded-full bg-gold-soft px-2 text-[11px]
-                    leading-[22px] font-extrabold text-gold-dark"
-                >
-                  {m.ui_gold({ amount: formatNumber(loaded().gold) })}
-                </span>
+                <Pill tone="gold">{m.ui_gold({ amount: formatNumber(loaded().gold) })}</Pill>
               </span>
               <PlayerPlace player={props.state.player} />
             </div>

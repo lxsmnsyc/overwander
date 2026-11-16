@@ -1,5 +1,6 @@
 import { type JSX, Show } from 'solid-js';
 import { SETTING_ROW } from './card';
+import { CountPill } from './row-card';
 
 /**
  * A setting with a range rather than two states: a volume, a rate, a
@@ -62,12 +63,7 @@ export default function Slider(props: SliderProps): JSX.Element {
             props.onChange(event.currentTarget.valueAsNumber);
           }}
         />
-        <span
-          class="inline-flex h-[22px] min-w-[26px] shrink-0 items-center justify-center rounded-full
-            bg-line-soft px-1.5 font-display text-xs font-semibold text-muted tabular-nums"
-        >
-          {percent()}
-        </span>
+        <CountPill>{percent()}</CountPill>
       </div>
     );
   }

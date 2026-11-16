@@ -1,4 +1,5 @@
 import { For, type JSX } from 'solid-js';
+import { CountPill } from './row-card';
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta';
 
 /**
@@ -64,14 +65,9 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
           >
             <RadioGroupLabel as="span">{option.label}</RadioGroupLabel>
             {option.count == null ? null : (
-              <span
-                class={`ml-1.5 inline-flex h-[22px] min-w-[26px] items-center justify-center
-                  rounded-full px-1.5 font-display text-xs font-semibold tabular-nums ${
-                    option.hot === true ? 'bg-ember text-on-accent' : 'bg-line-soft text-muted'
-                  }`}
-              >
+              <CountPill class="ml-1.5" look={option.hot === true ? 'hot' : 'quiet'}>
                 {option.count}
-              </span>
+              </CountPill>
             )}
           </RadioGroupOption>
         )}

@@ -93,7 +93,6 @@ function TwoFactorCard(props: {
           <>
             <SettingState
               label={m.security_two_step()}
-              description={m.security_totp_on()}
               state={<Badge tone="leaf">{m.security_on()}</Badge>}
             >
               <Button
@@ -127,26 +126,23 @@ function TwoFactorCard(props: {
         <Show
           when={setup()}
           fallback={
-            <>
-              <SettingNote>{m.security_totp_offer()}</SettingNote>
-              <SettingState
-                label={m.security_two_step()}
-                description={m.security_two_step_description()}
-                state={<Badge>{m.security_off()}</Badge>}
+            <SettingState
+              label={m.security_two_step()}
+              description={m.security_two_step_description()}
+              state={<Badge>{m.security_off()}</Badge>}
+            >
+              <Button
+                tone="primary"
+                disabled={busy()}
+                onClick={() => {
+                  act(async () => {
+                    setSetup(await startTotp(props.password));
+                  });
+                }}
               >
-                <Button
-                  tone="primary"
-                  disabled={busy()}
-                  onClick={() => {
-                    act(async () => {
-                      setSetup(await startTotp(props.password));
-                    });
-                  }}
-                >
-                  {m.security_set_up()}
-                </Button>
-              </SettingState>
-            </>
+                {m.security_set_up()}
+              </Button>
+            </SettingState>
           }
         >
           {(started) => (
@@ -207,7 +203,6 @@ function PasskeyList(props: {
           <SettingState
             label={one.name === '' ? m.login_passkey() : one.name}
             description={m.security_added({ date: formatDate(one.createdAt) })}
-            state={<Badge tone="leaf">{m.security_on()}</Badge>}
           >
             <Button
               tone="danger"

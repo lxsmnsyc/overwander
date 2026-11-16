@@ -27,7 +27,7 @@ import { LearnRefusal, type LearnResult } from '../../model/learn-refusal';
 import { MoveLine } from '../catches/MovePicker';
 import { MOVE_CARD, MoveStripe } from './move-card';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { type CounterCost, CounterStep, CounterTerms, DockNote } from './terms';
+import { type CounterCost, CounterStep, CounterTerms } from './terms';
 import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import { type FormProps, defineForm } from './form';
@@ -47,8 +47,6 @@ export interface TeachMoveInput {
   catchId: string;
   /** The move being taught. Its machine is derived from it: there is exactly one per move */
   move: Moves;
-  /** What is being spent, as the form says it: "The machine is spent teaching it" */
-  cost?: string;
   /** The item it spends, drawn as a chip. Defaults to the move's machine */
   price?: Items;
   /**
@@ -116,12 +114,6 @@ function TeachBody(
     return props.input.teach == null ? { item: getMachineItem(props.input.move) } : undefined;
   };
 
-  const room = (): number => {
-    const loaded = record();
-
-    return loaded == null ? 0 : getCatchSlots(loaded, Slots.Move);
-  };
-
   const named = (): string => {
     const loaded = record();
 
@@ -174,10 +166,7 @@ function TeachBody(
           ? m.teach_full({ name: named(), count: known().length })
           : m.teach_room({ name: named() })}
       </Meta>
-      <CounterTerms
-        cost={costOf()}
-        rows={[{ label: named(), value: m.teach_knows({ count: known().length, room: room() }) }]}
-      />
+      <CounterTerms cost={costOf()} />
 
       {/* The move on offer, set apart from the ones it already knows */}
       <div class="flex flex-col gap-2 rounded-card border-2 border-tide bg-tide-soft p-2.5">
@@ -261,16 +250,7 @@ function TeachBody(
 
       <Status message={status()} />
 
-      <DialogActions
-        stack
-        note={
-          <Show when={full()}>
-            <DockNote>
-              {m.teach_dock_forgetting({ move: getMoveData(known()[forgetting()] ?? 0).name })}
-            </DockNote>
-          </Show>
-        }
-      >
+      <DialogActions stack>
         <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
           {busy() ? m.teach_busy() : action()}
         </Button>
@@ -330,7 +310,7 @@ function CatchFace(props: { catchId: string }): JSX.Element {
 /** Teaching a move, answered with true once it is learned */
 export const TeachMoveForm = defineForm<TeachMoveInput, true>({
   title: (input) => m.teach_title({ move: getMoveData(input.move).name }),
-  prompt: (input) => m.teach_prompt({ cost: input.cost ?? m.teach_the_machine() }),
+  prompt: () => m.teach_prompt(),
   lead: (input) => <CatchFace catchId={input.catchId} />,
   width: 'wide',
   // Answered by its buttons alone: a level hands a move over once
@@ -373,7 +353,6 @@ export function askTeachings(
       openForm(TeachMoveForm, {
         catchId: current.catchId,
         move: current.move,
-        cost: current.levelled ? m.teach_nothing() : undefined,
         teach: current.levelled ? learnLevelUpMove : undefined,
       })
         .then((taught) => {

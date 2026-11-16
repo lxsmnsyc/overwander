@@ -279,9 +279,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
             behind a second dialog, and the button waits for three */}
         <Show when={rented()}>
           <div class="flex flex-col gap-2">
-            <CounterStep>
-              {m.stop_rent({ size: FRONTIER_TEAM_SIZE, taken: taken().length })}
-            </CounterStep>
+            <CounterStep>{m.stop_rent({ size: FRONTIER_TEAM_SIZE })}</CounterStep>
             <CatchBox
               entries={crate()}
               capacity={crate().length}

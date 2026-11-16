@@ -1,10 +1,10 @@
 import { type JSX, Show, createSignal } from 'solid-js';
 import type { ItemAmount } from '../items/InventoryPicker';
-import { Button, DialogActions, DialogSection, Segmented } from '../styled';
+import { Button, DialogActions, DialogSection, Pill, Segmented } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 import { ItemTray, type PickItemInput } from './pick-item';
-import { DockNote, TERM_CHIP } from './terms';
+import { DockNote } from './terms';
 import { formatNumber } from '../../i18n/format';
 
 /**
@@ -51,9 +51,9 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
           {/* What the purse holds, as the gold chip beside the choice */}
           <Show when={props.input.buy.have}>
             {(have) => (
-              <span class={`${TERM_CHIP} bg-gold-soft text-gold-dark`}>
+              <Pill size="medium" tone="gold" class="gap-1.5">
                 {formatNumber(have().amount)} {have().unit}
-              </span>
+              </Pill>
             )}
           </Show>
         </div>

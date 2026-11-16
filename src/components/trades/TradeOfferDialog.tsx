@@ -24,9 +24,12 @@ import { m } from '../../i18n/paraglide/messages.js';
 export interface TradeOfferDialogProps {
   /** The signed-in player, whose pokemon goes out */
   player: string;
-  /** Who the offer is for, or null while nobody is */
+  /** Who the offer is for: kept through the fade that closes it */
   friend: string | null;
+  isOpen: boolean;
   onClose: () => void;
+  /** Called once the closing fade is over */
+  onGone?: () => void;
 }
 
 /** Which way the gold on the offer points */
@@ -54,8 +57,11 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   // friend says nothing about the next
   createEffect(
     on(
-      () => props.friend,
-      () => {
+      () => [props.friend, props.isOpen] as const,
+      ([, open]) => {
+        if (!open) {
+          return;
+        }
         setOffered(null);
         setAsked(null);
         setGoldMode('none');
@@ -89,11 +95,11 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   const gold = (): number => mine()?.gold ?? 0;
 
   const [buddy] = createResource(
-    () => (props.friend == null ? null : props.player),
+    () => (props.isOpen ? props.player : null),
     async (uid) => getBuddy(uid),
   );
   const [onlyOne] = createResource(
-    () => (props.friend == null ? null : props.player),
+    () => (props.isOpen ? props.player : null),
     async (uid) => (await countCaught(uid)) <= 1,
   );
 
@@ -164,8 +170,9 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   return (
     <>
       <Dialog
-        isOpen={props.friend != null && picking() == null}
+        isOpen={props.isOpen && picking() == null}
         onClose={props.onClose}
+        afterLeave={props.onGone}
         width="wider"
         title={m.trade_title({ name: named() })}
         description={m.trade_description()}

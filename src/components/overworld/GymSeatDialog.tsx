@@ -302,10 +302,7 @@ function SeatCounter(
                       sprite={props.holder.latest?.sprite ?? null}
                     />
                     <Meta class="text-left">
-                      {m.gym_seat_standing({
-                        count: lineup().length,
-                        defenses: seated().defenses,
-                      })}
+                      {m.gym_seat_standing({ defenses: seated().defenses })}
                     </Meta>
                   </div>
                   <Show when={!mine()}>

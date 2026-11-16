@@ -46,6 +46,7 @@ const KIND_EDGES: Record<PillTone, string> = {
   gold: 'bg-gold',
   arcane: 'bg-arcane',
   neutral: 'bg-line',
+  plain: 'bg-line',
 };
 
 /** What the row says happened, in the words the panel behind it uses */

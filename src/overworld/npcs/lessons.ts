@@ -8,7 +8,6 @@ import type { Choice } from '../../components/forms/choice';
 import { pickCatchThenForm } from '../../components/forms/pick-catch-then';
 import { getMoveData } from '../../data/moves';
 import { TeachMoveForm } from '../../components/forms/teach-move';
-import { m } from '../../i18n/paraglide/messages.js';
 import { scalesHeld } from './shared';
 import type { NpcVisit } from './create';
 
@@ -105,7 +104,6 @@ async function teachOnce(
   const taught = await visit.form(TeachMoveForm, {
     catchId: option.id,
     move,
-    cost: m.npc_the_heart_scale(),
     price: lesson.fee,
     teach: lesson.teach,
   });

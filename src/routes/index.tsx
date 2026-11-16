@@ -1,6 +1,6 @@
 import { Title } from '@solidjs/meta';
 import { clientOnly } from '@solidjs/start';
-import { type Accessor, type JSX, Show, createSignal, from } from 'solid-js';
+import { type Accessor, type JSX, Show, createEffect, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
@@ -133,6 +133,16 @@ const DESCRIPTIONS: Record<Panelled, () => string> = {
  */
 function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const game = useGame();
+  // The friend being offered a trade, kept until the dialog's fade is over
+  const [lastTrading, setLastTrading] = createSignal<string | null>(null);
+
+  createEffect(() => {
+    const friend = game.trading();
+
+    if (friend != null) {
+      setLastTrading(friend);
+    }
+  });
   /**
    * Whether the seller's side of the auction board is open. It lives
    * here because the button that opens it is in the dialog's top bar
@@ -485,14 +495,22 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           {/* Made when the offer starts rather than with the page: dialogs stack in
               the order they were made, and the profile it is opened from is made when
               it first opens, so an offer made with the page sat behind it */}
-          <Show when={game.trading() != null}>
-            <TradeOfferDialog
-              player={props.user.uid}
-              friend={game.trading()}
-              onClose={() => {
-                game.setTrading(null);
-              }}
-            />
+          <Show when={lastTrading()}>
+            {(friend) => (
+              <TradeOfferDialog
+                player={props.user.uid}
+                friend={friend()}
+                isOpen={game.trading() != null}
+                onClose={() => {
+                  game.setTrading(null);
+                }}
+                onGone={() => {
+                  if (game.trading() == null) {
+                    setLastTrading(null);
+                  }
+                }}
+              />
+            )}
           </Show>
 
           {/* Listing is its own dialog, opened as the sheet closes:

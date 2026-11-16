@@ -1,8 +1,8 @@
 import { For, type JSX, Show } from 'solid-js';
 import { DuelBan } from '../../../data/constants/duel-bans';
 import { Slots, getSlots } from '../../../data/constants/slots';
-import { CounterTerms, TERM_CHIP } from '../../forms/terms';
-import { Button } from '../../styled';
+import { CounterTerms } from '../../forms/terms';
+import { Button, Pill } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /** What each ban reads as on the rules chips */
@@ -38,18 +38,22 @@ export default function RuleChips(props: RuleChipsProps): JSX.Element {
     >
       {/* Nothing is recorded: no candy, no aftermath, and what the party spent comes back */}
       <Show when={props.maxBst > 0}>
-        <span class={`${TERM_CHIP} bg-line-soft`}>
+        <Pill size="medium" tone="plain" class="gap-1.5">
           <span class="font-semibold text-muted">{m.duels_stat_total()}</span>≤ {props.maxBst}
-        </span>
+        </Pill>
       </Show>
       <For each={BAN_CHIPS}>
         {([ban, label]) => (
           <Show when={(props.bans & ban) !== 0}>
-            <span class={`${TERM_CHIP} bg-ember-soft text-ember-dark`}>{label()}</span>
+            <Pill size="medium" tone="ember" class="gap-1.5">
+              {label()}
+            </Pill>
           </Show>
         )}
       </For>
-      <span class={`${TERM_CHIP} bg-line-soft`}>{m.duels_unranked()}</span>
+      <Pill size="medium" tone="plain" class="gap-1.5">
+        {m.duels_unranked()}
+      </Pill>
       <Show when={props.onChange}>
         {(change) => (
           <>

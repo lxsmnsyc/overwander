@@ -260,14 +260,8 @@ function ListingBody(
         <RowCard tone="quiet">
           <span class="text-[13px] leading-snug">
             {props.subject?.lot === AuctionLot.Item
-              ? m.auction_confirm_item({
-                  asking: formatNumber(asking()),
-                  raise: formatNumber(raise()),
-                })
-              : m.auction_confirm_catch({
-                  asking: formatNumber(asking()),
-                  raise: formatNumber(raise()),
-                })}{' '}
+              ? m.auction_confirm_item()
+              : m.auction_confirm_catch()}{' '}
             <Meta>{m.auction_confirm_payment()}</Meta>
           </span>
         </RowCard>

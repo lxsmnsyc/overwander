@@ -93,7 +93,7 @@ function HoneyTreeBody(
       {/* The cost is on the button, so the one line here is what the player has */}
       <CounterTerms
         have={{ amount: jars(), short: jars() < LATHER_COST, unit: describeItem(Items.Honey) }}
-        often={props.lathered ? m.ow_used_this_while() : m.honey_tree_often()}
+        often={props.lathered ? undefined : m.honey_tree_often()}
       />
       <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
       <Show when={props.lathered}>

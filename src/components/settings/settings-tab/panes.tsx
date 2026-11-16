@@ -234,6 +234,7 @@ export function AudioPane(): JSX.Element {
       <Slider
         row
         label={m.settings_music()}
+        description={m.settings_music_description()}
         value={settings().music}
         onChange={(level) => {
           setSetting('music', level);

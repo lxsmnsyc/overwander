@@ -6,7 +6,7 @@ import { getItemData } from '../../data/items';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button, ListRow, Meta } from '../styled';
+import { Button, ListRow, Meta, Pill } from '../styled';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -66,18 +66,6 @@ export interface CounterTermsProps {
   children?: JSX.Element;
 }
 
-/** One term as a chip: gold for money, ember when the player is short */
-export const TERM_CHIP =
-  'inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-extrabold text-ink';
-
-/** The colours a term can take: what it means rather than how it is dressed */
-const TERM_TONES = {
-  leaf: 'bg-leaf-soft text-leaf-dark',
-  ember: 'bg-ember-soft text-ember-dark',
-  gold: 'bg-gold-soft text-gold-dark',
-  tide: 'bg-tide-soft text-tide-dark',
-} as const;
-
 /**
  * Always the first thing in a counter, as a row of chips: the price,
  * what the player carries, and anything else read before pressing
@@ -87,28 +75,32 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
     <div class="flex flex-wrap gap-1.5">
       <Show when={props.cost}>
         {(cost) => (
-          <span class={`${TERM_CHIP} bg-gold-soft text-gold-dark`}>{costChip(cost())}</span>
+          <Pill size="medium" tone="gold" class="gap-1.5">
+            {costChip(cost())}
+          </Pill>
         )}
       </Show>
       <Show when={props.have}>
         {(have) => (
-          <span
-            class={`${TERM_CHIP} ${have().short ? 'bg-ember-soft text-ember-dark' : 'bg-line-soft'}`}
-          >
+          <Pill size="medium" tone={have().short ? 'ember' : 'plain'} class="gap-1.5">
             {m.terms_you_carry({ amount: formatNumber(have().amount), unit: have().unit })}
-          </span>
+          </Pill>
         )}
       </Show>
       <For each={props.rows ?? []}>
         {(row) => (
-          <span class={`${TERM_CHIP} ${row.tone == null ? 'bg-line-soft' : TERM_TONES[row.tone]}`}>
+          <Pill size="medium" tone={row.tone ?? 'plain'} class="gap-1.5">
             <span class="font-bold text-muted">{row.label}</span>
             {row.value}
-          </span>
+          </Pill>
         )}
       </For>
       <Show when={props.often}>
-        {(often) => <span class={`${TERM_CHIP} bg-line-soft`}>{often()}</span>}
+        {(often) => (
+          <Pill size="medium" tone="plain" class="gap-1.5">
+            {often()}
+          </Pill>
+        )}
       </Show>
       {props.children}
     </div>

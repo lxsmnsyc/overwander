@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-finish-boards
 title: Boards for the overworld dialogs, the shell and the social screens
-status: active
+status: done
 priority: must
 type: docs
 story: ui-redesign-finish
@@ -9,6 +9,7 @@ outline: false
 milestone: now
 size: M
 gate: true
+spent: 391404
 added: 2026-11-16
 owns:
   - docs/design/field-kit/*.dc.html

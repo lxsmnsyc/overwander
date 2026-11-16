@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-overworld-dialogs
 title: Redesign the overworld dialogs
-status: todo
+status: active
 priority: must
 type: feature
 story: ui-redesign-finish

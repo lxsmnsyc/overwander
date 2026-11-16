@@ -8,27 +8,34 @@ import {
   createSignal,
 } from 'solid-js';
 import {
+  AuctionLot,
   type AuctionRecord,
   type BidHistoryEntry,
   BidState,
   canClaim,
   claimAuction,
   getBidState,
+  isLive,
   listBidHistory,
 } from '../../auth/auctions';
-import { AuctionLotLabel } from './auction-tab/lots';
 import {
-  Badge,
-  type BadgeTone,
   Button,
+  GroupLabel,
   LIST_PAGE,
   List,
-  ListRow,
-  Meta,
   Note,
+  Pill,
+  type PillTone,
+  RowActions,
+  RowCard,
+  RowText,
   Status,
   createPager,
 } from '../styled';
+import { AuctionLotLabel } from './auction-tab/lots';
+import { describeRemaining } from './auction-tab/time';
+import LotFace from './LotFace';
+import { useGame } from '../app/game-context';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
 import { formatNumber } from '../../i18n/format';
@@ -38,11 +45,11 @@ import { m } from '../../i18n/paraglide/messages.js';
  * Where the player stands, said the way they would say it
  */
 const BID_STATE_LABELS: Record<BidState, () => string> = {
-  [BidState.Leading]: m.auction_state_leading,
-  [BidState.Outbid]: m.auction_state_outbid,
-  [BidState.Won]: m.auction_state_won,
-  [BidState.Lost]: m.auction_state_lost,
-  [BidState.Collected]: m.auction_state_collected,
+  [BidState.Leading]: m.auction_pill_winning,
+  [BidState.Outbid]: m.auction_pill_outbid,
+  [BidState.Won]: m.auction_pill_won,
+  [BidState.Lost]: m.auction_pill_lost,
+  [BidState.Collected]: m.auction_pill_collected,
 };
 
 /**
@@ -50,7 +57,7 @@ const BID_STATE_LABELS: Record<BidState, () => string> = {
  * having lost it are the two things a player scans this list for, so
  * they are the two the eye can tell apart without reading
  */
-const BID_STATE_TONES: Record<BidState, BadgeTone> = {
+const BID_STATE_TONES: Record<BidState, PillTone> = {
   [BidState.Leading]: 'leaf',
   [BidState.Outbid]: 'ember',
   [BidState.Won]: 'gold',
@@ -63,9 +70,21 @@ const BID_STATE_TONES: Record<BidState, BadgeTone> = {
  * are the same number only while they are the ones winning it
  */
 function describeStanding(auction: AuctionRecord, mine: number, state: BidState): string {
-  return state === BidState.Leading || state === BidState.Won || state === BidState.Collected
-    ? m.ui_gold({ amount: formatNumber(mine) })
-    : m.auction_you_bid({ mine, standing: auction.bid });
+  const amount = formatNumber(mine);
+  const standing = formatNumber(auction.bid);
+
+  switch (state) {
+    case BidState.Leading:
+      return m.auction_line_leading();
+    case BidState.Outbid:
+      return m.auction_line_outbid({ standing });
+    case BidState.Won:
+      return m.auction_line_won({ amount });
+    case BidState.Lost:
+      return m.auction_line_lost({ standing });
+    default:
+      return m.auction_line_collected({ amount });
+  }
 }
 
 export interface BidsListProps {
@@ -94,6 +113,7 @@ export interface BidsListProps {
 function BidRows(
   props: BidsListProps & { history: Resource<BidHistoryEntry[]>; onChanged: () => void },
 ): JSX.Element {
+  const game = useGame();
   const [status, setStatus] = createSignal<string | null>(null);
 
   const paged = createPager(() => props.history() ?? [], LIST_PAGE);
@@ -116,34 +136,51 @@ function BidRows(
   return (
     <>
       <Show when={props.history()?.length} fallback={<Note>{m.auction_no_bids()}</Note>}>
+        <GroupLabel>{m.profile_section_bids()}</GroupLabel>
         <List>
           <For each={paged.shown()}>
             {(entry) => {
               const state = (): BidState => getBidState(entry.lot, props.player, Date.now());
+              const line = (): string => {
+                const standing = describeStanding(entry.lot, entry.bid.amount, state());
+
+                return isLive(entry.lot, Date.now())
+                  ? `${standing} · ${describeRemaining(entry.lot.endsAt, Date.now())}`
+                  : standing;
+              };
 
               return (
-                <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
-                  <div class="flex grow flex-col gap-0.5">
-                    <span class="font-medium">
-                      <AuctionLotLabel auction={entry.lot} />
-                    </span>
-                    <Meta>{describeStanding(entry.lot, entry.bid.amount, state())}</Meta>
-                  </div>
-                  <Badge tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]()}</Badge>
-                  {/* Nothing is handed over when bidding closes, so a
+                <RowCard>
+                  <LotFace auction={entry.lot} />
+                  <RowText name={<AuctionLotLabel auction={entry.lot} />} line={line()} />
+                  <Pill tone={BID_STATE_TONES[state()]}>{BID_STATE_LABELS[state()]()}</Pill>
+                  <RowActions>
+                    {/* The whole record, read-only: a pokemon on the
+                        block is somebody else's */}
+                    <Show when={entry.lot.lot === AuctionLot.Catch && entry.lot.caught !== ''}>
+                      <Button
+                        onClick={() => {
+                          game.setSheet({ catchId: entry.lot.caught, readOnly: true });
+                        }}
+                      >
+                        {m.friends_view()}
+                      </Button>
+                    </Show>
+                    {/* Nothing is handed over when bidding closes, so a
                         won lot is collected here. Answering a raise is
                         not offered: that is the board's */}
-                  <Show when={canClaim(entry.lot, props.player, Date.now())}>
-                    <Button
-                      tone="primary"
-                      onClick={() => {
-                        collect(entry.auction);
-                      }}
-                    >
-                      {m.auction_collect()}
-                    </Button>
-                  </Show>
-                </ListRow>
+                    <Show when={canClaim(entry.lot, props.player, Date.now())}>
+                      <Button
+                        tone="primary"
+                        onClick={() => {
+                          collect(entry.auction);
+                        }}
+                      >
+                        {m.auction_collect()}
+                      </Button>
+                    </Show>
+                  </RowActions>
+                </RowCard>
               );
             }}
           </For>

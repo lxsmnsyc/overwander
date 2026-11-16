@@ -1,6 +1,6 @@
 import { type JSX, Show, createEffect, createSignal } from 'solid-js';
 import AddFriendDialog from '../../friends/AddFriendDialog';
-import type ProfileSection from '../../../game/session/profile-section';
+import ProfileSection from '../../../game/session/profile-section';
 import { UserIcon } from '../../icons';
 import { Button, Dialog, DialogActions, Meta } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -54,6 +54,22 @@ function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }
   const named = (): string =>
     props.viewOnly === true ? (state.profile()?.nickname ?? m.profile_trainer()) : ownTitle();
 
+  /** What the dock says: the open social pane's own line, else the profile's */
+  const dockNote = (): string => {
+    if (props.viewOnly === true) {
+      return m.profile_dock_visited();
+    }
+    const notes: Partial<Record<ProfileSection, () => string>> = {
+      [ProfileSection.Friends]: m.profile_dock_friends,
+      [ProfileSection.Requests]: m.profile_dock_requests,
+      [ProfileSection.Trades]: m.profile_dock_trades,
+      [ProfileSection.Bids]: m.profile_dock_bids,
+      [ProfileSection.Selling]: m.profile_dock_selling,
+    };
+
+    return (notes[state.open()] ?? m.profile_dock_own)();
+  };
+
   return (
     <Dialog
       isOpen={props.isOpen}
@@ -70,13 +86,7 @@ function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }
       hero={<ProfileHero state={state} />}
     >
       <ProfileBody state={state} />
-      <DialogActions
-        note={
-          <Meta class="hidden md:block">
-            {props.viewOnly === true ? m.profile_dock_visited() : m.profile_dock_own()}
-          </Meta>
-        }
-      >
+      <DialogActions note={<Meta class="hidden md:block">{dockNote()}</Meta>}>
         <Button onClick={props.onClose}>{m.ui_close()}</Button>
       </DialogActions>
       {/* Somebody to ask, out of everybody playing. It is opened from

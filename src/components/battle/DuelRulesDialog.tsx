@@ -4,7 +4,7 @@ import { TEAM_SIZE } from '../../auth/teams';
 import { withLimit } from '../../data/constants/battle-limits';
 import { Slots, getSlots, leastSlots, mostSlots } from '../../data/constants/slots';
 import { BST_CAPS, DuelBan } from '../../data/constants/duel-bans';
-import { Button, Checkbox, Dialog, DialogActions, Hint, HintList, Note, Select } from '../styled';
+import { Button, Dialog, DialogActions, Hint, HintList, Meta, Select, Switch } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -82,7 +82,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
   };
 
   const banField = (label: string, ban: DuelBan, description?: string): JSX.Element => (
-    <Checkbox
+    <Switch
       label={label}
       description={description}
       checked={(draft().bans & ban) !== 0}
@@ -95,6 +95,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
   const slotField = (label: string, kind: Slots): JSX.Element => (
     <Select
       label={label}
+      labelFace
       value={slotsOf(kind)}
       options={countOptions(slotChoices(kind))}
       onChange={(count) => {
@@ -107,6 +108,7 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
+      width="medium"
       title={m.duel_rules_title()}
       aside={
         <Hint title={m.duel_rules_hint_title()}>
@@ -120,36 +122,43 @@ export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Elemen
       }
       description={m.duel_rules_description()}
     >
-      {slotField(m.duel_rules_moves(), Slots.Move)}
-      {slotField(m.duel_rules_abilities(), Slots.Ability)}
-      {slotField(m.duel_rules_held_items(), Slots.Item)}
-      <Select
-        label={m.duel_rules_team_size()}
-        value={draft().teamSize}
-        options={countOptions(TEAM_CHOICES)}
-        onChange={(count) => {
-          setDraft((held) => ({ ...held, teamSize: count }));
-        }}
-      />
+      {/* Four counts in two columns, the stat ceiling under them */}
+      <div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {slotField(m.duel_rules_moves(), Slots.Move)}
+        {slotField(m.duel_rules_abilities(), Slots.Ability)}
+        {slotField(m.duel_rules_held_items(), Slots.Item)}
+        <Select
+          label={m.duel_rules_team_size()}
+          labelFace
+          value={draft().teamSize}
+          options={countOptions(TEAM_CHOICES)}
+          onChange={(count) => {
+            setDraft((held) => ({ ...held, teamSize: count }));
+          }}
+        />
+      </div>
       <Select
         label={m.duel_rules_max_bst()}
+        labelFace
         value={draft().maxBst}
         options={readBstOptions()}
         onChange={(cap) => {
           setDraft((held) => ({ ...held, maxBst: cap }));
         }}
       />
-      {banField(m.duel_rules_no_legendaries(), DuelBan.Legendary)}
-      {banField(m.duel_rules_no_mythicals(), DuelBan.Mythical)}
-      {banField(
-        m.duel_rules_no_item_forms(),
-        DuelBan.ItemForms,
-        m.duel_rules_no_item_forms_description(),
-      )}
+      <div class="flex flex-col gap-1">
+        {banField(m.duel_rules_no_legendaries(), DuelBan.Legendary)}
+        {banField(m.duel_rules_no_mythicals(), DuelBan.Mythical)}
+        {banField(
+          m.duel_rules_no_item_forms(),
+          DuelBan.ItemForms,
+          m.duel_rules_no_item_forms_description(),
+        )}
+      </div>
 
-      <Note>{m.duel_rules_note()}</Note>
+      <Meta class="block">{m.duel_rules_note()}</Meta>
 
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           onClick={() => {

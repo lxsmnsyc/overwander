@@ -7,11 +7,12 @@ import {
   Button,
   Dialog,
   DialogActions,
+  GroupLabel,
   LIST_PAGE,
   List,
+  Meta,
   Note,
-  Row,
-  Select,
+  Segmented,
   TextField,
   createPager,
   useToast,
@@ -140,24 +141,32 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
+      width="medium"
       title={props.title}
       description={props.description}
     >
+      {/* The role is a choice of two keys across the sheet */}
       <Show when={roles().length > 1}>
-        <Select
-          label={m.lobby_invite_role()}
-          value={asking()}
-          options={roleOptions()}
-          onChange={(chosen) => {
-            setRole(chosen);
-          }}
-        />
+        <div class="flex flex-col gap-1">
+          <GroupLabel>{m.lobby_invite_role()}</GroupLabel>
+          <Segmented
+            fill
+            label={m.lobby_invite_role()}
+            value={asking()}
+            options={roleOptions()}
+            onChange={(chosen) => {
+              setRole(chosen);
+            }}
+          />
+        </div>
       </Show>
 
       <Show when={props.onInviteByCode}>
-        <Row class="items-end gap-2">
+        <div class="flex items-end gap-2">
           <TextField
             class="grow"
+            labelFace
+            tall
             label={m.lobby_invite_code()}
             placeholder="0000-0000-0000"
             value={typed()}
@@ -166,21 +175,27 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
               setTyped(value);
             }}
           />
-          <Button tone="primary" disabled={busy() || typed().trim() === ''} onClick={callByCode}>
+          <Button
+            tone="primary"
+            class="h-11"
+            disabled={busy() || typed().trim() === ''}
+            onClick={callByCode}
+          >
             {m.lobby_invite()}
           </Button>
-        </Row>
+        </div>
       </Show>
 
       <Show
         when={(friends() ?? []).length > 0}
         fallback={<Note>{m.lobby_invite_no_friends()}</Note>}
       >
+        <GroupLabel>{m.profile_section_friends()}</GroupLabel>
         <List>
           <For each={roster.shown()}>
             {(uid) => (
               <FriendEntry uid={uid}>
-                <Show when={!there().has(uid)} fallback={<Note>{m.lobby_invite_present()}</Note>}>
+                <Show when={!there().has(uid)} fallback={<Meta>{m.lobby_invite_present()}</Meta>}>
                   <Button
                     disabled={busy() || asked().has(uid)}
                     onClick={() => {
@@ -196,7 +211,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
         </List>
         {roster.controls()}
       </Show>
-      <DialogActions>
+      <DialogActions stack>
         <Button onClick={props.onClose}>{m.battle_close()}</Button>
       </DialogActions>
     </Dialog>

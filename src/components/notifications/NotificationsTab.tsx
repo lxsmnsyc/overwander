@@ -1,17 +1,9 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, type JSX, Show, from } from 'solid-js';
 import { type Notice, NoticeKind } from '../../auth/notifications';
-import {
-  Badge,
-  type BadgeTone,
-  Button,
-  LIST_PAGE,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  createPager,
-} from '../styled';
-import FriendEntry from '../friends/FriendEntry';
+import { Button, LIST_PAGE, List, Meta, Note, Pill, type PillTone, createPager } from '../styled';
+import { type Profile, watchProfile } from '../../auth/profile';
+import { PlayerFace } from '../profile/PlayerPlate';
+import { formatDate, formatRelative } from '../../i18n/format';
 import { GameDialog, useGame } from '../app/game-context';
 import ProfileSection from '../../game/session/profile-section';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -36,7 +28,7 @@ const KIND_LABELS: Record<NoticeKind, () => string> = {
   [NoticeKind.AuctionOutbid]: m.notices_label_auction_outbid,
 };
 
-const KIND_TONES: Record<NoticeKind, BadgeTone> = {
+const KIND_TONES: Record<NoticeKind, PillTone> = {
   [NoticeKind.RaidInvite]: 'ember',
   [NoticeKind.DuelInvite]: 'tide',
   [NoticeKind.FriendRequest]: 'leaf',
@@ -44,6 +36,16 @@ const KIND_TONES: Record<NoticeKind, BadgeTone> = {
   [NoticeKind.AuctionWon]: 'gold',
   [NoticeKind.AuctionUnsold]: 'neutral',
   [NoticeKind.AuctionOutbid]: 'ember',
+};
+
+/** The colour edge down a row's left side, by what kind of notice it is */
+const KIND_EDGES: Record<PillTone, string> = {
+  ember: 'bg-ember',
+  tide: 'bg-tide',
+  leaf: 'bg-leaf',
+  gold: 'bg-gold',
+  arcane: 'bg-arcane',
+  neutral: 'bg-line',
 };
 
 /** What the row says happened, in the words the panel behind it uses */
@@ -86,6 +88,31 @@ export interface NotificationsTabProps {
   notices: Notice[];
 }
 
+/** The sender, followed so a rename shows here too */
+function readSender(uid: string): () => Profile | null | undefined {
+  return from<Profile | null>((set) =>
+    watchProfile(uid, (record) => {
+      set(record);
+    }),
+  );
+}
+
+function SenderFace(props: { uid: string }): JSX.Element {
+  const profile = readSender(props.uid);
+
+  return <PlayerFace sprite={profile()?.sprite} size={40} />;
+}
+
+function SenderName(props: { uid: string }): JSX.Element {
+  const profile = readSender(props.uid);
+
+  return (
+    <span class="truncate text-sm font-extrabold">
+      {(profile()?.nickname ?? '') === '' ? m.friends_unnamed() : profile()?.nickname}
+    </span>
+  );
+}
+
 export default function NotificationsTab(props: NotificationsTabProps): JSX.Element {
   const game = useGame();
   const waiting = createPager(() => props.notices, LIST_PAGE);
@@ -123,40 +150,34 @@ export default function NotificationsTab(props: NotificationsTabProps): JSX.Elem
       <List>
         <For each={waiting.shown()}>
           {(notice) => (
-            <Show
-              when={notice.from}
-              fallback={
-                <ListRow>
-                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]()}</Badge>
-                  <span class="grow text-sm">{KIND_LINES[notice.kind]()}</span>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      open(notice);
-                    }}
-                  >
-                    {KIND_ACTIONS[notice.kind]()}
-                  </Button>
-                </ListRow>
-              }
+            <li
+              class="relative flex min-h-[60px] flex-wrap items-center gap-x-3 gap-y-1.5 overflow-hidden
+                rounded-[14px] border-2 border-line-soft bg-paper py-2.5 pr-3.5 pl-5"
             >
-              {/* Somebody sent it, so it is drawn as a person: the same
-                  row a friends list uses, with what they did after it */}
-              {(sender) => (
-                <FriendEntry uid={sender()} since={notice.at} when={(date) => date}>
-                  <Badge tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]()}</Badge>
-                  <Meta>{KIND_LINES[notice.kind]()}</Meta>
-                  <Button
-                    tone="primary"
-                    onClick={() => {
-                      open(notice);
-                    }}
-                  >
-                    {KIND_ACTIONS[notice.kind]()}
-                  </Button>
-                </FriendEntry>
-              )}
-            </Show>
+              <span
+                aria-hidden="true"
+                class={`absolute inset-y-0 left-0 w-1.5 ${KIND_EDGES[KIND_TONES[notice.kind]]}`}
+              />
+              {/* Somebody sent it, so it is drawn as a person: their face,
+                  then their name beside what kind of notice it is */}
+              <Show when={notice.from}>{(sender) => <SenderFace uid={sender()} />}</Show>
+              <div class="flex min-w-0 grow basis-48 flex-col gap-0.5">
+                <span class="flex min-w-0 flex-wrap items-center gap-2">
+                  <Pill tone={KIND_TONES[notice.kind]}>{KIND_LABELS[notice.kind]()}</Pill>
+                  <Show when={notice.from}>{(sender) => <SenderName uid={sender()} />}</Show>
+                </span>
+                <Meta>{KIND_LINES[notice.kind]()}</Meta>
+              </div>
+              <Meta title={formatDate(notice.at)}>{formatRelative(notice.at)}</Meta>
+              <Button
+                tone="primary"
+                onClick={() => {
+                  open(notice);
+                }}
+              >
+                {KIND_ACTIONS[notice.kind]()}
+              </Button>
+            </li>
           )}
         </For>
       </List>

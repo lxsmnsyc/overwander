@@ -26,9 +26,21 @@ import {
 import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
-import RaidLobby, { type RaidLobbyReport } from './RaidLobby';
+import RaidLobby, { type RaidLobbyReport } from './raid-lobby';
 import watchLive from '../app/watch';
-import { Button, LIST_PAGE, List, ListRow, Meta, Note, Panel, createPager } from '../styled';
+import {
+  Button,
+  GroupLabel,
+  LIST_PAGE,
+  List,
+  Meta,
+  Note,
+  Panel,
+  Pill,
+  RowActions,
+  RowCard,
+  createPager,
+} from '../styled';
 import { getSpeciesData } from '../../data/species';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
@@ -53,28 +65,33 @@ export interface RaidsTabProps {
  * fetched by name instead, read through `latest` so a row still
  * arriving does not suspend the tab
  */
-/** A small uppercase heading over a list */
+/** The label face over a list, with what stands at its right end */
 function ListHeading(props: { children: JSX.Element; aside?: JSX.Element }): JSX.Element {
   return (
-    <div class="flex items-baseline justify-between gap-2">
-      <span class="text-xs font-semibold text-muted uppercase">{props.children}</span>
+    <div class="flex flex-wrap items-center gap-2.5">
+      <GroupLabel>{props.children}</GroupLabel>
       {props.aside}
     </div>
   );
 }
 
 /**
- * One lair as a row: the boss asleep, its name and types, a muted line
- * under them, and what can be pressed on the right
+ * One lair as a card: the boss asleep on its own square, its name and
+ * types, a muted line under them, and what can be pressed on the right
  */
 function LairRow(props: {
   raid: RaidRecord | null;
   line: JSX.Element;
   children: JSX.Element;
+  /** An invite stands out from the lairs gathering below it */
+  invited?: boolean;
 }): JSX.Element {
   return (
-    <ListRow class="flex-nowrap">
-      <span class="flex size-10 shrink-0 items-end justify-center">
+    <RowCard tone={props.invited === true ? 'ember' : 'plain'} class="min-h-[76px]">
+      <span
+        class="flex size-[52px] shrink-0 items-end justify-center rounded-[16px] bg-line-soft/60
+          p-0.5"
+      >
         <Show when={props.raid}>
           {(raid) => (
             <AnimatedSprite
@@ -82,29 +99,29 @@ function LairRow(props: {
               female={isFemaleBoss(raid().species, raid().traitValue)}
               animation={SpriteAnim.Sleep}
               direction="DownLeft"
-              scale={1}
+              fill
               label={m.raid_asleep({ name: getSpeciesData(raid().species).name })}
             />
           )}
         </Show>
       </span>
-      <div class="flex min-w-0 grow flex-col gap-0.5">
-        <div class="flex min-w-0 flex-wrap items-center gap-1.5">
-          <span class="truncate font-medium">
-            {props.raid == null ? m.raid_a_raid() : getRaidTitle(props.raid)}
-          </span>
-          <Show when={props.raid}>
-            {(raid) => (
+      <div class="flex min-w-0 grow flex-col gap-1">
+        <span class="truncate text-sm font-extrabold">
+          {props.raid == null ? m.raid_a_raid() : getRaidTitle(props.raid)}
+        </span>
+        <Show when={props.raid}>
+          {(raid) => (
+            <span class="flex flex-wrap gap-1">
               <For each={getSpeciesData(raid().species).types}>
                 {(type) => <TypeBadge type={type} />}
               </For>
-            )}
-          </Show>
-        </div>
+            </span>
+          )}
+        </Show>
         <Meta class="truncate text-left">{props.line}</Meta>
       </div>
-      <div class="flex shrink-0 gap-1.5">{props.children}</div>
-    </ListRow>
+      <RowActions>{props.children}</RowActions>
+    </RowCard>
   );
 }
 
@@ -132,6 +149,7 @@ function InvitedRow(props: {
 
   return (
     <LairRow
+      invited
       raid={raid()}
       line={
         props.invite.role === LobbyRole.Spectator
@@ -233,7 +251,18 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
         fallback={
           <Show when={raids()} fallback={<Note>{m.raid_loading()}</Note>}>
             <Show when={(invites() ?? []).length > 0}>
-              <ListHeading>{m.raid_invited()}</ListHeading>
+              <ListHeading
+                aside={
+                  <span
+                    class="inline-flex h-[22px] min-w-[26px] items-center justify-center rounded-full
+                      bg-ember px-1.5 font-display text-xs font-semibold text-on-accent tabular-nums"
+                  >
+                    {invitedIds().length}
+                  </span>
+                }
+              >
+                {m.raid_invited()}
+              </ListHeading>
               <List>
                 <For each={invitedIds()}>
                   {(id) => (
@@ -252,11 +281,16 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
                 </For>
               </List>
             </Show>
-            <ListHeading aside={<Meta>{nextWindow()}</Meta>}>
-              {m.raid_gathering({ count: raids()?.length ?? 0 })}
-            </ListHeading>
+            {/* The next window's countdown stands at the heading's right */}
+            <div class="flex flex-wrap items-center gap-2.5">
+              <GroupLabel>{m.raid_gathering({ count: raids()?.length ?? 0 })}</GroupLabel>
+              <span class="grow" />
+              <Pill tone="tide" size="medium">
+                {nextWindow()}
+              </Pill>
+            </div>
             <Show when={raids()?.length} fallback={<Note>{m.raid_none_gathering()}</Note>}>
-              <List>
+              <List class="grid! grid-cols-1 md:grid-cols-2">
                 <For each={gathering.shown()}>
                   {([id, raid]) => (
                     <LairRow

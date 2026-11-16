@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-social
 title: Redesign trades, auctions, raids and friends
-status: active
+status: done
 priority: must
 type: feature
 story: ui-redesign-finish
@@ -9,6 +9,7 @@ outline: false
 milestone: now
 size: L
 added: 2026-11-03
+spent: 683188
 owns:
   - src/components/trades/**
   - src/components/auctions/**

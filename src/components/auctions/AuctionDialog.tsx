@@ -1,4 +1,4 @@
-import { type JSX, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import {
   AuctionLot,
   MAX_INCREMENT,
@@ -9,16 +9,16 @@ import {
   openItemAuction,
 } from '../../auth/auctions';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
-import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
 import type { AuctionSubject } from '../../game/session/types';
-import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { describeItem } from '../details';
 import ItemSprite from '../items/ItemSprite';
-import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Status } from '../styled';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
+import { Button, Dialog, DialogActions, List, Meta, RowCard, RowText, Status } from '../styled';
+import { CatchFace } from './LotFace';
+import { NATURE_NAMES } from '../../data/ids/text';
+import { GENDER_LABELS } from '../catches/catch-summary';
+import { AUCTION_DURATION } from '../../model/auction-record';
 import describeFailure from '../../i18n/refusals';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -55,27 +55,6 @@ export interface AuctionDialogProps {
 }
 
 /**
- * How big the icon over an item lot is drawn. Large enough to be the
- * subject of the dialog rather than a bullet beside its name
- */
-const ITEM_SIZE = 64;
-
-/**
- * Down the middle — the **text**, and nothing else.
- *
- * The dialog is one thing being parted with and a price being named
- * for it, so the picture and the prose share an axis. What it must not
- * do is centre the column itself: `items-center` shrink-wraps every
- * child to its own contents, and the two that are supposed to reach
- * the panel's edges — the heading stuck to the top, the button bar
- * stuck to the bottom with its rule across it — came in short of them.
- * A rule that stops an inch from each side reads as a divider inside
- * the content rather than as the foot of the panel, which is not how
- * any other dialog in the game ends
- */
-const CENTRED = 'text-center';
-
-/**
  * The listing itself, which is where the record is read.
  *
  * A record read in the body that declared it lands on the boundary
@@ -88,8 +67,7 @@ function ListingBody(
   const [asking, setAsking] = createSignal(MIN_STARTING_BID);
   const [raise, setRaise] = createSignal(MIN_INCREMENT);
   const [status, setStatus] = createSignal<string | null>(null);
-  // Whether the second dialog is the one showing. The first is where
-  // the terms are named; this one is where they are agreed to
+  // Whether the last press has been asked once: the second press lists
   const [confirming, setConfirming] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
 
@@ -168,147 +146,162 @@ function ListingBody(
   };
 
   /**
-   * What is standing on the block, drawn the size a dialog can hold
-   * and set in the middle of it.
+   * What is standing on the block, as the lot row at the top of both
+   * dialogs: its picture in a square, its name over a line about it.
    *
-   * A pokemon is its sprite, an egg is drawn as an egg the way it is
-   * everywhere else, and an item is its icon with its name under it —
-   * the same picture the bag draws, so what is about to be parted with
-   * is recognised rather than read
+   * A pokemon is its sprite (an egg is drawn as an egg the way it is
+   * everywhere else) and an item is its icon, the same picture the bag
+   * draws, so what is about to be parted with is recognised rather
+   * than read
    */
   const portrait = (): JSX.Element => (
-    <Show
-      when={props.subject?.lot !== AuctionLot.Item}
-      fallback={
-        <div class="flex min-h-24 flex-col items-center justify-center gap-1">
-          <Show when={props.subject?.lot === AuctionLot.Item ? props.subject.item : null} keyed>
-            {(item) => <ItemSprite item={item} size={ITEM_SIZE} label="" />}
+    <List>
+      <RowCard>
+        <span
+          class="flex size-11 shrink-0 items-center justify-center rounded-[12px] border-2
+            border-line-soft bg-line-soft/60 p-0.5"
+          aria-hidden="true"
+        >
+          <Show
+            when={props.subject?.lot === AuctionLot.Item ? props.subject.item : null}
+            keyed
+            fallback={
+              <Show when={props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null}>
+                {(id) => (
+                  <Suspense>
+                    <CatchFace catchId={id()} />
+                  </Suspense>
+                )}
+              </Show>
+            }
+          >
+            {(item) => <ItemSprite item={item} size={32} label="" />}
           </Show>
-          <span class="text-center text-lg font-semibold">{named()}</span>
-        </div>
-      }
-    >
-      <Show when={props.caught()} fallback={<Note>{m.auction_reading_record()}</Note>}>
-        {(record) => (
-          <div class="flex justify-center">
-            <AnimatedSprite
-              species={isEgg(record()) ? Species.Egg : record().species}
-              female={!isEgg(record()) && record().gender === Genders.Female}
-              shiny={!isEgg(record()) && isShiny(record())}
-              animation={SpriteAnim.Idle}
-              direction="Down"
-              scale={4}
-              shadow
-              label={named()}
-            />
-          </div>
-        )}
-      </Show>
-    </Show>
+        </span>
+        <RowText
+          name={named()}
+          line={
+            props.subject?.lot === AuctionLot.Item ? (
+              m.auction_item_line()
+            ) : (
+              <Show when={props.caught()} fallback={m.auction_reading_record()}>
+                {(record) => (
+                  <Show when={!isEgg(record())} fallback={m.ui_egg()}>
+                    {GENDER_LABELS[record().gender]()} · {NATURE_NAMES[record().nature]}
+                  </Show>
+                )}
+              </Show>
+            )
+          }
+        />
+      </RowCard>
+    </List>
   );
 
-  return (
-    <>
-      {/* The terms. Both dialogs are siblings rather than one over the
-          other: only ever one of them is open, so neither is fighting
-          the other for the click that closes it */}
-      <Dialog
-        isOpen={props.subject != null && !confirming()}
-        onClose={close}
-        title={m.auction_title({ name: named() })}
-        description={m.auction_description()}
-        class={CENTRED}
-      >
-        {portrait()}
+  const pressLabel = (): string => {
+    if (busy()) {
+      return m.auction_putting_up();
+    }
+    return confirming() ? m.trade_sure() : m.auction_put_up_day();
+  };
 
-        <Row class="justify-center">
-          <Field label={m.auction_opening_bid()}>
+  return (
+    <Dialog
+      isOpen={props.subject != null}
+      onClose={close}
+      title={m.auction_put_up_title({ name: named() })}
+      width="medium"
+      description={m.auction_description()}
+    >
+      {portrait()}
+
+      <label class="flex flex-col gap-1">
+        <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
+          {m.auction_opening_bid()}
+        </span>
+        <input
+          type="number"
+          class="h-[46px] text-base"
+          min={MIN_STARTING_BID}
+          max={MAX_STARTING_BID}
+          value={asking()}
+          onInput={(event) => {
+            setAsking(Number(event.currentTarget.value));
+            setConfirming(false);
+          }}
+        />
+        <Meta>
+          {m.auction_terms_note({
+            raise: formatNumber(raise()),
+            hours: AUCTION_DURATION / 3_600_000,
+          })}
+        </Meta>
+      </label>
+
+      {/* The rest of the terms, in quiet rows: how much a bid must raise
+          it, and what listing means */}
+      <List>
+        <RowCard tone="quiet">
+          <label class="flex grow items-center gap-3">
+            <span class="grow text-sm font-extrabold">{m.auction_least_raise()}</span>
             <input
               type="number"
-              min={MIN_STARTING_BID}
-              max={MAX_STARTING_BID}
-              value={asking()}
-              onInput={(event) => {
-                setAsking(Number(event.currentTarget.value));
-              }}
-            />
-          </Field>
-          <Field label={m.auction_least_raise()}>
-            <input
-              type="number"
+              class="h-10 w-[120px]"
               min={MIN_INCREMENT}
               max={MAX_INCREMENT}
               value={raise()}
               onInput={(event) => {
                 setRaise(Number(event.currentTarget.value));
+                setConfirming(false);
               }}
             />
-          </Field>
-        </Row>
+          </label>
+        </RowCard>
+        <RowCard tone="quiet">
+          <span class="text-[13px] leading-snug">
+            {props.subject?.lot === AuctionLot.Item
+              ? m.auction_confirm_item({
+                  asking: formatNumber(asking()),
+                  raise: formatNumber(raise()),
+                })
+              : m.auction_confirm_catch({
+                  asking: formatNumber(asking()),
+                  raise: formatNumber(raise()),
+                })}{' '}
+            <Meta>{m.auction_confirm_payment()}</Meta>
+          </span>
+        </RowCard>
+      </List>
 
-        <Status message={status()} />
+      <Status message={status()} />
 
-        <DialogActions>
-          <Button
-            tone="primary"
-            disabled={
-              !sensible() || (props.subject?.lot === AuctionLot.Catch && props.caught() == null)
-            }
-            onClick={() => {
+      {/* One sheet: the terms, then what listing means. The last press
+          asks twice in place, since a lot cannot be taken back off the
+          block */}
+      <DialogActions stack>
+        <Button
+          tone="primary"
+          disabled={
+            busy() ||
+            !sensible() ||
+            (props.subject?.lot === AuctionLot.Catch && props.caught() == null)
+          }
+          onClick={() => {
+            if (!confirming()) {
               setStatus(null);
               setConfirming(true);
-            }}
-          >
-            {m.auction_put_up()}
-          </Button>
-          <Button onClick={close}>{m.ui_never_mind()}</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* The second dialog: the same pokemon, and what listing it
-          actually means, in the words the player will remember if it
-          sells for less than they hoped */}
-      <Dialog
-        isOpen={props.subject != null && confirming()}
-        onClose={() => {
-          setConfirming(false);
-        }}
-        title={m.auction_confirm_title({ name: named() })}
-        description={m.auction_confirm_description()}
-        class={CENTRED}
-      >
-        {portrait()}
-
-        <Note>
-          {props.subject?.lot === AuctionLot.Item
-            ? m.auction_confirm_item({
-                asking: formatNumber(asking()),
-                raise: formatNumber(raise()),
-              })
-            : m.auction_confirm_catch({
-                asking: formatNumber(asking()),
-                raise: formatNumber(raise()),
-              })}
-        </Note>
-        <Meta>{m.auction_confirm_payment()}</Meta>
-
-        <Status message={status()} />
-
-        <DialogActions>
-          <Button tone="danger" disabled={busy()} onClick={list}>
-            {busy() ? m.auction_putting_up() : m.auction_put_up_day()}
-          </Button>
-          <Button
-            disabled={busy()}
-            onClick={() => {
-              setConfirming(false);
-            }}
-          >
-            {m.ui_back()}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+              return;
+            }
+            list();
+          }}
+        >
+          {pressLabel()}
+        </Button>
+        <Button disabled={busy()} onClick={close}>
+          {m.ui_never_mind()}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 

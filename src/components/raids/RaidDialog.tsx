@@ -219,6 +219,29 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
     <Dialog
       isOpen={props.lair != null}
       onClose={close}
+      width="wide"
+      // What is waiting in there, asleep on the lair's floor until
+      // somebody walks in on it
+      hero={
+        <Show when={view()}>
+          {(standing) => (
+            <div
+              class="flex h-[170px] w-full items-end justify-center border-b-2 border-line-soft pb-4
+                bg-[linear-gradient(var(--color-tide-soft),var(--color-parchment)_62%,var(--color-leaf-soft)_62%)]"
+            >
+              <AnimatedSprite
+                species={standing().species}
+                female={standing().female}
+                animation={SpriteAnim.Sleep}
+                direction="DownLeft"
+                scale={4}
+                shadow
+                label={m.raid_waiting_label({ name: getSpeciesData(standing().species).name })}
+              />
+            </div>
+          )}
+        </Show>
+      }
       title={title()}
       description={view() == null ? m.raid_lair_empty() : summary()}
     >
@@ -230,7 +253,7 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
                 who pressed it is owed an answer where they are looking
                 rather than in a line under the map */}
             <CounterSpent title={m.raid_quiet()} says={summary()} quoted={false} />
-            <DialogActions>
+            <DialogActions stack>
               <Button onClick={close}>{m.ow_walk_on()}</Button>
             </DialogActions>
           </>
@@ -238,25 +261,6 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
       >
         {(standing) => (
           <>
-            {/* What is waiting in there, asleep until somebody walks in
-                on it. The sprite stands on the floor of its box, so a
-                tall boss and a short one put their feet on one line */}
-            <div class="flex flex-col items-center gap-2 py-2 text-center">
-              {/* Room kept for a wingspan: the row is the width of the
-                  panel and the picture is as wide as it happens to be,
-                  so a legendary bird has somewhere to put its wings */}
-              <div class="-mb-2 flex min-h-28 w-full items-end justify-center pt-2">
-                <AnimatedSprite
-                  species={standing().species}
-                  female={standing().female}
-                  animation={SpriteAnim.Sleep}
-                  direction="DownLeft"
-                  scale={4}
-                  shadow
-                  label={m.raid_waiting_label({ name: getSpeciesData(standing().species).name })}
-                />
-              </div>
-            </div>
             <CounterTerms
               rows={[
                 { label: m.raid_waiting(), value: getSpeciesData(standing().species).name },
@@ -283,8 +287,8 @@ export default function RaidDialog(props: RaidDialogProps): JSX.Element {
               ]}
             />
             {/* What fighting it means, which is the decision the button asks for */}
-            <Meta class="pt-3">{describeRaid(standing())}</Meta>
-            <DialogActions>
+            <Meta class="block pt-3">{describeRaid(standing())}</Meta>
+            <DialogActions stack>
               <Button tone="primary" disabled={busy()} onClick={act}>
                 {ACTION_LABELS[standing().action]()}
               </Button>

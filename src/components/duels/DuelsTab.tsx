@@ -11,8 +11,19 @@ import {
 } from '../../auth/duels';
 import LobbyRole from '../../model/lobby-role';
 import { type Profile, watchProfile } from '../../auth/profile';
-import DuelLobby, { type DuelLobbyReport } from './DuelLobby';
-import { Button, DialogSection, List, ListRow, Meta, Note, Panel, RowButton } from '../styled';
+import DuelLobby, { type DuelLobbyReport } from './duel-lobby';
+import {
+  Button,
+  DialogActions,
+  GroupLabel,
+  List,
+  Note,
+  Panel,
+  RowActions,
+  RowCard,
+  RowText,
+} from '../styled';
+import { PlayerFace } from '../profile/PlayerPlate';
 import { useGame } from '../app/game-context';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -34,23 +45,30 @@ function InvitedRow(props: {
   };
 
   return (
-    <ListRow>
-      <span class="font-medium">{named()}</span>
-      <Meta class="grow">
-        {props.invite.role === LobbyRole.Fighter
-          ? m.duels_invited_fighter()
-          : m.duels_invited_spectator()}
-      </Meta>
-      <Button tone="primary" onClick={props.onAccept}>
-        {m.duels_join()}
-      </Button>
-      <Button onClick={props.onDecline}>{m.duels_dismiss()}</Button>
-    </ListRow>
+    <RowCard>
+      <PlayerFace sprite={caller()?.sprite} size={40} />
+      <RowText
+        name={named()}
+        line={
+          props.invite.role === LobbyRole.Fighter
+            ? m.duels_invited_fighter()
+            : m.duels_invited_spectator()
+        }
+      />
+      <RowActions>
+        <Button tone="primary" onClick={props.onAccept}>
+          {m.duels_join()}
+        </Button>
+        <Button onClick={props.onDecline}>{m.duels_dismiss()}</Button>
+      </RowActions>
+    </RowCard>
   );
 }
 
 export interface DuelsTabProps {
   user: PlayerIdentity;
+  /** Closes the panel: the dock's way out, beside the buttons that host */
+  onClose: () => void;
   /**
    * The lobby the player is standing in, so the panel is named for it
    * and closes only by Leave while they hold a seat; null while they
@@ -116,54 +134,64 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
         when={game.duel()}
         fallback={
           <>
-            <Note>{m.duels_intro()}</Note>
+            {/* What this is, in a card of its own: a battle is arranged, not found */}
+            <p
+              class="m-0 rounded-[14px] border-2 border-tide/20 bg-tide-soft/60 px-3 py-2.5
+                text-[13px] leading-snug"
+            >
+              {m.duels_intro()}
+            </p>
 
             <Show when={(invites() ?? []).length > 0}>
-              <DialogSection title={m.duels_invited()}>
-                <List>
-                  <For each={invites() ?? []}>
-                    {(invite) => (
-                      <InvitedRow
-                        invite={invite}
-                        onAccept={() => {
-                          accept(invite.duel);
-                        }}
-                        onDecline={() => {
-                          declineDuelInvite(invite.duel).catch(() => undefined);
-                        }}
-                      />
-                    )}
-                  </For>
-                </List>
-              </DialogSection>
+              <GroupLabel>{m.duels_invited()}</GroupLabel>
+              <List>
+                <For each={invites() ?? []}>
+                  {(invite) => (
+                    <InvitedRow
+                      invite={invite}
+                      onAccept={() => {
+                        accept(invite.duel);
+                      }}
+                      onDecline={() => {
+                        declineDuelInvite(invite.duel).catch(() => undefined);
+                      }}
+                    />
+                  )}
+                </For>
+              </List>
             </Show>
 
-            <DialogSection title={m.duels_your_lobbies()}>
-              <Show when={(mine() ?? []).length > 0} fallback={<Note>{m.duels_no_lobbies()}</Note>}>
-                <List>
-                  <For each={mine() ?? []}>
-                    {([id, lobby]) => (
-                      <ListRow>
-                        <RowButton
-                          class="font-medium"
+            <GroupLabel>{m.duels_your_lobbies()}</GroupLabel>
+            <Show when={(mine() ?? []).length > 0} fallback={<Note>{m.duels_no_lobbies()}</Note>}>
+              <List>
+                <For each={mine() ?? []}>
+                  {([id, lobby]) => (
+                    <RowCard>
+                      <RowText
+                        name={
+                          lobby.host === props.user.uid ? m.duels_your_lobby() : m.duels_a_lobby()
+                        }
+                        line={`${m.duels_in_room({ count: lobby.members.length })}${
+                          lobby.battle == null ? '' : ` · ${m.duels_being_fought()}`
+                        }`}
+                      />
+                      <RowActions>
+                        <Button
                           onClick={() => {
                             open(id);
                           }}
                         >
-                          {lobby.host === props.user.uid ? m.duels_your_lobby() : m.duels_a_lobby()}
-                        </RowButton>
-                        <Meta>
-                          {m.duels_in_room({ count: lobby.members.length })}
-                          {lobby.battle == null ? '' : ` · ${m.duels_being_fought()}`}
-                        </Meta>
-                      </ListRow>
-                    )}
-                  </For>
-                </List>
-              </Show>
-            </DialogSection>
+                          {m.raid_open()}
+                        </Button>
+                      </RowActions>
+                    </RowCard>
+                  )}
+                </For>
+              </List>
+            </Show>
 
-            <div class="flex flex-wrap justify-center gap-2">
+            {/* The way out on the left, and the two ways to stage a fight on the right */}
+            <DialogActions stack>
               <Button
                 tone="primary"
                 disabled={busy()}
@@ -177,6 +205,9 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
                   seat, and the lobby waits for two guests rather than
                   one */}
               <Button
+                // The board's dock reads Host and watch, then Host a lobby
+                // at the far right; on a phone the primary stays on top
+                class="sm:order-[-1]"
                 disabled={busy()}
                 onClick={() => {
                   stage(true);
@@ -184,7 +215,8 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
               >
                 {m.duels_host_watch()}
               </Button>
-            </div>
+              <Button onClick={props.onClose}>{m.ui_close()}</Button>
+            </DialogActions>
           </>
         }
       >

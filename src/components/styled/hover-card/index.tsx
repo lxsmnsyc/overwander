@@ -58,6 +58,11 @@ const GAP = 8;
  */
 const PLACED = 'pointer-events-none z-50';
 
+/** What turns a placed card into a sheet across the foot below `md` */
+const AS_SHEET =
+  ' max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:p-2';
+const SHEET_CARD = ' max-md:w-full!';
+
 /** The name on the left and what kind of thing it is on the right, on white like a tooltip's */
 const BAR = 'flex items-center justify-between gap-2 px-3 pt-2.5 text-left text-ink';
 
@@ -123,6 +128,11 @@ export interface HoverCardProps extends ParentProps {
    */
   placement?: HoverCardPlacement;
   width?: HoverCardWidth;
+  /**
+   * On a phone, stand across the foot of the screen as a sheet instead
+   * of beside the trigger. Opt-in: other cards keep their placement
+   */
+  sheet?: boolean;
   /** Room for how the trigger sits in its row */
   class?: string;
   /**
@@ -538,7 +548,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
             ref={(element) => {
               floating.refs.setFloating(element);
             }}
-            class={PLACED}
+            class={`${PLACED}${props.sheet === true ? AS_SHEET : ''}`}
             // Hidden until it has been placed, so it never jumps from a corner
             style={{
               ...floating.floatingStyles,
@@ -561,9 +571,9 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                 // Nothing to press or read while it fades: a card on its
                 // way out would otherwise swallow the click that follows
                 aria-hidden={open() ? undefined : 'true'}
-                class={`${CARD} ${WIDTHS[props.width ?? 'narrow']} ${
-                  open() ? '' : 'pointer-events-none'
-                }`}
+                class={`${CARD} ${WIDTHS[props.width ?? 'narrow']}${
+                  props.sheet === true ? SHEET_CARD : ''
+                } ${open() ? '' : 'pointer-events-none'}`}
                 onPointerEnter={cancel}
                 onPointerLeave={(event) => {
                   // A tap inside the card sends a mouse-leave when the

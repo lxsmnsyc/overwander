@@ -1,6 +1,6 @@
 import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
-import { ListRow, Meta } from '../styled';
+import { Pill, type PillTone, RowActions, RowCard, RowText } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 import { PlayerFace } from '../profile/PlayerPlate';
 import { formatDate } from '../../i18n/format';
@@ -27,6 +27,12 @@ export interface FriendEntryProps extends ParentProps {
    * like it should
    */
   onOpen?: () => void;
+  /** The line under the name, where it is not a date: "Wants to be friends" */
+  line?: string;
+  /** What hovering the row says, such as the date a request was made */
+  title?: string;
+  /** The row's state in one word, in a pill before the buttons */
+  pill?: { text: string; tone: PillTone };
 }
 
 export default function FriendEntry(props: FriendEntryProps): JSX.Element {
@@ -41,43 +47,51 @@ export default function FriendEntry(props: FriendEntryProps): JSX.Element {
 
     return nickname === '' ? m.friends_unnamed() : nickname;
   };
+  /** What stands under the name: the line the list gave, else the date said */
+  const line = (): string | undefined => {
+    if (props.line != null) {
+      return props.line;
+    }
+    return props.when != null && (props.since ?? 0) > 0
+      ? props.when(formatDate(props.since ?? 0))
+      : undefined;
+  };
 
   const actions = children(() => props.children);
+  const text = (): JSX.Element => <RowText name={called()} line={line()} />;
 
   return (
-    <ListRow>
+    <RowCard title={props.title}>
       <Show
         when={props.onOpen}
         fallback={
           <>
-            <PlayerFace sprite={profile()?.sprite} />
-            <span class="grow truncate font-semibold">{called()}</span>
+            <PlayerFace sprite={profile()?.sprite} size={40} />
+            {text()}
           </>
         }
       >
         {(open) => (
           <button
             type="button"
-            class="flex min-w-0 grow cursor-pointer items-center gap-2 rounded-lg border-0
-              bg-transparent p-0 text-left shadow-none transition-colors hover:text-tide-dark
-              active:translate-y-0"
+            class="flex min-w-0 grow basis-40 cursor-pointer items-center gap-2.5 rounded-lg
+              border-0 bg-transparent p-0 text-left shadow-none transition-colors
+              hover:text-tide-dark active:translate-y-0"
             aria-label={m.friends_open_profile({ name: called() })}
             onClick={() => {
               open()();
             }}
           >
-            <PlayerFace sprite={profile()?.sprite} />
-            <span class="min-w-0 grow truncate font-semibold">{called()}</span>
+            <PlayerFace sprite={profile()?.sprite} size={40} />
+            {text()}
           </button>
         )}
       </Show>
-      <Show when={props.when != null && (props.since ?? 0) > 0}>
-        <Meta>{props.when?.(formatDate(props.since ?? 0))}</Meta>
-      </Show>
+      <Show when={props.pill}>{(pill) => <Pill tone={pill().tone}>{pill().text}</Pill>}</Show>
       {/* On a line of their own on a phone, under the name and the date */}
       <Show when={actions.toArray().length > 0}>
-        <div class="flex basis-full items-center gap-2 sm:basis-auto">{actions()}</div>
+        <RowActions>{actions()}</RowActions>
       </Show>
-    </ListRow>
+    </RowCard>
   );
 }

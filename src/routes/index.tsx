@@ -10,6 +10,7 @@ import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
+import { SellHint } from '../components/auctions/auction-tab/sell';
 import BattleData from '../components/app/BattleData';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
@@ -22,7 +23,7 @@ import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
 import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
-import type { DuelLobbyReport } from '../components/duels/DuelLobby';
+import type { DuelLobbyReport } from '../components/duels/duel-lobby';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexDialog from '../components/dex/PokedexDialog';
 import ProfileDialog from '../components/profile/ProfileDialog';
@@ -31,7 +32,7 @@ import QuestsTab from '../components/quests/quests-tab';
 import QuestHint from '../components/quests/quests-tab/hint';
 import SettingsTab from '../components/settings/settings-tab';
 import RaidsTab from '../components/raids/RaidsTab';
-import type { RaidLobbyReport } from '../components/raids/RaidLobby';
+import type { RaidLobbyReport } from '../components/raids/raid-lobby';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Meta, Note } from '../components/styled';
@@ -199,7 +200,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Gifts)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
             title={TITLES[GameDialog.Gifts]()}
             description={DESCRIPTIONS[GameDialog.Gifts]()}
@@ -207,7 +208,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             <BattleData>
               <GiftsTab />
             </BattleData>
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.gifts_dock_note()}</Meta>} stack>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -238,13 +239,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Notifications)}
             onClose={close}
-            width="wide"
+            width="wider"
             terse
             title={TITLES[GameDialog.Notifications]()}
             description={DESCRIPTIONS[GameDialog.Notifications]()}
           >
             <NotificationsTab notices={game.notices()} />
-            <DialogActions>
+            <DialogActions
+              note={<Meta class="hidden md:block">{m.notices_dock_note()}</Meta>}
+              stack
+            >
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -295,8 +299,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             insistent={raidLobby()?.hosting === true}
-            // Broad in a lobby, for the boss beside the trainer list
-            width={raidLobby() == null ? 'wide' : 'broad'}
+            // Broad: lair cards two across in the list, and in a lobby
+            // the boss beside the trainer list
+            width="broad"
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
             //
@@ -317,7 +322,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               }}
             />
             <Show when={raidLobby() == null}>
-              <DialogActions>
+              <DialogActions note={<Meta class="hidden md:block">{m.raid_dock_note()}</Meta>}>
                 <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
             </Show>
@@ -331,29 +336,27 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             // A seated player leaves by Leave, which takes their party out
             insistent={duelLobby()?.seated === true}
-            width="wide"
+            // The list is a narrower sheet; a lobby needs the field's width
+            width={duelLobby() == null ? 'wider' : 'rail'}
             terse
             title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
             description={DESCRIPTIONS[GameDialog.Battles]()}
           >
             <DuelsTab
               user={props.user}
+              onClose={close}
               onLobby={(standing) => {
                 setDuelLobby(standing);
               }}
             />
-            <Show when={duelLobby() == null}>
-              <DialogActions>
-                <Button onClick={close}>{m.ui_close()}</Button>
-              </DialogActions>
-            </Show>
           </Dialog>
 
           <Dialog
             isOpen={showing(GameDialog.Auctions)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            aside={selling() ? <SellHint /> : undefined}
             title={TITLES[GameDialog.Auctions]()}
             description={DESCRIPTIONS[GameDialog.Auctions]()}
           >
@@ -369,12 +372,20 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
                 }}
               />
             </BattleData>
-            <DialogActions>
+            <DialogActions
+              stack
+              note={
+                <Show when={!selling()}>
+                  <Meta class="hidden md:block">{m.auction_dock_note()}</Meta>
+                </Show>
+              }
+            >
               {/* The one thing the board is for that is not looking
                   at it. Selling takes the whole panel rather than a
                   card on top of the lots, so the key that opened it
                   is also the way back out */}
               <Button
+                tone={selling() ? 'ghost' : 'primary'}
                 onClick={() => {
                   setSelling(!selling());
                 }}

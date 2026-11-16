@@ -57,6 +57,8 @@ export { default as StepButton } from './step-button';
 export type { StepButtonProps } from './step-button';
 export type { SearchProps } from './search';
 export type { ListRowProps, RowButtonProps } from './list';
+export { GroupLabel, Pill, RowActions, RowCard, RowText } from './row-card';
+export type { PillTone, RowCardProps, RowCardTone } from './row-card';
 export { Card, Divider, Panel, Row } from './surface';
 export type { CardProps, PanelProps } from './surface';
 export { default as ToastProvider, useToast } from './toast';

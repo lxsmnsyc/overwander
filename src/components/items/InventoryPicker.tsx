@@ -108,6 +108,8 @@ interface InventoryPickerCommonProps {
    * one. For callers that are already in a dialog
    */
   inline?: boolean;
+  /** Squares across in the tray, for a caller that lists more than the bag's six */
+  columns?: 6 | 8 | 10;
   /**
    * Whether the dialog is open. Leave it out and the picker opens and
    * shuts itself from its own button
@@ -453,6 +455,7 @@ function PickerList(
         }
       >
         <ItemGrid
+          columns={props.columns}
           entries={cells()}
           verb={props.verb}
           disabled={props.disabled}

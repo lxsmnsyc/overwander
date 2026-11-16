@@ -1,6 +1,15 @@
 import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
 import { type FoundPlayer, FriendTie, findPlayerByCode, getMyFriendCode } from '../../auth/friends';
-import { Button, Dialog, DialogActions, List, Meta, Note, Row, Status, TextField } from '../styled';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  GroupLabel,
+  List,
+  Note,
+  Status,
+  TextField,
+} from '../styled';
 import FriendEntry from './FriendEntry';
 import createFriendTie, { friendActionLabel } from './tie';
 import { useGame } from '../app/game-context';
@@ -29,7 +38,7 @@ function Found(props: { player: FoundPlayer }): JSX.Element {
   return (
     <>
       <List>
-        <FriendEntry uid={props.player.uid}>
+        <FriendEntry uid={props.player.uid} line={m.friends_found()}>
           <Button
             onClick={() => {
               game.setVisiting(props.player.uid);
@@ -62,27 +71,29 @@ function OwnCode(props: { code: Resource<string> }): JSX.Element {
   const [copied, setCopied] = createSignal(false);
 
   return (
-    <Row class="items-center justify-between">
-      <div class="flex flex-col">
-        <Meta>{m.friends_your_code()}</Meta>
-        <span class="font-mono text-lg font-semibold tracking-wide">{props.code()}</span>
+    <div class="flex flex-col gap-1.5 rounded-card border-2 border-tide/20 bg-tide-soft/60 p-3">
+      <GroupLabel>{m.friends_your_code()}</GroupLabel>
+      <div class="flex items-center gap-2.5">
+        <span class="grow font-display text-[26px] font-semibold tracking-[0.04em]">
+          {props.code()}
+        </span>
+        <Button
+          onClick={() => {
+            navigator.clipboard
+              .writeText(props.code.latest ?? '')
+              .then(() => {
+                setCopied(true);
+              })
+              .catch(() => {
+                // Nothing to say: the code is on the screen to copy by
+                // hand, which is what somebody refused the API does
+              });
+          }}
+        >
+          {copied() ? m.friends_copied() : m.friends_copy()}
+        </Button>
       </div>
-      <Button
-        onClick={() => {
-          navigator.clipboard
-            .writeText(props.code.latest ?? '')
-            .then(() => {
-              setCopied(true);
-            })
-            .catch(() => {
-              // Nothing to say: the code is on the screen to copy by
-              // hand, which is what somebody refused the API does
-            });
-        }}
-      >
-        {copied() ? m.friends_copied() : m.friends_copy()}
-      </Button>
-    </Row>
+    </div>
   );
 }
 
@@ -124,6 +135,7 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
+      width="medium"
       title={m.friends_add_title()}
       description={m.friends_add_description()}
     >
@@ -134,6 +146,8 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
       <div class="flex items-end gap-2">
         <TextField
           class="grow"
+          labelFace
+          tall
           label={m.friends_code_label()}
           placeholder="0000-0000-0000"
           value={typed()}
@@ -142,7 +156,12 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
             setTyped(value);
           }}
         />
-        <Button tone="primary" disabled={looking() || typed().trim() === ''} onClick={look}>
+        <Button
+          tone="primary"
+          class="h-11"
+          disabled={looking() || typed().trim() === ''}
+          onClick={look}
+        >
           {m.friends_look_up()}
         </Button>
       </div>
@@ -151,7 +170,7 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
       <Note>{looking() ? m.ui_looking() : ''}</Note>
       <Status message={said()} />
       <Status message={error()} tone="alert" />
-      <DialogActions>
+      <DialogActions stack>
         <Button onClick={props.onClose}>{m.ui_close()}</Button>
       </DialogActions>
     </Dialog>

@@ -6,16 +6,7 @@ import FriendsTab from '../../friends/FriendsTab';
 import RequestsTab from '../../friends/RequestsTab';
 import TradesTab from '../../trades/TradesTab';
 import ProfileSection from '../../../game/session/profile-section';
-import {
-  Button,
-  RailCount,
-  RailTab,
-  RailTabs,
-  Segmented,
-  Status,
-  TabGroup,
-  TabPane,
-} from '../../styled';
+import { RailCount, RailTab, RailTabs, Segmented, Status, TabGroup, TabPane } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
 import AwardsCard from '../awards-card';
 import TeamsCard from '../TeamsCard';
@@ -161,19 +152,12 @@ function OwnBody(props: { state: ProfileState }): JSX.Element {
           <TeamsCard player={state().player} />
         </TabPane>
         <TabPane value={ProfileSection.Friends}>
-          <div class="flex flex-col gap-2.5">
-            <div class="flex flex-wrap items-center justify-end gap-2">
-              <Button
-                tone="primary"
-                onClick={() => {
-                  state().setAdding(true);
-                }}
-              >
-                {m.friends_tie_add()}
-              </Button>
-            </div>
-            <FriendsTab player={state().player} />
-          </div>
+          <FriendsTab
+            player={state().player}
+            onAdd={() => {
+              state().setAdding(true);
+            }}
+          />
         </TabPane>
         {/* What they have been asked and can still take back */}
         <TabPane value={ProfileSection.Requests}>

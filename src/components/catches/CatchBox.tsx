@@ -47,7 +47,7 @@ export const BOX_SIZE = BOX_COLUMNS * BOX_ROWS;
  * five rows drawn narrower or wider, so a box stays one screenful
  * either way
  */
-export type BoxWidth = 5 | 6 | 8;
+export type BoxWidth = 5 | 6 | 8 | 10;
 
 /** How many a box of a given width holds, which is what a page of them is */
 export function boxSizeOf(columns: BoxWidth): number {
@@ -162,6 +162,8 @@ export interface CatchBoxProps {
    * half a box of nothing beside it
    */
   columns?: 3 | BoxWidth;
+  /** Squares across below `md`, for a caller that asked for a wide box: a phone keeps six */
+  narrow?: 3 | BoxWidth;
   /**
    * How many squares the box draws, for a box that is not the box: a
    * team preview is one row of six, not thirty squares five of which
@@ -268,6 +270,7 @@ const COLUMNS: Record<3 | BoxWidth, string> = {
   5: 'grid-cols-5',
   6: 'grid-cols-6',
   8: 'grid-cols-8',
+  10: 'grid-cols-10',
 };
 
 /**
@@ -280,6 +283,7 @@ const WIDTH: Record<3 | BoxWidth, string> = {
   5: 'max-w-md',
   6: 'max-w-lg',
   8: 'max-w-2xl',
+  10: 'max-w-4xl',
 };
 
 /**
@@ -418,7 +422,24 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   const width = (): BoxWidth =>
     props.columns == null || props.columns === 3 ? BOX_COLUMNS : props.columns;
 
-  const columns = (): 3 | BoxWidth => props.columns ?? BOX_COLUMNS;
+  /** Whether the screen is `md` or wider; a wide box draws its `narrow` count below it */
+  const [roomy, setRoomy] = createSignal(true);
+
+  onMount(() => {
+    const query = globalThis.matchMedia('(min-width: 48rem)');
+    const read = (): void => {
+      setRoomy(query.matches);
+    };
+
+    read();
+    query.addEventListener('change', read);
+    onCleanup(() => {
+      query.removeEventListener('change', read);
+    });
+  });
+
+  const columns = (): 3 | BoxWidth =>
+    !roomy() && props.narrow != null ? props.narrow : (props.columns ?? BOX_COLUMNS);
 
   /**
    * How many squares are drawn: what the caller asked for, or at least

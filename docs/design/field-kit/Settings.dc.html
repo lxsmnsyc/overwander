@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55)}
+.sheet{position:absolute;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);display:flex;flex-direction:column;animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+@keyframes rise{from{transform:translateY(4px);opacity:0}}
+.plate{position:absolute;left:24px;top:-17px;height:34px;padding:0 16px 0 12px;border-radius:999px;background:#2360C8;color:#fff;display:flex;align-items:center;gap:8px;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;box-shadow:0 3px 0 0 #163F86;z-index:3}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.btn.danger{background:#fff;border-color:#D6372A;color:#B02A1F}
+.btn.blue{background:#2360C8;border-color:#163F86;color:#fff;box-shadow:0 3px 0 0 #163F86}
+.btn.on{background:#E3ECFA;border-color:#2360C8;color:#163F86}
+.btn.quiet{border-color:transparent;background:transparent;box-shadow:none}
+.btn.sq40{width:40px;padding:0}
+.btn[disabled]{opacity:.45;cursor:default;transform:none}
+.label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F}
+.h{font-family:Fredoka,sans-serif;font-weight:600}
+.input{height:40px;border:2px solid #C3D2E8;border-radius:12px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:13px;color:#52627F}
+.field{display:flex;flex-direction:column;gap:4px}
+.field .input{color:#14203A;font-size:14px}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:#E7EEF8;gap:2px}
+.seg .btn{height:34px}
+.term{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#E7EEF8;font-size:12px;font-weight:800;color:#14203A}
+.term i{font-style:normal;color:#52627F;font-weight:700}
+.term.gold{background:#FDF1D6;color:#8A5A00}
+.term.ember{background:#FCE3E0;color:#B02A1F}
+.term.leaf{background:#E3F3EA;color:#156B3D}
+.term.tide{background:#E3ECFA;color:#163F86}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.pill.leaf{background:#E3F3EA;color:#156B3D}.pill.ember{background:#FCE3E0;color:#B02A1F}.pill.gold{background:#FDF1D6;color:#8A5A00}.pill.tide{background:#E3ECFA;color:#163F86}.pill.arcane{background:#EDE6FA;color:#4B2E9A}.pill.neutral{background:#E7EEF8;color:#52627F}
+.count{font-family:Fredoka,sans-serif;font-weight:600;font-size:12px;min-width:26px;height:22px;padding:0 6px;border-radius:999px;background:#E7EEF8;color:#52627F;display:inline-flex;align-items:center;justify-content:center}
+.count.hot{background:#D6372A;color:#fff}
+.rail{display:flex;flex-direction:column;gap:2px;padding:12px 10px 12px 14px;border-right:2px solid #E7EEF8;flex:0 0 auto}
+.rail .grp{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;padding:10px 10px 4px}
+.rail .grp:first-child{padding-top:2px}
+.ritem{display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;border:2px solid transparent;font-size:14px;font-weight:800;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;color:#14203A;text-align:left;width:100%}
+.ritem:hover{background:#F4F7FC}
+.ritem.current{border-color:#2360C8;background:#EEF4FC;color:#163F86}
+.ritem .count{margin-left:auto}
+.dot{width:22px;height:22px;border-radius:7px;flex:0 0 22px}
+.tile{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8}
+.tile b{font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;line-height:1}
+.track{height:6px;border-radius:3px;background:#E7EEF8;overflow:hidden}
+.track span{display:block;height:100%;border-radius:3px;background:#1E8F52}
+.card{border:2px solid #E7EEF8;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;animation:rise 280ms cubic-bezier(.2,.8,.2,1) both}
+.card h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8;background:#fff;min-height:52px}
+.row.sel{border-color:#1E8F52;background:#EAF6EF}
+.row.me{border-color:#1E8F52;background:#EAF6EF}
+.row.quiet{background:#F4F7FC}
+.grow{flex:1 1 auto;min-width:0}
+.name{font-weight:800;font-size:14px}
+.meta{font-size:12px;color:#52627F}
+.dock{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:2px solid #E7EEF8;flex:0 0 auto}
+.dock .note{font-size:13px;color:#52627F}
+.hint{width:28px;height:28px;border-radius:14px;border:2px solid #C3D2E8;color:#2360C8;font-weight:800;font-size:13px;display:inline-flex;align-items:center;justify-content:center;background:#fff;cursor:pointer}
+.sw{width:44px;height:26px;border-radius:13px;background:#C3D2E8;position:relative;flex:0 0 44px;cursor:pointer;border:0;padding:0;transition:background 240ms}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(20,32,58,.25);transition:transform 240ms cubic-bezier(.34,1.56,.64,1)}
+.sw.on{background:#1E8F52}.sw.on::after{transform:translateX(18px)}
+.opt{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;cursor:pointer;text-align:left;font-family:Nunito,sans-serif;color:#14203A}
+.opt:hover{border-color:#2360C8}
+.opt.on{border-color:#1E8F52;background:#EAF6EF}
+.mon{width:44px;height:44px;border-radius:14px;flex:0 0 44px}
+.face{width:40px;height:40px;border-radius:12px;flex:0 0 40px}
+.sqr{position:relative;height:72px;border-radius:12px;background:#fff;border:2px solid #C3D2E8;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 140ms cubic-bezier(.34,1.56,.64,1),border-color 140ms}
+.sqr:hover{transform:translateY(-2px);border-color:#2360C8}
+.sqr.on{border-color:#1E8F52;background:#EAF6EF;box-shadow:0 0 0 3px #1E8F5233}
+.sqr .lv{position:absolute;left:5px;bottom:3px;font-family:Fredoka,sans-serif;font-weight:600;font-size:10px;color:#52627F}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.grid6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.hero{position:relative;display:flex;gap:16px;align-items:center;padding:16px 18px;border-bottom:2px solid #E7EEF8;border-radius:22px 22px 0 0}
+.quote{font-style:italic;font-size:14px;color:#14203A;background:#fff;border:2px solid #E7EEF8;border-radius:14px;padding:8px 12px;position:relative}
+.boardchip{position:absolute;z-index:20;display:flex;gap:6px;align-items:center;padding:4px;border-radius:14px;background:rgba(255,255,255,.92);border:2px solid #C3D2E8}
+.boardchip .btn{height:30px;font-size:12px}
+.prop{outline:3px dashed #6E46C9;outline-offset:3px;border-radius:14px;position:relative}
+.proptag{position:absolute;right:6px;top:-12px;background:#6E46C9;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;z-index:4}
+.tip{position:absolute;z-index:5;border-radius:14px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18),0 18px 30px -18px rgba(20,32,58,.6);padding:10px 12px;display:flex;flex-direction:column;gap:6px;animation:rise 140ms cubic-bezier(.2,.8,.2,1) both}
+.scroll{overflow:hidden}
+.setrow{display:flex;align-items:center;gap:14px;padding:12px 4px;border-bottom:2px solid #F0F4FA}
+.setrow:last-child{border-bottom:0}
+.slider{position:relative;width:220px;height:8px;border-radius:4px;background:#E7EEF8}
+.slider span{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:#2360C8}
+.slider i{position:absolute;top:-6px;width:20px;height:20px;margin-left:-10px;border-radius:50%;background:#fff;border:3px solid #2360C8;box-shadow:0 2px 0 rgba(20,32,58,.25)}
+.kbd{min-width:44px;height:34px;padding:0 10px;border-radius:10px;border:2px solid #C3D2E8;border-bottom-width:4px;background:#F4F7FC;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="sheet" style="left: 168px; top: 44px; width: 944px; height: 632px" role="dialog" aria-label="Settings">
+<div class="plate"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"></path></svg>Settings</div>
+<div style="display: flex; flex: 1 1 auto; min-height: 0; padding-top: 22px">
+<nav class="rail" style="width: 200px" aria-label="Sections" role="tablist">
+<sc-for list="{{ panes }}" as="p" hint-placeholder-count="8"><sc-if value="{{ p.divider }}" hint-placeholder-val="{{ false }}"><div style="height: 2px; background: #E7EEF8; margin: 6px 4px"></div></sc-if><button class="{{ p.cls }}" role="tab" onClick="{{ p.pick }}"><span class="dot" style="background: {{ p.c }}"></span>{{ p.name }}</button></sc-for>
+</nav>
+<div style="flex: 1 1 auto; min-width: 0; padding: 12px 22px; display: flex; flex-direction: column; gap: 12px; overflow: hidden">
+<div style="display: flex; align-items: baseline; gap: 10px"><span class="h" style="font-size: 22px">{{ paneName }}</span><span class="meta">{{ paneLine }}</span></div>
+<sc-for list="{{ cards }}" as="c" hint-placeholder-count="2">
+<div class="card" style="gap: 2px; padding: 8px 16px">
+<sc-if value="{{ c.title }}" hint-placeholder-val="{{ false }}"><h3 style="padding-top: 4px">{{ c.title }}</h3></sc-if>
+<sc-for list="{{ c.rows }}" as="r" hint-placeholder-count="4">
+<sc-if value="{{ r.sw }}" hint-placeholder-val="{{ true }}"><div class="setrow"><div class="grow" style="display: flex; flex-direction: column"><span class="name">{{ r.label }}</span><span class="meta">{{ r.desc }}</span></div><button class="{{ r.cls }}" role="switch" aria-label="{{ r.label }}"></button></div></sc-if>
+<sc-if value="{{ r.slider }}" hint-placeholder-val="{{ false }}"><div class="setrow"><div class="grow" style="display: flex; flex-direction: column"><span class="name">{{ r.label }}</span><span class="meta">{{ r.desc }}</span></div><div class="slider"><span style="width: {{ r.val }}%"></span><i style="left: {{ r.val }}%"></i></div><span class="count">{{ r.val }}</span></div></sc-if>
+<sc-if value="{{ r.key }}" hint-placeholder-val="{{ false }}"><div class="setrow"><span class="name grow">{{ r.label }}</span><span class="kbd">{{ r.k }}</span><button class="btn" style="height: 34px">Change</button></div></sc-if>
+<sc-if value="{{ r.cards }}" hint-placeholder-val="{{ false }}"><div style="padding: 10px 0 6px; display: flex; flex-direction: column; gap: 8px"><span class="name">{{ r.label }}</span><div style="display: grid; grid-template-columns: repeat({{ r.n }}, minmax(0, 1fr)); gap: 8px"><sc-for list="{{ r.options }}" as="o" hint-placeholder-count="3"><button class="{{ o.cls }}"><span class="name">{{ o.name }}</span><span class="meta">{{ o.desc }}</span></button></sc-for></div></div></sc-if>
+<sc-if value="{{ r.note }}" hint-placeholder-val="{{ false }}"><div style="padding: 10px 0; font-size: 13px; color: #52627F; max-width: 560px">{{ r.text }}</div></sc-if>
+<sc-if value="{{ r.line }}" hint-placeholder-val="{{ false }}"><div style="padding: 6px 0; display: flex; flex-direction: column"><span class="label">{{ r.label }}</span><span style="font-size: 14px">{{ r.text }}</span></div></sc-if>
+<sc-if value="{{ r.action }}" hint-placeholder-val="{{ false }}"><div class="setrow"><div class="grow" style="display: flex; flex-direction: column"><span class="name">{{ r.label }}</span><span class="meta">{{ r.desc }}</span></div><span class="{{ r.pill }}">{{ r.state }}</span><button class="btn" style="height: 34px">{{ r.verb }}</button></div></sc-if>
+</sc-for>
+</div>
+</sc-for>
+</div>
+</div>
+<div class="dock"><button class="btn">Close</button><span class="note">Settings are kept on this device. Security belongs to your account.</span></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { at: 0 }; }
+  renderVals() {
+    const s = this.state;
+    const defs = ['Display', 'Controls', 'World', 'Play', 'Audio', 'Security', 'About', 'Development'];
+    const tones = ['#2360C8', '#6E46C9', '#36B26F', '#F59A3B', '#E94B6A', '#D6372A', '#52627F', '#C3D2E8'];
+    const panes = defs.map((n, i) => ({ name: n, c: tones[i], divider: i === 6, cls: i === s.at ? 'ritem current' : 'ritem', pick: () => this.setState({ at: i }) }));
+    const sw = (label, desc, on) => ({ sw: true, label, desc, cls: on ? 'sw on' : 'sw' });
+    const opts = (label, list, on, n) => ({ cards: true, label, n: n || list.length, options: list.map((x, i) => ({ name: x[0], desc: x[1], cls: i === on ? 'opt on' : 'opt' })) });
+    const by = [
+      [{ rows: [sw('Dark mode', 'Night colours for the whole game.', false), opts('Language', [['English', 'Language of the game'], ['日本語', 'ゲームの言語'], ['Español', 'Idioma del juego']], 0), sw('Reduce motion', 'Panels fade instead of moving.', false), opts('Clock', [['24 hours', '14:30'], ['12 hours', '2:30 pm']], 0)] }],
+      [{ rows: [{ note: true, text: 'The arrows always walk, whatever these say. Read while nothing else on the page has the keyboard, so a key typed into a search box is a key typed into a search box.' }, { key: true, label: 'Up', k: 'W' }, { key: true, label: 'Down', k: 'S' }, { key: true, label: 'Left', k: 'A' }, { key: true, label: 'Right', k: 'D' }, { key: true, label: 'Interact', k: 'E' }, { key: true, label: 'Menu', k: 'Q' }] }],
+      [{ rows: [sw('Grid lines', 'Draw the tile grid on the ground.', false), sw('Chunk lines', 'Draw the edge of each chunk.', false), sw('Map grid', 'Draw chunk lines on the world map.', true), sw('Flat board', 'Look straight down instead of laid back.', false), sw('Detailed map', 'Draw the world map with more detail.', true), opts('Board edge', [['Haze', 'Fade into the distance'], ['Full', 'Show everything'], ['Plain', 'A flat edge']], 0)] }],
+      [{ rows: [sw('Keep the ball', 'Stay on the same ball after a throw.', true), opts('Box width', [['5', 'Roomy squares'], ['6', 'The standard'], ['8', 'More at once']], 1)] }],
+      [{ rows: [{ note: true, text: 'Music is kept for when there is some. Sound is what the world does now.' }, { slider: true, label: 'Sound', desc: 'Footsteps, doors, battle cries.', val: 70 }, { slider: true, label: 'Music', desc: '', val: 40 }] }],
+      [{ title: 'Passkeys', rows: [{ note: true, text: 'A passkey signs you in with this device instead of a password.' }, { action: true, label: 'This laptop', desc: 'Added 3 Nov', pill: 'pill leaf', state: 'On', verb: 'Remove' }, { action: true, label: 'Add a passkey', desc: 'Name it so you know which is which.', pill: 'pill neutral', state: '', verb: 'Add' }] }, { title: 'Authenticator app', rows: [{ action: true, label: 'Two-step sign in', desc: 'A six-digit code after your password.', pill: 'pill neutral', state: 'Off', verb: 'Set up' }] }],
+      [{ title: 'Overwander', rows: [{ note: true, text: 'A seed-generated Pokemon-style overworld with a real-time battle engine.' }, { line: true, label: 'Written by', text: 'Alexis H. Munsayac' }, { line: true, label: 'The dex', text: 'Six regions, 640 pokemon' }, { line: true, label: 'Source', text: 'Open source, MIT licence' }] }, { title: 'Credits', rows: [{ note: true, text: 'Art, sprites, overworld, scenery and the libraries it stands on, each with its source.' }] }],
+      [{ rows: [sw('Highlight steps', 'Mark the tile each step lands on.', false), sw('Shiny boost', 'Make every wild pokemon shiny.', false)] }],
+    ];
+    return { panes, paneName: defs[s.at], paneLine: ['How the game looks and reads.', 'Keys, on this device.', 'How the board is drawn.', 'How you play.', 'What you hear.', 'Your sign-in, on your account.', 'What this is, and who made it.', 'Only in a development build.'][s.at], cards: by[s.at] };
+  }
+}
+</script>
+</body>
+</html>

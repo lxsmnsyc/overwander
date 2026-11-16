@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-social
 title: Redesign trades, auctions, raids and friends
-status: todo
+status: active
 priority: must
 type: feature
 story: ui-redesign-finish

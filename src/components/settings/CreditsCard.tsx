@@ -6,7 +6,8 @@ import {
   asCredits,
   groupCredits,
 } from '../../data/credits';
-import { Card, Note } from '../styled';
+import { Note } from '../styled';
+import { SettingCard } from './setting-card';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -103,7 +104,7 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
 
   return (
     <>
-      <Card title={m.credits_art_title()}>
+      <SettingCard loose title={m.credits_art_title()}>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           <For each={held().sources}>
             {(source) => (
@@ -122,25 +123,25 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
             )}
           </For>
         </ul>
-      </Card>
+      </SettingCard>
 
-      <Card title={m.credits_sprites_title()}>
+      <SettingCard loose title={m.credits_sprites_title()}>
         <p class="max-w-prose text-sm text-muted">{m.credits_sprites_note()}</p>
         <Artists artists={groupCredits(held().sprites)} />
-      </Card>
+      </SettingCard>
 
-      <Card title={m.credits_overworld_title()}>
+      <SettingCard loose title={m.credits_overworld_title()}>
         <Artists artists={groupCredits(held().overworld)} name={sheetName} />
-      </Card>
+      </SettingCard>
 
       <Show when={held().scenery.length > 0}>
-        <Card title={m.credits_scenery_title()}>
+        <SettingCard loose title={m.credits_scenery_title()}>
           <p class="max-w-prose text-sm text-muted">{m.credits_scenery_note()}</p>
           <p class="max-w-prose text-sm">{held().scenery.join(', ')}</p>
-        </Card>
+        </SettingCard>
       </Show>
 
-      <Card title={m.credits_libraries_title()}>
+      <SettingCard loose title={m.credits_libraries_title()}>
         <p class="max-w-prose text-sm text-muted">{m.credits_libraries_note()}</p>
         <ul class="m-0 flex list-none flex-col gap-2 p-0">
           <For each={packages('runtime')}>
@@ -157,7 +158,7 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
         <p class="max-w-prose text-sm text-muted">
           {m.credits_build_note({ names: buildNames() })}
         </p>
-      </Card>
+      </SettingCard>
     </>
   );
 }
@@ -168,9 +169,9 @@ export default function CreditsCard(): JSX.Element {
   return (
     <Suspense
       fallback={
-        <Card title={m.credits_title()}>
+        <SettingCard loose title={m.credits_title()}>
           <Note>{m.credits_loading()}</Note>
-        </Card>
+        </SettingCard>
       }
     >
       <CreditsList credits={credits} />

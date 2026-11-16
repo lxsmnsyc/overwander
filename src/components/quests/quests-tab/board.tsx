@@ -6,19 +6,90 @@ import { type RotationBoard, type RotationScope, claimRotation } from '../../../
 import { CHAINS, CHAIN_ORDER, type Chains, type Quests } from '../../../data/quests';
 import { type QuestReward, QuestRewardKind } from '../../../data/quests/types';
 import { GameDialog, useGame } from '../../app/game-context';
-import { Badge, DialogSection, Hint, HintList, type ToastTone, useToast } from '../../styled';
-import { DAILY_SLOTS } from '../../../data/quests/rotations';
-import { For, Index, type JSX, type Resource, Show, createEffect, createSignal } from 'solid-js';
 import {
-  Accordion,
-  AccordionButton,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-} from 'terracotta';
-import { ChevronRightIcon } from '../../icons';
+  Meta,
+  RailCount,
+  RailTab,
+  RailTabs,
+  TabGroup,
+  TabPane,
+  type ToastTone,
+  useToast,
+} from '../../styled';
+import { DAILY_SLOTS } from '../../../data/quests/rotations';
+import {
+  For,
+  Index,
+  type JSX,
+  type ParentProps,
+  type Resource,
+  Show,
+  createEffect,
+  createSignal,
+} from 'solid-js';
 import sayItems from '../../items/say-items';
 import { m } from '../../../i18n/paraglide/messages.js';
+
+/**
+ * The places a rail row can open. The rotating asks and the two lists
+ * of loose ones have a place each, and a chain's place is its own id
+ * past them, so the open one is a single number a tab group can hold
+ */
+const enum Place {
+  Daily = 0,
+  Weekly = 1,
+  Open = 2,
+  Done = 3,
+  /** Chain ids are added to this */
+  Chain = 100,
+}
+
+/** The colour square of each chain's row, taken in the board's order */
+const CHAIN_TONES = ['#36B26F', '#2360C8', '#D6372A', '#6E46C9', '#2BA3A3', '#F59A3B', '#E94B6A'];
+
+/** A rail row's colour square */
+function Dot(props: { tone: string }): JSX.Element {
+  return (
+    <span
+      aria-hidden="true"
+      class="size-4 shrink-0 rounded-[5px] md:size-[18px] md:rounded-md"
+      style={{ background: props.tone }}
+    />
+  );
+}
+
+/** The pane's head: its name, the line under it, and how far along it is */
+function PaneHead(props: {
+  name: string;
+  line: string;
+  /** Claimed over total for a place that has a total, for the progress track */
+  share?: { claimed: number; total: number };
+}): JSX.Element {
+  return (
+    <>
+      <div class="flex flex-wrap items-baseline gap-x-2.5">
+        <h3 class="m-0 font-display text-[22px] leading-tight font-semibold">{props.name}</h3>
+        <span class="text-xs text-muted">{props.line}</span>
+      </div>
+      {/* Proposal, approved at the gate: how much of it is claimed */}
+      <Show when={props.share != null && props.share.total > 0 ? props.share : null}>
+        {(share) => (
+          <div
+            role="img"
+            aria-label={m.quest_claimed_of({ claimed: share().claimed, total: share().total })}
+            class="h-2 overflow-hidden rounded-full bg-line-soft"
+          >
+            <span
+              class="block h-full rounded-full bg-leaf transition-[width] duration-(--motion-move)
+                ease-settle"
+              style={{ width: `${(share().claimed / share().total) * 100}%` }}
+            />
+          </div>
+        )}
+      </Show>
+    </>
+  );
+}
 
 export default function QuestBoard(props: {
   standings: Resource<QuestStanding[]>;
@@ -116,24 +187,50 @@ export default function QuestBoard(props: {
     return [];
   };
 
-  /**
-   * Which chains stand open, held here rather than by the accordion.
-   *
-   * Left to its own devices it would take the opening set as a prop,
-   * and that prop is worked out from the standings — so every re-read
-   * after a claim would shut whatever the player had opened and open
-   * what the board thinks is interesting. Seeded once from the first
-   * standings to arrive, and theirs after that
-   */
-  const [openChains, setOpenChains] = createSignal<Chains[]>([]);
-  let seeded = false;
+  /** The rotating board's cards that can be claimed now, daily or weekly */
+  const dailyReady = (): number => {
+    let count = 0;
+
+    for (const standing of props.rotations.latest?.daily ?? []) {
+      if (standing.claimable && !standing.claimed) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+  const dailyClaimed = (): number => {
+    let count = 0;
+
+    for (const standing of props.rotations.latest?.daily ?? []) {
+      if (standing.claimed) {
+        count += 1;
+      }
+    }
+    return count;
+  };
+  const weekly = (): RotationBoard['weekly'] | undefined => props.rotations.latest?.weekly;
+  const weeklyReady = (): number => (weekly()?.claimable === true && !weekly()?.claimed ? 1 : 0);
+
+  /** Which row is open: seeded once from the first standings to arrive, and the player's after */
+  const [place, setPlace] = createSignal<number>(Place.Daily);
+  let placed = false;
 
   createEffect(() => {
-    if (seeded || props.standings.latest == null) {
+    if (placed || props.standings.latest == null) {
       return;
     }
-    seeded = true;
-    setOpenChains(ready());
+    placed = true;
+    // What is ready to claim, then the first unfinished chain, as the
+    // board used to open them
+    if (dailyReady() > 0 || weeklyReady() > 0) {
+      setPlace(dailyReady() > 0 ? Place.Daily : Place.Weekly);
+      return;
+    }
+    const owed = ready();
+
+    if (owed.length > 0) {
+      setPlace(Place.Chain + owed[0]);
+    }
   });
 
   const say = (message: string, tone: ToastTone): void => {
@@ -214,101 +311,121 @@ export default function QuestBoard(props: {
   };
 
   return (
-    <div class="flex flex-col gap-4">
-      {/* The rotating asks first: today's three and the week's hunt
-          turn over on their own, so they outrank the standing board.
-          Unkeyed, so a re-read swaps the numbers rather than the
-          cards: a rebuilt card is one the player watches flicker */}
-      <Show when={props.rotations.latest}>
-        {(board) => (
-          <>
-            <DialogSection
-              title={m.quest_today()}
-              hint={
-                <Hint title={m.quest_about()}>
-                  <HintList>
-                    <li>{m.quest_hint_rotation({ count: DAILY_SLOTS })}</li>
-                    <li>{m.quest_hint_after()}</li>
-                    <li>{m.quest_hint_chains()}</li>
-                    <li>{m.quest_hint_claim()}</li>
-                  </HintList>
-                </Hint>
-              }
-            >
-              {/* By slot rather than by value: today's three keep
-                  their places, and a re-read is new numbers in the
-                  same three cards */}
-              <Index each={board().daily}>
-                {(standing) => (
-                  <RotationCard
-                    standing={standing()}
-                    busy={claiming()}
-                    onClaim={() => {
-                      claimRotating('daily', standing().quest.slot);
-                    }}
-                  />
-                )}
-              </Index>
-            </DialogSection>
-            <DialogSection title={m.quest_this_week()}>
-              <RotationCard
-                standing={board().weekly}
-                busy={claiming()}
-                onClaim={() => {
-                  claimRotating('weekly', board().weekly.quest.slot);
-                }}
-              />
-            </DialogSection>
-          </>
-        )}
-      </Show>
+    // The rows down the left from `md` up, a row of chips that scrolls
+    // sideways on a phone, and the open one's cards beside them
+    <TabGroup
+      horizontal
+      value={place()}
+      onChange={(value) => {
+        setPlace(value);
+      }}
+      class="flex min-h-0 flex-col gap-3 md:flex-row md:gap-0"
+    >
+      <RailTabs label={m.quest_sections()} class="md:w-[250px] md:px-2.5 md:py-1 md:pl-3.5">
+        {/* The rotating asks first: today's three and the week's hunt
+            turn over on their own, so they outrank the standing board */}
+        <RailGroup label={m.quest_group_rotating()} />
+        <RailTab value={Place.Daily}>
+          <Dot tone="#F59A3B" />
+          <span class="truncate">{m.quest_today()}</span>
+          <RowCounts ready={dailyReady()}>
+            {props.rotations.latest?.daily.length ?? DAILY_SLOTS}
+          </RowCounts>
+        </RailTab>
+        <RailTab value={Place.Weekly}>
+          <Dot tone="#F59A3B" />
+          <span class="truncate">{m.quest_this_week()}</span>
+          <RowCounts ready={weeklyReady()}>{weekly() == null ? 0 : 1}</RowCounts>
+        </RailTab>
+        <RailGroup label={m.quest_group_chains()} />
+        <For each={CHAIN_ORDER}>
+          {(chain, at) => (
+            <RailTab value={Place.Chain + chain}>
+              <Dot tone={CHAIN_TONES[at() % CHAIN_TONES.length]} />
+              <span class="truncate">{CHAINS[chain].name}</span>
+              <RowCounts ready={claimableIn(chain)}>
+                {claimedIn(chain)} / {CHAINS[chain].quests.length}
+              </RowCounts>
+            </RailTab>
+          )}
+        </For>
+        <RailGroup label={m.quest_group_other()} />
+        <RailTab value={Place.Open}>
+          <Dot tone="#2BA3A3" />
+          <span class="truncate">{m.quest_asked_of_anybody()}</span>
+          <RailCount>{open().length}</RailCount>
+        </RailTab>
+        <RailTab value={Place.Done}>
+          <Dot tone="#9AA8C0" />
+          <span class="truncate">{m.quest_done()}</span>
+          <RailCount>{done().length}</RailCount>
+        </RailTab>
+      </RailTabs>
 
-      {/* One chain a row, shut. There are a dozen of them and a
-          player is working through one or two, so the board opens as
-          a list of what the game teaches rather than as every ask it
-          holds; whatever is ready to claim is opened for them */}
-      <Accordion
-        as="div"
-        multiple
-        toggleable
-        value={openChains()}
-        onChange={(chains) => {
-          setOpenChains(chains);
-        }}
-        class="flex flex-col gap-2"
-      >
+      <div class="flex min-h-0 min-w-0 grow flex-col gap-2.5 md:overflow-y-auto md:px-5 md:py-3">
+        {/* Unkeyed, so a re-read swaps the numbers rather than the
+            cards: a rebuilt card is one the player watches flicker */}
+        <TabPane value={Place.Daily}>
+          <div class="flex flex-col gap-2.5">
+            <PaneHead
+              name={m.quest_today()}
+              line={m.quest_hint_rotation({ count: DAILY_SLOTS })}
+              share={{ claimed: dailyClaimed(), total: props.rotations.latest?.daily.length ?? 0 }}
+            />
+            {/* By slot rather than by value: today's three keep
+                their places, and a re-read is new numbers in the
+                same three cards */}
+            <Index each={props.rotations.latest?.daily ?? []}>
+              {(standing) => (
+                <RotationCard
+                  standing={standing()}
+                  busy={claiming()}
+                  onClaim={() => {
+                    claimRotating('daily', standing().quest.slot);
+                  }}
+                />
+              )}
+            </Index>
+          </div>
+        </TabPane>
+        <TabPane value={Place.Weekly}>
+          <div class="flex flex-col gap-2.5">
+            <PaneHead
+              name={m.quest_this_week()}
+              line={m.quest_line_week()}
+              share={{
+                claimed: weekly()?.claimed === true ? 1 : 0,
+                total: weekly() == null ? 0 : 1,
+              }}
+            />
+            <Show when={weekly()}>
+              {(standing) => (
+                <RotationCard
+                  standing={standing()}
+                  busy={claiming()}
+                  onClaim={() => {
+                    claimRotating('weekly', standing().quest.slot);
+                  }}
+                />
+              )}
+            </Show>
+          </div>
+        </TabPane>
+        {/* One chain a pane. There are a dozen of them and a player is
+            working through one or two; whatever is ready to claim
+            shows in the rail beside its name */}
         <For each={CHAIN_ORDER}>
           {(chain) => (
-            <AccordionItem
-              as="div"
-              value={chain}
-              class="flex flex-col rounded-panel border-2 border-line-soft"
-            >
-              <AccordionHeader as="h3" class="m-0">
-                <AccordionButton
-                  class="group flex w-full cursor-pointer items-center gap-2 border-0
-                    bg-transparent p-3 text-left shadow-none focus-visible:outline-2
-                    focus-visible:outline-offset-2 focus-visible:outline-tide"
-                >
-                  <ChevronRightIcon
-                    aria-hidden="true"
-                    class="size-4 shrink-0 text-muted transition-transform
-                      group-aria-expanded:rotate-90"
-                  />
-                  <span class="min-w-0 grow truncate text-sm font-bold text-ink">
-                    {CHAINS[chain].name}
-                  </span>
-                  <Show when={claimableIn(chain) > 0}>
-                    <Badge tone="leaf">{m.quest_ready({ count: claimableIn(chain) })}</Badge>
-                  </Show>
-                  <Badge
-                    tone={claimedIn(chain) === CHAINS[chain].quests.length ? 'leaf' : 'neutral'}
-                  >
-                    {claimedIn(chain)} / {CHAINS[chain].quests.length}
-                  </Badge>
-                </AccordionButton>
-              </AccordionHeader>
-              <AccordionPanel class="flex flex-col gap-2 p-3 pt-0">
+            <TabPane value={Place.Chain + chain}>
+              <div class="flex flex-col gap-2.5">
+                <PaneHead
+                  name={CHAINS[chain].name}
+                  line={m.quest_line_chain({
+                    claimed: claimedIn(chain),
+                    total: CHAINS[chain].quests.length,
+                  })}
+                  share={{ claimed: claimedIn(chain), total: CHAINS[chain].quests.length }}
+                />
                 <For each={CHAINS[chain].quests}>
                   {(quest) => (
                     <Show when={standingOf(quest)} fallback={<LockedCard quest={quest} />}>
@@ -318,27 +435,71 @@ export default function QuestBoard(props: {
                     </Show>
                   )}
                 </For>
-              </AccordionPanel>
-            </AccordionItem>
+              </div>
+            </TabPane>
           )}
         </For>
-      </Accordion>
+        <TabPane value={Place.Open}>
+          <div class="flex flex-col gap-2.5">
+            <PaneHead
+              name={m.quest_asked_of_anybody()}
+              line={m.quest_line_open()}
+              share={{ claimed: 0, total: open().length }}
+            />
+            <Show when={open().length > 0} fallback={<Meta>{m.quest_none_here()}</Meta>}>
+              <For each={open()}>
+                {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
+              </For>
+            </Show>
+          </div>
+        </TabPane>
+        <TabPane value={Place.Done}>
+          <div class="flex flex-col gap-2.5">
+            <PaneHead
+              name={m.quest_done()}
+              line={m.quest_line_done()}
+              share={{ claimed: done().length, total: done().length }}
+            />
+            <Show when={done().length > 0} fallback={<Meta>{m.quest_none_here()}</Meta>}>
+              <For each={done()}>
+                {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
+              </For>
+            </Show>
+          </div>
+        </TabPane>
+      </div>
+    </TabGroup>
+  );
+}
 
-      <Show when={open().length > 0}>
-        <DialogSection title={m.quest_asked_of_anybody()}>
-          <For each={open()}>
-            {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
-          </For>
-        </DialogSection>
-      </Show>
+/** A group's label in the rail's column; a phone's chip row has no room for it */
+function RailGroup(props: { label: string }): JSX.Element {
+  return (
+    <span
+      aria-hidden="true"
+      class="hidden px-2.5 pt-2.5 pb-1 text-[11px] font-extrabold tracking-[0.12em] text-muted
+        uppercase first:pt-0.5 md:block"
+    >
+      {props.label}
+    </span>
+  );
+}
 
-      <Show when={done().length > 0}>
-        <DialogSection title={m.quest_done()}>
-          <For each={done()}>
-            {(standing) => <QuestCard standing={standing} busy={claiming()} onClaim={claim} />}
-          </For>
-        </DialogSection>
+/** A row's counts at its end: what can be claimed now, in green, before the count itself */
+function RowCounts(props: ParentProps<{ ready: number }>): JSX.Element {
+  return (
+    <span class="ml-auto flex shrink-0 items-center gap-1">
+      <Show when={props.ready > 0}>
+        <span
+          role="img"
+          aria-label={m.quest_ready({ count: props.ready })}
+          class="inline-flex h-[22px] min-w-[26px] items-center justify-center rounded-full
+            bg-leaf px-1.5 font-display text-xs font-semibold text-on-accent tabular-nums"
+        >
+          {props.ready}
+        </span>
       </Show>
-    </div>
+      <RailCount>{props.children}</RailCount>
+    </span>
   );
 }

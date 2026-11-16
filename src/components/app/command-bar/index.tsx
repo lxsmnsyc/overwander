@@ -10,7 +10,8 @@ import {
   TransitionChild,
 } from 'terracotta';
 import type { QueryCompletion, QuerySuggestion } from '../../../core/query';
-import { Status, usePortalHost } from '../../styled';
+import { usePortalHost } from '../../styled';
+import { m } from '../../../i18n/paraglide/messages.js';
 import COMMAND_VOCABULARY from './commands';
 import FADE, { SHEER } from '../../styled/transition';
 import Offers from './offers';
@@ -249,11 +250,12 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                 room below it */}
             <TransitionChild
               {...FADE}
-              class="fixed top-[12%] left-1/2 w-[min(92vw,34rem)] -translate-x-1/2"
+              class="fixed top-[8%] left-1/2 w-[min(calc(100vw-1rem),34rem)] -translate-x-1/2
+                sm:top-[12%]"
             >
               <DialogPanel
-                class="flex flex-col gap-2 rounded-panel border-2 border-line bg-paper
-              px-4 py-3 text-left shadow-sheet"
+                class="flex flex-col gap-2 rounded-sheet border-2 border-line bg-paper p-3
+              text-left shadow-sheet"
               >
                 <HeadlessDialogTitle class="sr-only">Command bar</HeadlessDialogTitle>
                 <HeadlessDialogDescription class="sr-only">
@@ -265,15 +267,21 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     somebody typed the next line */}
                 <Show when={result()}>
                   {(answer) => (
-                    <Status
-                      message={answer().message}
-                      tone={answer().tone === 'refusal' ? 'alert' : 'status'}
-                    />
+                    <p
+                      role={answer().tone === 'refusal' ? 'alert' : 'status'}
+                      class={`rounded-button border-2 px-3 py-2.5 text-[13px] font-bold shadow-none ${
+                        answer().tone === 'refusal'
+                          ? 'border-ember/35 bg-ember-soft text-ember-dark'
+                          : 'border-leaf/35 bg-leaf-soft text-leaf-dark'
+                      }`}
+                    >
+                      {answer().message}
+                    </p>
                   )}
                 </Show>
                 <span
-                  class="flex min-w-0 items-center gap-2 rounded-xl border-2 border-line bg-paper
-                  px-2.5 py-1.5 focus-within:border-tide"
+                  class="flex h-[46px] min-w-0 items-center gap-2.5 rounded-[14px] border-2 border-tide
+                  bg-paper px-3 ring-3 ring-tide/15"
                 >
                   {/* The mark is the label. The bar wears it so that
                       nobody has to type it, and so a box that is
@@ -285,7 +293,7 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     type="text"
                     value={line()}
                     placeholder="tp player:self x:100"
-                    class="w-full min-w-0 grow rounded-none border-0 bg-transparent p-0 text-sm
+                    class="w-full min-w-0 grow rounded-none border-0 bg-transparent p-0 text-[15px]
                     focus-visible:outline-none"
                     autocomplete="off"
                     role="combobox"
@@ -375,6 +383,9 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     onPick={pick}
                   />
                 </Show>
+                {/* The keys, said once: the box is plainly for typing and
+                    the rest is reached by key */}
+                <span class="px-1 text-xs text-muted">{m.command_keys()}</span>
               </DialogPanel>
             </TransitionChild>
           </HeadlessDialog>

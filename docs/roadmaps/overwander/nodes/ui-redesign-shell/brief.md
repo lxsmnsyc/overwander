@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-shell
 title: Redesign settings, profile, quests and the shell
-status: active
+status: done
 priority: must
 type: feature
 story: ui-redesign-finish
@@ -9,6 +9,7 @@ outline: false
 milestone: now
 size: L
 added: 2026-11-03
+spent: 541280
 owns:
   - src/components/app/LoginForm.tsx
   - src/components/app/Announcements.tsx

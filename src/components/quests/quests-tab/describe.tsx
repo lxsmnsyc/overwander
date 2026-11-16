@@ -258,7 +258,7 @@ export function requirementIcon(requirement: QuestRequirement): JSX.Element {
   }
 
   return (
-    <span class="flex size-9 shrink-0 items-center justify-center rounded-xl bg-line-soft/60">
+    <span class="flex size-[30px] shrink-0 items-center justify-center rounded-[10px] bg-line-soft/60">
       {requirementGlyph(requirement)}
     </span>
   );

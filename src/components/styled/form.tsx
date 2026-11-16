@@ -40,8 +40,21 @@ export interface FieldFrameProps {
    * over the grid under it
    */
   quietLabel?: boolean;
+  /** The word above is the label face (small capitals) rather than a plain line */
+  labelFace?: boolean;
   class?: string;
   children: (parts: FieldParts) => JSX.Element;
+}
+
+/** How the word above the control is drawn */
+function labelClass(props: FieldFrameProps): string {
+  if (props.quietLabel === true) {
+    return 'sr-only';
+  }
+  if (props.labelFace === true) {
+    return 'text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase';
+  }
+  return 'text-sm font-semibold text-muted';
 }
 
 /**
@@ -57,10 +70,7 @@ export function FieldFrame(props: FieldFrameProps): JSX.Element {
 
   return (
     <div class={`flex flex-col gap-1 ${props.class ?? ''}`}>
-      <label
-        for={id}
-        class={props.quietLabel === true ? 'sr-only' : 'text-sm font-semibold text-muted'}
-      >
+      <label for={id} class={labelClass(props)}>
         {props.label}
         <Show when={props.required}>
           <span aria-hidden="true" class="text-ember">

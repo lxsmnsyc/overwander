@@ -34,14 +34,19 @@ export function railRow(current: boolean): string {
   return `${ROW} ${current ? CURRENT : AT_REST}`;
 }
 
-/** How many a row holds, in a pill at its right end */
-export function RailCount(props: ParentProps<{ lit?: boolean }>): JSX.Element {
+/** How many a row holds, in a pill at its right end (`hot` for what waits on the player) */
+export function RailCount(props: ParentProps<{ lit?: boolean; hot?: boolean }>): JSX.Element {
+  const look = (): string => {
+    if (props.hot === true) {
+      return 'bg-ember text-on-accent';
+    }
+    return props.lit === true ? 'bg-tide text-on-accent' : 'bg-line-soft text-muted';
+  };
+
   return (
     <span
       class={`ml-auto inline-flex h-[22px] min-w-[26px] shrink-0 items-center justify-center
-        rounded-full px-1.5 font-display text-xs font-semibold tabular-nums ${
-          props.lit === true ? 'bg-tide text-on-accent' : 'bg-line-soft text-muted'
-        }`}
+        rounded-full px-1.5 font-display text-xs font-semibold tabular-nums ${look()}`}
     >
       {props.children}
     </span>

@@ -16,7 +16,7 @@ import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import BagDialog from '../components/items/inventory-list';
-import LoginForm from '../components/app/LoginForm';
+import LoginForm, { TitleCard } from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
@@ -26,15 +26,16 @@ import type { DuelLobbyReport } from '../components/duels/DuelLobby';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexDialog from '../components/dex/PokedexDialog';
 import ProfileDialog from '../components/profile/ProfileDialog';
-import ProfileTab from '../components/profile/ProfileTab';
+import ProfileSheet from '../components/profile/profile-sheet';
 import QuestsTab from '../components/quests/quests-tab';
-import SettingsTab from '../components/settings/SettingsTab';
+import QuestHint from '../components/quests/quests-tab/hint';
+import SettingsTab from '../components/settings/settings-tab';
 import RaidsTab from '../components/raids/RaidsTab';
 import type { RaidLobbyReport } from '../components/raids/RaidLobby';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
-import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
-import { Button, Dialog, DialogActions, Note } from '../components/styled';
+import { Button, Dialog, DialogActions, Meta, Note } from '../components/styled';
+import { BookmarkIcon, PageIcon, SettingsIcon } from '../components/icons';
 import { m } from '../i18n/paraglide/messages.js';
 
 /**
@@ -216,15 +217,17 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Quests)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            lead={<BookmarkIcon class="size-4" aria-hidden="true" />}
+            aside={<QuestHint />}
             title={TITLES[GameDialog.Quests]()}
             description={DESCRIPTIONS[GameDialog.Quests]()}
           >
             <BattleData>
               <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
             </BattleData>
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.quest_hint_claim()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -251,13 +254,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Settings)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            lead={<SettingsIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Settings]()}
             description={DESCRIPTIONS[GameDialog.Settings]()}
           >
             <SettingsTab />
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.settings_dock_note()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -267,31 +271,25 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.News)}
             onClose={close}
-            width="wide"
+            width="rail"
+            layout="sheet"
             terse
+            lead={<PageIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.News]()}
             description={DESCRIPTIONS[GameDialog.News]()}
           >
             <NewsTab />
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.news_dock_note()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
-          <Dialog
+          <ProfileSheet
+            player={props.user.uid}
+            section={game.profileAt() ?? undefined}
             isOpen={showing(GameDialog.Profile)}
             onClose={close}
-            // Broad for the side list of sections beside what is open
-            width="broad"
-            quiet
-            title={TITLES[GameDialog.Profile]()}
-            description={DESCRIPTIONS[GameDialog.Profile]()}
-          >
-            <ProfileTab player={props.user.uid} section={game.profileAt() ?? undefined} />
-            <DialogActions>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
+          />
 
           <Dialog
             isOpen={showing(GameDialog.Raids)}
@@ -535,18 +533,23 @@ function Banned(props: {
     <Show when={profile()?.banned === true} fallback={props.children(() => profile()?.role ?? '')}>
       <div class="flex h-full items-center justify-center px-4">
         <div
-          class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
-          text-center shadow-pop"
+          class="flex w-full max-w-105 flex-col gap-3 overflow-hidden rounded-sheet border-2
+            border-line bg-paper pb-[22px] text-center shadow-sheet"
         >
-          <h1>{m.refusal_banned()}</h1>
-          <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
-          <Button
-            onClick={() => {
-              signOut().catch(() => undefined);
-            }}
-          >
-            {m.ui_sign_out()}
-          </Button>
+          <header class="bg-linear-to-b from-ember-soft to-paper px-6 pt-[30px] pb-5">
+            <h1 class="font-display text-3xl leading-tight font-semibold">{m.refusal_banned()}</h1>
+          </header>
+          <div class="flex flex-col gap-3 px-6">
+            <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
+            <Button
+              class="h-11 justify-center"
+              onClick={() => {
+                signOut().catch(() => undefined);
+              }}
+            >
+              {m.ui_sign_out()}
+            </Button>
+          </div>
         </div>
       </div>
     </Show>
@@ -565,25 +568,11 @@ export default function Home(): JSX.Element {
           <div class="flex h-full items-center justify-center px-4">
             <Show when={!auth.loading()} fallback={<Note>{m.landing_loading()}</Note>}>
               {/* The title screen: the game's name and what it is, then
-                  the one thing there is to do about it, on the same white
-                  sheet every dialog is drawn on */}
-              <div
-                class="relative flex w-full max-w-sm flex-col gap-4 rounded-panel border-2 border-line
-                  bg-paper px-5 pt-7 pb-5 shadow-sheet"
-              >
-                <header class="flex flex-col items-center gap-1 text-center">
-                  <h1 class="text-4xl font-black tracking-tight">Overwander</h1>
-                  <p class="text-sm text-muted">{m.landing_tagline()}</p>
-                </header>
-                {/* Worth changing before signing in as much as after: the
-                    menu that carries it is behind the sign-in */}
-                <ThemeToggle
-                  class="absolute top-3 right-3 flex size-8 cursor-pointer items-center justify-center
-                    rounded-full border-0 bg-line-soft p-0 text-muted shadow-none transition-colors
-                    hover:bg-tide-soft hover:text-tide-dark active:translate-y-0 [&_svg]:size-4"
-                />
+                  the one thing there is to do about it, on a card with
+                  a tinted header */}
+              <TitleCard>
                 <LoginForm />
-              </div>
+              </TitleCard>
             </Show>
           </div>
         }

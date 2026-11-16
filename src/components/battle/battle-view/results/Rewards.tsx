@@ -5,7 +5,7 @@ import { getItemData } from '../../../../data/items';
 import { getFamilyName, getSpeciesData } from '../../../../data/species';
 import type { Spoils } from '../../../app/game-context';
 import ItemSprite from '../../../items/ItemSprite';
-import { AwardArt } from '../../../profile/AwardsCard';
+import { AwardArt } from '../../../profile/awards-card';
 import CandySprite from '../../../sprites/CandySprite';
 import { formatNumber } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';

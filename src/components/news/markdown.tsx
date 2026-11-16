@@ -26,21 +26,44 @@ function isAway(url: string): boolean {
   return /^[a-z]+:/.test(url);
 }
 
+/**
+ * The line a release's index entry says about it. The page's own title
+ * is its first heading, and the line stands right under it, so the
+ * heading says where to put it
+ */
+export const ReleaseLine = createContext('');
+
+/** How a heading of each depth is drawn, over the base layer's face */
+const HEADING_SIZES = [
+  'mt-0 mb-0 text-[26px] leading-tight',
+  'mt-4 mb-0 text-lg',
+  'mt-3 mb-0 text-base',
+] as const;
+
 const MARKDOWN: MDXBuiltinComponents = {
   Root: (props) => <div class="flex flex-col gap-3">{props.children}</div>,
 
-  Heading: (props) => (
-    <Dynamic
-      component={HEADINGS[props.depth - 1]}
-      id={props.id}
-      // Above the block it introduces rather than between two of them
-      class="mt-3 first:mt-0"
-    >
-      {props.children}
-    </Dynamic>
-  ),
+  Heading: (props) => {
+    const line = useContext(ReleaseLine);
 
-  Paragraph: (props) => <p class="max-w-prose">{props.children}</p>,
+    return (
+      <>
+        <Dynamic
+          component={HEADINGS[props.depth - 1]}
+          id={props.id}
+          // Above the block it introduces rather than between two of them
+          class={`first:mt-0 ${HEADING_SIZES[props.depth - 1] ?? 'mt-3'}`}
+        >
+          {props.children}
+        </Dynamic>
+        <Show when={props.depth === 1 && line !== ''}>
+          <span class="block text-xs text-muted">{line}</span>
+        </Show>
+      </>
+    );
+  },
+
+  Paragraph: (props) => <p class="max-w-prose leading-[1.55]">{props.children}</p>,
 
   Strong: (props) => <strong class="font-bold text-ink">{props.children}</strong>,
   Emphasis: (props) => <em>{props.children}</em>,

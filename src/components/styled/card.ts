@@ -28,3 +28,7 @@ export function riseAfter(cards: number): JSX.CSSProperties {
 export function tint(colour: string, amount: number): string {
   return `color-mix(in srgb, ${colour} ${amount}%, var(--color-paper))`;
 }
+
+/** A row of a settings card: the label and its control, ruled off from the next row */
+export const SETTING_ROW =
+  'items-center gap-3.5 border-b-2 border-line-soft/60 px-1 py-3 last:border-b-0';

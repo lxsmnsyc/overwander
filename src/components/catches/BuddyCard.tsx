@@ -11,14 +11,13 @@ import { resolveBuddy, setBuddy } from '../../auth/buddy';
 import type { CaughtPokemon } from '../../auth/caught';
 import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
-import { MAX_FRIENDSHIP } from '../../data/constants/friendship';
 import getSigil from '../../data/constants/sigil';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import { GENDER_LABELS, GENDER_MARKS, sayFriendship } from './catch-summary';
 import CatchPicker from './catch-picker';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Badge, Button, Meta, Note, Row, Status } from '../styled';
+import { Badge, Button, Meta, Note, Status } from '../styled';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -35,45 +34,6 @@ import { m } from '../../i18n/paraglide/messages.js';
  * about the same pokemon: what it is, what it looks like, and the mark
  * that tells one Rattata from another.
  */
-
-/**
- * A number as a length, with the words for it beside.
- *
- * Both of the things a buddy earns by being walked with — how close
- * an egg is to hatching, how well a pokemon thinks of its owner — are
- * fractions of something, and a fraction printed as two numbers is
- * arithmetic a player should not have to do at a glance. The words
- * stay, because a bar on its own cannot say *how many* steps
- */
-function Gauge(props: {
-  label: string;
-  tone: string;
-  value: number;
-  of: number;
-  /**
-   * What a screen reader is told it comes to — "120 of 2560 steps
-   * walked", "adores you". A bar is a picture, and a picture of a
-   * number has to say the number
-   */
-  said: string;
-}): JSX.Element {
-  const share = (): number =>
-    props.of <= 0 ? 1 : Math.max(0, Math.min(1, props.value / props.of));
-
-  return (
-    <div class="flex items-center gap-2">
-      <Meta class="w-20 shrink-0 text-left">{props.label}</Meta>
-      <div
-        class="h-1.5 grow overflow-hidden rounded-full bg-line-soft"
-        role="img"
-        aria-label={`${props.label}: ${props.said}`}
-        title={props.said}
-      >
-        <div class={`h-full rounded-full ${props.tone}`} style={{ width: `${share() * 100}%` }} />
-      </div>
-    </div>
-  );
-}
 
 /**
  * The picture's own box, which becomes a button where the card has a
@@ -187,9 +147,13 @@ function BuddyBody(
    */
 
   return (
-    // No frame of its own: it is the right half of the profile's trainer card
-    <div class="flex flex-col gap-2">
-      <Row class="flex-nowrap">
+    // The right half of the profile's hero: a white card with the
+    // walker, what it is, how close the two are, and the swap
+    <div class="flex min-w-0 grow flex-col gap-2">
+      <div
+        class="flex flex-nowrap items-center gap-3 rounded-card border-2 border-line-soft bg-paper
+          px-3 py-2"
+      >
         <Show
           when={buddy()}
           fallback={
@@ -204,13 +168,11 @@ function BuddyBody(
             <>
               {/* No fixed box. It had one, and the sprite is taller
                   than the box was, so it stood well above the line it
-                  was supposed to be on — the box only ever decided
-                  where the *bottom* of an overflowing picture went.
-                  The picture is its own size, and the row lines it up
-                  with the words beside it.
+                  was supposed to be on. The picture is its own size,
+                  and the row lines it up with the words beside it.
 
                   Half the size it was drawn at: this is a line of the
-                  profile rather than the subject of a screen — and
+                  profile rather than the subject of a screen, and
                   half of three is not a whole number of pixels, which
                   for pixel art is the one scale that looks wrong */}
               <Sprung open={props.onOpen} at={pair()[0]}>
@@ -226,31 +188,30 @@ function BuddyBody(
                 />
               </Sprung>
 
-              <div class="flex grow flex-col gap-1">
+              <div class="flex min-w-0 grow flex-col">
+                <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
+                  {props.viewOnly === true ? m.catch_buddy_label_them() : m.catch_buddy_label()}
+                </span>
                 <Show
                   when={!isEgg(pair()[1])}
                   fallback={
                     <>
-                      <span class="font-semibold">{m.ui_egg()}</span>
-                      {/* How close it is to hatching, drawn as well as
-                          counted. An egg is the one thing in the game
-                          that is finished by walking, so how far along
-                          it is *is* what the buddy card is for */}
-                      <Gauge
-                        label={m.catch_buddy_hatching()}
-                        tone="bg-gold"
-                        value={pair()[1].steps}
-                        of={pair()[1].hatchSteps}
-                        said={m.catch_buddy_steps({
+                      <span class="text-sm font-extrabold">{m.ui_egg()}</span>
+                      {/* How close it is to hatching, counted. An egg is
+                          the one thing in the game that is finished by
+                          walking, so how far along it is *is* what the
+                          buddy card is for */}
+                      <Meta>
+                        {m.catch_buddy_steps({
                           steps: pair()[1].steps,
                           hatch: pair()[1].hatchSteps,
                         })}
-                      />
+                      </Meta>
                     </>
                   }
                 >
-                  <div class="flex flex-wrap items-center gap-2">
-                    <span class="font-semibold">
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                    <span class="text-sm font-extrabold">
                       {m.ui_level_name({
                         level: pair()[1].level,
                         name: getSpeciesData(pair()[1].species).name,
@@ -275,31 +236,26 @@ function BuddyBody(
                       <Badge tone="gold">{m.catch_shiny_badge()}</Badge>
                     </Show>
                   </div>
-                  {/* The mark it is known by. Two of the same species
-                      with the same sigil are the same individual */}
-                  <Meta class="font-mono tracking-[0.2em]">
-                    {getSigil(pair()[1].individualValue, pair()[1].traitValue)}
+                  {/* What walking with it has come to. Both counts are
+                      earned by the walking rather than by anything a
+                      player presses: `walked` is how far this pokemon
+                      has gone as somebody's buddy, which is the one
+                      that buys the friendship beside it. The words for
+                      the friendship stand on its tooltip, and the mark
+                      it is known by ends the line (two of the same
+                      species with the same sigil are the same
+                      individual) */}
+                  <Meta>
+                    <span title={sayFriendship(pair()[1].friendship)}>
+                      {m.catch_buddy_friendship({ count: pair()[1].friendship })}
+                    </span>
+                    {' · '}
+                    {m.catch_buddy_walked({ count: pair()[1].walked })}
+                    {' · '}
+                    <span class="font-mono tracking-[0.2em]">
+                      {getSigil(pair()[1].individualValue, pair()[1].traitValue)}
+                    </span>
                   </Meta>
-                  {/* What walking with it has come to. Both of these
-                      are earned by the walking rather than by anything
-                      a player presses, and neither was written down
-                      anywhere: a buddy quietly gained regard for
-                      hundreds of paces and the only way to see it was
-                      to open its sheet */}
-                  <Gauge
-                    label={m.catch_friendship()}
-                    tone="bg-leaf"
-                    value={pair()[1].friendship}
-                    of={MAX_FRIENDSHIP}
-                    said={sayFriendship(pair()[1].friendship)}
-                  />
-                  {/* `walked`, not `steps`. They are two counts on
-                      purpose: `steps` is how far an egg has been
-                      carried and stops meaning anything the moment it
-                      hatches, while `walked` is how far this pokemon
-                      has gone as somebody's buddy — which is the one
-                      that buys the friendship above */}
-                  <Meta>{m.catch_buddy_walked({ count: pair()[1].walked })}</Meta>
                 </Show>
               </div>
             </>
@@ -319,7 +275,7 @@ function BuddyBody(
             {buddy() == null ? m.catch_buddy_choose() : m.catch_buddy_replace()}
           </Button>
         </Show>
-      </Row>
+      </div>
 
       <Status message={status()} tone="alert" />
 

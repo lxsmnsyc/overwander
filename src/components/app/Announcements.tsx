@@ -78,15 +78,18 @@ export default function Announcements(): JSX.Element {
       <For each={liveAnnouncements(announcements() ?? [], now(), dismissed())}>
         {(announcement) => (
           <div
-            class="pointer-events-auto flex max-w-xl items-start gap-2 rounded-xl border-2
-              border-gold bg-gold-soft px-3 py-2 text-sm font-bold text-ink shadow-pop"
+            class="motion-crossfade pointer-events-auto flex max-w-140 items-start gap-2.5
+              rounded-[14px] border-2 border-gold bg-gold-soft px-3.5 py-2.5 text-sm font-bold
+              text-ink shadow-pop
+              animate-[rise-in_var(--motion-base)_var(--ease-spring)_backwards]"
           >
             <span class="min-w-0 flex-1 break-words">{announcement.message}</span>
             <button
               type="button"
               aria-label={m.ui_dismiss()}
-              class="inline-flex shrink-0 cursor-pointer items-center rounded-full border-0
-                bg-transparent p-0.5 text-ink shadow-none hover:text-gold-dark"
+              class="inline-flex size-7 shrink-0 cursor-pointer items-center justify-center
+                rounded-[9px] border-0 bg-transparent p-0 text-gold-dark shadow-none
+                hover:bg-gold/30 hover:text-ink"
               onClick={() => {
                 dismiss(announcement.id);
               }}

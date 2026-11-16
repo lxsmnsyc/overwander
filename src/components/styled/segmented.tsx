@@ -24,6 +24,8 @@ export interface SegmentedProps<V> {
   value: V;
   options: SegmentedOption<V>[];
   onChange: (value: V) => void;
+  /** Stretch across the column, each key taking an equal share */
+  fill?: boolean;
   class?: string;
 }
 
@@ -43,7 +45,7 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
           props.onChange(value);
         }
       }}
-      class={`${TRACK} ${props.class ?? ''}`}
+      class={`${TRACK} ${props.fill === true ? 'w-full' : ''} ${props.class ?? ''}`}
     >
       <RadioGroupLabel as="span" class="sr-only">
         {props.label}
@@ -52,7 +54,7 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
         {(option) => (
           <RadioGroupOption
             value={option.value}
-            class={`${KEY} ${
+            class={`${KEY} ${props.fill === true ? 'flex-1 text-center' : ''} ${
               option.value === props.value
                 ? 'border-line bg-paper text-ink'
                 : 'border-transparent bg-transparent text-muted hover:text-ink'

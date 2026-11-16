@@ -1,5 +1,6 @@
 import { type JSX, Show } from 'solid-js';
 import { Toggle } from 'terracotta';
+import { SETTING_ROW } from './card';
 
 /**
  * A setting that takes effect as it is pressed, rather than when a
@@ -16,11 +17,13 @@ export interface SwitchProps {
   onChange: (checked: boolean) => void;
   description?: string;
   disabled?: boolean;
+  /** Drawn as a settings row: a bolder name, a rule under it, the switch centred */
+  row?: boolean;
   class?: string;
 }
 
 const TRACK =
-  'relative h-6 w-11 shrink-0 rounded-full border-2 border-line bg-line-soft transition-colors' +
+  'relative h-[26px] w-11 shrink-0 rounded-full border-2 border-line bg-line-soft transition-colors' +
   ' duration-(--motion-quick)' +
   ' aria-pressed:border-leaf-dark aria-pressed:bg-leaf aria-disabled:cursor-not-allowed' +
   ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide';
@@ -30,14 +33,18 @@ const TRACK =
  * springs across, so it lands with a small overshoot
  */
 const KNOB =
-  'absolute top-0.5 left-0.5 size-4 rounded-full bg-paper shadow-pop-sm' +
+  'absolute top-px left-px size-5 rounded-full bg-paper shadow-pop-sm' +
   ' transition-[translate] duration-(--motion-base) ease-spring';
 
 export default function Switch(props: SwitchProps): JSX.Element {
   return (
-    <div class={`flex items-start justify-between gap-3 text-sm ${props.class ?? ''}`}>
+    <div
+      class={`flex justify-between text-sm ${
+        props.row === true ? SETTING_ROW : 'items-start gap-3'
+      } ${props.class ?? ''}`}
+    >
       <span class="flex flex-col gap-0.5">
-        <span class="font-semibold">{props.label}</span>
+        <span class={props.row === true ? 'font-extrabold' : 'font-semibold'}>{props.label}</span>
         <Show when={props.description}>
           {(said) => <span class="text-xs text-muted">{said()}</span>}
         </Show>
@@ -57,7 +64,7 @@ export default function Switch(props: SwitchProps): JSX.Element {
         aria-label={props.label}
         class={`${TRACK} ${props.disabled === true ? 'opacity-70' : ''}`}
       >
-        <span aria-hidden="true" class={`${KNOB} ${props.checked ? 'translate-x-5' : ''}`} />
+        <span aria-hidden="true" class={`${KNOB} ${props.checked ? 'translate-x-[18px]' : ''}`} />
       </Toggle>
     </div>
   );

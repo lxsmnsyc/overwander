@@ -90,27 +90,14 @@ function HoneyTreeBody(
 
   return (
     <>
+      {/* The cost is on the button, so the one line here is what the player has */}
       <CounterTerms
-        cost={{ item: Items.Honey, amount: LATHER_COST }}
         have={{ amount: jars(), short: jars() < LATHER_COST, unit: describeItem(Items.Honey) }}
         often={props.lathered ? m.ow_used_this_while() : m.honey_tree_often()}
       />
       <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
-      <Show
-        when={!props.lathered}
-        fallback={<CounterSpent says={m.honey_tree_sticky()} quoted={false} />}
-      >
-        <div class="flex items-center gap-3.5 rounded-card border-2 border-gold/35 bg-gold-soft p-3">
-          <span class="flex size-14 shrink-0 items-end justify-center rounded-[18px] bg-gold/60 pb-1">
-            <AtlasSprite
-              sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-              name={landmarkPicture(Landmark.HoneyTree) ?? ''}
-              size={44}
-              label=""
-            />
-          </span>
-          <p class="m-0 text-sm leading-snug">{m.honey_tree_invite()}</p>
-        </div>
+      <Show when={props.lathered}>
+        <CounterSpent says={m.honey_tree_sticky()} quoted={false} />
       </Show>
       <DialogActions stack>
         <Show when={!props.lathered}>

@@ -477,7 +477,10 @@ export function AuctionBoard(
         <CatchGrid
           bare
           cardOnly
+          fill
           columns={8}
+          // Only the rows the lots fill, as the board draws it
+          capacity={Math.max(1, Math.ceil(boxed().length / 8)) * 8}
           entries={boxed()}
           cell={(entry) => (
             <Show when={lotOf(entry().id)}>

@@ -22,6 +22,7 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CrosshairIcon,
+  QuestionIcon,
 } from '../icons';
 import { Button, Dialog, DialogActions, HoverCard, Segmented } from '../styled';
 import { DockNote } from '../forms/terms';
@@ -336,11 +337,7 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
           class="inline-flex size-7 items-center justify-center rounded-full border-2 border-line
             bg-paper text-[13px] font-extrabold text-tide transition-colors hover:border-tide
             focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
-          trigger={
-            <span role="img" aria-label={m.world_map_steering()}>
-              ?
-            </span>
-          }
+          trigger={<QuestionIcon class="size-4" role="img" aria-label={m.world_map_steering()} />}
         >
           <ul class="flex flex-col gap-2">
             <Key presses={m.world_map_key_drag()}>{m.world_map_drag()}</Key>

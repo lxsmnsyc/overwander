@@ -92,6 +92,7 @@ export function BidDialog(props: {
       isOpen={props.lot != null}
       onClose={props.onClose}
       width="medium"
+      terse
       title={props.name == null ? m.auction_bid() : m.auction_bid_on({ name: props.name })}
       description={m.auction_bid_description()}
     >
@@ -118,11 +119,9 @@ export function BidDialog(props: {
         )}
       </Show>
       <label class="flex flex-col gap-1">
-        <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
-          {m.auction_your_bid()}
-        </span>
         <input
           type="number"
+          aria-label={m.auction_your_bid()}
           class="h-[46px] text-base"
           min={floor()}
           max={props.gold}

@@ -676,7 +676,6 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
    */
   const box = (): JSX.CSSProperties => {
     const bounds = drawn()?.bounds ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
-    const longest = Math.max(1, bounds.width, bounds.height);
 
     const playing = sprite();
 
@@ -695,15 +694,38 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     }
 
     if (props.fill === true) {
-      return {
-        width: share(bounds.width, longest),
-        height: share(bounds.height, longest),
-      };
+      // The whole of the box it is put in, which can be any shape: the
+      // picture is fitted inside it by `fitted`, never stretched to it
+      return { width: '100%', height: '100%', 'container-type': 'size' };
     }
 
     const scale = props.scale ?? 1;
 
     return { width: `${bounds.width * scale}px`, height: `${bounds.height * scale}px` };
+  };
+
+  /**
+   * Where the picture stands inside a filled box: the largest square the
+   * box holds, centred, with the sprite's own proportions inside it. A
+   * box wider or taller than a square leaves room either side instead of
+   * stretching the pixels
+   */
+  const fitted = (): JSX.CSSProperties => {
+    const bounds = drawn()?.bounds ?? { width: DEFAULT_CELL, height: DEFAULT_CELL };
+    const longest = Math.max(1, bounds.width, bounds.height);
+    const side = 'min(100cqw, 100cqh)';
+
+    if (props.fill !== true || props.sized === true) {
+      return { display: 'contents' };
+    }
+    return {
+      position: 'absolute',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: `calc(${side} * ${bounds.width / longest})`,
+      height: `calc(${side} * ${bounds.height / longest})`,
+    };
   };
 
   return (
@@ -714,36 +736,38 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
       style={box()}
       class={`relative block shrink-0 ${props.class ?? ''}`}
     >
-      <Show when={drawn()}>
-        {(showing) => (
-          <>
-            {/* The plain shadow, or the aura standing in for it —
+      <span style={fitted()}>
+        <Show when={drawn()}>
+          {(showing) => (
+            <>
+              {/* The plain shadow, or the aura standing in for it —
                 never both: a haze rooted in the ground is the shadow
                 of the thing standing in it */}
-            <Show when={props.shadow === true && props.aura == null ? groundOf(showing()) : null}>
-              {(ground) => <span style={ground()} />}
-            </Show>
-            {/* Behind the picture: the pokemon stands in its aura
+              <Show when={props.shadow === true && props.aura == null ? groundOf(showing()) : null}>
+                {(ground) => <span style={ground()} />}
+              </Show>
+              {/* Behind the picture: the pokemon stands in its aura
                 rather than under it. Keyed, so a record purified while
                 its sheet is open swaps cleanly */}
-            <Show when={props.aura} keyed>
-              {(aura) => (
-                <AuraCanvas
-                  drawn={drawn}
-                  paint={aura === 'shadow' ? paintShadowAura : paintPurifiedAura}
-                />
-              )}
-            </Show>
-            <span style={pictureOf(showing())} />
-            {/* Keyed on which pokemon it is, so meeting a second shiny
+              <Show when={props.aura} keyed>
+                {(aura) => (
+                  <AuraCanvas
+                    drawn={drawn}
+                    paint={aura === 'shadow' ? paintShadowAura : paintPurifiedAura}
+                  />
+                )}
+              </Show>
+              <span style={pictureOf(showing())} />
+              {/* Keyed on which pokemon it is, so meeting a second shiny
                 throws a fresh handful rather than leaving the first
                 one's finished animation on screen */}
-            <Show when={props.sparkle === true ? props.species : null} keyed>
-              {(seed) => <SparkleCanvas drawn={drawn} seed={seed} />}
-            </Show>
-          </>
-        )}
-      </Show>
+              <Show when={props.sparkle === true ? props.species : null} keyed>
+                {(seed) => <SparkleCanvas drawn={drawn} seed={seed} />}
+              </Show>
+            </>
+          )}
+        </Show>
+      </span>
     </span>
   );
 }

@@ -96,6 +96,6 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
 export const ShopForm = defineForm<ShopInput, ShopPick>({
   title: (input) => input.buy.title ?? m.shop_title(),
   prompt: (input) => input.buy.prompt ?? m.shop_prompt(),
-  width: 'rail',
+  width: 'medium',
   view: (props) => <ShopView {...props} />,
 });

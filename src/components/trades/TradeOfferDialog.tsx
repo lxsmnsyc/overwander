@@ -280,6 +280,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
           than over it: two panels fighting for the close press is the
           thing being avoided */}
       <CatchPicker
+        fill
         open={picking() === 'mine'}
         onClose={() => {
           setPicking(null);
@@ -294,6 +295,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
         }}
       />
       <CatchPicker
+        fill
         open={picking() === 'theirs'}
         onClose={() => {
           setPicking(null);

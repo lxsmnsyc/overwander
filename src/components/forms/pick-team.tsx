@@ -266,6 +266,7 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
         fallback={
           // Live: the party is held here, and Join in the dock is the one press
           <CatchPicker
+            fill
             inline
             multiple
             live

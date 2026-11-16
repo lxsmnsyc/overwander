@@ -17,7 +17,7 @@ The capture pass for the story. Nothing new was built here beyond the fixes list
 
 Fixed on `feat/ui-redesign-finish`:
 
-- Trade offer (from the profile's Friends pane): the dialog opened behind the profile and was invisible. Dialogs in one container stacked in the order they were made, and the profile is made lazily. `Dialog` now moves its container to the end when it opens (`styled/dialog.tsx`).
+- Trade offer (from the profile's Friends pane): the dialog opened behind the profile and was invisible. Dialogs in one container stack in the order they were made, and the profile is made when it first opens. A first fix moved every dialog to the top of its container on open; it was dropped because it moves DOM under a running enter transition and changes every caller. The offer is now mounted when it starts (`routes/index.tsx`), so it is made after the profile it opens from. Nothing in `Dialog` changed for stacking.
 - Auctions: the hover card stayed over the Bid sheet after pressing Bid, Collect or a seller. The item square's card and the pokemon lot's card now close on the press (`items/ItemGrid.tsx`, `auction-tab/lot-actions.tsx`, `board.tsx`).
 - Auctions and Gifts: the items tray was a 32rem box in the middle of the pane while the pokemon tray ran full width. The board's items tray, the sell mode's bag tray (new `fill` prop on `InventoryPicker`) and the gifts items tray now fill the pane, as on the boards.
 - Raids, Battle, Notices, Gifts and Auctions: the nameplate icon the boards show was missing (`routes/index.tsx`). The raid and duel lobbies keep a plain title, as on their boards.
@@ -25,21 +25,37 @@ Fixed on `feat/ui-redesign-finish`:
 
 Left as the maintainer accepted: no Take back on a running lot, the lair hero without a bubble, dialog widths on the existing scale, Safari's level pill, ProfileTab for the staff panel, awards in rows of eight, quest chains' claimed counts, longer Friends and Trades sentences in tooltips.
 
+Second round, board differences fixed:
+
+- Catch pickers (breeder, groomer, tutor, team pick, trade, sell) fill their dialog, as the boards draw them.
+- Auction pokemon tray draws only the rows the lots fill (`CatchGrid` takes `capacity`). Gifts catches the same, six across.
+- Announcement banners take the board's width (`w-full max-w-140`).
+- Quest rail is 290px wide so chain names are not cut by the counts.
+- Phone raid lobby: the boss floor sits beside the name and types, so the trainers are in view (`boss-card.tsx`).
+- Command bar: not matched. The board lists `player:alice, player:bob` as soon as `pl` is typed; a friend's nickname is not held on the client without opening a profile read, and listing values straight after a field's first letters changes the shared query engine. `player:self` is still offered after the colon.
+
+Third round, maintainer notes:
+
+- Sprites in filled boxes (raid lobby teams, lobby parties, every `AnimatedSprite fill`) are fitted inside the largest square the box holds, centred and pixelated, instead of stretched to the box (`sprites/AnimatedSprite.tsx`).
+- Bid sheet: no stand-alone "Your bid" label and no explanatory paragraph; the field keeps the least next bid and the purse as its one hint.
+- World map `?` is the shared question icon, centred in its button.
+- Dialog dock: the button row scrolled sideways, which clipped downwards too and shaved each button's drop and focus ring. The row is padded and pulled back by the same amount (`styled/dialog.tsx`).
+- Honey tree: hero with the tree's line, one chip line (jars carried, once a window), and the action with its cost on the button. The invite card and the cost chip are gone.
+- Portal, pick-catch, pick-catch-then and pick-move: the cost is on the action's pill only; the chip strip keeps what the player carries.
+- Chef and every shop: `medium` width with the tray filling it, tabs over the tray. Item pickers in forms and the Safari bag fill their dialog.
+- Gifts catches: six across, only the rows needed, one square size.
+
 Seen and left (small, shared pieces, not worth a risky change here):
 
-- The catch picker tray in the breeder, groomer, tutor and trade pickers is narrower than the dialog (the board draws it full width).
-- The auction board's pokemon tray draws every empty square of its grid, so it runs past the dock and scrolls; the board shows two rows.
-- Announcement banners shrink to their text instead of the board's fixed width, and sit over a dialog's nameplate while they last.
-- The command bar's suggestions for `tp pl` list the argument name (`player:`), not the three values the board shows; values appear after the colon.
-- Quest chain names in the rail truncate when the ready count is on the row.
+- Announcement banners sit over a dialog's nameplate while they last.
+- The dialog-dock clip was found by measurement and by reading the row's classes, not by a visible before shot.
 
 ## Not reached
 
+- Safari Fled: twelve throws on desktop light did not produce a flee, so idle, Bag and Caught are what exist.
 - Factory: the nearest Rented-rule Frontier Brain was "not taking challengers" in this window, so the crate tray was not shown (the Stop counter that shares its furniture was captured).
-- Safari Fled and exited, and the Caught state on phone: only the idle, Bag and Caught states on desktop light, and the idle state in the other three, were captured.
-- NPC forms: Say (Kurt), shop Buy (Chef, Geologist, Vendor), Move Tutor and Move Reminder (teach, but with no Pokemon able to learn, so the move cards were not shown), Breeder and Groomer (pick), Daycare, Nurse Joy and Trader. Shop Sell, the Ask list with a have-line and the teach move cards were not staged: no pokemon with forgettable moves or sellable stock was set up.
-- Duel and raid lobbies with two full parties and a countdown, and a live raid lair on phone dark and light for the Max Raid: lair dialogs were captured for the Legendary and Max Raid sites on desktop light and the first three sizes only.
-- Awards and Teams panes populated with real data (Alice has no battles, badges or saved teams).
+- The phone raid lobby after the boss-card change: the raid window rolled over and the lobby could not be hosted again in time, so the shot in the folder is from before the change.
+- Say and Daycare/Nurse Joy/Trader forms were captured at their opening state only; Move Reminder shows its picker without a pokemon that has forgotten anything.
 - The staff panel and the Development settings pane's behaviour beyond opening it.
 
 ## Stubs left

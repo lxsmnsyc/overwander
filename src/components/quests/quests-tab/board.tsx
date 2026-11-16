@@ -321,7 +321,7 @@ export default function QuestBoard(props: {
       }}
       class="flex min-h-0 flex-col gap-3 md:flex-row md:gap-0"
     >
-      <RailTabs label={m.quest_sections()} class="md:w-[250px] md:px-2.5 md:py-1 md:pl-3.5">
+      <RailTabs label={m.quest_sections()} class="md:w-[290px] md:px-2.5 md:py-1 md:pl-3.5">
         {/* The rotating asks first: today's three and the week's hunt
             turn over on their own, so they outrank the standing board */}
         <RailGroup label={m.quest_group_rotating()} />

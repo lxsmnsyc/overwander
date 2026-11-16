@@ -384,7 +384,9 @@ function GiftShelf(props: {
   /** A box of waiting pokemon, with the card over each square where the taking happens */
   const box = (entries: CatchGridEntry[]): JSX.Element => (
     <CatchGrid
-      columns={8}
+      columns={6}
+      // Room round each one: six across, and only the rows the gifts fill
+      capacity={Math.max(1, Math.ceil(entries.length / 6)) * 6}
       entries={entries}
       // The card carries one button, so the square presses it too; a
       // visited shelf has nothing to press anywhere

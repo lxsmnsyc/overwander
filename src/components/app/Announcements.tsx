@@ -78,7 +78,7 @@ export default function Announcements(): JSX.Element {
       <For each={liveAnnouncements(announcements() ?? [], now(), dismissed())}>
         {(announcement) => (
           <div
-            class="motion-crossfade pointer-events-auto flex max-w-140 items-start gap-2.5
+            class="motion-crossfade pointer-events-auto flex w-full max-w-140 items-start gap-2.5
               rounded-[14px] border-2 border-gold bg-gold-soft px-3.5 py-2.5 text-sm font-bold
               text-ink shadow-pop
               animate-[rise-in_var(--motion-base)_var(--ease-spring)_backwards]"

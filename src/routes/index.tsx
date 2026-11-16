@@ -482,13 +482,18 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
 
           {/* An offer to a friend, opened over wherever they were
               found: their row in the list, or their profile */}
-          <TradeOfferDialog
-            player={props.user.uid}
-            friend={game.trading()}
-            onClose={() => {
-              game.setTrading(null);
-            }}
-          />
+          {/* Made when the offer starts rather than with the page: dialogs stack in
+              the order they were made, and the profile it is opened from is made when
+              it first opens, so an offer made with the page sat behind it */}
+          <Show when={game.trading() != null}>
+            <TradeOfferDialog
+              player={props.user.uid}
+              friend={game.trading()}
+              onClose={() => {
+                game.setTrading(null);
+              }}
+            />
+          </Show>
 
           {/* Listing is its own dialog, opened as the sheet closes:
               the pokemon is about to leave the records it was read from */}

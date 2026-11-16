@@ -116,6 +116,7 @@ export default function Commands(props: CommandsProps): JSX.Element {
         {/* Balls and treats only, and no treat while it is
           still chewing the last one */}
         <InventoryPicker
+          fill
           inline
           player={props.player}
           value={props.inHand}

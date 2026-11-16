@@ -212,8 +212,8 @@ function PickCatchThenBody<T>(
   return (
     <>
       <DialogSection class="flex flex-col gap-3">
-        <Show when={props.input.cost != null || props.input.have != null}>
-          <CounterTerms cost={props.input.cost} have={props.input.have} />
+        <Show when={props.input.have != null}>
+          <CounterTerms have={props.input.have} />
         </Show>
         <PickOne
           options={props.options.latest ?? []}

@@ -82,6 +82,7 @@ export default function SellPane(props: {
             it ends, an egg is a sealed box only its owner can see into,
             and the buddy is not something to sell by misreading a list */}
         <CatchPicker
+          fill
           inline
           columns={10}
           options={props.sellable()}

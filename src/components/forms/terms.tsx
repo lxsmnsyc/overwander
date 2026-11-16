@@ -234,6 +234,7 @@ export function PickOne(props: PickOneProps): JSX.Element {
         <>
           <CounterStep>{m.terms_choose_pokemon()}</CounterStep>
           <CatchPicker
+            fill
             inline
             disabled={props.disabled}
             options={props.options}

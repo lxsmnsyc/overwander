@@ -397,6 +397,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
       {/* Answering an open ask: the box opens in the panel's place,
           and the pick is the agreement */}
       <CatchPicker
+        fill
         open={answering() != null}
         onClose={() => {
           setAnswering(null);

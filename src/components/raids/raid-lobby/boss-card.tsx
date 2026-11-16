@@ -46,43 +46,46 @@ export default function BossCard(props: {
       class="flex flex-col gap-3 rounded-panel border-2 border-line-soft p-3 md:min-h-0
         md:overflow-y-auto md:rounded-none md:border-0 md:border-r-2 md:py-3 md:pr-3.5 md:pl-4"
     >
-      {/* The boss asleep on the field's floor, feet on the grass so a
+      {/* On a phone the floor and the name share a row, so the trainers are in view */}
+      <div class="flex items-center gap-3 md:flex-col md:items-stretch md:gap-3">
+        {/* The boss asleep on the field's floor, feet on the grass so a
           tall boss and a short one put their name on the same line */}
-      <div
-        class="flex h-[150px] w-full shrink-0 items-end justify-center overflow-hidden
+        <div
+          class="flex h-[110px] w-[46%] shrink-0 md:h-[150px] md:w-full items-end justify-center overflow-hidden
           rounded-card border-2 border-line-soft pb-4
           bg-[linear-gradient(var(--color-tide-soft),var(--color-parchment)_60%,var(--color-leaf-soft)_60%)]"
-      >
-        <AnimatedSprite
-          species={props.species}
-          female={props.female}
-          animation={SpriteAnim.Sleep}
-          direction="DownLeft"
-          scale={wide() ? 4 : 2}
-          shadow
-          label={m.raid_waiting_label({ name: data().name })}
-        />
-      </div>
-
-      <div class="flex min-w-0 flex-col items-center gap-1.5 text-center">
-        {/* The level first: a raid boss is fought at the cap whoever
-            it is, and that is what a party is sized against */}
-        <span class="font-display text-base font-semibold">
-          {m.ui_level_name({ level: RAID_BOSS_LEVEL, name: data().name })}
-        </span>
-        <div class="flex flex-wrap justify-center gap-1">
-          <For each={data().types}>{(type) => <TypeBadge type={type} />}</For>
+        >
+          <AnimatedSprite
+            species={props.species}
+            female={props.female}
+            animation={SpriteAnim.Sleep}
+            direction="DownLeft"
+            scale={wide() ? 4 : 2}
+            shadow
+            label={m.raid_waiting_label({ name: data().name })}
+          />
         </div>
-        <Show when={props.tera}>
-          {(tera) => (
-            <div class="flex items-center gap-1.5">
-              <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
-                {m.raid_tera_type()}
-              </span>
-              <TypeBadge type={tera()} />
-            </div>
-          )}
-        </Show>
+
+        <div class="flex min-w-0 flex-1 flex-col items-center gap-1.5 text-center">
+          {/* The level first: a raid boss is fought at the cap whoever
+            it is, and that is what a party is sized against */}
+          <span class="font-display text-base font-semibold">
+            {m.ui_level_name({ level: RAID_BOSS_LEVEL, name: data().name })}
+          </span>
+          <div class="flex flex-wrap justify-center gap-1">
+            <For each={data().types}>{(type) => <TypeBadge type={type} />}</For>
+          </div>
+          <Show when={props.tera}>
+            {(tera) => (
+              <div class="flex items-center gap-1.5">
+                <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
+                  {m.raid_tera_type()}
+                </span>
+                <TypeBadge type={tera()} />
+              </div>
+            )}
+          </Show>
+        </div>
       </div>
 
       <div class="flex flex-col gap-1.5 border-t-2 border-line-soft pt-2">

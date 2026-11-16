@@ -47,6 +47,8 @@ export interface CatchGridProps {
   numbered?: boolean;
   /** Whether the box takes the whole width, passed to the box */
   fill?: boolean;
+  /** How many squares are drawn, filled or not, where the caller knows better than the box */
+  capacity?: number;
   /** Squares across, where the caller knows better than the box width setting */
   columns?: BoxWidth;
   /**
@@ -258,6 +260,7 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
             onHold={props.onHold}
             numbered={props.numbered}
             fill={props.fill}
+            capacity={props.capacity}
             cardOnly={props.cardOnly}
             cell={props.cell}
             onDragStart={props.onDragStart}

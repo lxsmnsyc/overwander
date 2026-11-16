@@ -62,6 +62,7 @@ export function ItemTray(props: {
         <Show when={props.input.intro}>{(intro) => <Meta class="block">{intro()}</Meta>}</Show>
         <Show when={props.input.step}>{(step) => <CounterStep>{step()}</CounterStep>}</Show>
         <InventoryPicker
+          fill
           inline
           player={props.input.player}
           verb={props.input.verb}

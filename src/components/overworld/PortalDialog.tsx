@@ -191,14 +191,13 @@ function PortalBody(
 
   return (
     <>
+      {/* The cost and its one-a-crossing are on the button, so this is the keys carried */}
       <CounterTerms
-        cost={{ item: Items.PortalKey }}
         have={{
           amount: readable(props.keys) ?? 0,
           short: (readable(props.keys) ?? 0) === 0,
           unit: m.portal_keys({ count: readable(props.keys) ?? 0 }),
         }}
-        often={m.portal_often()}
       />
       <Show when={failed(props.keys)}>{(said) => <Note>{said()}</Note>}</Show>
 

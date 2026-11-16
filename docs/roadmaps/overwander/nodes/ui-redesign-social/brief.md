@@ -4,16 +4,29 @@ title: Redesign trades, auctions, raids and friends
 status: todo
 priority: must
 type: feature
+story: ui-redesign-finish
 outline: true
 milestone: now
 size: L
 added: 2026-11-03
 owns:
   - src/components/trades/**
+  - src/components/auctions/**
+  - src/components/raids/**
+  - src/components/duels/**
+  - src/components/friends/**
+  - src/components/gifts/**
+  - src/components/notifications/**
 shared:
   - src/components/styled/**
 provides: []
 depends_on:
+  - on: ui-redesign-finish-boards
+    kind: hard
+    why: Built to the boards approved at its gate
+  - on: ui-redesign-shell
+    kind: hard
+    why: One node at a time on this device; shares src/components/styled and builds on the last one's pieces
   - on: ui-design-system
     kind: hard
     why: Built on its tokens and primitives

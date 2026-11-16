@@ -4,6 +4,7 @@ title: Redesign the overworld dialogs
 status: todo
 priority: must
 type: feature
+story: ui-redesign-finish
 outline: true
 milestone: now
 size: L
@@ -13,10 +14,14 @@ owns:
   - src/components/overworld/WorldMapCanvas.tsx
   - src/components/overworld/visit-npc.tsx
   - src/components/overworld/NpcSprite.tsx
+  - src/components/forms/**
 shared:
   - src/components/styled/**
 provides: []
 depends_on:
+  - on: ui-redesign-finish-boards
+    kind: hard
+    why: Built to the boards approved at its gate
   - on: ui-design-system
     kind: hard
     why: Built on its tokens and primitives

@@ -4,16 +4,29 @@ title: Redesign settings, profile, quests and the shell
 status: todo
 priority: must
 type: feature
+story: ui-redesign-finish
 outline: true
 milestone: now
 size: L
 added: 2026-11-03
 owns:
-  - src/components/app/**
+  - src/components/app/LoginForm.tsx
+  - src/components/app/Announcements.tsx
+  - src/components/app/command-bar/**
+  - src/components/settings/**
+  - src/components/profile/**
+  - src/components/quests/**
+  - src/components/news/**
 shared:
   - src/components/styled/**
 provides: []
 depends_on:
+  - on: ui-redesign-finish-boards
+    kind: hard
+    why: Built to the boards approved at its gate
+  - on: ui-redesign-overworld-dialogs
+    kind: hard
+    why: One node at a time on this device; shares src/components/styled and builds on the last one's pieces
   - on: ui-design-system
     kind: hard
     why: Built on its tokens and primitives

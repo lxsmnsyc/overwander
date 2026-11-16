@@ -5,7 +5,6 @@ import type Npc from '../../data/ids/npcs';
 import { type NpcVisit, getNpc } from '../../overworld/npcs';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { type ConversationHandle, converse } from '../forms/conversation';
-import { HeadingPortrait } from '../forms/terms';
 import type { ToastRequest } from '../styled';
 import NpcSprite from './NpcSprite';
 
@@ -33,11 +32,7 @@ export function visitNpc(options: VisitOptions): ConversationHandle {
     {
       name: data.name,
       greeting: data.quote,
-      portrait: () => (
-        <HeadingPortrait>
-          <NpcSprite npc={options.npc} sheet={options.sheet} size={28} label="" />
-        </HeadingPortrait>
-      ),
+      portrait: () => <NpcSprite npc={options.npc} sheet={options.sheet} size={46} label="" />,
     },
     async (talk) => {
       const bag = async (): Promise<InventoryEntry[]> => getInventory(options.player);

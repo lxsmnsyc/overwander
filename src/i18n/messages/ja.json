@@ -2034,5 +2034,21 @@
   "npc_trader_line": "{name}の Lv. {level}だね。 {band}の ポケモンなら どれでも ひきとるよ。",
   "npc_trader_refused": "それは だめだ。 あいぼうか、 てばなせない ポケモンだろう。",
   "npc_trader_toast": "こうかん かんりょう。 こうかんで おこる ことにも じゅんびは できている。",
-  "npc_trader_done": "いい こうかんだった。 だいじに してやってくれ。"
+  "npc_trader_done": "いい こうかんだった。 だいじに してやってくれ。",
+  "counter_note_party": "つぎに パーティを えらぶ",
+  "counter_note_picked": "{count} / {max} えらんだ",
+  "counter_note_town": "{town}を えらんだ",
+  "counter_note_decline": "ことわるなら たちさる",
+  "world_map_show": "ひょうじ",
+  "world_map_ground": "ちじょう",
+  "world_map_in_view": "みえる はんい",
+  "world_map_you_are_in": "いま いる ばしょ",
+  "ask_press_note": "ひとつ えらぶ",
+  "teach_dock_forgetting": "{move}を わすれる",
+  "world_map_dock_note": "やじるしキーで うごかす、 Shiftで おおきく、 Homeで もどる",
+  "shop_press_buy": "かいたい どうぐを えらぶ",
+  "safari_appeared": "やせいの {name}が あらわれた！",
+  "talk_say_waits": "ことばを よむのを まっている。",
+  "nest_bare_line": "なかには なにも ない。",
+  "world_map_chunk_meta": "チャンク {x}, {y} ・ ひょうじ {viewX}, {viewY}"
 }

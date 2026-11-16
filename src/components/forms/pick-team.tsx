@@ -12,16 +12,8 @@ import { type FormProps, defineForm } from './form';
 import { useAuth } from '../../auth/context';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamRow, { TeamRows } from '../catches/TeamRow';
-import {
-  Badge,
-  Button,
-  DialogActions,
-  Note,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
-} from '../styled';
+import { Badge, Button, DialogActions, Note, Segmented } from '../styled';
+import { DockNote } from './terms';
 
 /**
  * Why a pokemon cannot be brought into a raid. All four are shown
@@ -251,26 +243,28 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
         </For>
       </ol>
 
-      <TabGroup
-        horizontal
+      {/* Which half of the picking is showing: the box, or the teams already saved */}
+      <Segmented
+        class="self-start"
+        label={m.pick_team_title()}
         value={open()}
-        onChange={(value: TeamTab) => {
-          setOpen(value);
+        options={[
+          { value: TeamTab.Box, label: m.pick_catch_title() },
+          {
+            value: TeamTab.Saved,
+            label: m.pick_team_saved_tab(),
+            count: saved().length || undefined,
+          },
+        ]}
+        onChange={(next) => {
+          setOpen(next);
         }}
-        class="flex flex-col gap-3"
-      >
-        <TabBar class="self-start">
-          <TabButton value={TeamTab.Box}>{m.pick_catch_title()}</TabButton>
-          <TabButton value={TeamTab.Saved}>
-            {m.pick_team_saved_tab()}
-            <Show when={saved().length > 0}>
-              <Badge class="ml-1.5">{saved().length}</Badge>
-            </Show>
-          </TabButton>
-        </TabBar>
+      />
 
-        <TabPane value={TeamTab.Box}>
-          {/* Live: the party is held here, and Join in the dock is the one press */}
+      <Show
+        when={open() === TeamTab.Saved}
+        fallback={
+          // Live: the party is held here, and Join in the dock is the one press
           <CatchPicker
             inline
             multiple
@@ -292,28 +286,29 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
               setPicks(catches);
             }}
           />
-        </TabPane>
+        }
+      >
+        <Show when={saved().length > 0} fallback={<Note>{m.pick_team_no_saved()}</Note>}>
+          <TeamRows>
+            <For each={saved()}>
+              {([, preset]) => (
+                <SavedTeam
+                  preset={preset}
+                  healed={props.input.healed}
+                  onUse={() => {
+                    load(preset.catches);
+                  }}
+                />
+              )}
+            </For>
+          </TeamRows>
+        </Show>
+      </Show>
 
-        <TabPane value={TeamTab.Saved}>
-          <Show when={saved().length > 0} fallback={<Note>{m.pick_team_no_saved()}</Note>}>
-            <TeamRows>
-              <For each={saved()}>
-                {([, preset]) => (
-                  <SavedTeam
-                    preset={preset}
-                    healed={props.input.healed}
-                    onUse={() => {
-                      load(preset.catches);
-                    }}
-                  />
-                )}
-              </For>
-            </TeamRows>
-          </Show>
-        </TabPane>
-      </TabGroup>
-
-      <DialogActions>
+      <DialogActions
+        stack
+        note={<DockNote>{m.counter_note_picked({ count: picks().length, max: max() })}</DockNote>}
+      >
         <Button
           tone="primary"
           disabled={picks().length === 0}
@@ -333,6 +328,6 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
 export const PickTeamForm = defineForm<PickTeamInput, string[]>({
   title: () => m.pick_team_title(),
   prompt: (input) => m.pick_team_prompt({ max: input.max ?? TEAM_SIZE }),
-  width: 'wide',
+  width: 'rail',
   view: (props) => <PickTeamView {...props} />,
 });

@@ -2508,5 +2508,21 @@
   "npc_trader_line": "{name}, level {level}. I will take any of yours that is {band}.",
   "npc_trader_refused": "Not that one. Your buddy, or one you cannot part with.",
   "npc_trader_toast": "Traded. It arrives ready for anything a trade brings on.",
-  "npc_trader_done": "A fair trade. Look after it for me."
+  "npc_trader_done": "A fair trade. Look after it for me.",
+  "counter_note_party": "Pick a party next",
+  "counter_note_picked": "{count} of {max} picked",
+  "counter_note_town": "{town} picked",
+  "counter_note_decline": "Walk on to decline",
+  "world_map_show": "Show",
+  "world_map_ground": "Ground",
+  "world_map_in_view": "In view",
+  "world_map_you_are_in": "You are in",
+  "ask_press_note": "Press one to choose it",
+  "teach_dock_forgetting": "Forgetting {move}",
+  "world_map_dock_note": "Arrow keys pan, Shift strides, Home comes back",
+  "shop_press_buy": "Press an item to buy it",
+  "safari_appeared": "A wild {name} appeared!",
+  "talk_say_waits": "They wait for you to read it.",
+  "nest_bare_line": "There is nothing in it.",
+  "world_map_chunk_meta": "Chunk {x}, {y} · view at {viewX}, {viewY}"
 }

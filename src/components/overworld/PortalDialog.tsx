@@ -11,7 +11,7 @@ import {
 import { getItemCount } from '../../auth/inventory';
 import usePortalOnServer from '../../auth/portals';
 import { type TownRecord, listTowns } from '../../auth/towns';
-import { BIOME_NAMES } from '../../data/biome';
+import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import { Items } from '../../data/ids/items';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { chunkOfCell } from '../../overworld/grid';
@@ -20,6 +20,7 @@ import {
   Button,
   Dialog,
   DialogActions,
+  HeroBand,
   LIST_PAGE,
   List,
   ListRow,
@@ -35,14 +36,14 @@ import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import describeWhere from '../../overworld/bearing';
-import { CostBadge, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
+import { CostBadge, CounterTerms, DockNote } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 
-/** The portal beside the heading */
-const PORTAL_SPRITE = 28;
+/** The standing stones on the hero's stage */
+const PORTAL_SPRITE = 56;
 
 /**
  * A portal, and the name of somewhere to come out.
@@ -205,7 +206,6 @@ function PortalBody(
         when={towns().length > 0}
         fallback={<Note class="text-center">{m.portal_no_towns()}</Note>}
       >
-        <CounterStep>{m.portal_choose()}</CounterStep>
         <TextField
           label={m.portal_town()}
           placeholder={m.portal_search()}
@@ -218,18 +218,28 @@ function PortalBody(
           <List>
             <For each={page.shown()}>
               {(town) => (
-                <ListRow selected={named() === town.name}>
+                <ListRow
+                  class="min-h-[52px] flex-nowrap rounded-card"
+                  selected={named() === town.name}
+                >
                   <RowButton
+                    class="flex items-center gap-2.5"
                     pressed={named() === town.name}
                     disabled={busy()}
                     onClick={() => {
                       setNamed(town.name);
                     }}
                   >
+                    {/* The biome it stands in, as a square of its own colour */}
+                    <span
+                      aria-hidden="true"
+                      class="size-10 shrink-0 rounded-button"
+                      style={{ background: BIOME_COLORS[town.biome] }}
+                    />
                     {/* Two lines, since a far town's distance runs longer
                         than any column set aside for it */}
                     <span class="flex w-full min-w-0 flex-col text-left">
-                      <span class="truncate font-semibold">{town.name}</span>
+                      <span class="truncate font-extrabold">{town.name}</span>
                       <Meta class="truncate tabular-nums">
                         {describeWhere(chunkOf(town), here())} · {BIOME_NAMES[town.biome]}
                       </Meta>
@@ -243,7 +253,14 @@ function PortalBody(
         </Show>
       </Show>
 
-      <DialogActions>
+      <DialogActions
+        stack
+        note={
+          <Show when={chosen()}>
+            {(town) => <DockNote>{m.counter_note_town({ town: town().name })}</DockNote>}
+          </Show>
+        }
+      >
         <Button
           tone="primary"
           disabled={busy() || chosen() == null || (readable(props.keys) ?? 0) === 0}
@@ -290,15 +307,21 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       isOpen={props.cell != null}
       onClose={props.onClose}
       title={m.portal_title()}
-      lead={
-        <HeadingPortrait>
-          <AtlasSprite
-            sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-            name={landmarkPicture(Landmark.Portal) ?? ''}
-            size={PORTAL_SPRITE}
-            label=""
-          />
-        </HeadingPortrait>
+      width="wide"
+      hero={
+        <HeroBand
+          tone="arcane"
+          stage={
+            <AtlasSprite
+              sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+              name={landmarkPicture(Landmark.Portal) ?? ''}
+              size={PORTAL_SPRITE}
+              label=""
+            />
+          }
+        >
+          {m.portal_description()}
+        </HeroBand>
       }
       description={m.portal_description()}
     >

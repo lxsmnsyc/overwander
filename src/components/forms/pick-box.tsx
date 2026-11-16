@@ -49,7 +49,7 @@ function PickBoxView(props: FormProps<PickBoxInput, string>): JSX.Element {
           )}
         </Show>
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={picked() == null}

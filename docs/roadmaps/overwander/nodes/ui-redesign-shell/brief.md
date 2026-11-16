@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-shell
 title: Redesign settings, profile, quests and the shell
-status: todo
+status: active
 priority: must
 type: feature
 story: ui-redesign-finish

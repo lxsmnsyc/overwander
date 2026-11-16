@@ -21,6 +21,8 @@ export type { FieldProps } from './field';
 export { FieldFrame, FormActions, FormGrid, FormSection } from './form';
 export type { FieldFrameProps, FieldParts, FormSectionProps } from './form';
 export { default as Filter } from './filter';
+export { default as HeroBand } from './hero';
+export type { HeroBandProps, HeroTone } from './hero';
 export { default as Hint, HintList } from './hint';
 export type { HintProps } from './hint';
 export { default as HoverCard, showSafeAreas } from './hover-card';

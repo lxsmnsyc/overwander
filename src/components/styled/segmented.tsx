@@ -14,6 +14,8 @@ import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta';
 export interface SegmentedOption<V> {
   value: V;
   label: string;
+  /** How many it holds, in a pill after the label */
+  count?: number;
 }
 
 export interface SegmentedProps<V> {
@@ -57,6 +59,15 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
             }`}
           >
             <RadioGroupLabel as="span">{option.label}</RadioGroupLabel>
+            {option.count == null ? null : (
+              <span
+                class="ml-1.5 inline-flex h-[22px] min-w-[26px] items-center justify-center
+                  rounded-full bg-line-soft px-1.5 font-display text-xs font-semibold text-muted
+                  tabular-nums"
+              >
+                {option.count}
+              </span>
+            )}
           </RadioGroupOption>
         )}
       </For>

@@ -122,7 +122,7 @@ function PickCatchBody(
         </Show>
         <Status message={refused()} />
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={!ready()}

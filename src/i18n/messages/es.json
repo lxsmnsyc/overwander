@@ -2698,5 +2698,21 @@
   "npc_trader_line": "{name}, Nv. {level}. Aceptaré cualquiera de los tuyos que sea {band}.",
   "npc_trader_refused": "Ese no. Es tu compañero, o uno del que no puedes separarte.",
   "npc_trader_toast": "Intercambiado. Llega listo para lo que traiga un intercambio.",
-  "npc_trader_done": "Un trato justo. Cuídalo por mí."
+  "npc_trader_done": "Un trato justo. Cuídalo por mí.",
+  "counter_note_party": "Después eliges tu equipo",
+  "counter_note_picked": "{count} de {max} elegidos",
+  "counter_note_town": "{town} elegido",
+  "counter_note_decline": "Pulsa Seguir para declinar",
+  "world_map_show": "Mostrar",
+  "world_map_ground": "Suelo",
+  "world_map_in_view": "A la vista",
+  "world_map_you_are_in": "Estás en",
+  "ask_press_note": "Pulsa una opción para elegirla",
+  "teach_dock_forgetting": "Olvidará {move}",
+  "world_map_dock_note": "Las flechas mueven, Mayús da zancadas, Inicio vuelve",
+  "shop_press_buy": "Pulsa un objeto para comprarlo",
+  "safari_appeared": "¡Ha aparecido un {name} salvaje!",
+  "talk_say_waits": "Esperan a que lo leas.",
+  "nest_bare_line": "No hay nada dentro.",
+  "world_map_chunk_meta": "Sector {x}, {y} · vista en {viewX}, {viewY}"
 }

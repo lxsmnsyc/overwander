@@ -13,7 +13,7 @@ import {
   on,
   untrack,
 } from 'solid-js';
-import { type CaughtPokemon, getCaught } from '../../auth/caught';
+import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../model/caught-record';
 import { Slots } from '../../data/constants/slots';
 import { isEgg } from '../../model/egg';
@@ -24,9 +24,10 @@ import { Genders, Species } from '../../data/ids/species';
 import { getMoveData } from '../../data/moves';
 import { getSpeciesData } from '../../data/species';
 import { LearnRefusal, type LearnResult } from '../../model/learn-refusal';
-import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../catches/MovePicker';
+import { MoveLine } from '../catches/MovePicker';
+import { MOVE_CARD, MoveStripe } from './move-card';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { type CounterCost, CounterStep, CounterTerms, HeadingPortrait } from './terms';
+import { type CounterCost, CounterStep, CounterTerms, DockNote } from './terms';
 import { Button, DialogActions, Meta, Note, Status } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import { type FormProps, defineForm } from './form';
@@ -56,6 +57,9 @@ export interface TeachMoveInput {
    */
   teach?: (catchId: string, move: Moves, replaces: number) => Promise<LearnResult | null>;
 }
+
+/** The known moves two to a row, as the catch sheet's cards sit */
+const MOVE_CARDS = 'm-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2';
 
 /** Why a teaching was refused, as a sentence with the pokemon and the move filled in */
 function describeLearnRefusal(refusal: LearnRefusal, name: string, move: string): string {
@@ -176,15 +180,18 @@ function TeachBody(
       />
 
       {/* The move on offer, set apart from the ones it already knows */}
-      <div class="flex flex-col gap-2 rounded-2xl border-2 border-tide bg-tide-soft px-3 py-2.5">
+      <div class="flex flex-col gap-2 rounded-card border-2 border-tide bg-tide-soft p-2.5">
         <div class="flex items-center gap-2">
           <span
             class="shrink-0 rounded-full bg-tide px-2 py-0.5 text-[10px] font-extrabold
-              tracking-wide text-white uppercase"
+              tracking-wide text-on-accent uppercase"
           >
             {m.teach_new()}
           </span>
-          <MoveLine move={props.input.move} />
+          <div class={`${MOVE_CARD} grow border-line bg-paper`}>
+            <MoveStripe move={props.input.move} />
+            <MoveLine move={props.input.move} />
+          </div>
         </div>
         <CounterTerms
           rows={[
@@ -201,17 +208,18 @@ function TeachBody(
         fallback={
           <>
             <CounterStep>{m.teach_its_moves()}</CounterStep>
-            <ul class={MOVE_SLOTS}>
+            <ul class={MOVE_CARDS}>
               <For each={known()}>
                 {(move) => (
-                  <li class={`${MOVE_SLOT} border-line bg-paper`}>
+                  <li class={`${MOVE_CARD} border-line bg-paper`}>
+                    <MoveStripe move={move} />
                     <MoveLine move={move} />
                   </li>
                 )}
               </For>
               {/* Where the new one will go */}
               <li
-                class={`${MOVE_SLOT} border-dashed border-leaf bg-leaf-soft font-bold text-leaf-dark`}
+                class={`${MOVE_CARD} border-dashed border-leaf bg-leaf-soft font-extrabold text-leaf-dark`}
               >
                 + {taught()}
               </li>
@@ -220,14 +228,14 @@ function TeachBody(
         }
       >
         <CounterStep>{m.teach_choose_forget()}</CounterStep>
-        <ul class={MOVE_SLOTS}>
+        <ul class={MOVE_CARDS}>
           <Index each={known()}>
             {(move, at) => (
               <li>
                 <button
                   type="button"
                   aria-pressed={forgetting() === at}
-                  class={`${MOVE_SLOT} w-full cursor-pointer ${
+                  class={`${MOVE_CARD} w-full cursor-pointer ${
                     forgetting() === at
                       ? 'border-ember bg-ember-soft text-ember-dark [&_.truncate]:line-through'
                       : 'border-line bg-paper hover:border-tide'
@@ -236,6 +244,7 @@ function TeachBody(
                     setForgetting(at);
                   }}
                 >
+                  <MoveStripe move={move()} />
                   <MoveLine move={move()} />
                 </button>
               </li>
@@ -252,7 +261,16 @@ function TeachBody(
 
       <Status message={status()} />
 
-      <DialogActions>
+      <DialogActions
+        stack
+        note={
+          <Show when={full()}>
+            <DockNote>
+              {m.teach_dock_forgetting({ move: getMoveData(known()[forgetting()] ?? 0).name })}
+            </DockNote>
+          </Show>
+        }
+      >
         <Button tone="primary" disabled={busy() || record() == null} onClick={teach}>
           {busy() ? m.teach_busy() : action()}
         </Button>
@@ -265,7 +283,7 @@ function TeachBody(
 }
 
 function TeachView(props: FormProps<TeachMoveInput, true>): JSX.Element {
-  const [caught] = createResource(() => props.input.catchId, getCaught);
+  const [caught] = createResource(() => props.input.catchId, getCaughtBatched);
 
   return (
     <Suspense fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
@@ -274,27 +292,37 @@ function TeachView(props: FormProps<TeachMoveInput, true>): JSX.Element {
   );
 }
 
-/** The pokemon's face, for the nameplate, read on its own */
+/** The face itself, read under the boundary of `CatchFace` */
+function Face(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
+  return (
+    <Show when={props.caught()}>
+      {(loaded) => (
+        <span class="mb-0.5 size-12">
+          <AnimatedSprite
+            species={isEgg(loaded()) ? Species.Egg : loaded().species}
+            female={!isEgg(loaded()) && loaded().gender === Genders.Female}
+            shiny={!isEgg(loaded()) && isShiny(loaded())}
+            direction="Down"
+            still
+            fill
+            label=""
+          />
+        </span>
+      )}
+    </Show>
+  );
+}
+
+/**
+ * The pokemon's face, for the hero's stage. It reads the same catch the
+ * form's body does, through the batched read, so both go out as one
+ */
 function CatchFace(props: { catchId: string }): JSX.Element {
-  const [caught] = createResource(() => props.catchId, getCaught);
+  const [caught] = createResource(() => props.catchId, getCaughtBatched);
 
   return (
     <Suspense>
-      <Show when={caught()}>
-        {(loaded) => (
-          <HeadingPortrait>
-            <AnimatedSprite
-              species={isEgg(loaded()) ? Species.Egg : loaded().species}
-              female={!isEgg(loaded()) && loaded().gender === Genders.Female}
-              shiny={!isEgg(loaded()) && isShiny(loaded())}
-              direction="Down"
-              still
-              fill
-              label=""
-            />
-          </HeadingPortrait>
-        )}
-      </Show>
+      <Face caught={caught} />
     </Suspense>
   );
 }

@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-overworld-dialogs
 title: Redesign the overworld dialogs
-status: active
+status: done
 priority: must
 type: feature
 story: ui-redesign-finish
@@ -9,6 +9,7 @@ outline: false
 milestone: now
 size: L
 added: 2026-11-04
+spent: 526441
 owns:
   - src/components/overworld/*Dialog.tsx
   - src/components/overworld/WorldMapCanvas.tsx

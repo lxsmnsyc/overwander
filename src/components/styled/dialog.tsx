@@ -39,10 +39,12 @@ import { PortalHost, usePortalHost } from './portal-host';
  * a few — the catch sheet, the world map — are a page of detail, and
  * asking for room is better than every one of them being that wide
  */
-export type DialogWidth = 'narrow' | 'wide' | 'rail' | 'broad' | 'sheet';
+export type DialogWidth = 'narrow' | 'medium' | 'wide' | 'rail' | 'broad' | 'sheet';
 
 const WIDTHS: Record<DialogWidth, string> = {
   narrow: 'w-[min(92vw,26rem)]',
+  // A line said to the player and read: a conversation's say step
+  medium: 'w-[min(92vw,35rem)]',
   wide: 'w-[min(92vw,44rem)]',
   // A rail of places beside a tray six squares wide: the bag, the dex
   rail: 'w-[min(96vw,59rem)]',
@@ -243,6 +245,13 @@ export interface DialogProps extends ParentProps {
    * works
    */
   origin?: Element | null;
+  /**
+   * A band that stands under the nameplate and across the sheet's top
+   * edge, saying who or what the dialog is about (`HeroBand`). It takes
+   * the place of the line under the title, which is still announced to
+   * a screen reader: the band draws the same words as its bubble
+   */
+  hero?: JSX.Element;
 }
 
 /**
@@ -368,6 +377,10 @@ export function Dialog(props: DialogProps): JSX.Element {
      */
     const aside = children(() => props.aside);
     const bar = children(() => props.bar);
+    const hero = children(() => props.hero);
+    // The line under the title is read out rather than drawn where a
+    // quiet dialog has no heading, or a band says it
+    const unseen = (): boolean => props.quiet === true || hero() != null;
 
     return (
       <div
@@ -375,16 +388,18 @@ export function Dialog(props: DialogProps): JSX.Element {
           props.class ?? ''
         }`}
       >
+        {/* The band reaches the sheet's edges, under the nameplate */}
+        {hero() == null ? null : <div class={`${BLEED_OUT} -mt-4 sm:-mt-5`}>{hero()}</div>}
         {/* Both stuck rows travel together: a second `sticky` under
           the first would have to be told how tall the first is,
           and the heading is a line taller when it carries its
           sentence than when it does not */}
-        <div class={props.quiet === true && bar() == null ? 'sr-only' : STUCK_TOP}>
+        <div class={unseen() && bar() == null ? 'sr-only' : STUCK_TOP}>
           {/* The title is on the nameplate; what is left here is the line
               under it, or only the room the plate takes */}
           <header
             class={
-              props.quiet === true
+              unseen()
                 ? 'sr-only'
                 : `flex items-start gap-3 bg-paper pb-1 ${PAD_IN} ${
                     // With nothing but an aside to show, the row stands level
@@ -547,6 +562,12 @@ export function DialogActions(
      * a catch came from: its own line over the buttons on a phone
      */
     note?: JSX.Element;
+    /**
+     * On a phone, stack the buttons full width with the action on top
+     * and the way out last, instead of one row with the way out on the
+     * left. Opt-in: a dock without it is as it was
+     */
+    stack?: boolean;
   },
 ): JSX.Element {
   const note = children(() => props.note);
@@ -563,6 +584,10 @@ export function DialogActions(
         class={`flex flex-nowrap items-center justify-end gap-2 overflow-x-auto
           [&>*:last-child]:order-first [&>*:last-child]:mr-auto ${
             note() == null ? 'w-full' : 'sm:contents'
+          } ${
+            props.stack === true
+              ? 'max-sm:flex-col max-sm:items-stretch max-sm:overflow-x-visible max-sm:[&>*]:w-full max-sm:[&>*]:justify-center max-sm:[&>*:last-child]:order-none max-sm:[&>*:last-child]:mr-0'
+              : ''
           }`}
       >
         {props.children}

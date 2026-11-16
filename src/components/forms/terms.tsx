@@ -6,7 +6,7 @@ import { getItemData } from '../../data/items';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import ItemSprite from '../items/ItemSprite';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Badge, Button, ListRow, Meta } from '../styled';
+import { Button, ListRow, Meta } from '../styled';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -31,10 +31,16 @@ function costChip(cost: CounterCost): JSX.Element {
   );
 }
 
-/** The price as a badge, for the terms and for the button that pays it */
+/**
+ * The price as a white pill, for the button that pays it: it stands on
+ * the button's fill so the cost reads without leaving the button
+ */
 export function CostBadge(props: { cost: CounterCost }): JSX.Element {
   return (
-    <Badge tone="gold">
+    <span
+      class="inline-flex h-[22px] items-center gap-1 rounded-full bg-paper px-2 text-[11px]
+        font-extrabold whitespace-nowrap text-gold-dark"
+    >
       {'gold' in props.cost ? (
         m.ui_gold({ amount: formatNumber(props.cost.gold) })
       ) : (
@@ -43,7 +49,7 @@ export function CostBadge(props: { cost: CounterCost }): JSX.Element {
           {props.cost.amount ?? 1}
         </>
       )}
-    </Badge>
+    </span>
   );
 }
 
@@ -53,7 +59,7 @@ export interface CounterTermsProps {
   /** What the player holds of what is charged */
   have?: { amount: number; short: boolean; unit: string };
   /** Anything else a player reads before pressing: levels, stakes */
-  rows?: { label: string; value: JSX.Element }[];
+  rows?: { label: string; value: JSX.Element; tone?: 'leaf' | 'ember' | 'gold' | 'tide' }[];
   /** How often the counter serves, or that it already has this while */
   often?: string;
   /** Anything else that stands at the end of the row, such as a button to change the terms */
@@ -62,7 +68,15 @@ export interface CounterTermsProps {
 
 /** One term as a chip: gold for money, ember when the player is short */
 export const TERM_CHIP =
-  'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold';
+  'inline-flex h-7 items-center gap-1.5 rounded-full px-2.5 text-xs font-extrabold text-ink';
+
+/** The colours a term can take: what it means rather than how it is dressed */
+const TERM_TONES = {
+  leaf: 'bg-leaf-soft text-leaf-dark',
+  ember: 'bg-ember-soft text-ember-dark',
+  gold: 'bg-gold-soft text-gold-dark',
+  tide: 'bg-tide-soft text-tide-dark',
+} as const;
 
 /**
  * Always the first thing in a counter, as a row of chips: the price,
@@ -87,8 +101,8 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
       </Show>
       <For each={props.rows ?? []}>
         {(row) => (
-          <span class={`${TERM_CHIP} bg-line-soft`}>
-            <span class="font-semibold text-muted">{row.label}</span>
+          <span class={`${TERM_CHIP} ${row.tone == null ? 'bg-line-soft' : TERM_TONES[row.tone]}`}>
+            <span class="font-bold text-muted">{row.label}</span>
             {row.value}
           </span>
         )}
@@ -106,9 +120,21 @@ export function HeadingPortrait(props: { children: JSX.Element }): JSX.Element {
   return <span class="flex size-7 items-end justify-center">{props.children}</span>;
 }
 
+/**
+ * A line in the dock between the way out and the action: what happens
+ * next, or how far the picking has got. Handed to `DialogActions`'s `note`
+ */
+export function DockNote(props: { children: JSX.Element }): JSX.Element {
+  return <span class="text-[13px] text-muted">{props.children}</span>;
+}
+
 /** The label over a counter's picker */
 export function CounterStep(props: { children: JSX.Element }): JSX.Element {
-  return <span class="text-xs font-semibold text-muted uppercase">{props.children}</span>;
+  return (
+    <span class="text-xs font-extrabold tracking-[0.12em] text-muted uppercase">
+      {props.children}
+    </span>
+  );
 }
 
 /**
@@ -123,7 +149,7 @@ export function PickedRow(props: {
   onChange: () => void;
 }): JSX.Element {
   return (
-    <ListRow class="flex-nowrap" selected>
+    <ListRow class="min-h-[52px] flex-nowrap rounded-card" selected>
       <span class="flex size-12 shrink-0 items-center justify-center">
         <AnimatedSprite
           species={props.option.caught.species}
@@ -160,7 +186,10 @@ export function CounterSpent(props: {
   quoted?: boolean;
 }): JSX.Element {
   return (
-    <div class="flex flex-col gap-1 rounded-xl border-2 border-dashed border-line px-3 py-3.5 text-center">
+    <div
+      class="flex flex-col gap-1 rounded-card border-2 border-dashed border-line bg-line-soft/50
+        px-3 py-3.5 text-center"
+    >
       <span class="text-sm font-extrabold">{props.title ?? m.terms_spent_title()}</span>
       <span class={`text-xs text-muted ${props.quoted === false ? '' : 'italic'}`}>
         {props.quoted === false ? props.says : m.ui_quoted({ text: props.says })}

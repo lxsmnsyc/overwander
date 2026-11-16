@@ -2,7 +2,8 @@ import { For, type JSX, Show, createSignal } from 'solid-js';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
-import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../catches/MovePicker';
+import { MoveLine } from '../catches/MovePicker';
+import { MOVE_CARD, MoveStripe } from './move-card';
 import {
   Button,
   DialogActions,
@@ -79,7 +80,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
         </Show>
         {/* Name, type and category at a glance, as the catch sheet draws
             them; what the move does is on the card over it */}
-        <ul class={MOVE_SLOTS}>
+        <ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
           <For
             each={page.shown()}
             fallback={
@@ -97,7 +98,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
                     type="button"
                     aria-pressed={chosen() === move}
                     disabled={refused() != null}
-                    class={`${MOVE_SLOT} w-full cursor-pointer disabled:cursor-not-allowed
+                    class={`${MOVE_CARD} w-full cursor-pointer disabled:cursor-not-allowed
                       disabled:opacity-55 ${
                         chosen() === move
                           ? 'border-leaf bg-leaf-soft'
@@ -107,6 +108,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
                       setChosen(move);
                     }}
                   >
+                    <MoveStripe move={move} />
                     <MoveLine move={move} />
                     <Show when={refused()}>{(why) => <Meta class="shrink-0">{why()}</Meta>}</Show>
                   </button>
@@ -117,7 +119,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
         </ul>
         {page.controls()}
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={chosen() == null || props.input.have?.short === true}

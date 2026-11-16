@@ -1,6 +1,6 @@
 import { For, type JSX, Show, createSignal } from 'solid-js';
 import { Button, DialogActions, DialogSection, List, ListRow, RowButton } from '../styled';
-import { CostBadge, type CounterCost, CounterStep, CounterTerms } from './terms';
+import { CostBadge, type CounterCost, CounterStep, CounterTerms, DockNote } from './terms';
 import { type ActionForm, defineForm } from './form';
 import { openForm } from './stack';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -55,23 +55,47 @@ function ChoiceView<T>(props: {
     <Show
       when={props.input.list === true}
       fallback={
-        <DialogActions>
-          <For each={props.input.choices}>
-            {(choice) => (
-              <Button
-                tone="primary"
-                disabled={choice.refused != null}
-                onClick={() => {
-                  props.submit(choice.value);
-                }}
-              >
-                {choice.label}
-                <Show when={choice.cost}>{(cost) => <CostBadge cost={cost()} />}</Show>
-              </Button>
-            )}
-          </For>
-          <Button onClick={props.cancel}>{props.leave}</Button>
-        </DialogActions>
+        <>
+          {/* The answers as cards: pressing one is the answer, and one that
+              cannot be taken is greyed with its reason where its note would be */}
+          <Show when={props.input.have}>{(have) => <CounterTerms have={have()} />}</Show>
+          <Show when={props.input.step}>{(step) => <CounterStep>{step()}</CounterStep>}</Show>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <For each={props.input.choices}>
+              {(choice) => (
+                <button
+                  type="button"
+                  disabled={choice.refused != null}
+                  class="flex cursor-pointer flex-col gap-0.5 rounded-card border-2 border-line
+                    bg-paper px-3.5 py-2.5 text-left shadow-pop-sm
+                    transition-[translate,border-color] duration-(--motion-quick) ease-spring
+                    hover:-translate-y-0.5 hover:border-tide focus-visible:outline-2
+                    focus-visible:outline-offset-2 focus-visible:outline-tide
+                    disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0
+                    disabled:hover:border-line"
+                  onClick={() => {
+                    props.submit(choice.value);
+                  }}
+                >
+                  <span class="text-sm font-extrabold">{choice.label}</span>
+                  <Show when={choice.refused ?? choice.detail}>
+                    {(said) => <span class="text-xs text-muted">{said()}</span>}
+                  </Show>
+                  <Show when={choice.cost}>
+                    {(cost) => (
+                      <span class="mt-1 self-start">
+                        <CostBadge cost={cost()} />
+                      </span>
+                    )}
+                  </Show>
+                </button>
+              )}
+            </For>
+          </div>
+          <DialogActions stack note={<DockNote>{m.ask_press_note()}</DockNote>}>
+            <Button onClick={props.cancel}>{props.leave}</Button>
+          </DialogActions>
+        </>
       }
     >
       <DialogSection class="flex flex-col gap-3">
@@ -80,16 +104,19 @@ function ChoiceView<T>(props: {
         <List>
           <For each={props.input.choices}>
             {(choice) => (
-              <ListRow class="flex-nowrap p-0" selected={picked() === choice}>
+              <ListRow
+                class="min-h-[52px] flex-nowrap rounded-card p-0"
+                selected={picked() === choice}
+              >
                 <RowButton
-                  class="flex items-center gap-2 px-3 py-2"
+                  class="flex items-center gap-2 px-3.5 py-2.5"
                   pressed={picked() === choice}
                   disabled={choice.refused != null}
                   onClick={() => {
                     press(choice);
                   }}
                 >
-                  <span class="grow font-semibold">{choice.label}</span>
+                  <span class="grow font-extrabold">{choice.label}</span>
                   <Show when={choice.refused ?? choice.detail}>
                     {(said) => (
                       <span class="shrink-0 text-right text-xs text-muted tabular-nums">
@@ -103,7 +130,7 @@ function ChoiceView<T>(props: {
           </For>
         </List>
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Show when={props.input.action}>
           {(action) => (
             <Button
@@ -133,6 +160,7 @@ export function choiceForm<T>(): ActionForm<ChoiceInput<T>, T> {
   return defineForm<ChoiceInput<T>, T>({
     title: (input) => input.title ?? m.choice_title(),
     prompt: (input) => input.prompt ?? m.choice_prompt(),
+    width: 'wide',
     view: (props) => (
       <ChoiceView
         input={props.input}

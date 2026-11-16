@@ -18,8 +18,8 @@ import { openForm } from '../forms/stack';
 import { PickTeamForm } from '../forms/pick-team';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import NpcSprite from './NpcSprite';
-import { Button, Dialog, DialogActions, Meta, useToast } from '../styled';
-import { CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
+import { Button, Dialog, DialogActions, HeroBand, Meta, useToast } from '../styled';
+import { CounterStep, CounterTerms, DockNote } from '../forms/terms';
 import { TEAM_SIZE } from '../../auth/teams';
 import { useGame } from '../app/game-context';
 import type { StopChallenge } from '../../game/overworld/challengers';
@@ -87,6 +87,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         progress: 0,
         fainted: false,
         mark: taken().includes(at) ? ('picked' as const) : undefined,
+        level: levelInBand(traitValue, FRONTIER_PARTY_LEVELS),
         label: m.ow_lineup_square({
           species: getSpeciesData(species).name,
           level: levelInBand(traitValue, FRONTIER_PARTY_LEVELS),
@@ -135,6 +136,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         egg: false,
         progress: 0,
         fainted: false,
+        level: levelInBand(entry.traitValue, levels()),
         label: m.ow_lineup_square({
           species: getSpeciesData(entry.species).name,
           level: levelInBand(entry.traitValue, levels()),
@@ -218,16 +220,21 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
         isOpen={props.challenge != null && !picking()}
         onClose={props.onClose}
         title={props.challenger?.name ?? m.ow_team_rocket()}
-        lead={
-          <HeadingPortrait>
-            <NpcSprite npc={props.npc} sheet={props.sheet} size={28} label="" />
-          </HeadingPortrait>
+        width="wide"
+        // The Factory's gold, or the Rocket ember, over the person
+        hero={
+          <HeroBand
+            tone={rented() ? 'gold' : 'ember'}
+            stage={<NpcSprite npc={props.npc} sheet={props.sheet} size={56} label="" />}
+          >
+            {greeting()}
+          </HeroBand>
         }
-        description={<span class="italic">{greeting()}</span>}
+        description={greeting()}
       >
         <Show when={props.challenge?.[1]}>
           {(record) => (
-            <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-3 pt-1">
               {/* What the fight asks of a party before the line-up is read */}
               <CounterTerms
                 rows={[
@@ -259,6 +266,7 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
                   entries={lineup(record())}
                   capacity={record().party.length}
                   columns={3}
+                  tone="ember"
                   cardOnly
                 />
               </Show>
@@ -270,15 +278,30 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
             party: the six are laid out with the fight rather than
             behind a second dialog, and the button waits for three */}
         <Show when={rented()}>
-          <div class="flex flex-col gap-2 pt-3">
+          <div class="flex flex-col gap-2">
             <CounterStep>
               {m.stop_rent({ size: FRONTIER_TEAM_SIZE, taken: taken().length })}
             </CounterStep>
-            <CatchBox entries={crate()} capacity={crate().length} columns={3} onOpen={toggle} />
+            <CatchBox
+              entries={crate()}
+              capacity={crate().length}
+              columns={3}
+              tone="gold"
+              onOpen={toggle}
+            />
           </div>
         </Show>
 
-        <DialogActions>
+        <DialogActions
+          stack
+          note={
+            <DockNote>
+              {rented()
+                ? m.counter_note_picked({ count: taken().length, max: FRONTIER_TEAM_SIZE })
+                : m.counter_note_party()}
+            </DockNote>
+          }
+        >
           <Button
             tone="primary"
             disabled={rented() && taken().length !== FRONTIER_TEAM_SIZE}

@@ -34,7 +34,7 @@ export interface LotKit {
  */
 export default function createLotActions(kit: LotKit): {
   lotDetails: (auction: AuctionRecord) => JSX.Element;
-  lotActions: (id: string, auction: AuctionRecord) => JSX.Element;
+  lotActions: (id: string, auction: AuctionRecord, done?: () => void) => JSX.Element;
   lotChoices: (id: string, auction: AuctionRecord) => ItemAction[];
 } {
   const game = useGame();
@@ -69,7 +69,7 @@ export default function createLotActions(kit: LotKit): {
     </>
   );
 
-  const lotActions = (id: string, auction: AuctionRecord): JSX.Element => (
+  const lotActions = (id: string, auction: AuctionRecord, done?: () => void): JSX.Element => (
     <Show when={kit.viewOnly !== true}>
       <Show
         when={kit.claimOf(id, auction)}
@@ -84,6 +84,7 @@ export default function createLotActions(kit: LotKit): {
               disabled={bidRefusal(auction, kit.player, kit.gold()) != null}
               title={bidRefusal(auction, kit.player, kit.gold()) ?? undefined}
               onClick={() => {
+                done?.();
                 kit.onBid(id);
               }}
             >
@@ -93,7 +94,13 @@ export default function createLotActions(kit: LotKit): {
         }
       >
         {(taking) => (
-          <Button tone="primary" onClick={taking().onClaim}>
+          <Button
+            tone="primary"
+            onClick={() => {
+              done?.();
+              taking().onClaim();
+            }}
+          >
             {taking().label}
           </Button>
         )}

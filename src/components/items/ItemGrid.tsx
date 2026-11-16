@@ -441,20 +441,25 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                 sheet={props.sheet === true}
                 title={detailItem(cell().item).name}
                 kind={m.tooltip_kind_item()}
-                footer={
+                footer={(close) => (
                   <For each={cell().actions}>
                     {(action) => (
                       <Button
                         tone={action.tone}
                         disabled={action.disabled}
                         title={action.title}
-                        onClick={action.onPress}
+                        onClick={() => {
+                          // Put the card away first: it would otherwise stay over
+                          // whatever the action opens until the pointer moved
+                          close();
+                          action.onPress();
+                        }}
                       >
                         {action.label}
                       </Button>
                     )}
                   </For>
-                }
+                )}
                 trigger={square(cell())}
               >
                 <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />

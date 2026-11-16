@@ -501,7 +501,7 @@ export function AuctionBoard(
                       >
                         {m.friends_view()}
                       </Button>
-                      {lotActions(lot()[0], lot()[1])}
+                      {lotActions(lot()[0], lot()[1], close)}
                     </>
                   )}
                 >

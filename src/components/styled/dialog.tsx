@@ -309,6 +309,31 @@ export function Dialog(props: DialogProps): JSX.Element {
   /** The placed box that grows, for aiming it at `origin` */
   let panel: HTMLElement | undefined;
 
+  /** The portal's own element, which the dialog is drawn inside */
+  let container: HTMLElement | undefined;
+
+  // Dialogs in one container stack in the order they were made, and one
+  // made lazily (the profile) came after one made with the page (the
+  // trade offer), so the offer opened out of sight behind it. A dialog
+  // that opens moves to the end of its container, which is the top
+  createEffect(() => {
+    if (!props.isOpen || container == null) {
+      return;
+    }
+
+    const parent = container.parentNode;
+
+    if (parent != null && parent.lastChild !== container) {
+      const focused = document.activeElement;
+
+      parent.append(container);
+      // A moved element drops its focus, and the focus trap has just taken it
+      if (focused instanceof HTMLElement && container.contains(focused)) {
+        focused.focus();
+      }
+    }
+  });
+
   const close = (): void => {
     asked = true;
     setShowing(false);
@@ -442,7 +467,12 @@ export function Dialog(props: DialogProps): JSX.Element {
   };
 
   return (
-    <Portal mount={host()}>
+    <Portal
+      mount={host()}
+      ref={(element) => {
+        container = element;
+      }}
+    >
       {/* This says *when* the dialog is there and nothing about how it
           looks getting there: the two `TransitionChild` wrappers below
           carry the fades. An animated wrapper here would multiply its

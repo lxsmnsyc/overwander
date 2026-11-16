@@ -379,14 +379,18 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
             />
           </div>
 
-          <div class="flex shrink-0 flex-col gap-0.5 md:gap-1">
+          {/* Last in the phone's row, so the chips that act (the sky's showpieces, the key)
+              are the ones in reach and the place is what scrolls out */}
+          <div class="flex shrink-0 flex-col gap-0.5 max-md:order-last md:gap-1">
             <span class="text-xs font-extrabold tracking-[0.12em] text-muted uppercase">
               {m.world_map_you_are_in()}
             </span>
-            <span class="font-display text-base font-semibold md:text-lg">{standingIn()}</span>
+            <span class="font-display text-base font-semibold whitespace-nowrap md:text-lg">
+              {standingIn()}
+            </span>
             <Show when={standing()}>
               {(at) => (
-                <span class="text-xs text-muted tabular-nums">
+                <span class="hidden text-xs text-muted tabular-nums md:inline">
                   {m.world_map_chunk_meta({
                     x: at().chunkX,
                     y: at().chunkY,

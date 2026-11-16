@@ -467,7 +467,7 @@ export function AuctionBoard(
         <h4>{m.auction_items()}</h4>
         {/* Narrowed by the board's own search, so the tray draws none
             of its own */}
-        <ItemGrid bare sheet columns={8} entries={itemLots()} />
+        <ItemGrid bare sheet fill columns={8} entries={itemLots()} />
       </Show>
 
       <Show when={kind() !== LotKind.Items && boxed().length}>

@@ -490,7 +490,7 @@ function GiftShelf(props: {
             <Note class="text-center">{emptily(m.gifts_offered_items, m.gifts_waiting_items)}</Note>
           }
         >
-          <ItemGrid sheet columns={8} entries={itemCells()} />
+          <ItemGrid sheet fill columns={8} entries={itemCells()} />
         </Show>
       </Show>
       <Show when={view() === GiftView.Encounters}>

@@ -194,6 +194,8 @@ interface InventoryPickerCommonProps {
    * bumps it so the list catches up
    */
   revision?: unknown;
+  /** Whether the tray runs the full width of what holds it (see `ItemGrid`) */
+  fill?: boolean;
   /** The tray's search, kept by a caller that draws the tray again (see `ItemGrid`) */
   query?: string;
   onQuery?: (typed: string) => void;
@@ -456,6 +458,7 @@ function PickerList(
       >
         <ItemGrid
           columns={props.columns}
+          fill={props.fill}
           entries={cells()}
           verb={props.verb}
           disabled={props.disabled}

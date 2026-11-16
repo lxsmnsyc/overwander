@@ -36,7 +36,16 @@ import type { RaidLobbyReport } from '../components/raids/raid-lobby';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
 import { Button, Dialog, DialogActions, Meta, Note } from '../components/styled';
-import { BookmarkIcon, PageIcon, SettingsIcon } from '../components/icons';
+import {
+  AuctionIcon,
+  BellIcon,
+  BookmarkIcon,
+  FireIcon,
+  GiftIcon,
+  PageIcon,
+  SettingsIcon,
+  SwordsIcon,
+} from '../components/icons';
 import { m } from '../i18n/paraglide/messages.js';
 
 /**
@@ -202,6 +211,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="rail"
             terse
+            lead={<GiftIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Gifts]()}
             description={DESCRIPTIONS[GameDialog.Gifts]()}
           >
@@ -241,6 +251,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             width="wider"
             terse
+            lead={<BellIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Notifications]()}
             description={DESCRIPTIONS[GameDialog.Notifications]()}
           >
@@ -312,6 +323,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // opened from the *world* rather than from that button
             // arrives with no word about where it came from
             terse
+            lead={raidLobby() == null ? <FireIcon class="size-4" aria-hidden="true" /> : undefined}
             title={raidLobby()?.title ?? TITLES[GameDialog.Raids]()}
             description={DESCRIPTIONS[GameDialog.Raids]()}
           >
@@ -339,6 +351,9 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // The list is a narrower sheet; a lobby needs the field's width
             width={duelLobby() == null ? 'wider' : 'rail'}
             terse
+            lead={
+              duelLobby() == null ? <SwordsIcon class="size-4" aria-hidden="true" /> : undefined
+            }
             title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
             description={DESCRIPTIONS[GameDialog.Battles]()}
           >
@@ -357,6 +372,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             width="rail"
             terse
             aside={selling() ? <SellHint /> : undefined}
+            lead={<AuctionIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Auctions]()}
             description={DESCRIPTIONS[GameDialog.Auctions]()}
           >

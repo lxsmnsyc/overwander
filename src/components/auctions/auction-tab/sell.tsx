@@ -58,6 +58,7 @@ export default function SellPane(props: {
         <h4>{m.auction_from_bag()}</h4>
         <InventoryPicker
           inline
+          fill
           columns={10}
           revision={props.revision}
           value={null}

@@ -122,7 +122,7 @@ export function BidDialog(props: {
         <input
           type="number"
           aria-label={m.auction_your_bid()}
-          class="h-[46px] text-base"
+          class="h-[46px] w-full text-base"
           min={floor()}
           max={props.gold}
           value={amount()}

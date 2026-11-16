@@ -221,7 +221,7 @@ function ListingBody(
         </span>
         <input
           type="number"
-          class="h-[46px] text-base"
+          class="h-[46px] w-full text-base"
           min={MIN_STARTING_BID}
           max={MAX_STARTING_BID}
           value={asking()}

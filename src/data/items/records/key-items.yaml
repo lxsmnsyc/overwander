@@ -21,3 +21,17 @@ CatchingCharm:
   type: KeyItem
   icon: key/catching-charm
   flags: [Holdable]
+
+# Held by the player's buddy, it pays one more candy of the caught
+# pokemon's family on every catch
+ExpCharm:
+  type: KeyItem
+  icon: key/exp-charm
+  flags: [Holdable]
+
+# Held by the player's buddy, it halves the steps an egg picked up
+# beside it needs, and does not stack with a Flame Body buddy
+OvalCharm:
+  type: KeyItem
+  icon: key/oval-charm
+  flags: [Holdable]

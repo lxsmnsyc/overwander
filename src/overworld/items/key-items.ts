@@ -1,6 +1,7 @@
 import { EventPriority } from '../../core/event-emitter';
 import { CAVE_LAMP_CELLS } from '../../data/overworld/cave';
 import { Items } from '../../data/ids/items';
+import { FLAME_BODY_FACTOR } from '../abilities/gen-1';
 import type Overworld from '../core';
 import { OverworldEvents } from '../events';
 import createHeldItem from './__create';
@@ -49,6 +50,49 @@ const setupCatchingCharm = createHeldItem(Items.CatchingCharm, (overworld) => {
 });
 
 /**
+ * What the Exp Charm pays on a catch: one candy of the caught
+ * pokemon's family. It is the Exp. Share's and the Lucky Egg's amount,
+ * paid on every catch instead of half of them, because the charm is a
+ * rare find and a buddy holds one item at a time, so carrying it
+ * means giving up the other two. There is no experience here to
+ * multiply, which is what the mainline charm acts on
+ */
+export const EXP_CHARM_BONUS = 1;
+
+/**
+ * Exp Charm: held, not used. Every catch pays one more candy of the
+ * family it came from, and none to the buddy's own. The species day
+ * does not multiply it, the same as the other two candy items
+ */
+const setupExpCharm = createHeldItem(Items.ExpCharm, (overworld) => {
+  overworld.on(OverworldEvents.CheckCatchCandy, EventPriority.Exact, (event) => {
+    event.bonus.set(event.caught, (event.bonus.get(event.caught) ?? 0) + EXP_CHARM_BONUS);
+  });
+});
+
+/**
+ * What the Oval Charm leaves of an egg's steps: the Flame Body's own
+ * half. There is no Day Care for the mainline charm to quicken, so it
+ * warms an egg picked up beside the buddy, the way Flame Body does
+ */
+export const OVAL_CHARM_FACTOR = FLAME_BODY_FACTOR;
+
+/**
+ * Oval Charm: held, not used. An egg picked up while the buddy
+ * carries it needs half the steps, whatever the buddy is.
+ *
+ * It takes the **smaller** of what the steps already are and half the
+ * base, rather than halving again, so a Flame Body buddy carrying it
+ * is warmed once and not twice. It runs after the abilities for that
+ * reason: whichever of the two ran first, the answer is the same
+ */
+const setupOvalCharm = createHeldItem(Items.OvalCharm, (overworld) => {
+  overworld.on(OverworldEvents.CheckEggSteps, EventPriority.Post, (event) => {
+    event.steps = Math.min(event.steps, event.base * OVAL_CHARM_FACTOR);
+  });
+});
+
+/**
  * Explorer Kit: held, not used. Underground it is what the player
  * sees by.
  *
@@ -67,6 +111,8 @@ const setupExplorerKit = createHeldItem(Items.ExplorerKit, (overworld) => {
 const HELD_ITEMS: ((overworld: Overworld) => void)[] = [
   setupShinyCharm,
   setupCatchingCharm,
+  setupExpCharm,
+  setupOvalCharm,
   setupExplorerKit,
 ];
 

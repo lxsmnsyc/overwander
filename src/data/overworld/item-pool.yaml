@@ -380,6 +380,11 @@ special:
   # is worth is half again on a throw rather than eight times a
   # roll, so it is the lesser of the two charms in every sense
   CatchingCharm: 12
+  # The two candy and egg charms, a little thinner than the Catching
+  # Charm: each is worth a candy a catch or an egg a walk shorter,
+  # not a better chance at anything
+  ExpCharm: 8
+  OvalCharm: 8
   # The only way a mythical is ever fought: the relic is found
   # here or not at all
   OldSeaMap: 6

@@ -724,13 +724,12 @@ export const enum Items {
   RedFlute = 341,
 
   /**
-   * TODO: the rest of the charms, all shaped like the Shiny Charm and
-   * the Catching Charm that are already written
+   * The charms the buddy carries, all shaped like the Shiny Charm. See
+   * [`src/overworld/items/key-items.ts`](../../overworld/items/key-items.ts)
    */
   ExpCharm = 342,
   OvalCharm = 343,
   CatchingCharm = 344,
-  MarkCharm = 345,
 
   /**
    * TODO: held items blocked on a battle feature that does not exist.

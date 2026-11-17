@@ -4319,7 +4319,6 @@ export const ITEM_IDS = {
   ExpCharm: Items.ExpCharm,
   OvalCharm: Items.OvalCharm,
   CatchingCharm: Items.CatchingCharm,
-  MarkCharm: Items.MarkCharm,
   ElectricSeed: Items.ElectricSeed,
   GrassySeed: Items.GrassySeed,
   MistySeed: Items.MistySeed,

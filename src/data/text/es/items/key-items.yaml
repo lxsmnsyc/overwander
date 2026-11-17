@@ -8,5 +8,11 @@ ExplorerKit:
 CatchingCharm:
   name: Amuleto Captura
   description: Mientras tu compañero lo lleve, todas las probabilidades de captura aumentan en la mitad (x1,5).
+ExpCharm:
+  name: Amuleto Exp
+  description: Mientras tu compañero lo lleve, cada captura da un caramelo más de la familia del Pokémon capturado.
+OvalCharm:
+  name: Amuleto Oval
+  description: Mientras tu compañero lo lleve, los huevos necesitan la mitad de pasos para eclosionar. No se acumula con Cuerpo Llama.
 templates:
   kit: Ves {cells} casillas en la oscuridad del subsuelo y bajo un Día Oscuro, mientras tu compañero lo lleve.

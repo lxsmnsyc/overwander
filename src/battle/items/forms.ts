@@ -1,51 +1,22 @@
 import { EventPriority } from '../../core/event-emitter';
 import Abilities from '../../data/ids/abilities';
-import { Items } from '../../data/ids/items';
 import { Moves } from '../../data/ids/moves';
 import { FORM_ITEMS } from '../../data/items/form-items';
 import { Species } from '../../data/ids/species';
 import { getBaseFormSpecies } from '../../data/ids/forms';
 import { getShadowlessSpecies, getTrueShadowShape } from '../../data/species/true-shadow';
+import {
+  ULTRA_BURST_ABILITY,
+  ULTRA_BURST_FROM,
+  ULTRA_BURST_ITEM,
+  shapeAbilityOf,
+} from '../../data/species/shape-abilities';
 import type Battle from '../battle';
 import type Unit from '../unit';
 import { BattleEvents } from '../events';
 import { MergedLifecycle } from '../lifecycle';
 import { createHeldItem, holds } from './__create';
 import { teraShapeOf } from './masks';
-
-/**
- * The ability a shape brings on top of what the catch carries. Worn
- * rather than rolled: the base species' pool never holds a form's own
- * ability, so this is the only way it reaches a fight
- */
-const SHAPE_ABILITIES = new Map<Species, Abilities>([
-  [Species.DialgaOrigin, Abilities.Unaware],
-  [Species.PalkiaOrigin, Abilities.ShadowTag],
-  [Species.GiratinaOrigin, Abilities.Levitate],
-  [Species.ShayminSky, Abilities.SereneGrace],
-  [Species.KyogrePrimal, Abilities.PrimordialSea],
-  [Species.GroudonPrimal, Abilities.DesolateLand],
-  [Species.TornadusTherian, Abilities.Regenerator],
-  [Species.ThundurusTherian, Abilities.VoltAbsorb],
-  [Species.LandorusTherian, Abilities.Intimidate],
-  [Species.EnamorusTherian, Abilities.Overcoat],
-  // Ogerpon has no ability of its own: each mask brings one, the Teal
-  // with nothing in hand, and every Terastal shape brings Embody Aspect
-  [Species.Ogerpon, Abilities.Defiant],
-  [Species.OgerponWellspring, Abilities.WaterAbsorb],
-  [Species.OgerponHearthflame, Abilities.MoldBreaker],
-  [Species.OgerponCornerstone, Abilities.Sturdy],
-  [Species.OgerponTealTera, Abilities.EmbodyAspect],
-  [Species.OgerponWellspringTera, Abilities.EmbodyAspect],
-  [Species.OgerponHearthflameTera, Abilities.EmbodyAspect],
-  [Species.OgerponCornerstoneTera, Abilities.EmbodyAspect],
-  [Species.TerapagosTerastal, Abilities.TeraShell],
-]);
-
-/** A true shadow's shape brings what its counterpart's would */
-function shapeAbilityOf(species: Species): Abilities | undefined {
-  return SHAPE_ABILITIES.get(getShadowlessSpecies(species) ?? species);
-}
 
 /**
  * Trade the shape it leaves for the one it takes: a shape's ability
@@ -110,21 +81,18 @@ const SHAPE_NEEDS = new Map<Species, Abilities>([
   [Species.Silvally, Abilities.RksSystem],
 ]);
 
-/** The shapes of Necrozma that can let their light out */
-const ULTRA_BURST_FROM = new Set<Species>([Species.NecrozmaDuskMane, Species.NecrozmaDawnWings]);
-
 /**
  * Ultra Burst: a fused Necrozma holding its crystal takes the field as
  * Ultra Necrozma. Only a fused shape bursts, so a Necrozma alone keeps
  * its own shape whatever it holds
  */
-const ultraBurst = createHeldItem(Items.UltranecroziumZ, (battle) =>
+const ultraBurst = createHeldItem(ULTRA_BURST_ITEM, (battle) =>
   battle.on(BattleEvents.UnitEntersField, EventPriority.Post, (event) => {
     const unit = event.source;
 
-    if (ULTRA_BURST_FROM.has(unit.species) && holds(unit, Items.UltranecroziumZ)) {
+    if (ULTRA_BURST_FROM.has(unit.species) && holds(unit, ULTRA_BURST_ITEM)) {
       unit.setSpecies(Species.NecrozmaUltra);
-      unit.wearAbility(Abilities.Neuroforce);
+      unit.wearAbility(ULTRA_BURST_ABILITY);
     }
   }),
 );

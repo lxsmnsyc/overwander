@@ -3,6 +3,8 @@ import type { Items } from '../data/ids/items';
 import type { Moves } from '../data/ids/moves';
 import { getAbilityData, getSignatureAbility } from '../data/abilities';
 import type { Species } from '../data/ids/species';
+import type { WornAbility } from '../data/species/shape-abilities';
+import { m } from '../i18n/paraglide/messages.js';
 import { getSpeciesAbilityPools, getSpeciesData } from '../data/species';
 import { getItemData } from '../data/items';
 import { getMoveData } from '../data/moves';
@@ -43,9 +45,12 @@ export function detailAbility(ability: Abilities): { name: string; description: 
 
 /**
  * Where an ability comes from for this species: its family's signature,
- * its hidden pool, or the ordinary one. Each is drawn in its own colour
+ * its hidden pool, or the ordinary one. Each is drawn in its own colour.
+ * A worn ability is not from the pool at all: a shape brings it in
+ * battle, so `abilityKind` never answers it and a caller that lists
+ * worn abilities names it itself
  */
-export type AbilityKind = 'regular' | 'hidden' | 'signature';
+export type AbilityKind = 'regular' | 'hidden' | 'signature' | 'worn';
 
 export function abilityKind(species: Species, ability: Abilities): AbilityKind {
   try {
@@ -63,7 +68,22 @@ export const ABILITY_PILLS: Record<AbilityKind, string> = {
   regular: 'border-line-soft bg-tide-soft text-tide-dark',
   hidden: 'border-arcane/40 bg-arcane/15 text-arcane',
   signature: 'border-gold/50 bg-gold-soft text-gold-dark',
+  worn: 'border-dashed border-leaf/60 bg-leaf-soft text-leaf-dark',
 };
+
+/**
+ * What the card over a worn ability says: the ability's own line, then
+ * that it is worn in battle, and by which item where an item brings it
+ */
+export function detailWornAbility(worn: WornAbility): { name: string; description: string } {
+  const detail = detailAbility(worn.ability);
+  const note =
+    worn.item == null
+      ? m.catch_ability_worn()
+      : m.catch_ability_worn_item({ item: describeItem(worn.item) });
+
+  return { name: detail.name, description: `${detail.description} ${note}` };
+}
 
 export function describeMove(move: Moves): string {
   try {

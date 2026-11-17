@@ -31,7 +31,9 @@ import {
   describeItem,
   detailAbility,
   detailItem,
+  detailWornAbility,
 } from '../../../details';
+import { getWornAbilities } from '../../../../data/species/shape-abilities';
 import { CHANNELER_FEE } from '../../../../data/overworld/npc';
 
 import InventoryPicker from '../../../items/InventoryPicker';
@@ -54,7 +56,7 @@ import {
   createReorder,
 } from '../../../styled';
 
-import { Index, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { For, Index, type JSX, Show, createEffect, createMemo, createSignal, on } from 'solid-js';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
@@ -106,6 +108,7 @@ const ABILITY_SLOTS: Record<AbilityKind, string> = {
   regular: 'border-line bg-paper text-ink',
   hidden: 'border-arcane/40 bg-arcane-soft text-arcane-dark',
   signature: 'border-gold/60 bg-gold-soft text-gold-dark',
+  worn: 'border-dashed border-leaf/60 bg-leaf-soft text-leaf-dark',
 };
 
 /** A move card, and the empty and locked cards beside it */
@@ -251,6 +254,10 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
    */
   const [moves, setMoves] = createSignal<Moves[]>([]);
   const [abilities, setAbilities] = createSignal<Abilities[]>([]);
+  // What its shape or held items make it wear in a fight
+  const worn = createMemo(() =>
+    getWornAbilities(props.caught.species, props.caught.items, props.caught.abilities),
+  );
   const [items, setItems] = createSignal<Items[]>([]);
 
   const lay = (caught: CaughtPokemon): void => {
@@ -412,6 +419,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   </li>
                   <li>{m.catch_abilities_help_channeler({ fee: describeItem(CHANNELER_FEE) })}</li>
                   <li>{m.catch_abilities_help_order()}</li>
+                  <li>{m.catch_abilities_help_worn()}</li>
                 </HintList>
               </Hint>
             }
@@ -457,6 +465,22 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 />
               )}
             </Index>
+            {/* What it wears in a fight rather than carries: no grip, no
+                slot, and nothing a patch or a save can reach */}
+            <For each={worn()}>
+              {(entry) => (
+                <li>
+                  <TooltipHost class="block" kind="ability" {...detailWornAbility(entry)}>
+                    <span
+                      class={`flex ${ABILITY_SLOT} min-w-0 items-center border-2 px-2.5 text-[13px]
+                        font-extrabold ${ABILITY_SLOTS.worn}`}
+                    >
+                      <span class="truncate">{describeAbility(entry.ability)}</span>
+                    </span>
+                  </TooltipHost>
+                </li>
+              )}
+            </For>
           </ul>
         </div>
 

@@ -21,7 +21,15 @@ import { NATURE_NAMES } from '../../data/ids/text';
 import { getSpeciesData } from '../../data/species';
 import StatusSquares from './StatusSquares';
 import TypeBadge from '../sprites/TypeBadge';
-import { ABILITY_PILLS, abilityKind, describeMove, detailAbility, detailItem } from '../details';
+import {
+  ABILITY_PILLS,
+  abilityKind,
+  describeMove,
+  detailAbility,
+  detailItem,
+  detailWornAbility,
+} from '../details';
+import { type WornAbility, getWornAbilities } from '../../data/species/shape-abilities';
 import { GENDER_LABELS, GENDER_MARKS } from './catch-summary';
 import MoveTooltip from '../moves/MoveTooltip';
 import ItemCard from '../items/ItemCard';
@@ -90,6 +98,10 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
    * a Utility Belt widens it — so the tray is the pokemon's rather
    * than the game's
    */
+  // What its shape or held items make it wear in a fight
+  const worn = (): WornAbility[] =>
+    getWornAbilities(caught().species, caught().items, caught().abilities);
+
   const slots = (): null[] => {
     // Room is only worth drawing to somebody who can fill it: on a
     // stranger's pokemon an empty slot is a button nobody may press
@@ -243,7 +255,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           </ul>
 
           <ul class="m-0 flex list-none flex-col gap-1 p-0">
-            <For each={caught().abilities} fallback={<Meta>{m.catch_no_ability()}</Meta>}>
+            <For each={caught().abilities}>
               {(ability) => (
                 <li>
                   <TooltipHost class="block" kind="ability" {...detailAbility(ability)}>
@@ -258,6 +270,22 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                 </li>
               )}
             </For>
+            <For each={worn()}>
+              {(entry) => (
+                <li>
+                  <TooltipHost class="block" kind="ability" {...detailWornAbility(entry)}>
+                    <span
+                      class={`block truncate rounded-full border px-2 py-0.5 ${ABILITY_PILLS.worn}`}
+                    >
+                      {detailAbility(entry.ability).name}
+                    </span>
+                  </TooltipHost>
+                </li>
+              )}
+            </For>
+            <Show when={caught().abilities.length === 0 && worn().length === 0}>
+              <Meta>{m.catch_no_ability()}</Meta>
+            </Show>
           </ul>
 
           {/* Pictures rather than names, two to a row: a held item is one

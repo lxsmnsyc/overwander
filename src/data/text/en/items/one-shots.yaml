@@ -61,3 +61,6 @@ EjectPack:
 BoosterEnergy:
   name: Booster Energy
   description: Wakes a Protosynthesis or Quark Drive holder's boost without sun or Electric Terrain, used up as it does.
+RoomService:
+  name: Room Service
+  description: -1 Speed when a Trick Room goes up, used up as it does.

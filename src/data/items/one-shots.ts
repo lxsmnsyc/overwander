@@ -38,6 +38,7 @@ export const ONE_SHOTS = new Set<Items>([
   Items.RedCard,
   Items.EjectButton,
   Items.EjectPack,
+  Items.RoomService,
 ]);
 
 export function isOneShot(item: Items): boolean {

@@ -11,6 +11,7 @@ import setupMegas from '../gimmicks/mega';
 import setupZeniths from '../gimmicks/zenith';
 import setupOneShots from './one-shots';
 import setupOrbs from './orbs';
+import setupRoomService from './room-service';
 import setupSacredAsh from './sacred-ash';
 import setupStatBoosters from './stat-boosters';
 import setupTreats from './treats';
@@ -25,6 +26,7 @@ export default function setupItems(battle: Battle): void {
   setupOrbs(battle);
   setupGear(battle);
   setupOneShots(battle);
+  setupRoomService(battle);
   setupBattleItems(battle);
   setupSacredAsh(battle);
   setupDrinks(battle);

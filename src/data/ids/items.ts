@@ -735,17 +735,21 @@ export const enum Items {
    * TODO: held items blocked on a battle feature that does not exist.
    *
    * Terrain for the seeds and the extender is TODO'd where it would be
-   * declared, in [`src/data/ids/status.ts`](./status.ts). Trick Room
-   * for the service and the Paradox abilities for the energy have
-   * nowhere to be written down yet
+   * declared, in [`src/data/ids/status.ts`](./status.ts). The Paradox
+   * abilities for the energy have nowhere to be written down yet
    */
   ElectricSeed = 346,
   GrassySeed = 347,
   MistySeed = 348,
   PsychicSeed = 349,
   TerrainExtender = 350,
-  RoomService = 352,
   BoosterEnergy = 353,
+
+  /**
+   * Drops its holder's Speed a stage when a Trick Room goes up. See
+   * [`src/battle/items/room-service.ts`](../../battle/items/room-service.ts)
+   */
+  RoomService = 352,
 
   /** Walks its holder over whatever was laid at its feet */
   HeavyDutyBoots = 351,

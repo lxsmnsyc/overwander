@@ -27,7 +27,17 @@ export default function setupTrickRoom(battle: Battle): void {
     if (event.move === Moves.TrickRoom) {
       // A second casting takes the room down, the way the mainline's
       // does, rather than holding it open for another 10 seconds
-      remaining = remaining > 0 ? 0 : DURATION;
+      const rising = remaining === 0;
+
+      remaining = rising ? DURATION : 0;
+
+      if (rising) {
+        battle.emit(BattleEvents.StartTrickRoom, {
+          id: 'StartTrickRoom',
+          disabled: false,
+          source: event.source,
+        });
+      }
     }
   });
 

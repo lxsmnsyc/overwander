@@ -154,3 +154,13 @@ BoosterEnergy:
   flags: [Consumable, Holdable, Marketable]
   buy: 3000
   sell: 1500
+
+# Spent when a Trick Room goes up, on either side of the field. Priced
+# with the rest of the one-shots; the behaviour is in
+# `src/battle/items/room-service.ts`
+RoomService:
+  type: Held
+  icon: held/room-service
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500

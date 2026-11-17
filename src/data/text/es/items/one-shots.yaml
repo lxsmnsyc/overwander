@@ -63,3 +63,6 @@ EjectPack:
 BoosterEnergy:
   name: Energía Potenciadora
   description: Activa el aumento de un portador con Paleosíntesis o Carga Cuark sin necesidad de sol ni de Campo Eléctrico, y se gasta al hacerlo.
+RoomService:
+  name: Servicio Raro
+  description: -1 de Velocidad cuando se crea un Espacio Raro, y se gasta al hacerlo.

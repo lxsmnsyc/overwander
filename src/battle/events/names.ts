@@ -335,6 +335,8 @@ const enum BattleEvents {
    * ability. Only an absorber answers, so a plain immunity does not
    */
   CheckUnitAIMoveFeeds = 156,
+  /** A Trick Room going up; the caster is the source. Taking it down is not announced */
+  StartTrickRoom = 157,
 }
 
 export default BattleEvents;

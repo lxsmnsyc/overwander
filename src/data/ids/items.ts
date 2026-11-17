@@ -677,8 +677,9 @@ export const enum Items {
   SportBall = 319,
 
   /**
-   * TODO: the PP restoratives, which clear cooldowns the way a Leppa
-   * Berry already does
+   * The PP restoratives, held, which halve or clear cooldowns the way
+   * a Leppa Berry already does. See
+   * [`src/battle/items/pp-restoratives.ts`](../../battle/items/pp-restoratives.ts)
    */
   Ether = 320,
   MaxEther = 321,
@@ -723,29 +724,32 @@ export const enum Items {
   RedFlute = 341,
 
   /**
-   * TODO: the rest of the charms, all shaped like the Shiny Charm and
-   * the Catching Charm that are already written
+   * The charms the buddy carries, all shaped like the Shiny Charm. See
+   * [`src/overworld/items/key-items.ts`](../../overworld/items/key-items.ts)
    */
   ExpCharm = 342,
   OvalCharm = 343,
   CatchingCharm = 344,
-  MarkCharm = 345,
 
   /**
    * TODO: held items blocked on a battle feature that does not exist.
    *
    * Terrain for the seeds and the extender is TODO'd where it would be
-   * declared, in [`src/data/ids/status.ts`](./status.ts). Trick Room
-   * for the service and the Paradox abilities for the energy have
-   * nowhere to be written down yet
+   * declared, in [`src/data/ids/status.ts`](./status.ts). The Paradox
+   * abilities for the energy have nowhere to be written down yet
    */
   ElectricSeed = 346,
   GrassySeed = 347,
   MistySeed = 348,
   PsychicSeed = 349,
   TerrainExtender = 350,
-  RoomService = 352,
   BoosterEnergy = 353,
+
+  /**
+   * Drops its holder's Speed a stage when a Trick Room goes up. See
+   * [`src/battle/items/room-service.ts`](../../battle/items/room-service.ts)
+   */
+  RoomService = 352,
 
   /** Walks its holder over whatever was laid at its feet */
   HeavyDutyBoots = 351,

@@ -1421,6 +1421,8 @@ describe('item data', () => {
       Items.MasterBall,
       Items.ShinyCharm,
       Items.CatchingCharm,
+      Items.ExpCharm,
+      Items.OvalCharm,
       Items.OldSeaMap,
       Items.GSBall,
       Items.AuroraTicket,

@@ -154,3 +154,34 @@ RevivalHerb:
   sell: 1400
   revives: 1
   bitter: 3
+
+# The PP restoratives. This game has no spendable PP, so each is held
+# like a Leppa Berry and used up once a battle on a cooldown (see `PP_RESTORATIVES` in
+# `src/data/items/medicine.ts`). Not berries, so Unnerve leaves them be
+Ether:
+  type: Held
+  icon: medicine/ether
+  flags: [Consumable, Holdable, Marketable]
+  buy: 1500
+  sell: 750
+
+MaxEther:
+  type: Held
+  icon: medicine/max-ether
+  flags: [Consumable, Holdable, Marketable]
+  buy: 3000
+  sell: 1500
+
+Elixir:
+  type: Held
+  icon: medicine/elixir
+  flags: [Consumable, Holdable, Marketable]
+  buy: 2500
+  sell: 1250
+
+MaxElixir:
+  type: Held
+  icon: medicine/max-elixir
+  flags: [Consumable, Holdable, Marketable]
+  buy: 4000
+  sell: 2000

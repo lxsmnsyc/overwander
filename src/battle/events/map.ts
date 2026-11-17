@@ -307,4 +307,5 @@ export interface BattleEventMap extends EventMap {
   [BattleEvents.CheckUnitWeatherDuration]: [CheckUnitWeatherDurationEvent, EventPriority];
   [BattleEvents.UnitUpdateStatusTimer]: [UnitUpdateStatusTimerEvent, EventPriority];
   [BattleEvents.CheckUnitCanAddStage]: [CheckUnitCanUpdateStageEvent, EventPriority];
+  [BattleEvents.StartTrickRoom]: [UnitEvent, EventPriority];
 }

@@ -31,3 +31,15 @@ EnergyPowder: { name: Energy Powder }
 EnergyRoot: { name: Energy Root }
 HealPowder: { name: Heal Powder }
 RevivalHerb: { name: Revival Herb }
+Ether:
+  name: Ether
+  description: Halves the cooldown of the first move its holder uses, then is used up. Not a berry, so Unnerve does not stop it.
+MaxEther:
+  name: Max Ether
+  description: Clears the cooldown of the first move its holder uses, then is used up. Not a berry, so Unnerve does not stop it.
+Elixir:
+  name: Elixir
+  description: Halves every cooldown the moment all of its holder’s moves are cooling down at once, then is used up.
+MaxElixir:
+  name: Max Elixir
+  description: Clears every cooldown the moment all of its holder’s moves are cooling down at once, then is used up.

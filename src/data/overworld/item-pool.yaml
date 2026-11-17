@@ -64,6 +64,10 @@ uncommon:
   # a richer band than a dearer pearl would break the ladder
   RareBone: 5
   SuperPotion: 10
+  # The PP restoratives, held for a cooldown: the plain two are the
+  # commoner find and the two that clear it outright sit a band up
+  Ether: 6
+  Elixir: 4
   FullHeal: 6
   # The only thing the Move Reminder takes. It is dug up rather than
   # bought because nothing sells one: a forgotten move costs a walk,
@@ -91,6 +95,8 @@ scarce:
   # What a party comes back from a lost fight on, all of it bottled
   # and sold. The herb is a Revive that grows out of the ground
   MaxPotion: 6
+  MaxEther: 5
+  MaxElixir: 3
   Revive: 6
   RevivalHerb: 4
   # The stones that hold a sky out longer, and the clay that does
@@ -374,6 +380,11 @@ special:
   # is worth is half again on a throw rather than eight times a
   # roll, so it is the lesser of the two charms in every sense
   CatchingCharm: 12
+  # The two candy and egg charms, a little thinner than the Catching
+  # Charm: each is worth a candy a catch or an egg a walk shorter,
+  # not a better chance at anything
+  ExpCharm: 8
+  OvalCharm: 8
   # The only way a mythical is ever fought: the relic is found
   # here or not at all
   OldSeaMap: 6

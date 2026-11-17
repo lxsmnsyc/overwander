@@ -1228,7 +1228,7 @@
   "catch_abilities_help_items": "{capsule}は けいとうが もてる とくせいを もう ひとつ ひきだす。 {patch}は けいとうの とくゆうとくせいを かきこむ。",
   "catch_abilities_help_channeler": "たびを する きとうしは、 けいとうが もてる とくせいを もう ひとつ よびだし、 その ための わくを ふやす。 りょうきんは {fee} ひとつで、 あらわれる たびに いちど だけ てつだってくれる。",
   "catch_abilities_help_order": "ドラッグで ならびかえる。 とくせいの かずが かぎられる たたかいでは、 うえから じゅんに つかう。",
-  "catch_ability_worn": "たたかいの あいだだけ みに つける とくせい。",
+  "catch_ability_worn": "すがたの ちからで たたかいの あいだだけ つく。",
   "catch_ability_worn_item": "{item}を もたせている あいだ、 たたかいで みに つける。",
   "catch_abilities_help_worn": "てんせんの とくせいは、 すがたや もちもので たたかいの あいだだけ つく。 わくは つかわず、 うごかせない。",
   "catch_held_items": "もちもの",

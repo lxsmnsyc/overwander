@@ -1,7 +1,7 @@
 ---
 id: ui-redesign-finish
 title: Finish the UI redesign
-status: active
+status: done
 priority: must
 type: story
 outline: false

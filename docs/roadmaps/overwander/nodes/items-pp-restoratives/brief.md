@@ -1,7 +1,7 @@
 ---
 id: items-pp-restoratives
 title: Ether, Max Ether, Elixir and Max Elixir
-status: todo
+status: done
 priority: should
 type: feature
 outline: false

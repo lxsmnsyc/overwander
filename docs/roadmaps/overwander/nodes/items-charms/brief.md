@@ -1,7 +1,7 @@
 ---
 id: items-charms
 title: Exp and Oval Charms
-status: todo
+status: done
 priority: should
 type: feature
 outline: false

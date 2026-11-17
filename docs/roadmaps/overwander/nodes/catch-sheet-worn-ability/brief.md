@@ -1,7 +1,7 @@
 ---
 id: catch-sheet-worn-ability
 title: Show a form's worn ability on the catch sheet
-status: todo
+status: done
 priority: should
 type: feature
 outline: false

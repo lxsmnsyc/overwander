@@ -1,7 +1,7 @@
 ---
 id: items-room-service
 title: Room Service
-status: todo
+status: done
 priority: could
 type: feature
 outline: false

@@ -114,10 +114,13 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
     <Dialog
       isOpen={props.isOpen}
       onClose={props.onClose}
+      width="wide"
       title={m.profile_edit_title()}
       description={m.profile_edit_description()}
     >
       <TextField
+        labelFace
+        tall
         label={m.profile_nickname()}
         value={name()}
         autocomplete="nickname"
@@ -140,6 +143,8 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
           rather than scrolled, since a player deep in the ladder has
           a long list of them */}
       <Combobox
+        labelFace
+        tall
         label={m.profile_title()}
         value={title()}
         options={choices()}

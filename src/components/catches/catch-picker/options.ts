@@ -1,6 +1,7 @@
 import type { JSX } from 'solid-js';
 import type { CaughtPokemon } from '../../../auth/caught';
-import type { BoxView } from '../CatchBox';
+import type { BoxView, BoxWidth } from '../CatchBox';
+import type { DialogWidth } from '../../styled';
 
 /**
  * Which box a picker is showing: one of the player's (`box` its id),
@@ -154,6 +155,16 @@ interface CatchPickerCommonProps {
   placeLabel?: (slot: number) => string;
   /** Whether the box takes the whole width it is given */
   fill?: boolean;
+  /**
+   * Draw the second press of a single pick in the dialog's dock (a note
+   * saying what is picked and the button that hands it over) instead of
+   * under the list. Opt-in: other callers keep the question under the list
+   */
+  dock?: boolean;
+  /** Squares across, where the caller knows better than the box width setting */
+  columns?: BoxWidth;
+  /** How wide the dialog stands, where the caller wants more room than `wide` */
+  width?: DialogWidth;
   /** A line under the search about what it found */
   results?: JSX.Element;
   /** A word about the order, at the end of the line under the search */

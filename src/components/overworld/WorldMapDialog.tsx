@@ -11,7 +11,7 @@ import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
 import type Weather from '../../data/overworld/weather';
-import { WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
+import { WEATHER_COLORS, WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
 import getWorld from '../../overworld/current';
 import { weatherWindowOf } from '../../overworld/chunk-snapshot';
 import { localNow } from '../../auth/clock';
@@ -22,8 +22,10 @@ import {
   ChevronRightIcon,
   ChevronUpIcon,
   CrosshairIcon,
+  QuestionIcon,
 } from '../icons';
-import { Button, Dialog, DialogActions, Hint } from '../styled';
+import { Button, Dialog, DialogActions, HoverCard, Segmented } from '../styled';
+import { DockNote } from '../forms/terms';
 import WorldMapCanvas, { PAN_STRIDE, townsInView } from './WorldMapCanvas';
 import { useGame } from '../app/game-context';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -45,17 +47,20 @@ const HALF = Math.floor(SPAN / 2);
  */
 const SKY_CHECK = 60 * 1000;
 
-/** A small toggle or chip laid over the map */
-const CHIP = `cursor-pointer rounded-full border-2 border-tide bg-paper/90 px-2 py-0.5 text-xs
-  font-bold text-tide-dark shadow-none transition-colors hover:bg-tide-soft active:translate-y-0
-  aria-pressed:bg-tide aria-pressed:text-on-accent focus-visible:outline-2
-  focus-visible:outline-offset-2 focus-visible:outline-tide`;
+/** A chip in the rail's row on a phone, or a row of the rail from `md` */
+const CHIP = 'h-9 shrink-0 text-xs md:w-full md:justify-start';
 
 /** One key of the pan pad */
-const PAD = `flex size-8 cursor-pointer items-center justify-center rounded-lg border-2 border-tide
-  bg-paper/90 p-0 text-sm text-ink shadow-none transition-colors hover:bg-tide-soft
-  active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2
+const PAD = `flex size-[34px] cursor-pointer items-center justify-center rounded-[10px] border-2
+  border-line bg-paper/95 p-0 text-sm text-ink shadow-rest transition-colors
+  hover:border-tide active:translate-y-0 focus-visible:outline-2 focus-visible:outline-offset-2
   focus-visible:outline-tide`;
+
+/** What the map shows under the player's eye */
+const enum Show_ {
+  Ground = 'ground',
+  Sky = 'sky',
+}
 
 /**
  * One key and what it does, laid out the way the search guide lays out
@@ -94,7 +99,8 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
    * the map is read to decide which way to walk, and the weather is
    * the answer to a different question
    */
-  const [sky, setSky] = createSignal(false);
+  const [mode, setMode] = createSignal<Show_>(Show_.Ground);
+  const sky = (): boolean => mode() === Show_.Sky;
 
   /**
    * The hour the skies are read for. It ticks on its own, so a map
@@ -257,22 +263,82 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
     pan(dx * distance, dy * distance);
   };
 
+  /** What the player is standing in: the place the game names, or the ground under them */
+  const standingIn = (): string => {
+    const named = game.place();
+    const at = standing();
+
+    if (named != null && named !== '') {
+      return named;
+    }
+    return at == null
+      ? m.world_map_finding()
+      : BIOME_NAMES[getWorld().getChunkBiome(at.chunkX, at.chunkY)];
+  };
+
+  /** One thing the key names: the player, a town, or a biome's colour */
+  const keyRows = (): JSX.Element => (
+    <>
+      <span class="flex items-center gap-2 text-[13px] font-bold">
+        <span class="size-3.5 shrink-0 rounded-[2px] border-2 border-paper bg-ink/70" />
+        {m.world_map_you()}
+      </span>
+      <span class="flex items-center gap-2 text-[13px] font-bold">
+        <span class="size-3.5 shrink-0 rounded-[2px] border-2 border-ink" />
+        {m.world_map_town()}
+      </span>
+      <For each={biomesInView()}>
+        {(biome) => (
+          <span class="flex items-center gap-2 text-[13px] font-bold">
+            <span
+              class="size-3.5 shrink-0 rounded-[4px]"
+              style={{ background: BIOME_COLORS[biome] }}
+            />
+            {BIOME_NAMES[biome]}
+          </span>
+        )}
+      </For>
+    </>
+  );
+
   return (
     <Dialog
       isOpen={props.isOpen}
       onClose={close}
-      width="wide"
-      quiet
+      width="rail"
+      layout="sheet"
+      terse
       title={m.world_map_title()}
+      lead={
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.4"
+          aria-hidden="true"
+        >
+          <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
+          <path d="M9 4v14M15 6v14" />
+        </svg>
+      }
       description={m.world_map_description({ span: SPAN, x: centerX(), y: centerY() })}
-      // The keys, on the one visible row a quiet dialog has. The
-      // heading is read out rather than drawn, so a sighted player has
-      // nowhere else to find out the map answers the keyboard at all.
-      // A card rather than a tooltip, for the reason the search box
-      // carries one: there are four keys to say, and a line of running
-      // text is not the shape of a list of them
-      bar={
-        <Hint title={m.world_map_steering()} description={m.world_map_steering_hint()}>
+      // The keys, at the sheet's top right. A card rather than a
+      // tooltip, for the reason the search box carries one: there are
+      // four keys to say, and a line of running text is not the shape of
+      // a list of them
+      aside={
+        <HoverCard
+          title={m.world_map_steering()}
+          kind={m.ui_help()}
+          description={m.world_map_steering_hint()}
+          placement="bottom"
+          class="inline-flex size-7 items-center justify-center rounded-full border-2 border-line
+            bg-paper text-[13px] font-extrabold text-tide transition-colors hover:border-tide
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tide"
+          trigger={<QuestionIcon class="size-4" role="img" aria-label={m.world_map_steering()} />}
+        >
           <ul class="flex flex-col gap-2">
             <Key presses={m.world_map_key_drag()}>{m.world_map_drag()}</Key>
             <Key presses="↑ ↓ ← →">{m.world_map_arrows()}</Key>
@@ -280,150 +346,203 @@ export default function WorldMapDialog(props: WorldMapDialogProps): JSX.Element 
             <Key presses="Home">{m.world_map_home()}</Key>
           </ul>
           <p class="mt-2 text-xs text-muted">{m.world_map_rim()}</p>
-        </Hint>
+        </HoverCard>
       }
     >
-      <WorldMapCanvas
-        span={SPAN}
-        originX={centerX() - HALF}
-        originY={centerY() - HALF}
-        biomes={biomes()}
-        skies={skies()}
-        towns={towns()}
-        playerX={standing()?.chunkX ?? Number.NaN}
-        playerY={standing()?.chunkY ?? Number.NaN}
-        onPan={pan}
-        onRecenter={recenter}
-        overlay={
-          <>
-            <div class="absolute top-1.5 right-1.5 z-10 flex gap-1">
-              <button
-                type="button"
-                class={CHIP}
-                aria-pressed={sky()}
-                title={m.world_map_sky_hint()}
-                onClick={() => {
-                  setSky(!sky());
-                }}
-              >
-                ☁ {m.world_map_sky()}
-              </button>
-              <Popover defaultOpen={false} class="relative">
-                <PopoverButton class={CHIP}>{m.world_map_key()}</PopoverButton>
-                <PopoverPanel
-                  class="absolute top-full right-0 z-30 mt-1 flex max-h-72 w-52 flex-col gap-1
-                    overflow-y-auto rounded-panel border-2 border-line bg-paper p-2 text-xs shadow-float"
-                >
-                  <span class="flex items-center gap-2">
-                    <span class="size-3 shrink-0 border-2 border-white bg-ink/40" />
-                    {m.world_map_you()}
-                  </span>
-                  <span class="flex items-center gap-2">
-                    <span class="size-3 shrink-0 border border-white bg-transparent ring-1 ring-black/70" />
-                    {m.world_map_town()}
-                  </span>
-                  <For each={biomesInView()}>
-                    {(biome) => (
-                      <span class="flex items-center gap-2">
-                        <span
-                          class="size-3 shrink-0 rounded-sm"
-                          style={{ background: BIOME_COLORS[biome] }}
-                        />
-                        {BIOME_NAMES[biome]}
-                      </span>
-                    )}
-                  </For>
-                </PopoverPanel>
-              </Popover>
-            </div>
-
-            <span
-              class="pointer-events-none absolute bottom-1.5 left-1.5 z-10 rounded-lg bg-ink/70
-                px-1.5 py-0.5 text-xs font-semibold text-parchment tabular-nums"
-            >
-              <Show when={standing()} fallback={m.world_map_finding()}>
-                {(at) => m.world_map_you_at({ x: at().chunkX, y: at().chunkY })}
-              </Show>
-              {` · ${m.world_map_view_at({ x: centerX(), y: centerY() })}`}
+      <div class="flex min-h-0 flex-col gap-3 md:grow md:flex-row md:gap-0">
+        {/* The rail: what the map shows, where the player is, and what is on it.
+            On a phone it is a row of chips over the map */}
+        <nav
+          aria-label={m.world_map_show()}
+          class="flex shrink-0 items-center gap-2 overflow-x-auto pb-1 md:w-[14.5rem]
+            md:flex-col md:items-stretch md:gap-3.5 md:overflow-x-visible md:overflow-y-auto
+            md:border-r-2 md:border-line-soft md:pr-4 md:pb-0"
+        >
+          <div class="flex shrink-0 flex-col gap-1.5" title={m.world_map_sky_hint()}>
+            <span class="hidden text-xs font-extrabold tracking-[0.12em] text-muted uppercase md:block">
+              {m.world_map_show()}
             </span>
+            <Segmented
+              class="md:w-full [&>*]:md:flex-1"
+              label={m.world_map_show()}
+              value={mode()}
+              options={[
+                { value: Show_.Ground, label: m.world_map_ground() },
+                { value: Show_.Sky, label: m.world_map_sky() },
+              ]}
+              onChange={(next) => {
+                setMode(next);
+              }}
+            />
+          </div>
 
-            {/* Buttons for whoever has no keyboard to steer with */}
-            <div class="absolute right-1.5 bottom-1.5 z-10 grid grid-cols-3 gap-0.5">
-              <span />
-              <button
-                type="button"
-                class={PAD}
-                aria-label={m.world_map_pan_north()}
-                onClick={step(0, -1)}
-              >
-                <ChevronUpIcon class="size-4" aria-hidden="true" />
-              </button>
-              <span />
-              <button
-                type="button"
-                class={PAD}
-                aria-label={m.world_map_pan_west()}
-                onClick={step(-1, 0)}
-              >
-                <ChevronLeftIcon class="size-4" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                class={PAD}
-                aria-label={m.world_map_back_to_you()}
-                onClick={recenter}
-              >
-                <CrosshairIcon class="size-5" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                class={PAD}
-                aria-label={m.world_map_pan_east()}
-                onClick={step(1, 0)}
-              >
-                <ChevronRightIcon class="size-4" aria-hidden="true" />
-              </button>
-              <span />
-              <button
-                type="button"
-                class={PAD}
-                aria-label={m.world_map_pan_south()}
-                onClick={step(0, 1)}
-              >
-                <ChevronDownIcon class="size-4" aria-hidden="true" />
-              </button>
-              <span />
-            </div>
-          </>
-        }
-      />
-
-      {/* Pressing one looks at it */}
-      <Show when={sky()}>
-        <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs">
-          <Show
-            when={showpieces().length > 0}
-            fallback={<span class="text-muted">{m.world_map_quiet()}</span>}
-          >
-            <span class="text-muted">{m.world_map_worth()}</span>
-            <For each={showpieces()}>
-              {(one) => (
-                <button
-                  type="button"
-                  class={CHIP}
-                  onClick={() => {
-                    lookAt(one.x, one.y);
-                  }}
-                >
-                  {WEATHER_NAMES[one.weather]} {one.x}, {one.y}
-                </button>
+          {/* Last in the phone's row, so the chips that act (the sky's showpieces, the key)
+              are the ones in reach and the place is what scrolls out */}
+          <div class="flex shrink-0 flex-col gap-0.5 max-md:order-last md:gap-1">
+            <span class="text-xs font-extrabold tracking-[0.12em] text-muted uppercase">
+              {m.world_map_you_are_in()}
+            </span>
+            <span class="font-display text-base font-semibold whitespace-nowrap md:text-lg">
+              {standingIn()}
+            </span>
+            <Show when={standing()}>
+              {(at) => (
+                <span class="hidden text-xs text-muted tabular-nums md:inline">
+                  {m.world_map_chunk_meta({
+                    x: at().chunkX,
+                    y: at().chunkY,
+                    viewX: centerX(),
+                    viewY: centerY(),
+                  })}
+                </span>
               )}
-            </For>
-          </Show>
-        </div>
-      </Show>
+            </Show>
+          </div>
 
-      <DialogActions>
+          <Show when={sky()}>
+            <div class="flex shrink-0 items-center gap-2 md:flex-col md:items-stretch md:gap-1.5">
+              <span class="hidden text-xs font-extrabold tracking-[0.12em] text-muted uppercase md:block">
+                {m.world_map_worth()}
+              </span>
+              {/* Pressing one looks at it */}
+              <For
+                each={showpieces()}
+                fallback={<span class="text-xs text-muted">{m.world_map_quiet()}</span>}
+              >
+                {(one) => (
+                  <Button
+                    class={CHIP}
+                    onClick={() => {
+                      lookAt(one.x, one.y);
+                    }}
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="size-3.5 shrink-0 rounded-[4px]"
+                      style={{ background: WEATHER_COLORS[one.weather] }}
+                    />
+                    {WEATHER_NAMES[one.weather]}
+                    <span class="ml-auto pl-1 text-xs font-bold text-muted tabular-nums">
+                      {one.x}, {one.y}
+                    </span>
+                  </Button>
+                )}
+              </For>
+            </div>
+          </Show>
+
+          <Show when={!sky()}>
+            {/* The key: a list in the rail, and behind a chip where there is no room for one */}
+            <div class="hidden min-h-0 flex-col gap-2 md:flex">
+              <span class="text-xs font-extrabold tracking-[0.12em] text-muted uppercase">
+                {m.world_map_in_view()}
+              </span>
+              {keyRows()}
+            </div>
+            <Popover defaultOpen={false} class="relative shrink-0 md:hidden">
+              <PopoverButton
+                class="h-9 cursor-pointer rounded-button border-2 border-line bg-paper px-3 text-xs
+                  font-extrabold text-ink shadow-none hover:border-tide active:translate-y-0"
+              >
+                {m.world_map_key()}
+              </PopoverButton>
+              <PopoverPanel
+                class="fixed inset-x-4 z-30 mt-1 flex max-h-72 flex-col gap-1.5 overflow-y-auto
+                  rounded-card border-2 border-line bg-paper p-3 shadow-float"
+              >
+                {keyRows()}
+              </PopoverPanel>
+            </Popover>
+          </Show>
+        </nav>
+
+        <div class="flex min-h-0 min-w-0 grow flex-col gap-2.5 overflow-y-auto md:px-4.5">
+          <span class="text-xs text-muted">
+            {m.world_map_description({ span: SPAN, x: centerX(), y: centerY() })}
+          </span>
+          {/* The box the map fills: a size container from `md`, so the square
+              is as large as the column's height and width allow */}
+          <div class="flex min-h-0 grow flex-col md:[container-type:size]">
+            <WorldMapCanvas
+              fill
+              span={SPAN}
+              originX={centerX() - HALF}
+              originY={centerY() - HALF}
+              biomes={biomes()}
+              skies={skies()}
+              towns={towns()}
+              playerX={standing()?.chunkX ?? Number.NaN}
+              playerY={standing()?.chunkY ?? Number.NaN}
+              onPan={pan}
+              onRecenter={recenter}
+              overlay={
+                <>
+                  <span
+                    class="pointer-events-none absolute bottom-2.5 left-2.5 z-10 inline-flex h-[26px]
+                    items-center rounded-full bg-ink/80 px-2.5 text-[11px] font-extrabold
+                    text-parchment tabular-nums"
+                  >
+                    <Show when={standing()} fallback={m.world_map_finding()}>
+                      {(at) => m.world_map_you_at({ x: at().chunkX, y: at().chunkY })}
+                    </Show>
+                    {` · ${m.world_map_view_at({ x: centerX(), y: centerY() })}`}
+                  </span>
+
+                  {/* Buttons for whoever has no keyboard to steer with */}
+                  <div class="absolute right-2.5 bottom-2.5 z-10 grid grid-cols-3 gap-[3px]">
+                    <span />
+                    <button
+                      type="button"
+                      class={PAD}
+                      aria-label={m.world_map_pan_north()}
+                      onClick={step(0, -1)}
+                    >
+                      <ChevronUpIcon class="size-4" aria-hidden="true" />
+                    </button>
+                    <span />
+                    <button
+                      type="button"
+                      class={PAD}
+                      aria-label={m.world_map_pan_west()}
+                      onClick={step(-1, 0)}
+                    >
+                      <ChevronLeftIcon class="size-4" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      class={`${PAD} text-tide`}
+                      aria-label={m.world_map_back_to_you()}
+                      onClick={recenter}
+                    >
+                      <CrosshairIcon class="size-5" aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      class={PAD}
+                      aria-label={m.world_map_pan_east()}
+                      onClick={step(1, 0)}
+                    >
+                      <ChevronRightIcon class="size-4" aria-hidden="true" />
+                    </button>
+                    <span />
+                    <button
+                      type="button"
+                      class={PAD}
+                      aria-label={m.world_map_pan_south()}
+                      onClick={step(0, 1)}
+                    >
+                      <ChevronDownIcon class="size-4" aria-hidden="true" />
+                    </button>
+                    <span />
+                  </div>
+                </>
+              }
+            />
+          </div>
+        </div>
+      </div>
+
+      <DialogActions stack note={<DockNote>{m.world_map_dock_note()}</DockNote>}>
         <Button onClick={close}>{m.world_map_close()}</Button>
       </DialogActions>
     </Dialog>

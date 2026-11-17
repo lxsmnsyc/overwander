@@ -10,16 +10,16 @@ import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 
-import { Button, Dialog, DialogActions, Note, useToast } from '../styled';
-import { CostBadge, CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
+import { Button, Dialog, DialogActions, HeroBand, Note, useToast } from '../styled';
+import { CostBadge, CounterSpent, CounterTerms } from '../forms/terms';
 import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 import { describeItem } from '../details';
 
-/** The tree beside the heading */
-const TREE_SPRITE = 28;
+/** The tree on the hero's stage */
+const TREE_SPRITE = 56;
 
 export interface HoneyTreeDialogProps {
   player: string;
@@ -90,19 +90,16 @@ function HoneyTreeBody(
 
   return (
     <>
+      {/* The cost is on the button, so the one line here is what the player has */}
       <CounterTerms
-        cost={{ item: Items.Honey, amount: LATHER_COST }}
         have={{ amount: jars(), short: jars() < LATHER_COST, unit: describeItem(Items.Honey) }}
-        often={props.lathered ? m.ow_used_this_while() : m.honey_tree_often()}
+        often={props.lathered ? undefined : m.honey_tree_often()}
       />
       <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
-      <Show
-        when={!props.lathered}
-        fallback={<CounterSpent says={m.honey_tree_sticky()} quoted={false} />}
-      >
-        <Note>{m.honey_tree_invite()}</Note>
+      <Show when={props.lathered}>
+        <CounterSpent says={m.honey_tree_sticky()} quoted={false} />
       </Show>
-      <DialogActions>
+      <DialogActions stack>
         <Show when={!props.lathered}>
           <Button
             tone="primary"
@@ -134,15 +131,21 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
       isOpen={props.cell != null}
       onClose={props.onClose}
       title={m.honey_tree_title()}
-      lead={
-        <HeadingPortrait>
-          <AtlasSprite
-            sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-            name={landmarkPicture(Landmark.HoneyTree) ?? ''}
-            size={TREE_SPRITE}
-            label=""
-          />
-        </HeadingPortrait>
+      width="wide"
+      hero={
+        <HeroBand
+          tone="gold"
+          stage={
+            <AtlasSprite
+              sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+              name={landmarkPicture(Landmark.HoneyTree) ?? ''}
+              size={TREE_SPRITE}
+              label=""
+            />
+          }
+        >
+          {m.honey_tree_description()}
+        </HeroBand>
       }
       description={m.honey_tree_description()}
     >

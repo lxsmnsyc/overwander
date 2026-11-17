@@ -1,4 +1,6 @@
 import { type JSX, Show } from 'solid-js';
+import { SETTING_ROW } from './card';
+import { CountPill } from './row-card';
 
 /**
  * A setting with a range rather than two states: a volume, a rate, a
@@ -18,6 +20,8 @@ export interface SliderProps {
   onChange: (value: number) => void;
   description?: string;
   disabled?: boolean;
+  /** Drawn as a settings row: the label, the track beside it, the number in a pill */
+  row?: boolean;
   class?: string;
 }
 
@@ -35,6 +39,34 @@ const TRACK =
 
 export default function Slider(props: SliderProps): JSX.Element {
   const percent = (): number => Math.round(props.value * 100);
+
+  if (props.row === true) {
+    return (
+      <div class={`flex text-sm ${SETTING_ROW} ${props.class ?? ''}`}>
+        <span class="flex min-w-0 grow flex-col gap-0.5">
+          <span class="font-extrabold">{props.label}</span>
+          <Show when={props.description}>
+            {(said) => <span class="text-xs text-muted">{said()}</span>}
+          </Show>
+        </span>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={STEP}
+          value={props.value}
+          disabled={props.disabled}
+          aria-label={props.label}
+          aria-valuetext={`${percent()} percent`}
+          class={`${TRACK} w-24 shrink sm:w-[220px]`}
+          onInput={(event) => {
+            props.onChange(event.currentTarget.valueAsNumber);
+          }}
+        />
+        <CountPill>{percent()}</CountPill>
+      </div>
+    );
+  }
 
   return (
     <div class={`flex flex-col gap-1 text-sm ${props.class ?? ''}`}>

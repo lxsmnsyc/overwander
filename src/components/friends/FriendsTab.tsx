@@ -25,7 +25,7 @@ import matchesFriend, {
 import { type Profile, getProfiles } from '../../auth/profile';
 import {
   Button,
-  Divider,
+  GroupLabel,
   LIST_PAGE,
   List,
   Note,
@@ -50,6 +50,8 @@ import { m } from '../../i18n/paraglide/messages.js';
  */
 export interface FriendsTabProps {
   player: string;
+  /** Open the add-a-friend dialog; the button stands at the pane's top right */
+  onAdd: () => void;
 }
 
 /**
@@ -107,6 +109,7 @@ function Roster(props: {
 
   return (
     <Show when={asked().length > 0} fallback={<Note>{m.friends_no_match()}</Note>}>
+      <GroupLabel>{m.friends_group()}</GroupLabel>
       <List>
         <For each={roster.shown()}>
           {(uid) => (
@@ -126,7 +129,7 @@ function Roster(props: {
                 {m.friends_trade()}
               </Button>
               <Button
-                tone="danger"
+                tone="ghost-danger"
                 disabled={props.busy === uid}
                 onClick={() => {
                   props.onAct(uid, removeFriend(uid));
@@ -165,6 +168,14 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
     }
     return since;
   });
+  const blockedAt = createMemo(() => {
+    const since = new Map<string, number>();
+
+    for (const row of blocked() ?? []) {
+      since.set(row.uid, row.since);
+    }
+    return since;
+  });
   const roll = createMemo(() => uidsOf(friends() ?? []));
   // What everybody is called, in one read rather than a row at a time:
   // the list is searched by name, and a name a row has not fetched yet
@@ -186,19 +197,31 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
 
   return (
     <>
-      {/* Finding one of a hundred. Asking for one more is beside the
-          heading the list is drawn under */}
-      <Show when={roll().length > SEARCH_FROM}>
-        <Search
-          vocabulary={FRIEND_VOCABULARY}
-          example="sort:since"
-          placeholder={m.friends_search()}
-          value={query()}
-          onChange={(typed) => {
-            setQuery(typed);
-          }}
-        />
-      </Show>
+      {/* The pane's head: finding one of a hundred and how many there
+          are on the left, asking for one more on the right */}
+      <div class="flex flex-wrap items-center gap-2.5">
+        <Show when={roll().length > SEARCH_FROM}>
+          <Search
+            vocabulary={FRIEND_VOCABULARY}
+            example="sort:since"
+            placeholder={m.friends_search()}
+            value={query()}
+            class="w-full sm:w-[300px]"
+            onChange={(typed) => {
+              setQuery(typed);
+            }}
+          />
+        </Show>
+        <Show when={roll().length > 0}>
+          <span class="text-xs text-muted">
+            {m.friends_count({ count: roll().length, limit: FRIEND_LIMIT })}
+          </span>
+        </Show>
+        <span class="grow" />
+        <Button tone="primary" onClick={props.onAdd}>
+          {m.friends_tie_add()}
+        </Button>
+      </div>
 
       <Show when={roll().length > 0} fallback={<Note>{m.friends_empty()}</Note>}>
         <Suspense fallback={<Note>{m.friends_loading()}</Note>}>
@@ -211,16 +234,20 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
             onAct={act}
           />
         </Suspense>
-        <Note>{m.friends_count({ count: roll().length, limit: FRIEND_LIMIT })}</Note>
       </Show>
 
       <Show when={(blocked() ?? []).length > 0}>
-        <Divider />
-        <Note>{m.friends_blocked()}</Note>
+        <GroupLabel title={m.friends_blocked()}>
+          {m.friends_blocked_group({ count: (blocked() ?? []).length })}
+        </GroupLabel>
         <List>
           <For each={shunned.shown()}>
             {(uid) => (
-              <FriendEntry uid={uid}>
+              <FriendEntry
+                uid={uid}
+                since={blockedAt().get(uid)}
+                when={(date) => m.friends_blocked_on({ date })}
+              >
                 <Button
                   disabled={busy() === uid}
                   onClick={() => {

@@ -171,7 +171,14 @@ export interface ItemGridProps {
    * wider than tall, for a screen that is nothing but the tray (the bag)
    */
   fill?: boolean;
+  /** Squares across from `md` up: the bag's six, or eight for a board that lists lots */
+  columns?: 6 | 8 | 10;
+  /** A square's card stands across the foot of the screen on a phone */
+  sheet?: boolean;
 }
+
+/** The extra columns a wider tray takes from `md` up */
+const COLUMN_CLASSES = { 6: '', 8: 'md:grid-cols-8', 10: 'md:grid-cols-10' } as const;
 
 /** How a square's frame reads: taken, looked at, or at rest */
 function pickCellTone(cell: ItemCell): string {
@@ -203,7 +210,9 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     }));
   };
 
-  const pages = (): number => Math.max(1, Math.ceil(narrowed().length / GRID_SIZE));
+  const across = (): number => props.columns ?? GRID_COLUMNS;
+  const traySize = (): number => across() * GRID_ROWS;
+  const pages = (): number => Math.max(1, Math.ceil(narrowed().length / traySize()));
 
   // Spending a stack or narrowing a search can empty the page being
   // looked at, and a player left staring at an empty tray reads it as
@@ -212,7 +221,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
     setPage((at) => Math.min(at, pages() - 1));
   });
 
-  const shown = (): ItemCell[] => narrowed().slice(page() * GRID_SIZE, (page() + 1) * GRID_SIZE);
+  const shown = (): ItemCell[] => narrowed().slice(page() * traySize(), (page() + 1) * traySize());
 
   /**
    * How many squares the tray draws, filled or not. A bag that runs to
@@ -220,9 +229,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
    * the buttons under it; a smaller one only fills out the row it is on
    */
   const squares = (): number =>
-    pages() > 1
-      ? GRID_SIZE
-      : Math.max(GRID_COLUMNS, Math.ceil(shown().length / GRID_COLUMNS) * GRID_COLUMNS);
+    pages() > 1 ? traySize() : Math.max(across(), Math.ceil(shown().length / across()) * across());
 
   const empties = (): number[] => {
     const slots: number[] = [];
@@ -404,8 +411,8 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       </Show>
 
       <div
-        class="grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide bg-parchment p-2
-          shadow-pop"
+        class={`grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide bg-parchment p-2
+          shadow-pop ${COLUMN_CLASSES[props.columns ?? 6]}`}
       >
         {/* `Index`, not `For`: callers rebuild the cell objects every
             time a purse or a bag moves, and a reference-keyed loop
@@ -431,22 +438,28 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
                   take it back */}
               <HoverCard
                 class="block w-full"
+                sheet={props.sheet === true}
                 title={detailItem(cell().item).name}
                 kind={m.tooltip_kind_item()}
-                footer={
+                footer={(close) => (
                   <For each={cell().actions}>
                     {(action) => (
                       <Button
                         tone={action.tone}
                         disabled={action.disabled}
                         title={action.title}
-                        onClick={action.onPress}
+                        onClick={() => {
+                          // Put the card away first: it would otherwise stay over
+                          // whatever the action opens until the pointer moved
+                          close();
+                          action.onPress();
+                        }}
                       >
                         {action.label}
                       </Button>
                     )}
                   </For>
-                }
+                )}
                 trigger={square(cell())}
               >
                 <ItemCard item={cell().item} carried={cell().carried ?? cell().amount} />

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Duels</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55)}
+.sheet{position:absolute;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);display:flex;flex-direction:column;animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+@keyframes rise{from{transform:translateY(4px);opacity:0}}
+.plate{position:absolute;left:24px;top:-17px;height:34px;padding:0 16px 0 12px;border-radius:999px;background:#2360C8;color:#fff;display:flex;align-items:center;gap:8px;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;box-shadow:0 3px 0 0 #163F86;z-index:3}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.btn.danger{background:#fff;border-color:#D6372A;color:#B02A1F}
+.btn.blue{background:#2360C8;border-color:#163F86;color:#fff;box-shadow:0 3px 0 0 #163F86}
+.btn.on{background:#E3ECFA;border-color:#2360C8;color:#163F86}
+.btn.quiet{border-color:transparent;background:transparent;box-shadow:none}
+.btn.sq40{width:40px;padding:0}
+.btn[disabled]{opacity:.45;cursor:default;transform:none}
+.label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F}
+.h{font-family:Fredoka,sans-serif;font-weight:600}
+.input{height:40px;border:2px solid #C3D2E8;border-radius:12px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:13px;color:#52627F}
+.field{display:flex;flex-direction:column;gap:4px}
+.field .input{color:#14203A;font-size:14px}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:#E7EEF8;gap:2px}
+.seg .btn{height:34px}
+.term{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#E7EEF8;font-size:12px;font-weight:800;color:#14203A}
+.term i{font-style:normal;color:#52627F;font-weight:700}
+.term.gold{background:#FDF1D6;color:#8A5A00}
+.term.ember{background:#FCE3E0;color:#B02A1F}
+.term.leaf{background:#E3F3EA;color:#156B3D}
+.term.tide{background:#E3ECFA;color:#163F86}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.pill.leaf{background:#E3F3EA;color:#156B3D}.pill.ember{background:#FCE3E0;color:#B02A1F}.pill.gold{background:#FDF1D6;color:#8A5A00}.pill.tide{background:#E3ECFA;color:#163F86}.pill.arcane{background:#EDE6FA;color:#4B2E9A}.pill.neutral{background:#E7EEF8;color:#52627F}
+.count{font-family:Fredoka,sans-serif;font-weight:600;font-size:12px;min-width:26px;height:22px;padding:0 6px;border-radius:999px;background:#E7EEF8;color:#52627F;display:inline-flex;align-items:center;justify-content:center}
+.count.hot{background:#D6372A;color:#fff}
+.rail{display:flex;flex-direction:column;gap:2px;padding:12px 10px 12px 14px;border-right:2px solid #E7EEF8;flex:0 0 auto}
+.rail .grp{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;padding:10px 10px 4px}
+.rail .grp:first-child{padding-top:2px}
+.ritem{display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;border:2px solid transparent;font-size:14px;font-weight:800;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;color:#14203A;text-align:left;width:100%}
+.ritem:hover{background:#F4F7FC}
+.ritem.current{border-color:#2360C8;background:#EEF4FC;color:#163F86}
+.ritem .count{margin-left:auto}
+.dot{width:22px;height:22px;border-radius:7px;flex:0 0 22px}
+.tile{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8}
+.tile b{font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;line-height:1}
+.track{height:6px;border-radius:3px;background:#E7EEF8;overflow:hidden}
+.track span{display:block;height:100%;border-radius:3px;background:#1E8F52}
+.card{border:2px solid #E7EEF8;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;animation:rise 280ms cubic-bezier(.2,.8,.2,1) both}
+.card h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8;background:#fff;min-height:52px}
+.row.sel{border-color:#1E8F52;background:#EAF6EF}
+.row.me{border-color:#1E8F52;background:#EAF6EF}
+.row.quiet{background:#F4F7FC}
+.grow{flex:1 1 auto;min-width:0}
+.name{font-weight:800;font-size:14px}
+.meta{font-size:12px;color:#52627F}
+.dock{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:2px solid #E7EEF8;flex:0 0 auto}
+.dock .note{font-size:13px;color:#52627F}
+.hint{width:28px;height:28px;border-radius:14px;border:2px solid #C3D2E8;color:#2360C8;font-weight:800;font-size:13px;display:inline-flex;align-items:center;justify-content:center;background:#fff;cursor:pointer}
+.sw{width:44px;height:26px;border-radius:13px;background:#C3D2E8;position:relative;flex:0 0 44px;cursor:pointer;border:0;padding:0;transition:background 240ms}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(20,32,58,.25);transition:transform 240ms cubic-bezier(.34,1.56,.64,1)}
+.sw.on{background:#1E8F52}.sw.on::after{transform:translateX(18px)}
+.opt{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;cursor:pointer;text-align:left;font-family:Nunito,sans-serif;color:#14203A}
+.opt:hover{border-color:#2360C8}
+.opt.on{border-color:#1E8F52;background:#EAF6EF}
+.mon{width:44px;height:44px;border-radius:14px;flex:0 0 44px}
+.face{width:40px;height:40px;border-radius:12px;flex:0 0 40px}
+.sqr{position:relative;height:72px;border-radius:12px;background:#fff;border:2px solid #C3D2E8;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 140ms cubic-bezier(.34,1.56,.64,1),border-color 140ms}
+.sqr:hover{transform:translateY(-2px);border-color:#2360C8}
+.sqr.on{border-color:#1E8F52;background:#EAF6EF;box-shadow:0 0 0 3px #1E8F5233}
+.sqr .lv{position:absolute;left:5px;bottom:3px;font-family:Fredoka,sans-serif;font-weight:600;font-size:10px;color:#52627F}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.grid6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.hero{position:relative;display:flex;gap:16px;align-items:center;padding:16px 18px;border-bottom:2px solid #E7EEF8;border-radius:22px 22px 0 0}
+.quote{font-style:italic;font-size:14px;color:#14203A;background:#fff;border:2px solid #E7EEF8;border-radius:14px;padding:8px 12px;position:relative}
+.boardchip{position:absolute;z-index:20;display:flex;gap:6px;align-items:center;padding:4px;border-radius:14px;background:rgba(255,255,255,.92);border:2px solid #C3D2E8}
+.boardchip .btn{height:30px;font-size:12px}
+.prop{outline:3px dashed #6E46C9;outline-offset:3px;border-radius:14px;position:relative}
+.proptag{position:absolute;right:6px;top:-12px;background:#6E46C9;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;z-index:4}
+.tip{position:absolute;z-index:5;border-radius:14px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18),0 18px 30px -18px rgba(20,32,58,.6);padding:10px 12px;display:flex;flex-direction:column;gap:6px;animation:rise 140ms cubic-bezier(.2,.8,.2,1) both}
+.scroll{overflow:hidden}
+.arena{display:grid;grid-template-columns:minmax(0,1fr) 56px minmax(0,1fr);gap:12px;align-items:center;padding:18px 20px;border-radius:18px;background:linear-gradient(#9ED8F2,#D5EFFA 58%,#7CC36A 58%,#4E9B45)}
+.seat{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:16px;background:rgba(255,255,255,.96);border:2px solid #C3D2E8;box-shadow:0 4px 0 rgba(20,32,58,.18)}
+.seat.open{border-style:dashed;align-items:center;text-align:center;min-height:170px;justify-content:center}
+.vs{width:48px;height:48px;border-radius:50%;background:#D6372A;color:#fff;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.stamp{display:inline-flex;align-items:center;height:26px;padding:0 10px;border-radius:999px;border:2px solid #C3D2E8;font-size:11px;font-weight:800;color:#52627F;background:#fff}
+.stamp.ready{background:#1E8F52;border-color:#156B3D;color:#fff}
+.party{display:flex;gap:4px}
+.party span{width:34px;height:34px;border-radius:10px;border:2px solid #C3D2E8;background:#fff;display:flex;align-items:center;justify-content:center}
+.party span i{display:block;width:20px;height:20px;border-radius:6px}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="boardchip" style="left: 16px; top: 12px"><span class="label" style="padding: 0 6px">State</span><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button class="{{ t.cls }}" onClick="{{ t.pick }}">{{ t.name }}</button></sc-for></div>
+
+<sc-if value="{{ list }}" hint-placeholder-val="{{ true }}">
+<div class="sheet" style="left: 238px; top: 76px; width: 804px; height: 560px" role="dialog" aria-label="Battles">
+<div class="plate"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 19L19 5M14 5h5v5M5 5l14 14"></path></svg>Battles</div>
+<div style="padding: 30px 22px 10px; display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; overflow: hidden">
+<div class="row quiet" style="background: #EEF4FC; border-color: #2360C833"><span style="font-size: 13px; line-height: 1.45">A battle between two trainers, arranged rather than found. It settles nothing: no candy, no aftermath, and nobody's record moves.</span></div>
+<span class="label">Invited</span>
+<div class="row"><span class="face" style="background: #7A63C9; border-radius: 50%"></span><div class="grow" style="display: flex; flex-direction: column"><span class="name">Marisol</span><span class="meta">Invited you to fight</span></div><button class="btn go">Join</button><button class="btn">Dismiss</button></div>
+<span class="label">Your lobbies</span>
+<div class="row"><div class="grow" style="display: flex; flex-direction: column"><span class="name">Your lobby</span><span class="meta">1 in the room</span></div><button class="btn">Open</button></div>
+</div>
+<div class="dock"><button class="btn">Close</button><span style="flex: 1 1 auto"></span><button class="btn">Host and watch</button><button class="btn go">Host a lobby</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ lobby }}" hint-placeholder-val="{{ false }}">
+<div class="sheet" style="left: 168px; top: 90px; width: 944px; height: 470px" role="dialog" aria-label="Your lobby">
+<div class="plate">Your lobby</div>
+<div style="padding: 30px 22px 10px; display: flex; flex-direction: column; gap: 12px; flex: 1 1 auto; overflow: hidden">
+<div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center"><span class="term"><i>Team</i> 3 a side</span><span class="term"><i>Moves</i> 4</span><span class="term"><i>Abilities</i> 1</span><span class="term"><i>Items</i> 1</span><span class="term"><i>Stat total</i> ≤ 600</span><span class="term ember">No legendaries</span><span class="term">Unranked</span><span style="flex: 1 1 auto"></span><button class="btn" style="height: 32px">Change rules</button></div>
+<div class="arena">
+<div class="seat"><div style="display: flex; align-items: center; gap: 8px"><span class="face" style="width: 36px; height: 36px; flex-basis: 36px; border-radius: 50%; background: #2360C8"></span><span class="name">You</span><span class="pill tide">Host</span><span style="flex: 1 1 auto"></span><span class="meta">Seat 1</span></div><span class="party"><sc-for list="{{ mons }}" as="m" hint-placeholder-count="3"><span><i style="background: {{ m }}"></i></span></sc-for></span><div style="display: flex; gap: 6px; align-items: center"><button class="btn" style="height: 34px">Change team</button><span class="stamp ready">Ready</span></div></div>
+<span class="vs">VS</span>
+<div class="seat open"><span class="name">Seat 2 is open</span><span class="meta">Waiting for somebody to sit.</span><button class="btn">Take the seat</button></div>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #52627F"><span style="display: flex"><span class="face" style="width: 24px; height: 24px; flex-basis: 24px; border-radius: 50%; background: #E94B6A"></span><span class="face" style="width: 24px; height: 24px; flex-basis: 24px; border-radius: 50%; background: #F59A3B; margin-left: -6px"></span></span>Watching · 2</div>
+</div>
+<div class="dock"><button class="btn">Close the lobby</button><span class="note">Waiting for a second fighter</span><span style="flex: 1 1 auto"></span><button class="btn">Invite</button><button class="btn go" disabled="true">Start</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ rules }}" hint-placeholder-val="{{ false }}">
+<div class="sheet" style="left: 388px; top: 50px; width: 504px" role="dialog" aria-label="Rules">
+<div class="plate">Rules</div>
+<button class="hint" style="position: absolute; right: 16px; top: 14px" aria-label="About the rules">?</button>
+<div style="padding: 30px 22px 12px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px"><div class="field"><span class="label">Moves</span><div class="input" style="color: #14203A">4</div></div><div class="field"><span class="label">Abilities</span><div class="input" style="color: #14203A">1</div></div><div class="field"><span class="label">Held items</span><div class="input" style="color: #14203A">1</div></div><div class="field"><span class="label">Team size</span><div class="input" style="color: #14203A">3</div></div></div>
+<div class="field"><span class="label">Highest stat total</span><div class="input" style="color: #14203A">600</div></div>
+<div style="display: flex; flex-direction: column"><div class="setrow" style="display: flex; align-items: center; gap: 12px; padding: 8px 0"><span class="name grow">No legendaries</span><button class="sw on" role="switch" aria-label="No legendaries"></button></div><div class="setrow" style="display: flex; align-items: center; gap: 12px; padding: 8px 0"><span class="name grow">No mythicals</span><button class="sw" role="switch" aria-label="No mythicals"></button></div><div class="setrow" style="display: flex; align-items: center; gap: 12px; padding: 8px 0"><div class="grow" style="display: flex; flex-direction: column"><span class="name">No item forms</span><span class="meta">Forms a held item changes.</span></div><button class="sw" role="switch" aria-label="No item forms"></button></div></div>
+</div>
+<div class="dock"><button class="btn">Cancel</button><span style="flex: 1 1 auto"></span><button class="btn go">Save</button></div>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { at: 0 }; }
+  renderVals() {
+    const s = this.state;
+    const names = ['List', 'Lobby', 'Rules'];
+    const tabs = names.map((n, i) => ({ name: n, cls: i === s.at ? 'btn on' : 'btn quiet', pick: () => this.setState({ at: i }) }));
+    return { tabs, list: s.at === 0, lobby: s.at === 1 || s.at === 2, rules: s.at === 2, mons: ['#F0584A', '#7A63C9', '#2BA3A3'] };
+  }
+}
+</script>
+</body>
+</html>

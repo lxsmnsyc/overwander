@@ -14,25 +14,25 @@ import {
 import { useGame } from '../app/game-context';
 import playEffect, { Effect } from '../app/sound';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
-import PlayerPlate from '../profile/PlayerPlate';
+import { PlayerFace } from '../profile/PlayerPlate';
 import NamedCatch, { fillSentence } from './NamedCatch';
 import {
-  Badge,
   Button,
-  Divider,
+  GroupLabel,
   LIST_PAGE,
   List,
-  ListRow,
   Meta,
   Note,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
+  Pill,
+  type PillTone,
+  RowActions,
+  RowCard,
+  RowText,
+  Segmented,
   createPager,
   useToast,
 } from '../styled';
-import { formatDate, formatNumber } from '../../i18n/format';
+import { formatDate, formatNumber, formatRelative } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -61,8 +61,18 @@ const SETTLED_WORDS: Partial<Record<TradeStatus, () => string>> = {
   [TradeStatus.Cancelled]: m.trade_taken_back,
 };
 
-/** The other end of the trade, named by their profile */
-function OtherParty(props: { uid: string }): JSX.Element {
+/** How a settled trade reads in its pill */
+const SETTLED_TONES: Partial<Record<TradeStatus, PillTone>> = {
+  [TradeStatus.Accepted]: 'leaf',
+  [TradeStatus.Declined]: 'ember',
+  [TradeStatus.Cancelled]: 'neutral',
+};
+
+/**
+ * The other end of the trade as a face and a name, over the deal in
+ * one line: pressing either opens their profile
+ */
+function OtherParty(props: { uid: string; line: JSX.Element }): JSX.Element {
   const game = useGame();
   const profile = from<Profile | null>((set) =>
     watchProfile(props.uid, (record) => {
@@ -76,13 +86,18 @@ function OtherParty(props: { uid: string }): JSX.Element {
   };
 
   return (
-    <PlayerPlate
-      name={called()}
-      sprite={profile()?.sprite}
-      onOpen={() => {
+    <button
+      type="button"
+      class="flex min-w-0 grow basis-48 cursor-pointer items-center gap-2.5 rounded-lg border-0
+        bg-transparent p-0 text-left shadow-none transition-colors hover:text-tide-dark
+        active:translate-y-0"
+      onClick={() => {
         game.setVisiting(props.uid);
       }}
-    />
+    >
+      <PlayerFace sprite={profile()?.sprite} size={40} />
+      <RowText name={called()} line={props.line} />
+    </button>
   );
 }
 
@@ -107,7 +122,7 @@ function DealLine(props: { trade: TradeRecord; mine: boolean }): JSX.Element {
   };
 
   return (
-    <Meta>
+    <>
       {fillSentence(say, [
         <NamedCatch id={props.trade.offered} />,
         <Show
@@ -117,7 +132,7 @@ function DealLine(props: { trade: TradeRecord; mine: boolean }): JSX.Element {
           {(asked) => <NamedCatch id={asked()} />}
         </Show>,
       ])}
-    </Meta>
+    </>
   );
 }
 
@@ -131,6 +146,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
   );
   const held = createMemo(() => new Map(trades() ?? []));
 
+  const [view, setView] = createSignal(TradesView.Pending);
   const [busy, setBusy] = createSignal<string | null>(null);
   /** The trade one press away from being agreed to or taken back */
   const [sure, setSure] = createSignal<string | null>(null);
@@ -251,125 +267,143 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
     settle(id, cancelTrade(id), m.trade_withdrawn());
   };
 
-  const row = (id: string, mine: boolean, children: JSX.Element): JSX.Element => (
+  /** One trade as a row card: who, the deal, then what the row says or offers */
+  const row = (
+    id: string,
+    mine: boolean,
+    children: JSX.Element,
+    tone?: 'plain' | 'quiet',
+  ): JSX.Element => (
     <Show when={held().get(id)}>
       {(trade) => (
-        <ListRow>
-          <div class="flex min-w-0 grow flex-col gap-1">
-            <OtherParty uid={mine ? trade().receiver : trade().proposer} />
-            <DealLine trade={trade()} mine={mine} />
-          </div>
+        <RowCard tone={tone}>
+          <OtherParty
+            uid={mine ? trade().receiver : trade().proposer}
+            line={<DealLine trade={trade()} mine={mine} />}
+          />
           {children}
-        </ListRow>
+        </RowCard>
       )}
     </Show>
   );
 
   return (
     <>
-      <TabGroup horizontal defaultValue={TradesView.Pending} class="flex flex-col gap-3">
-        <TabBar>
-          <TabButton value={TradesView.Pending}>
-            {m.trade_pending()}
-            {/* What is waiting on the player's answer, counted on the tab */}
-            <Show when={toAnswer().length > 0}>
-              <Badge tone="ember" class="ml-1.5">
-                {toAnswer().length}
-              </Badge>
-            </Show>
-          </TabButton>
-          <TabButton value={TradesView.Settled}>{m.trade_settled()}</TabButton>
-        </TabBar>
-        <TabPane value={TradesView.Pending}>
-          <div class="flex flex-col gap-3">
-            <Show when={toAnswer().length > 0} fallback={<Note>{m.trade_nobody_offering()}</Note>}>
-              <Note>{m.trade_offered_to_you()}</Note>
-              <List>
-                <For each={toAnswer()}>
-                  {(id) =>
-                    row(
-                      id,
-                      false,
-                      <>
-                        <Button
-                          tone="primary"
-                          disabled={busy() != null}
-                          onClick={() => {
-                            accept(id);
-                          }}
-                        >
-                          {acceptLabel(id)}
-                        </Button>
-                        <Button
-                          tone="danger"
-                          disabled={busy() != null}
-                          onClick={() => {
-                            settle(id, declineTrade(id), m.trade_offer_declined());
-                          }}
-                        >
-                          {m.trade_decline()}
-                        </Button>
-                      </>,
-                    )
-                  }
-                </For>
-              </List>
-            </Show>
+      <div class="flex items-center gap-2.5">
+        <Segmented
+          label={m.profile_section_trades()}
+          value={view()}
+          options={[
+            // What is waiting on the player's answer, counted on the key
+            {
+              value: TradesView.Pending,
+              label: m.trade_pending(),
+              count: toAnswer().length > 0 ? toAnswer().length : undefined,
+              hot: true,
+            },
+            { value: TradesView.Settled, label: m.trade_settled() },
+          ]}
+          onChange={(value) => {
+            setView(value);
+          }}
+        />
+      </div>
 
-            <Show when={waiting().length > 0}>
-              <Divider />
-              <Note>{m.trade_waiting()}</Note>
-              <List>
-                <For each={waiting()}>
-                  {(id) =>
-                    row(
-                      id,
-                      true,
-                      <Button
-                        disabled={busy() != null}
-                        onClick={() => {
-                          withdraw(id);
-                        }}
-                      >
-                        {sure() === id ? m.trade_sure() : m.trade_take_back()}
-                      </Button>,
-                    )
-                  }
-                </For>
-              </List>
-            </Show>
-          </div>
-        </TabPane>
-        <TabPane value={TradesView.Settled}>
-          <Show when={settled.shown().length > 0} fallback={<Note>{m.trade_none_settled()}</Note>}>
-            <List>
-              <For each={settled.shown()}>
-                {(id) =>
-                  row(
-                    id,
-                    held().get(id)?.proposer === props.player,
-                    <Meta>
-                      {m.trade_settled_on({
-                        word: SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open]?.() ?? '',
-                        date: formatDate(held().get(id)?.resolvedAt ?? 0),
-                      })}
-                    </Meta>,
-                  )
-                }
-              </For>
-            </List>
-            {settled.controls()}
-          </Show>
-        </TabPane>
-      </TabGroup>
+      <Show when={view() === TradesView.Pending}>
+        <Show when={toAnswer().length > 0} fallback={<Note>{m.trade_nobody_offering()}</Note>}>
+          <GroupLabel>{m.trade_offered_to_you()}</GroupLabel>
+          <List>
+            <For each={toAnswer()}>
+              {(id) =>
+                row(
+                  id,
+                  false,
+                  <RowActions>
+                    <Button
+                      tone="primary"
+                      disabled={busy() != null}
+                      onClick={() => {
+                        accept(id);
+                      }}
+                    >
+                      {acceptLabel(id)}
+                    </Button>
+                    <Button
+                      tone="ghost-danger"
+                      disabled={busy() != null}
+                      onClick={() => {
+                        settle(id, declineTrade(id), m.trade_offer_declined());
+                      }}
+                    >
+                      {m.trade_decline()}
+                    </Button>
+                  </RowActions>,
+                )
+              }
+            </For>
+          </List>
+        </Show>
+
+        <Show when={waiting().length > 0}>
+          <GroupLabel title={m.trade_waiting_note()}>{m.trade_waiting()}</GroupLabel>
+          <List>
+            <For each={waiting()}>
+              {(id) =>
+                row(
+                  id,
+                  true,
+                  <RowActions>
+                    <Button
+                      disabled={busy() != null}
+                      onClick={() => {
+                        withdraw(id);
+                      }}
+                    >
+                      {sure() === id ? m.trade_sure() : m.trade_take_back()}
+                    </Button>
+                  </RowActions>,
+                )
+              }
+            </For>
+          </List>
+        </Show>
+      </Show>
+
+      <Show when={view() === TradesView.Settled}>
+        <Show when={settled.shown().length > 0} fallback={<Note>{m.trade_none_settled()}</Note>}>
+          <List>
+            <For each={settled.shown()}>
+              {(id) =>
+                row(
+                  id,
+                  held().get(id)?.proposer === props.player,
+                  <>
+                    <Pill tone={SETTLED_TONES[held().get(id)?.status ?? TradeStatus.Open]}>
+                      {SETTLED_WORDS[held().get(id)?.status ?? TradeStatus.Open]?.() ?? ''}
+                    </Pill>
+                    <Meta title={formatDate(held().get(id)?.resolvedAt ?? 0)}>
+                      {formatRelative(held().get(id)?.resolvedAt ?? 0)}
+                    </Meta>
+                  </>,
+                  'quiet',
+                )
+              }
+            </For>
+          </List>
+          {settled.controls()}
+        </Show>
+      </Show>
 
       {/* Answering an open ask: the box opens in the panel's place,
           and the pick is the agreement */}
       <CatchPicker
+        fill
         open={answering() != null}
         onClose={() => {
           setAnswering(null);
         }}
+        width="rail"
+        dock
         title={m.trade_answer_with()}
         description={m.trade_answer_description()}
         verb={m.trade_give()}

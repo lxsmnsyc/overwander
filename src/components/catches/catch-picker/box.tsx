@@ -20,6 +20,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
+  onCleanup,
   untrack,
 } from 'solid-js';
 import { isServer } from 'solid-js/web';
@@ -74,6 +75,8 @@ export default function PickerBox(
     remark?: string;
     onHandled: () => void;
     onDone: () => void;
+    /** Told the question a single pick asks twice, for a caller drawing it in its dock */
+    onAsk?: (asked: { name: string; answer: () => void } | null) => void;
   },
 ): JSX.Element {
   const auth = useAuth();
@@ -489,6 +492,27 @@ export default function PickerBox(
     return id == null ? undefined : optionById().get(id);
   });
 
+  // A caller that draws the question in its dock is told what is asked
+  // and how to answer it, and told again with nothing when it is cleared
+  createEffect(() => {
+    const asked = pendingOption();
+
+    props.onAsk?.(
+      asked == null
+        ? null
+        : {
+            name: describeCatch(asked.caught),
+            answer: () => {
+              pickOne(asked.id);
+            },
+          },
+    );
+  });
+
+  onCleanup(() => {
+    props.onAsk?.(null);
+  });
+
   const finish = (): void => {
     if (props.confirm === true && !confirming()) {
       setConfirming(true);
@@ -503,7 +527,7 @@ export default function PickerBox(
    * one empty row, to file into
    */
   const withGaps = (made: CatchGridEntry[]): (CatchGridEntry | BoxGap)[] => {
-    const columns = settings().boxColumns;
+    const columns = props.columns ?? settings().boxColumns;
     const laid: (CatchGridEntry | BoxGap)[] = [];
     let next = 0;
 
@@ -645,6 +669,7 @@ export default function PickerBox(
           that takes it. The bar is titled "Info" because the card
           under it already names the pokemon on its first line */}
       <CatchGrid
+        columns={props.columns}
         entries={entries()}
         aside={props.aside}
         lead={props.lead}
@@ -721,7 +746,7 @@ export default function PickerBox(
 
       {/* A single pick that asks twice does it here rather than in the
           square: there is no room under a sprite for a question */}
-      <Show when={pendingOption()}>
+      <Show when={props.dock !== true && pendingOption()}>
         {(asked) => (
           <div class="flex flex-col items-center gap-2">
             {/* What the second press is really agreeing to */}

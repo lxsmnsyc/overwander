@@ -15,8 +15,8 @@ import type { QuerySuggestion } from '../../../core/query';
  * are listbox options and not buttons
  */
 const OPTION =
-  'flex cursor-pointer items-baseline gap-2 rounded-lg px-2 py-1 text-sm' +
-  ' font-semibold transition-colors hover:bg-tide-soft';
+  'flex h-[38px] shrink-0 cursor-pointer items-center gap-2.5 rounded-button px-3 text-sm' +
+  ' font-extrabold transition-colors hover:bg-tide-soft';
 
 const ACTIVE = 'bg-tide-soft text-tide-dark';
 
@@ -68,7 +68,7 @@ export default function Offers(props: OffersProps): JSX.Element {
             <span class="truncate">{suggestion.label}</span>
             <Show when={suggestion.hint}>
               {(hint) => (
-                <span class="ml-auto truncate text-xs font-normal text-muted">{hint()}</span>
+                <span class="ml-auto truncate text-xs font-semibold text-muted">{hint()}</span>
               )}
             </Show>
           </li>

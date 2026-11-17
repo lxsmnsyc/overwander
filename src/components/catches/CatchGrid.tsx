@@ -6,6 +6,7 @@ import CatchBox, {
   type BoxGap,
   type BoxSquare,
   type BoxView,
+  type BoxWidth,
   type SquarePress,
   isGap,
 } from './CatchBox';
@@ -46,6 +47,10 @@ export interface CatchGridProps {
   numbered?: boolean;
   /** Whether the box takes the whole width, passed to the box */
   fill?: boolean;
+  /** How many squares are drawn, filled or not, where the caller knows better than the box */
+  capacity?: number;
+  /** Squares across, where the caller knows better than the box width setting */
+  columns?: BoxWidth;
   /**
    * How the squares in sight are said, over a box long enough to
    * scroll. One box scrolled rather than paged, so a pokemon can be
@@ -249,11 +254,13 @@ export default function CatchGrid(props: CatchGridProps): JSX.Element {
             onView={(spot) => {
               setView(spot);
             }}
-            columns={settings().boxColumns}
+            columns={props.columns ?? settings().boxColumns}
+            narrow={props.columns == null ? undefined : 6}
             onOpen={props.onOpen}
             onHold={props.onHold}
             numbered={props.numbered}
             fill={props.fill}
+            capacity={props.capacity}
             cardOnly={props.cardOnly}
             cell={props.cell}
             onDragStart={props.onDragStart}

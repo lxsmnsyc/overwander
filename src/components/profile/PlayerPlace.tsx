@@ -1,6 +1,6 @@
 import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import type { PositionRecord } from '../../model/position-record';
-import { Badge, Meta, Note, Row } from '../styled';
+import { Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
 import namePlace from '../../overworld/place';
 import { worldCell } from '../../overworld/grid';
@@ -32,19 +32,19 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
   return (
     <Show when={props.place()} fallback={<Note>{m.profile_not_walked()}</Note>}>
       {(at) => (
-        <Row>
-          <Badge tone="leaf">
+        <Row class="gap-x-1.5">
+          <Meta class="font-bold">
             {namePlace(
               at().chunkX,
               at().chunkY,
               worldCell(at().chunkX, at().cellX),
               worldCell(at().chunkY, at().cellY),
             )}
-          </Badge>
+          </Meta>
           {/* On a line of their own under the place on a phone. In flow
               rather than pushed to the far edge, where it crowded
               whatever stood to the card's right */}
-          <span class="flex flex-wrap items-center gap-2 max-sm:basis-full">
+          <span class="flex flex-wrap items-center gap-x-1.5 max-sm:basis-full">
             <Meta>{m.profile_cell({ x: at().cellX, y: at().cellY })}</Meta>
             <Meta>{m.profile_last_moved({ when: walked(at().movedAt) })}</Meta>
           </span>

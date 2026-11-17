@@ -8,7 +8,7 @@ import { m } from '../../i18n/paraglide/messages.js';
 /** Whoever the player is talking to */
 export interface Speaker {
   name: string;
-  /** Their face on the nameplate */
+  /** Their face, on the hero band's stage */
   portrait?: () => JSX.Element;
   /** What they open with, which stands until they say something else */
   greeting: string;
@@ -79,6 +79,8 @@ export function converse(
   const [step, setStep] = createSignal<Step>({ kind: 'wait' });
 
   let walked = false;
+  /** The width the box had at the last step that drew something */
+  let held: DialogWidth = 'medium';
   /** How the step being waited on is thrown out of, when the player leaves */
   let abandon: (() => void) | undefined;
 
@@ -156,7 +158,15 @@ export function converse(
     width: () => {
       const now = step();
 
-      return now.kind === 'form' ? now.width : undefined;
+      // A line said is medium; a form is wide, or what it asks for. A wait
+      // keeps the width of the step before it, so the box does not flicker
+      // between two answers
+      if (now.kind === 'say') {
+        held = 'medium';
+      } else if (now.kind === 'form') {
+        held = now.width ?? 'wide';
+      }
+      return held;
     },
     insistent: () => {
       const now = step();
@@ -167,18 +177,21 @@ export function converse(
       <Switch>
         <Match when={asSay(step())} keyed>
           {(now) => (
-            <DialogActions>
-              <Button tone="primary" onClick={now.next}>
-                {m.ui_next()}
-              </Button>
-              <Button
-                onClick={() => {
-                  walk(close);
-                }}
-              >
-                {m.ow_walk_on()}
-              </Button>
-            </DialogActions>
+            <>
+              <p class="m-0 text-center text-sm text-muted">{m.talk_say_waits()}</p>
+              <DialogActions stack>
+                <Button tone="primary" onClick={now.next}>
+                  {m.ui_next()}
+                </Button>
+                <Button
+                  onClick={() => {
+                    walk(close);
+                  }}
+                >
+                  {m.ow_walk_on()}
+                </Button>
+              </DialogActions>
+            </>
           )}
         </Match>
         {/* Keyed, so a form asked straight after another is drawn afresh */}

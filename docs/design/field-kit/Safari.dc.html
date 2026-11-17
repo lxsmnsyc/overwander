@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Safari</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+*{box-sizing:border-box}
+.backdrop{position:absolute;inset:0;background:#7CC36A;background-image:linear-gradient(rgba(0,0,0,.05) 2px,transparent 2px),linear-gradient(90deg,rgba(0,0,0,.05) 2px,transparent 2px);background-size:32px 32px}
+.veil{position:absolute;inset:0;background:rgba(11,18,34,.55)}
+.sheet{position:absolute;border-radius:24px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 6px 0 0 rgba(16,46,99,.3),0 28px 48px -18px rgba(20,32,58,.6);display:flex;flex-direction:column;animation:sheet 360ms cubic-bezier(.34,1.56,.64,1) both}
+@keyframes sheet{from{transform:translateY(40px) scale(.95);opacity:0}}
+@keyframes rise{from{transform:translateY(4px);opacity:0}}
+.plate{position:absolute;left:24px;top:-17px;height:34px;padding:0 16px 0 12px;border-radius:999px;background:#2360C8;color:#fff;display:flex;align-items:center;gap:8px;font-family:Fredoka,sans-serif;font-weight:600;font-size:18px;box-shadow:0 3px 0 0 #163F86;z-index:3}
+.btn{font-family:Nunito,sans-serif;font-weight:800;font-size:13px;border-radius:12px;border:2px solid #C3D2E8;background:#fff;color:#14203A;padding:0 14px;height:40px;box-shadow:0 3px 0 0 rgba(20,32,58,.2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms,border-color 140ms}
+.btn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.btn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.btn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 3px 0 0 #0F5430}
+.btn.danger{background:#fff;border-color:#D6372A;color:#B02A1F}
+.btn.blue{background:#2360C8;border-color:#163F86;color:#fff;box-shadow:0 3px 0 0 #163F86}
+.btn.on{background:#E3ECFA;border-color:#2360C8;color:#163F86}
+.btn.quiet{border-color:transparent;background:transparent;box-shadow:none}
+.btn.sq40{width:40px;padding:0}
+.btn[disabled]{opacity:.45;cursor:default;transform:none}
+.label{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F}
+.h{font-family:Fredoka,sans-serif;font-weight:600}
+.input{height:40px;border:2px solid #C3D2E8;border-radius:12px;background:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:13px;color:#52627F}
+.field{display:flex;flex-direction:column;gap:4px}
+.field .input{color:#14203A;font-size:14px}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:#E7EEF8;gap:2px}
+.seg .btn{height:34px}
+.term{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border-radius:999px;background:#E7EEF8;font-size:12px;font-weight:800;color:#14203A}
+.term i{font-style:normal;color:#52627F;font-weight:700}
+.term.gold{background:#FDF1D6;color:#8A5A00}
+.term.ember{background:#FCE3E0;color:#B02A1F}
+.term.leaf{background:#E3F3EA;color:#156B3D}
+.term.tide{background:#E3ECFA;color:#163F86}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}
+.pill.leaf{background:#E3F3EA;color:#156B3D}.pill.ember{background:#FCE3E0;color:#B02A1F}.pill.gold{background:#FDF1D6;color:#8A5A00}.pill.tide{background:#E3ECFA;color:#163F86}.pill.arcane{background:#EDE6FA;color:#4B2E9A}.pill.neutral{background:#E7EEF8;color:#52627F}
+.count{font-family:Fredoka,sans-serif;font-weight:600;font-size:12px;min-width:26px;height:22px;padding:0 6px;border-radius:999px;background:#E7EEF8;color:#52627F;display:inline-flex;align-items:center;justify-content:center}
+.count.hot{background:#D6372A;color:#fff}
+.rail{display:flex;flex-direction:column;gap:2px;padding:12px 10px 12px 14px;border-right:2px solid #E7EEF8;flex:0 0 auto}
+.rail .grp{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;padding:10px 10px 4px}
+.rail .grp:first-child{padding-top:2px}
+.ritem{display:flex;align-items:center;gap:10px;height:40px;padding:0 10px;border-radius:12px;border:2px solid transparent;font-size:14px;font-weight:800;cursor:pointer;background:transparent;font-family:Nunito,sans-serif;color:#14203A;text-align:left;width:100%}
+.ritem:hover{background:#F4F7FC}
+.ritem.current{border-color:#2360C8;background:#EEF4FC;color:#163F86}
+.ritem .count{margin-left:auto}
+.dot{width:22px;height:22px;border-radius:7px;flex:0 0 22px}
+.tile{display:flex;flex-direction:column;gap:2px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8}
+.tile b{font-family:Fredoka,sans-serif;font-weight:600;font-size:22px;line-height:1}
+.track{height:6px;border-radius:3px;background:#E7EEF8;overflow:hidden}
+.track span{display:block;height:100%;border-radius:3px;background:#1E8F52}
+.card{border:2px solid #E7EEF8;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px;animation:rise 280ms cubic-bezier(.2,.8,.2,1) both}
+.card h3{margin:0;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#52627F;display:flex;align-items:center;gap:8px}
+.row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:14px;border:2px solid #E7EEF8;background:#fff;min-height:52px}
+.row.sel{border-color:#1E8F52;background:#EAF6EF}
+.row.me{border-color:#1E8F52;background:#EAF6EF}
+.row.quiet{background:#F4F7FC}
+.grow{flex:1 1 auto;min-width:0}
+.name{font-weight:800;font-size:14px}
+.meta{font-size:12px;color:#52627F}
+.dock{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:2px solid #E7EEF8;flex:0 0 auto}
+.dock .note{font-size:13px;color:#52627F}
+.hint{width:28px;height:28px;border-radius:14px;border:2px solid #C3D2E8;color:#2360C8;font-weight:800;font-size:13px;display:inline-flex;align-items:center;justify-content:center;background:#fff;cursor:pointer}
+.sw{width:44px;height:26px;border-radius:13px;background:#C3D2E8;position:relative;flex:0 0 44px;cursor:pointer;border:0;padding:0;transition:background 240ms}
+.sw::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 0 rgba(20,32,58,.25);transition:transform 240ms cubic-bezier(.34,1.56,.64,1)}
+.sw.on{background:#1E8F52}.sw.on::after{transform:translateX(18px)}
+.opt{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;cursor:pointer;text-align:left;font-family:Nunito,sans-serif;color:#14203A}
+.opt:hover{border-color:#2360C8}
+.opt.on{border-color:#1E8F52;background:#EAF6EF}
+.mon{width:44px;height:44px;border-radius:14px;flex:0 0 44px}
+.face{width:40px;height:40px;border-radius:12px;flex:0 0 40px}
+.sqr{position:relative;height:72px;border-radius:12px;background:#fff;border:2px solid #C3D2E8;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform 140ms cubic-bezier(.34,1.56,.64,1),border-color 140ms}
+.sqr:hover{transform:translateY(-2px);border-color:#2360C8}
+.sqr.on{border-color:#1E8F52;background:#EAF6EF;box-shadow:0 0 0 3px #1E8F5233}
+.sqr .lv{position:absolute;left:5px;bottom:3px;font-family:Fredoka,sans-serif;font-weight:600;font-size:10px;color:#52627F}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.grid6{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:8px;border-radius:18px;border:4px solid #2360C8;background:#EEF4FC}
+.hero{position:relative;display:flex;gap:16px;align-items:center;padding:16px 18px;border-bottom:2px solid #E7EEF8;border-radius:22px 22px 0 0}
+.quote{font-style:italic;font-size:14px;color:#14203A;background:#fff;border:2px solid #E7EEF8;border-radius:14px;padding:8px 12px;position:relative}
+.boardchip{position:absolute;z-index:20;display:flex;gap:6px;align-items:center;padding:4px;border-radius:14px;background:rgba(255,255,255,.92);border:2px solid #C3D2E8}
+.boardchip .btn{height:30px;font-size:12px}
+.prop{outline:3px dashed #6E46C9;outline-offset:3px;border-radius:14px;position:relative}
+.proptag{position:absolute;right:6px;top:-12px;background:#6E46C9;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;z-index:4}
+.tip{position:absolute;z-index:5;border-radius:14px;background:#fff;border:2px solid #C3D2E8;box-shadow:0 4px 0 0 rgba(20,32,58,.18),0 18px 30px -18px rgba(20,32,58,.6);padding:10px 12px;display:flex;flex-direction:column;gap:6px;animation:rise 140ms cubic-bezier(.2,.8,.2,1) both}
+.scroll{overflow:hidden}
+.field{position:relative;height:250px;overflow:hidden;border-radius:22px 22px 0 0;background:linear-gradient(#9ED8F2,#D5EFFA 55%,#7CC36A 55%,#4E9B45)}
+.base{position:absolute;left:50%;bottom:40px;width:180px;height:40px;margin-left:-90px;border-radius:50%;background:#63AD52;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+.glass{background:rgba(255,255,255,.95);border:2px solid #C3D2E8;border-radius:14px;box-shadow:0 4px 0 0 rgba(20,32,58,.18);backdrop-filter:blur(4px)}
+.textbox{position:relative;z-index:2;margin:-26px 18px 0;padding:10px 14px;border-radius:14px;border:2px solid #C3D2E8;background:#fff;box-shadow:0 3px 0 0 rgba(20,32,58,.15);font-weight:800;font-size:14px}
+.tiles{display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:10px;padding:14px 18px 18px}
+.tiles.two{grid-template-columns:1fr 1fr}
+.tilebtn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:84px;border-radius:16px;border:2px solid #C3D2E8;background:#fff;box-shadow:0 4px 0 0 rgba(20,32,58,.2);font-family:Nunito,sans-serif;font-weight:800;font-size:16px;color:#14203A;cursor:pointer;transition:transform 90ms cubic-bezier(.2,.8,.2,1),box-shadow 90ms}
+.tilebtn:hover{border-color:#2360C8;transform:translateY(-1px)}
+.tilebtn:active{transform:translateY(3px) scale(.98,.94);box-shadow:none}
+.tilebtn small{font-size:11px;font-weight:700;color:#52627F}
+.tilebtn.go{background:#1E8F52;border-color:#156B3D;color:#fff;box-shadow:0 4px 0 0 #0F5430}
+.tilebtn.go small{color:rgba(255,255,255,.85)}
+.ball{width:40px;height:40px;border-radius:50%;background:linear-gradient(#E8504A 50%,#fff 50%);border:3px solid #14203A;position:relative}
+.ball::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:3px solid #14203A}
+</style>
+</helmet>
+<div style="position: relative; width: 1280px; height: 720px; overflow: hidden; font-family: Nunito, sans-serif; color: #14203A">
+<div class="backdrop"></div>
+<div class="veil"></div>
+<div class="boardchip" style="left: 16px; top: 12px"><span class="label" style="padding: 0 6px">State</span><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button class="{{ t.cls }}" onClick="{{ t.pick }}">{{ t.name }}</button></sc-for></div>
+
+<div class="sheet" style="left: 288px; top: 54px; width: 704px" role="dialog" aria-label="A wild Gligar appeared!">
+<div class="plate">A wild Gligar appeared!</div>
+<div class="field">
+<div class="base"></div>
+<div class="glass" style="position: absolute; left: 14px; top: 28px; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px">
+<span class="h" style="font-size: 16px">Gligar</span>
+<span style="display: flex; gap: 4px; flex-wrap: wrap"><span class="pill tide">Sitrus Berry</span><span class="pill ember">Ready to flee soon</span><span class="pill leaf">Hyper Cutter</span><span class="pill gold">Caught before</span></span>
+</div>
+<sc-if value="{{ standing }}" hint-placeholder-val="{{ true }}"><div style="position: absolute; left: 50%; bottom: 52px; width: 96px; height: 92px; margin-left: -48px; border-radius: 30px 30px 20px 20px; background: #7A63C9; box-shadow: inset 0 -12px 0 rgba(0,0,0,.15)"></div></sc-if>
+<sc-if value="{{ inBall }}" hint-placeholder-val="{{ false }}"><div style="position: absolute; left: 50%; bottom: 56px; margin-left: -30px; width: 60px; height: 60px"><div class="ball" style="width: 60px; height: 60px"></div></div></sc-if>
+</div>
+<p class="textbox" role="status">{{ said }}</p>
+
+<sc-if value="{{ showTiles }}" hint-placeholder-val="{{ true }}">
+<div class="tiles">
+<button class="tilebtn" style="color: #B02A1F"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>Run<small>Walk away</small></button>
+<button class="tilebtn go"><span style="display: flex; align-items: center; gap: 10px"><span class="ball" style="width: 28px; height: 28px; border-width: 2px"></span>Throw</span><small>Safari Ball × 18</small></button>
+<button class="tilebtn" onClick="{{ openBag }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 9h14l-1 11H6z"></path><path d="M9 9V7a3 3 0 0 1 6 0v2"></path></svg>Bag<small>Balls and treats</small></button>
+</div>
+</sc-if>
+<sc-if value="{{ showBag }}" hint-placeholder-val="{{ false }}">
+<div style="padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 10px">
+<div class="grid6">
+<sc-for list="{{ stuff }}" as="b" hint-placeholder-count="6"><div class="sqr" style="height: 62px"><span style="width: 30px; height: 30px; border-radius: {{ b.r }}; background: {{ b.c }}"></span><span style="position: absolute; right: 4px; bottom: 4px; min-width: 20px; height: 18px; padding: 0 5px; border-radius: 999px; background: #14203A; color: #fff; font-family: Fredoka, sans-serif; font-size: 11px; display: flex; align-items: center; justify-content: center">{{ b.n }}</span></div></sc-for>
+</div>
+<button class="tilebtn" style="height: 52px" onClick="{{ closeBag }}">Never mind</button>
+</div>
+</sc-if>
+<sc-if value="{{ endedCaught }}" hint-placeholder-val="{{ false }}">
+<div class="tiles two"><button class="tilebtn">Walk on</button><button class="tilebtn go">Have a look</button></div>
+</sc-if>
+<sc-if value="{{ endedFled }}" hint-placeholder-val="{{ false }}">
+<div class="tiles two" style="grid-template-columns: 1fr"><button class="tilebtn">Walk on</button></div>
+</sc-if>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":720}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { at: 0 }; }
+  renderVals() {
+    const s = this.state;
+    const names = ['Idle', 'Bag', 'Caught', 'Fled'];
+    const tabs = names.map((n, i) => ({ name: n, cls: i === s.at ? 'btn on' : 'btn quiet', pick: () => this.setState({ at: i }) }));
+    const said = ['What will you do?', 'What will you do?', 'Gotcha! Gligar was caught!', 'Gligar ran away!'][s.at];
+    return {
+      tabs, said,
+      standing: s.at < 2 || s.at === 3, inBall: s.at === 2,
+      showTiles: s.at === 0, showBag: s.at === 1, endedCaught: s.at === 2, endedFled: s.at === 3,
+      openBag: () => this.setState({ at: 1 }), closeBag: () => this.setState({ at: 0 }),
+      stuff: [['#E8504A', '50%', 18], ['#F7C969', '10px', 6], ['#36B26F', '10px', 3], ['#2360C8', '50%', 2], ['#F59A3B', '10px', 9], ['#E94B6A', '10px', 4]].map((x) => ({ c: x[0], r: x[1], n: x[2] })),
+    };
+  }
+}
+</script>
+</body>
+</html>

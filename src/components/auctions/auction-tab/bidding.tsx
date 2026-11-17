@@ -1,6 +1,8 @@
-import { type AuctionRecord, nextBid } from '../../../auth/auctions';
-import { Button, Dialog, DialogActions, Field, Meta, Row } from '../../styled';
-import { type JSX, createEffect, createSignal, on } from 'solid-js';
+import { type AuctionRecord, isBidOn, nextBid } from '../../../auth/auctions';
+import { Button, Dialog, DialogActions, List, Meta, Pill, RowCard, RowText } from '../../styled';
+import LotFace from '../LotFace';
+import { describeRemaining, now } from './time';
+import { type JSX, Show, createEffect, createSignal, on } from 'solid-js';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -50,6 +52,8 @@ export function BidDialog(props: {
    * see what they are naming it for
    */
   name?: string;
+  /** Who listed it, for the lot row at the top */
+  seller?: string;
   onClose: () => void;
   onBid: (amount: number) => void;
 }): JSX.Element {
@@ -87,29 +91,51 @@ export function BidDialog(props: {
     <Dialog
       isOpen={props.lot != null}
       onClose={props.onClose}
+      width="medium"
+      terse
       title={props.name == null ? m.auction_bid() : m.auction_bid_on({ name: props.name })}
       description={m.auction_bid_description()}
     >
-      <Row class="justify-center">
-        <Field label={m.auction_bid()}>
-          <input
-            type="number"
-            min={floor()}
-            max={props.gold}
-            value={amount()}
-            onInput={(event) => {
-              setNamed(Number(event.currentTarget.value));
-            }}
-          />
-        </Field>
-      </Row>
-      <Row class="justify-center">
+      {/* The lot being bid on, in a row of its own over the amount */}
+      <Show when={props.lot}>
+        {(lot) => (
+          <List>
+            <RowCard>
+              <LotFace auction={lot()} />
+              <RowText
+                name={props.name ?? m.auction_a_pokemon()}
+                line={m.auction_sold_by_line({
+                  seller: props.seller ?? m.auction_a_trainer(),
+                  remaining: describeRemaining(lot().endsAt, now()),
+                })}
+              />
+              <Pill tone="gold" size="medium">
+                {isBidOn(lot())
+                  ? m.auction_top_bid({ amount: formatNumber(lot().bid) })
+                  : m.auction_opens_at({ amount: formatNumber(lot().startingBid) })}
+              </Pill>
+            </RowCard>
+          </List>
+        )}
+      </Show>
+      <label class="flex flex-col gap-1">
+        <input
+          type="number"
+          aria-label={m.auction_your_bid()}
+          class="h-[46px] w-full text-base"
+          min={floor()}
+          max={props.gold}
+          value={amount()}
+          onInput={(event) => {
+            setNamed(Number(event.currentTarget.value));
+          }}
+        />
         <Meta>
           {m.auction_bid_meta({ floor: formatNumber(floor()), gold: formatNumber(props.gold) })}
         </Meta>
-      </Row>
+      </label>
 
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={amount() > props.gold}

@@ -17,18 +17,19 @@ import { listWaitingEncounters } from '../../auth/safari';
 import type { EncounterRecord } from '../../model/encounter-record';
 import { EncounterType } from '../../overworld/encounter/kinds';
 import { Genders } from '../../data/ids/species';
+import { formatMoment } from '../../i18n/format';
 import { getSpeciesData } from '../../data/species';
 import {
   Badge,
   Button,
-  Filter,
-  type FilterOption,
   LIST_PAGE,
   List,
   ListRow,
   Meta,
   Note,
-  Row,
+  RowButton,
+  Segmented,
+  type SegmentedOption,
   createPager,
   useToast,
 } from '../styled';
@@ -43,7 +44,7 @@ import { npcName } from '../../overworld/npcs';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import TeamStrip from '../catches/TeamStrip';
-import PlayerPlate, { PlayerFace } from '../profile/PlayerPlate';
+import { PlayerFace } from '../profile/PlayerPlate';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /** How each outcome reads, called when shown so it follows the locale */
@@ -62,18 +63,6 @@ const KIND_NAMES: Record<BattleKind, () => string> = {
 };
 
 /**
- * How a row is coloured by how it ended. The colour is the outcome's
- * whole appearance on the row, so the label rides along for the
- * screen reader and the row's own title
- */
-const OUTCOME_ROW_TONES: Record<BattleOutcome, 'leaf' | 'ember' | undefined> = {
-  [BattleOutcome.Unfinished]: undefined,
-  [BattleOutcome.Won]: 'leaf',
-  [BattleOutcome.Lost]: 'ember',
-  [BattleOutcome.Drawn]: undefined,
-};
-
-/**
  * The history unfiltered
  */
 const EVERY_KIND = 'all';
@@ -85,14 +74,14 @@ type KindFilter = BattleKind | typeof EVERY_KIND;
  * actually fought, in the order they were listed as kinds. A history
  * of nothing but raids offers nothing to filter
  */
-function listKinds(records: BattleRecord[]): FilterOption<KindFilter>[] {
+function listKinds(records: BattleRecord[]): SegmentedOption<KindFilter>[] {
   const fought = new Set<BattleKind>();
 
   for (const record of records) {
     fought.add(getBattleKind(record));
   }
 
-  const options: FilterOption<KindFilter>[] = [{ value: EVERY_KIND, label: m.history_all() }];
+  const options: SegmentedOption<KindFilter>[] = [{ value: EVERY_KIND, label: m.history_all() }];
 
   for (const kind of [BattleKind.Raid, BattleKind.Npc, BattleKind.Player]) {
     if (fought.has(kind)) {
@@ -169,26 +158,6 @@ async function loadFought(key: string): Promise<FoughtLine> {
   };
 }
 
-/** The other player, once the snapshots say who they were */
-function RivalPlate(props: {
-  fought: Resource<FoughtLine>;
-  onVisit: (uid: string) => void;
-}): JSX.Element {
-  return (
-    <Show when={props.fought()?.rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
-      {(rival) => (
-        <PlayerPlate
-          name={rival().name}
-          sprite={rival().sprite}
-          onOpen={() => {
-            props.onVisit(rival().uid);
-          }}
-        />
-      )}
-    </Show>
-  );
-}
-
 /** The owner's own frozen party, square for square */
 function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
   return <TeamStrip catches={props.fought()?.mine ?? []} />;
@@ -199,18 +168,103 @@ function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
  * what the owner of this history fielded — coloured by how it ended
  */
 /**
- * How large the challenger's face is drawn in a row. The raid's boss
- * beside it fills a square of 10, and a trainer in a round frame reads
- * smaller than a pokemon at the same width
+ * How large the challenger's face is drawn in a row: the board's 32px
+ * square, which a raid boss is fitted into as well
  */
-const NPC_FACE = 34;
+const NPC_FACE = 32;
 
-/** The plate's colours by how the fight ended, the way a row is tinted */
-const PLATE_TONES: Record<'leaf' | 'ember' | 'none', string> = {
-  leaf: 'border-leaf bg-leaf-soft',
-  ember: 'border-ember bg-ember-soft',
-  none: 'border-line bg-paper',
+/** How each outcome's pill is toned on the row */
+const VERDICT_TONES: Record<BattleOutcome, 'leaf' | 'ember' | 'neutral'> = {
+  [BattleOutcome.Unfinished]: 'neutral',
+  [BattleOutcome.Won]: 'leaf',
+  [BattleOutcome.Lost]: 'ember',
+  [BattleOutcome.Drawn]: 'neutral',
 };
+
+/** The other player's face, once the snapshots say who they were */
+function RivalFace(props: { fought: Resource<FoughtLine> }): JSX.Element {
+  return <PlayerFace sprite={props.fought()?.rival?.sprite} size={NPC_FACE} />;
+}
+
+/** The face of whoever the fight was against, in the square the board gives it */
+function OpponentFace(props: {
+  kind: BattleKind;
+  record: BattleRecord;
+  fought: Resource<FoughtLine>;
+}): JSX.Element {
+  return (
+    <Switch>
+      <Match when={props.kind === BattleKind.Raid}>
+        {/* Fitted to a square of its own rather than drawn at a
+            multiple of the sheet: a raid boss is whatever size its
+            sheet is, and one tall one stretched every row in the
+            list to its height */}
+        <span class="flex size-8 shrink-0 items-center justify-center">
+          <AnimatedSprite
+            species={props.record.species}
+            animation={SpriteAnim.Idle}
+            direction="DownLeft"
+            fill
+            label={getSpeciesData(props.record.species).name}
+          />
+        </span>
+      </Match>
+      <Match when={props.kind === BattleKind.Npc}>
+        <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
+      </Match>
+      <Match when={props.kind === BattleKind.Player}>
+        <Suspense fallback={<PlayerFace size={NPC_FACE} />}>
+          <RivalFace fought={props.fought} />
+        </Suspense>
+      </Match>
+    </Switch>
+  );
+}
+
+/** Who it was against, by name: a pokemon, a trainer, or a player whose profile opens */
+function OpponentName(props: {
+  kind: BattleKind;
+  record: BattleRecord;
+  fought: Resource<FoughtLine>;
+  onVisit: (uid: string) => void;
+}): JSX.Element {
+  return (
+    <Switch>
+      <Match when={props.kind === BattleKind.Raid}>
+        <span class="truncate text-sm font-extrabold">
+          {getSpeciesData(props.record.species).name}
+        </span>
+      </Match>
+      <Match when={props.kind === BattleKind.Npc}>
+        {/* Whoever was standing there, kept on the record: a stop
+            stages a grunt, a duelling trainer, a gym leader or the
+            Champion, and calling every one of them a grunt was the
+            history saying the same wrong thing about all of them.
+            A fight stored before the name was kept has none, and
+            falls back to what it used to say */}
+        <span class="truncate text-sm font-extrabold">
+          {props.record.opponent === '' ? npcName(Npc.RocketGrunt) : props.record.opponent}
+        </span>
+      </Match>
+      <Match when={props.kind === BattleKind.Player}>
+        <Suspense fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
+          <Show when={props.fought()?.rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
+            {(rival) => (
+              <RowButton
+                class="truncate text-left text-sm font-extrabold"
+                onClick={() => {
+                  props.onVisit(rival().uid);
+                }}
+              >
+                {rival().name}
+              </RowButton>
+            )}
+          </Show>
+        </Suspense>
+      </Match>
+    </Switch>
+  );
+}
 
 function HistoryRow(props: {
   id: string;
@@ -228,111 +282,81 @@ function HistoryRow(props: {
   const kind = (): BattleKind => getBattleKind(props.record);
 
   return (
-    // The team stands on its own, outside the plate, so a narrow row
-    // never squeezes it out of sight
+    // A row card: how it ended, who it was against and when, the
+    // owner's frozen team, then what can be done with the fight
     <li
-      class="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2"
-      title={OUTCOME_LABELS[props.record.outcome]()}
+      class="flex min-h-13 flex-wrap items-center gap-x-2.5 gap-y-1.5 rounded-card border-2
+        border-line-soft bg-paper px-3 py-2"
     >
-      <div class="w-full shrink-0 sm:w-80">
+      <Badge
+        tone={VERDICT_TONES[props.record.outcome]}
+        class="min-w-12 justify-center border-0 px-2 py-0 text-[11px]"
+      >
+        {OUTCOME_LABELS[props.record.outcome]()}
+      </Badge>
+      <OpponentFace kind={kind()} record={props.record} fought={fought} />
+      <div class="flex min-w-0 grow basis-40 flex-col">
+        <OpponentName
+          kind={kind()}
+          record={props.record}
+          fought={fought}
+          onVisit={(uid) => {
+            game.setVisiting(uid);
+          }}
+        />
+        <Meta>
+          {KIND_NAMES[kind()]()} · {formatMoment(props.record.startedAt)}
+        </Meta>
+      </div>
+      {/* The team stands on its own, so a narrow row never squeezes
+          it out of sight */}
+      <div class="w-full shrink-0 sm:w-72">
         <Suspense fallback={<Note>{m.history_reading_team()}</Note>}>
           <OwnStrip fought={fought} />
         </Suspense>
       </div>
-      <div
-        class={`flex min-w-0 grow flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border-2 px-3
-          py-2 text-sm shadow-pop-sm ${PLATE_TONES[OUTCOME_ROW_TONES[props.record.outcome] ?? 'none']}`}
+      <Show when={props.owes}>
+        <Button
+          tone="primary"
+          onClick={() => {
+            // The overworld meets it: the encounter derives from the
+            // raid's own chunk and window
+            game.setReward({ raid: props.record.raid });
+            game.setDialog(GameDialog.None);
+            props.onClaimed();
+          }}
+        >
+          {m.history_claim({ species: getSpeciesData(props.record.species).name })}
+        </Button>
+      </Show>
+      {/* Watching it back: the same fight again, with nothing at stake */}
+      <Button
+        class="h-[34px]"
+        onClick={() => {
+          game.setBattle({ id: props.id, replay: true });
+        }}
       >
-        {/* What the fight was, kept on one line */}
-        <span class="flex min-w-0 items-center gap-2">
-          <Badge>{KIND_NAMES[kind()]()}</Badge>
-          <Meta>{m.history_vs()}</Meta>
-          <Switch>
-            <Match when={kind() === BattleKind.Raid}>
-              <span class="flex items-center gap-1.5 font-medium">
-                {/* Fitted to a square of its own rather than drawn at a
-                  multiple of the sheet: a raid boss is whatever size its
-                  sheet is, and one tall one stretched every row in the
-                  list to its height */}
-                <span class="flex size-10 shrink-0 items-center justify-center">
-                  <AnimatedSprite
-                    species={props.record.species}
-                    animation={SpriteAnim.Idle}
-                    direction="DownLeft"
-                    fill
-                    label={getSpeciesData(props.record.species).name}
-                  />
-                </span>
-                {getSpeciesData(props.record.species).name}
-              </span>
-            </Match>
-            <Match when={kind() === BattleKind.Npc}>
-              {/* Whoever was standing there, kept on the record: a stop
-                stages a grunt, a duelling trainer, a gym leader or the
-                Champion, and calling every one of them a grunt was the
-                history saying the same wrong thing about all of them.
-                A fight stored before the name was kept has none, and
-                falls back to what it used to say */}
-              <span class="flex items-center gap-1.5 font-medium">
-                <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
-                {props.record.opponent === '' ? npcName(Npc.RocketGrunt) : props.record.opponent}
-              </span>
-            </Match>
-            <Match when={kind() === BattleKind.Player}>
-              <Suspense fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
-                <RivalPlate
-                  fought={fought}
-                  onVisit={(uid) => {
-                    game.setVisiting(uid);
-                  }}
-                />
-              </Suspense>
-            </Match>
-          </Switch>
-        </span>
-        <Show when={props.owes}>
-          <Button
-            class="order-last sm:order-none"
-            tone="primary"
-            onClick={() => {
-              // The overworld meets it: the encounter derives from the
-              // raid's own chunk and window
-              game.setReward({ raid: props.record.raid });
-              game.setDialog(GameDialog.None);
-              props.onClaimed();
-            }}
-          >
-            {m.history_claim({ species: getSpeciesData(props.record.species).name })}
-          </Button>
-        </Show>
-        <span class="grow" />
-        {/* Watching it back, from the row's end: the same fight again, with nothing at stake */}
-        <Button
-          label={m.history_watch_replay()}
-          title={m.history_watch_replay()}
-          onClick={() => {
-            game.setBattle({ id: props.id, replay: true });
-          }}
-        >
-          <PlayIcon class="size-5" aria-hidden="true" />
-        </Button>
-        <Button
-          label={m.history_copy_link_label()}
-          title={m.history_copy_link()}
-          onClick={() => {
-            navigator.clipboard
-              .writeText(`${location.origin}/battle/${props.id}`)
-              .then(() => {
-                toast.push({ message: m.history_link_copied(), tone: 'leaf' });
-              })
-              .catch(() => {
-                toast.push({ message: m.history_link_failed(), tone: 'ember' });
-              });
-          }}
-        >
-          <ShareIcon class="size-5" aria-hidden="true" />
-        </Button>
-      </div>
+        <PlayIcon class="size-4" aria-hidden="true" />
+        {m.history_watch_replay()}
+      </Button>
+      <Button
+        tone="quiet"
+        class="h-[34px]"
+        label={m.history_copy_link_label()}
+        onClick={() => {
+          navigator.clipboard
+            .writeText(`${location.origin}/battle/${props.id}`)
+            .then(() => {
+              toast.push({ message: m.history_link_copied(), tone: 'leaf' });
+            })
+            .catch(() => {
+              toast.push({ message: m.history_link_failed(), tone: 'ember' });
+            });
+        }}
+      >
+        <ShareIcon class="size-4" aria-hidden="true" />
+        {m.history_copy_link()}
+      </Button>
     </li>
   );
 }
@@ -434,7 +458,7 @@ function BattleList(
    */
   const [kind, setKind] = createSignal<KindFilter>(EVERY_KIND);
 
-  const kinds = (): FilterOption<KindFilter>[] => {
+  const kinds = (): SegmentedOption<KindFilter>[] => {
     const records: BattleRecord[] = [];
 
     for (const [, record] of battles() ?? []) {
@@ -476,10 +500,11 @@ function BattleList(
   return (
     <Show when={battles()} fallback={<Note>{m.history_loading()}</Note>}>
       <Show when={battles()?.length} fallback={<Note>{m.history_none()}</Note>}>
-        {/* Nothing to narrow while every fight was the same kind */}
-        <Show when={kinds().length > 2}>
-          <Row class="mb-3">
-            <Filter
+        {/* Nothing to narrow while every fight was the same kind; the count
+            of what was fought stands at the row's end either way */}
+        <div class="flex flex-wrap items-center gap-2.5">
+          <Show when={kinds().length > 2}>
+            <Segmented
               label={m.history_kind()}
               value={only()}
               options={kinds()}
@@ -487,8 +512,10 @@ function BattleList(
                 setKind(picked);
               }}
             />
-          </Row>
-        </Show>
+          </Show>
+          <span class="grow" />
+          <Meta>{m.history_fought({ count: battles()?.length ?? 0 })}</Meta>
+        </div>
 
         <Show when={shown().length} fallback={<Note>{m.history_none_of_kind()}</Note>}>
           <List>

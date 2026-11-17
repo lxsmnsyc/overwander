@@ -45,6 +45,10 @@ interface ComboboxBaseProps<V> {
   error?: string;
   required?: boolean;
   disabled?: boolean;
+  /** The word above is the label face, small capitals */
+  labelFace?: boolean;
+  /** A 44px box, for a form that stands alone on its screen */
+  tall?: boolean;
   class?: string;
 }
 
@@ -145,7 +149,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
       aria-describedby={parts.describedBy}
       aria-invalid={props.error == null ? undefined : true}
       aria-required={props.required}
-      class={`w-full ${props.error == null ? '' : 'border-ember'}`}
+      class={`w-full ${props.tall === true ? 'h-11' : ''} ${props.error == null ? '' : 'border-ember'}`}
     />
   );
 
@@ -264,6 +268,7 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
       hint={props.hint}
       error={props.error}
       required={props.required}
+      labelFace={props.labelFace}
       class={props.class}
     >
       {(parts) => (

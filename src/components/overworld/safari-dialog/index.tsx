@@ -1,6 +1,5 @@
-import type { PlayerIdentity } from '../../auth/user';
+import type { PlayerIdentity } from '../../../auth/user';
 import {
-  For,
   type JSX,
   type Resource,
   Show,
@@ -11,101 +10,32 @@ import {
   createSignal,
   on,
 } from 'solid-js';
-import { type InventoryEntry, getInventory } from '../../auth/inventory';
-import type { EncounterRecord } from '../../model/encounter-record';
-import { feedEncounter, throwBall } from '../../auth/safari';
-import { BALL_ITEMS, Balls, type Items, getBall } from '../../data/ids/items';
-import { Genders } from '../../data/ids/species';
-import { isShadow, isShiny } from '../../model/caught-record';
-import { getSpeciesData } from '../../data/species';
-import type SafariSession from '../../overworld/safari';
-import { FEED_CATCH_BONUS, SafariState, ThrowResult, describeFlight } from '../../overworld/safari';
-import { describeAbility, describeItem } from '../details';
-import playEffect, { Effect, playEffectAfter } from '../app/sound';
-import InventoryPicker from '../items/InventoryPicker';
-import ItemSprite from '../items/ItemSprite';
-import AnimatedSprite from '../sprites/AnimatedSprite';
-import { ArrowLeftIcon, BagIcon, FireIcon, SparklesIcon } from '../icons';
-import { getSpeciesDexEntry } from '../../auth/pokedex';
-import { Badge, Dialog, Status, useToast } from '../styled';
-import { SpriteAnim } from '../../data/ids/sprite-anims';
-import settings, { setSetting } from '../app/settings';
-import { failed, readable } from '../app/resource-reads';
-import describeFailure from '../../i18n/refusals';
-import { m } from '../../i18n/paraglide/messages.js';
-
-/** One command in the safari's menu: a chunky tile on a hard drop */
-const TILE =
-  'flex cursor-pointer flex-col items-center justify-center gap-0.5 rounded-2xl border-2' +
-  ' border-line bg-paper px-1.5 py-2 text-sm font-extrabold text-ink shadow-[0_4px_0_0_var(--drop)]' +
-  ' transition-transform active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55';
-
-/** The throw, which is the tile pressed most */
-const TILE_PRIMARY = 'border-black/25 bg-tide text-on-accent shadow-[0_4px_0_0_rgb(0_0_0/0.25)]';
-
-/** The small line under a tile's word */
-const TILE_NOTE = 'text-[10.5px] font-bold text-muted';
-
-/**
- * Whether the item is something the encounter would eat
- */
-function isTreat(item: Items): boolean {
-  return FEED_CATCH_BONUS[item] != null;
-}
-
-/**
- * How a gender is shown beside a level. Something genderless says
- * nothing rather than saying so: an empty column is not information
- */
-const GENDER_MARKS: Record<Genders, string> = {
-  [Genders.Genderless]: '',
-  [Genders.Male]: '♂',
-  [Genders.Female]: '♀',
-};
-
-const THROW_MESSAGES: Record<ThrowResult, () => string> = {
-  [ThrowResult.Caught]: m.safari_throw_caught,
-  [ThrowResult.BrokeFree]: m.safari_throw_broke_free,
-  [ThrowResult.Fled]: m.safari_throw_fled,
-};
-
-/**
- * How large the ball on the throw button is drawn. It is the label
- * rather than a decoration beside one now — the button no longer
- * spells out what is in hand — so it is drawn at a size that can be
- * told from the other balls at a glance
- */
-/** How large the held item is drawn in its badge */
-const HELD_SPRITE = 16;
-
-const THROW_SPRITE = 28;
-
-/** How large the thrown ball is drawn where the pokemon was standing */
-const BALL_SPRITE = 48;
-
-/**
- * How long the ball takes to land, how long one shake of it takes, how
- * long it lies still between shakes, and the beat it is left still
- * before the answer is said.
- *
- * Most of it runs while the catch is being written down, so the player
- * waits little longer than they already do: what changes is that the
- * wait is the ball rocking rather than a static sprite.
- *
- * A shake and the rest after it are one iteration of the keyframes, so
- * the two are split there in the same 2/3 to 1/3 they are here
- */
-const BALL_LAND = 260;
-const BALL_SHAKE = 400;
-const BALL_REST = 200;
-const BALL_SETTLE = 320;
-
-const STATE_MESSAGES: Record<SafariState, () => string> = {
-  [SafariState.Active]: () => '',
-  [SafariState.Caught]: m.safari_state_caught,
-  [SafariState.Fled]: m.safari_state_fled,
-  [SafariState.Exited]: m.safari_state_exited,
-};
+import { type InventoryEntry, getInventory } from '../../../auth/inventory';
+import type { EncounterRecord } from '../../../model/encounter-record';
+import { feedEncounter, throwBall } from '../../../auth/safari';
+import { BALL_ITEMS, Balls, type Items, getBall } from '../../../data/ids/items';
+import { isShiny } from '../../../model/caught-record';
+import type SafariSession from '../../../overworld/safari';
+import { SafariState, ThrowResult } from '../../../overworld/safari';
+import { describeItem } from '../../details';
+import playEffect, { Effect, playEffectAfter } from '../../app/sound';
+import { getSpeciesDexEntry } from '../../../auth/pokedex';
+import { Dialog, Status, useToast } from '../../styled';
+import settings, { setSetting } from '../../app/settings';
+import { failed, readable } from '../../app/resource-reads';
+import describeFailure from '../../../i18n/refusals';
+import { m } from '../../../i18n/paraglide/messages.js';
+import Commands from './commands';
+import Field from './field';
+import { appeared } from './met';
+import {
+  BALL_LAND,
+  BALL_REST,
+  BALL_SETTLE,
+  BALL_SHAKE,
+  STATE_MESSAGES,
+  THROW_MESSAGES,
+} from './metrics';
 
 export interface SafariDialogProps {
   user: PlayerIdentity;
@@ -557,52 +487,6 @@ function SafariBody(
   };
 
   /**
-   * What is standing there, as the dialog is named after it: the
-   * species, the level and — for anything that has one — its gender.
-   *
-   * That is deliberately all of it. What the sheet would say about a
-   * caught pokemon, and what the odds behind the next throw are, is
-   * not shown: a player deciding whether this one is worth the balls
-   * should be looking at the pokemon rather than at a table. A shiny
-   * is still marked, with the same sparkles the box and the sheet mark
-   * one by, since the sprite alone leaves it to be noticed
-   */
-  const met = (): JSX.Element => {
-    const active = session();
-
-    if (active == null) {
-      return m.safari_encounter();
-    }
-    const { encounter } = active;
-    // Caught before, the level, the marks, then the name and its gender
-    return (
-      <span class="inline-flex items-center justify-center gap-1.5">
-        {/* Latest rather than read, so the heading never waits on the dex */}
-        <Show when={props.owned.latest === true}>
-          {/* The ball fills 18 of its 32-pixel cell, so the cell is drawn at 28 to bring
-              the ball up to the icons beside it, and pulled in so the line keeps their height */}
-          <ItemSprite item={BALL_ITEMS[Balls.PokeBall]} size={28} label="" class="-m-1.5" />
-          <span class="sr-only">{m.safari_caught_before()}</span>
-        </Show>
-        <span>{m.ow_level({ level: encounter.level })}</span>
-        <Show when={isShiny(encounter)}>
-          {/* The bar's own white rather than gold, which barely shows on
-              the blue. The word is what a screen reader hears */}
-          <SparklesIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">{m.safari_shiny()}</span>
-        </Show>
-        <Show when={isShadow(encounter)}>
-          <FireIcon aria-hidden="true" class="size-4 shrink-0" />
-          <span class="sr-only">{m.safari_shadow()}</span>
-        </Show>
-        <span>
-          {`${getSpeciesData(encounter.species).name} ${GENDER_MARKS[encounter.gender]}`.trimEnd()}
-        </span>
-      </span>
-    );
-  };
-
-  /**
    * Done looking at what was caught: the sheet takes it from here, and
    * the encounter is over either way
    */
@@ -651,11 +535,35 @@ function SafariBody(
       // ball is rocking, the answer is on its way, and leaving mid
       // throw settles the session under it
       insistent={props.insistent === true || throwing()}
-      // Named by the box on the field rather than a nameplate: this is
-      // a battle screen, and the pokemon's own box is its heading
-      quiet
-      title={met()}
+      // The nameplate says who has appeared; the field is the sheet's top,
+      // and the line under the title is for the screen reader alone
+      terse
+      width="wide"
+      title={appeared(session()?.encounter ?? null)}
       description={m.safari_description()}
+      hero={
+        <Show when={session()}>
+          {(held) => {
+            // Show only hands on a new object, and the session is mutated
+            // in place, so each read also follows the nudge that says it changed
+            const active = (): SafariSession<EncounterRecord> => {
+              revision();
+              return held();
+            };
+
+            return (
+              <Field
+                session={active()}
+                owned={props.owned.latest === true}
+                rocking={rocking()}
+                revealsHeld={props.revealsHeld}
+                revealsFlight={props.revealsFlight}
+                revealsAbility={props.revealsAbility}
+              />
+            );
+          }}
+        </Show>
+      }
     >
       <Show when={session()}>
         {(held) => {
@@ -668,217 +576,36 @@ function SafariBody(
 
           return (
             <>
-              {/* The field: sky over grass, and the pokemon on its base.
-                Its height is held whatever stands on it, so a throw
-                never moves the controls out from under the finger */}
-              <div
-                class="relative -mx-4 -mt-4 h-60 overflow-hidden rounded-t-[20px] sm:-mx-5 sm:-mt-5"
-                style={{
-                  background:
-                    'linear-gradient(var(--field-sky), var(--field-haze) 55%, var(--field-grass) 55%, var(--field-grass-deep))',
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  class="absolute bottom-8 left-1/2 h-9 w-40 -translate-x-1/2 rounded-[50%]
-                  shadow-[inset_0_-5px_0_rgb(0_0_0/0.15)]"
-                  style={{ background: 'var(--field-base)' }}
-                />
-                {/* The pokemon's box, the way a battle names who is standing there */}
-                <div
-                  class="absolute top-3 left-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-col gap-1
-                  rounded-xl border-2 border-line bg-paper px-2.5 py-1.5 text-sm font-extrabold
-                  shadow-pop"
-                >
-                  {met()}
-                  <Show
-                    when={
-                      (props.revealsHeld === true && active().encounter.items.length > 0) ||
-                      props.revealsFlight === true ||
-                      props.revealsAbility === true
-                    }
-                  >
-                    <span class="flex flex-wrap gap-1">
-                      <Show when={props.revealsHeld === true}>
-                        <For each={active().encounter.items}>
-                          {(item) => (
-                            <Badge tone="tide">
-                              <ItemSprite item={item} size={HELD_SPRITE} label="" />
-                              {describeItem(item)}
-                            </Badge>
-                          )}
-                        </For>
-                      </Show>
-                      {/* What a Forewarn buddy passes on: how ready it is to be gone */}
-                      <Show when={props.revealsFlight === true}>
-                        <Badge tone="ember">{describeFlight(active().getFleeChance())}</Badge>
-                      </Show>
-                      {/* And what a Trace buddy reads off it */}
-                      <Show when={props.revealsAbility === true}>
-                        <Badge tone="leaf">{describeAbility(active().encounter.ability)}</Badge>
-                      </Show>
-                    </span>
-                  </Show>
-                </div>
-                <div class="absolute inset-x-0 top-4 bottom-12 flex items-end justify-center">
-                  {/* The ball stands where the pokemon did while it rocks:
-                    what is inside the ball is not also in the field */}
-                  <Show
-                    when={rocking() != null}
-                    fallback={
-                      // Fitted to a square as tall as the field, as the catch
-                      // sheet does, so a tall species shrinks rather than crops
-                      <div class="relative flex aspect-square h-full max-w-full items-end justify-center">
-                        <AnimatedSprite
-                          species={active().encounter.species}
-                          shiny={isShiny(active().encounter)}
-                          female={active().encounter.gender === Genders.Female}
-                          sparkle={isShiny(active().encounter)}
-                          aura={isShadow(active().encounter) ? 'shadow' : undefined}
-                          animation={SpriteAnim.Idle}
-                          direction="Down"
-                          fill
-                          sized
-                          label={m.safari_standing({
-                            name: getSpeciesData(active().encounter.species).name,
-                          })}
-                        />
-                      </div>
-                    }
-                  >
-                    <span
-                      class="block pb-2"
-                      style={{ animation: `ball-land ${BALL_LAND}ms ease-out both` }}
-                    >
-                      <span
-                        class="block"
-                        style={{
-                          animation: `ball-shake ${BALL_SHAKE + BALL_REST}ms ease-in-out ${BALL_LAND}ms ${rocking() ?? 0} both`,
-                        }}
-                      >
-                        <ItemSprite
-                          item={BALL_ITEMS[active().ball]}
-                          size={BALL_SPRITE}
-                          label={
-                            active().state === SafariState.Caught
-                              ? m.safari_ball_holds()
-                              : m.safari_ball_rocks()
-                          }
-                        />
-                      </span>
-                    </span>
-                  </Show>
-                </div>
-              </div>
-
               {/* The textbox: what happened, said where the player is looking */}
               <p
-                class="relative z-10 -mt-7 mb-0 rounded-xl border-2 border-line bg-paper px-3 py-2
-                text-sm font-bold shadow-pop"
+                class="relative z-10 -mt-7 mb-0 rounded-[14px] border-2 border-line bg-paper px-3.5
+                py-2.5 text-sm font-extrabold shadow-rest"
                 role="status"
               >
                 {narration()}
               </p>
               <Status message={failed(props.bag)} />
 
-              <Show
-                when={active().state === SafariState.Active}
-                fallback={
-                  <div class="grid grid-cols-2 gap-2">
-                    <Show
-                      when={caught()}
-                      fallback={
-                        <button type="button" class={`${TILE} col-span-2`} onClick={leave}>
-                          {m.ow_walk_on()}
-                        </button>
-                      }
-                    >
-                      <button type="button" class={TILE} onClick={leave}>
-                        {m.ow_walk_on()}
-                      </button>
-                      <button type="button" class={`${TILE} ${TILE_PRIMARY}`} onClick={openSheet}>
-                        {m.safari_have_a_look()}
-                      </button>
-                    </Show>
-                  </div>
-                }
-              >
-                <Show
-                  when={rummaging()}
-                  fallback={
-                    // The command menu: the way out on the left, as a dock has it, then the throw and the bag
-                    <div class="grid grid-cols-[1fr_1.4fr_1fr] gap-2">
-                      <button
-                        type="button"
-                        class={`${TILE} text-ember-dark`}
-                        disabled={throwing()}
-                        onClick={leave}
-                      >
-                        <ArrowLeftIcon class="size-5" aria-hidden="true" />
-                        {m.safari_run()}
-                        <span class={TILE_NOTE}>{m.safari_walk_away()}</span>
-                      </button>
-                      {/* The ball in hand is the label: it is the one thing
-                        checked between every throw */}
-                      <button
-                        type="button"
-                        class={`${TILE} ${TILE_PRIMARY}`}
-                        disabled={throwing() || stockOf(inHand()) === 0}
-                        aria-label={m.safari_throw_label({
-                          item: describeItem(inHand()),
-                          count: stockOf(inHand()),
-                        })}
-                        onClick={hurl}
-                      >
-                        <ItemSprite item={inHand()} size={THROW_SPRITE} label="" class="-my-1" />
-                        {m.safari_throw()}
-                        <span class={`${TILE_NOTE} text-on-accent/85`}>
-                          {describeItem(inHand())} × {stockOf(inHand())}
-                        </span>
-                      </button>
-                      <button
-                        type="button"
-                        class={TILE}
-                        disabled={throwing()}
-                        onClick={() => {
-                          setRummaging(true);
-                        }}
-                      >
-                        <BagIcon class="size-5" aria-hidden="true" />
-                        {m.safari_bag()}
-                        <span class={TILE_NOTE}>{m.safari_bag_note()}</span>
-                      </button>
-                    </div>
-                  }
-                >
-                  {/* Balls and treats only, and no treat while it is
-                    still chewing the last one */}
-                  <InventoryPicker
-                    inline
-                    player={props.user.uid}
-                    value={inHand()}
-                    empty={m.safari_bag_empty()}
-                    filter={(entry) =>
-                      getBall(entry.item) != null || (isTreat(entry.item) && active().canFeed())
-                    }
-                    entries={readable(props.bag)}
-                    onPick={(item) => {
-                      if (item != null) {
-                        take(item);
-                      }
-                    }}
-                  />
-                  <button
-                    type="button"
-                    class={TILE}
-                    onClick={() => {
-                      setRummaging(false);
-                    }}
-                  >
-                    {m.safari_never_mind()}
-                  </button>
-                </Show>
-              </Show>
+              <Commands
+                session={active()}
+                player={props.user.uid}
+                entries={readable(props.bag)}
+                inHand={inHand()}
+                stockOf={stockOf}
+                throwing={throwing()}
+                rummaging={rummaging()}
+                caught={caught()}
+                onLeave={leave}
+                onThrow={hurl}
+                onOpenBag={() => {
+                  setRummaging(true);
+                }}
+                onCloseBag={() => {
+                  setRummaging(false);
+                }}
+                onTake={take}
+                onLook={openSheet}
+              />
             </>
           );
         }}

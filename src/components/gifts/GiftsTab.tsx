@@ -34,19 +34,7 @@ import CatchGrid, { type CatchGridEntry } from '../catches/CatchGrid';
 import ItemGrid, { type ItemCell } from '../items/ItemGrid';
 import { describeItem } from '../details';
 import playEffect, { Effect } from '../app/sound';
-import {
-  Badge,
-  Button,
-  HoverCard,
-  Meta,
-  Note,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
-  type ToastTone,
-  useToast,
-} from '../styled';
+import { Button, HoverCard, Meta, Note, Segmented, type ToastTone, useToast } from '../styled';
 import describeGiftReason from '../../i18n/gift-reasons';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -396,6 +384,9 @@ function GiftShelf(props: {
   /** A box of waiting pokemon, with the card over each square where the taking happens */
   const box = (entries: CatchGridEntry[]): JSX.Element => (
     <CatchGrid
+      columns={6}
+      // Room round each one: six across, and only the rows the gifts fill
+      capacity={Math.max(1, Math.ceil(entries.length / 6)) * 6}
       entries={entries}
       // The card carries one button, so the square presses it too; a
       // visited shelf has nothing to press anywhere
@@ -404,6 +395,7 @@ function GiftShelf(props: {
       cell={(entry) => (
         <HoverCard
           class="block size-full"
+          sheet
           trigger={<span class="block size-full" />}
           title={m.gifts_card_title()}
           kind={m.gifts_mystery_gift()}
@@ -439,16 +431,6 @@ function GiftShelf(props: {
     />
   );
 
-  /** A tab's name, with how many are on it */
-  const counted = (name: string, count: number): JSX.Element => (
-    <>
-      {name}
-      <Show when={count > 0}>
-        <Badge class="ml-1.5">{count}</Badge>
-      </Show>
-    </>
-  );
-
   /**
    * The tab picked, or null until one is. Until then it is the first tab
    * with something on it, which is only known once the shelf has arrived
@@ -464,27 +446,34 @@ function GiftShelf(props: {
     return meetings().length > 0 ? GiftView.Encounters : GiftView.Catches;
   };
 
+  const view = (): GiftView => picked() ?? first();
+
   return (
-    <TabGroup
-      horizontal
-      value={picked() ?? first()}
-      onChange={(value) => {
-        setPicked(value);
-      }}
-      class="flex flex-col gap-3"
-    >
-      <TabBar>
-        <TabButton value={GiftView.Catches}>
-          {counted(m.gifts_tab_catches(), handed().length)}
-        </TabButton>
-        <TabButton value={GiftView.Items}>
-          {counted(m.gifts_tab_items(), things().length)}
-        </TabButton>
-        <TabButton value={GiftView.Encounters}>
-          {counted(m.gifts_tab_encounters(), meetings().length)}
-        </TabButton>
-      </TabBar>
-      <TabPane value={GiftView.Catches}>
+    <div class="flex flex-col gap-3">
+      {/* The three shelves on one track with their counts, and what to do about them at its right */}
+      <div class="flex flex-wrap items-center gap-2.5">
+        <Segmented
+          label={m.panel_gifts()}
+          value={view()}
+          options={[
+            { value: GiftView.Catches, label: m.gifts_tab_catches(), count: handed().length },
+            { value: GiftView.Items, label: m.gifts_tab_items(), count: things().length },
+            {
+              value: GiftView.Encounters,
+              label: m.gifts_tab_encounters(),
+              count: meetings().length,
+            },
+          ]}
+          onChange={(value) => {
+            setPicked(value);
+          }}
+        />
+        <span class="grow" />
+        <Show when={props.viewOnly !== true}>
+          <Meta class="max-w-md">{m.gifts_head_note()}</Meta>
+        </Show>
+      </div>
+      <Show when={view() === GiftView.Catches}>
         <Show
           when={handed().length > 0}
           fallback={
@@ -495,18 +484,18 @@ function GiftShelf(props: {
         >
           {box(handed())}
         </Show>
-      </TabPane>
-      <TabPane value={GiftView.Items}>
+      </Show>
+      <Show when={view() === GiftView.Items}>
         <Show
           when={things().length > 0}
           fallback={
             <Note class="text-center">{emptily(m.gifts_offered_items, m.gifts_waiting_items)}</Note>
           }
         >
-          <ItemGrid entries={itemCells()} />
+          <ItemGrid sheet fill columns={8} entries={itemCells()} />
         </Show>
-      </TabPane>
-      <TabPane value={GiftView.Encounters}>
+      </Show>
+      <Show when={view() === GiftView.Encounters}>
         <Show
           when={meetings().length > 0}
           fallback={
@@ -517,8 +506,8 @@ function GiftShelf(props: {
         >
           {box(meetings())}
         </Show>
-      </TabPane>
-    </TabGroup>
+      </Show>
+    </div>
   );
 }
 

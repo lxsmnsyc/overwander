@@ -45,6 +45,10 @@ export interface TextFieldProps {
   onEnter?: () => void;
   /** Whether the label is read but not drawn (see `FieldFrame`) */
   quietLabel?: boolean;
+  /** The word above is the label face, small capitals */
+  labelFace?: boolean;
+  /** A 44px box, for a form that stands alone on its screen */
+  tall?: boolean;
   /** A mark drawn inside the box at its start, such as a magnifier on a search */
   leading?: JSX.Element;
   class?: string;
@@ -61,6 +65,7 @@ export default function TextField(props: TextFieldProps): JSX.Element {
       error={props.error}
       required={props.required}
       quietLabel={props.quietLabel}
+      labelFace={props.labelFace}
       class={props.class}
     >
       {(parts) => (
@@ -82,7 +87,7 @@ export default function TextField(props: TextFieldProps): JSX.Element {
             aria-describedby={parts.describedBy}
             aria-invalid={props.error == null ? undefined : true}
             aria-required={props.required}
-            class={`w-full ${props.leading == null ? '' : 'pl-8'} ${props.error == null ? '' : WRONG}`}
+            class={`w-full ${props.tall === true ? 'h-11 text-sm' : ''} ${props.leading == null ? '' : 'pl-8'} ${props.error == null ? '' : WRONG}`}
             onInput={(event) => {
               props.onChange(event.currentTarget.value);
             }}

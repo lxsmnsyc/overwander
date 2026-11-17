@@ -37,6 +37,10 @@ export interface RadioGroupProps<V> {
    * each a thing (a stat, an ability) rather than a setting
    */
   cards?: boolean;
+  /** How many cards stand across from `sm` up, where the default is two */
+  columns?: 2 | 3;
+  /** The group's name in the row's own voice (ink, bold) rather than as a muted caption */
+  named?: boolean;
 }
 
 const OPTION =
@@ -72,8 +76,18 @@ export default function RadioGroupField<V>(props: RadioGroupProps<V>): JSX.Eleme
       }}
       class={`flex flex-col gap-1 ${props.class ?? ''}`}
     >
-      <RadioGroupLabel class="text-sm font-semibold text-muted">{props.label}</RadioGroupLabel>
-      <div class={props.cards === true ? 'grid gap-2 sm:grid-cols-2' : 'flex flex-col gap-2'}>
+      <RadioGroupLabel
+        class={props.named === true ? 'text-sm font-extrabold' : 'text-sm font-semibold text-muted'}
+      >
+        {props.label}
+      </RadioGroupLabel>
+      <div
+        class={
+          props.cards === true
+            ? `grid gap-2 ${props.columns === 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2'}`
+            : 'flex flex-col gap-2'
+        }
+      >
         <For each={props.options}>
           {(option) => (
             <RadioGroupOption

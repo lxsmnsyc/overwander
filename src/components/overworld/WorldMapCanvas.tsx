@@ -207,6 +207,13 @@ export interface WorldMapCanvasProps {
   skies?: (Weather | null)[];
   /** Controls laid over the map, inside its frame */
   overlay?: JSX.Element;
+  /**
+   * Whether the map fills the box it stands in, as a square as large as
+   * the box allows, rather than stopping at 34rem. The box is the
+   * caller's and has to be a size container. The drawing is the same
+   * picture at the same resolution; only its size on the page changes
+   */
+  fill?: boolean;
 }
 
 export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element {
@@ -549,7 +556,11 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
     // than painted into it. Drawn into the picture the words were
     // pixels: the canvas is a few hundred across and blown up to fit,
     // so every letter was blown up with it
-    <div class="relative mx-auto w-[min(100%,34rem)]">
+    <div
+      class={`relative mx-auto ${
+        props.fill === true ? 'w-full md:size-[min(100cqw,100cqh)]' : 'w-[min(100%,34rem)]'
+      }`}
+    >
       <Show when={naming()} keyed>
         {(place) => (
           <span
@@ -573,7 +584,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         })}
         // Blown up from a few hundred pixels, so the chunks stay squares
         // rather than being smeared into each other
-        class="block h-auto w-full cursor-grab touch-none rounded-xl border-4 border-tide shadow-pop active:cursor-grabbing
+        class="block h-auto w-full cursor-grab touch-none rounded-card border-4 border-tide shadow-pop active:cursor-grabbing
         [image-rendering:pixelated] focus-visible:outline-none"
         title={naming()}
         onMouseMove={(event) => {

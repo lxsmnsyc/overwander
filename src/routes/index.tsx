@@ -1,6 +1,6 @@
 import { Title } from '@solidjs/meta';
 import { clientOnly } from '@solidjs/start';
-import { type Accessor, type JSX, Show, createSignal, from } from 'solid-js';
+import { type Accessor, type JSX, Show, createEffect, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
@@ -10,31 +10,42 @@ import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
 import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
+import { SellHint } from '../components/auctions/auction-tab/sell';
 import BattleData from '../components/app/BattleData';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
 import GameProvider, { GameDialog, useGame } from '../components/app/game-context';
 import BagDialog from '../components/items/inventory-list';
-import LoginForm from '../components/app/LoginForm';
+import LoginForm, { TitleCard } from '../components/app/LoginForm';
 import GiftsTab from '../components/gifts/GiftsTab';
 import NotificationsTab from '../components/notifications/NotificationsTab';
 import DexEntryDialog from '../components/dex/dex-entry-dialog';
 import SpeciesFormsDialog from '../components/dex/SpeciesFormsDialog';
 import DuelsTab from '../components/duels/DuelsTab';
-import type { DuelLobbyReport } from '../components/duels/DuelLobby';
+import type { DuelLobbyReport } from '../components/duels/duel-lobby';
 import OverworldTab from '../components/overworld/overworld-tab';
 import PokedexDialog from '../components/dex/PokedexDialog';
 import ProfileDialog from '../components/profile/ProfileDialog';
-import ProfileTab from '../components/profile/ProfileTab';
+import ProfileSheet from '../components/profile/profile-sheet';
 import QuestsTab from '../components/quests/quests-tab';
-import SettingsTab from '../components/settings/SettingsTab';
+import QuestHint from '../components/quests/quests-tab/hint';
+import SettingsTab from '../components/settings/settings-tab';
 import RaidsTab from '../components/raids/RaidsTab';
-import type { RaidLobbyReport } from '../components/raids/RaidLobby';
+import type { RaidLobbyReport } from '../components/raids/raid-lobby';
 import TradeOfferDialog from '../components/trades/TradeOfferDialog';
-import { ThemeToggle } from '../components/app/theme';
 import WorldMapDialog from '../components/overworld/WorldMapDialog';
-import { Button, Dialog, DialogActions, Note } from '../components/styled';
+import { Button, Dialog, DialogActions, Meta, Note } from '../components/styled';
+import {
+  AuctionIcon,
+  BellIcon,
+  BookmarkIcon,
+  FireIcon,
+  GiftIcon,
+  PageIcon,
+  SettingsIcon,
+  SwordsIcon,
+} from '../components/icons';
 import { m } from '../i18n/paraglide/messages.js';
 
 /**
@@ -122,6 +133,16 @@ const DESCRIPTIONS: Record<Panelled, () => string> = {
  */
 function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const game = useGame();
+  // The friend being offered a trade, kept until the dialog's fade is over
+  const [lastTrading, setLastTrading] = createSignal<string | null>(null);
+
+  createEffect(() => {
+    const friend = game.trading();
+
+    if (friend != null) {
+      setLastTrading(friend);
+    }
+  });
   /**
    * Whether the seller's side of the auction board is open. It lives
    * here because the button that opens it is in the dialog's top bar
@@ -198,15 +219,16 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Gifts)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            lead={<GiftIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Gifts]()}
             description={DESCRIPTIONS[GameDialog.Gifts]()}
           >
             <BattleData>
               <GiftsTab />
             </BattleData>
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.gifts_dock_note()}</Meta>} stack>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -216,15 +238,17 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Quests)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            lead={<BookmarkIcon class="size-4" aria-hidden="true" />}
+            aside={<QuestHint />}
             title={TITLES[GameDialog.Quests]()}
             description={DESCRIPTIONS[GameDialog.Quests]()}
           >
             <BattleData>
               <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
             </BattleData>
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.quest_hint_claim()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -235,13 +259,17 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Notifications)}
             onClose={close}
-            width="wide"
+            width="wider"
             terse
+            lead={<BellIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Notifications]()}
             description={DESCRIPTIONS[GameDialog.Notifications]()}
           >
             <NotificationsTab notices={game.notices()} />
-            <DialogActions>
+            <DialogActions
+              note={<Meta class="hidden md:block">{m.notices_dock_note()}</Meta>}
+              stack
+            >
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -251,13 +279,14 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.Settings)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            lead={<SettingsIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Settings]()}
             description={DESCRIPTIONS[GameDialog.Settings]()}
           >
             <SettingsTab />
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.settings_dock_note()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
@@ -267,38 +296,33 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
           <Dialog
             isOpen={showing(GameDialog.News)}
             onClose={close}
-            width="wide"
+            width="rail"
+            layout="sheet"
             terse
+            lead={<PageIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.News]()}
             description={DESCRIPTIONS[GameDialog.News]()}
           >
             <NewsTab />
-            <DialogActions>
+            <DialogActions note={<Meta class="hidden md:block">{m.news_dock_note()}</Meta>}>
               <Button onClick={close}>{m.ui_close()}</Button>
             </DialogActions>
           </Dialog>
 
-          <Dialog
+          <ProfileSheet
+            player={props.user.uid}
+            section={game.profileAt() ?? undefined}
             isOpen={showing(GameDialog.Profile)}
             onClose={close}
-            // Broad for the side list of sections beside what is open
-            width="broad"
-            quiet
-            title={TITLES[GameDialog.Profile]()}
-            description={DESCRIPTIONS[GameDialog.Profile]()}
-          >
-            <ProfileTab player={props.user.uid} section={game.profileAt() ?? undefined} />
-            <DialogActions>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
+          />
 
           <Dialog
             isOpen={showing(GameDialog.Raids)}
             onClose={close}
             insistent={raidLobby()?.hosting === true}
-            // Broad in a lobby, for the boss beside the trainer list
-            width={raidLobby() == null ? 'wide' : 'broad'}
+            // Broad: lair cards two across in the list, and in a lobby
+            // the boss beside the trainer list
+            width="broad"
             // Named for the lair while the player is standing in one,
             // and "Raids" while they are only looking at the list.
             //
@@ -309,6 +333,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             // opened from the *world* rather than from that button
             // arrives with no word about where it came from
             terse
+            lead={raidLobby() == null ? <FireIcon class="size-4" aria-hidden="true" /> : undefined}
             title={raidLobby()?.title ?? TITLES[GameDialog.Raids]()}
             description={DESCRIPTIONS[GameDialog.Raids]()}
           >
@@ -319,7 +344,7 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
               }}
             />
             <Show when={raidLobby() == null}>
-              <DialogActions>
+              <DialogActions note={<Meta class="hidden md:block">{m.raid_dock_note()}</Meta>}>
                 <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
             </Show>
@@ -333,29 +358,31 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
             onClose={close}
             // A seated player leaves by Leave, which takes their party out
             insistent={duelLobby()?.seated === true}
-            width="wide"
+            // The list is a narrower sheet; a lobby needs the field's width
+            width={duelLobby() == null ? 'wider' : 'rail'}
             terse
+            lead={
+              duelLobby() == null ? <SwordsIcon class="size-4" aria-hidden="true" /> : undefined
+            }
             title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
             description={DESCRIPTIONS[GameDialog.Battles]()}
           >
             <DuelsTab
               user={props.user}
+              onClose={close}
               onLobby={(standing) => {
                 setDuelLobby(standing);
               }}
             />
-            <Show when={duelLobby() == null}>
-              <DialogActions>
-                <Button onClick={close}>{m.ui_close()}</Button>
-              </DialogActions>
-            </Show>
           </Dialog>
 
           <Dialog
             isOpen={showing(GameDialog.Auctions)}
             onClose={close}
-            width="wide"
+            width="rail"
             terse
+            aside={selling() ? <SellHint /> : undefined}
+            lead={<AuctionIcon class="size-4" aria-hidden="true" />}
             title={TITLES[GameDialog.Auctions]()}
             description={DESCRIPTIONS[GameDialog.Auctions]()}
           >
@@ -371,12 +398,20 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
                 }}
               />
             </BattleData>
-            <DialogActions>
+            <DialogActions
+              stack
+              note={
+                <Show when={!selling()}>
+                  <Meta class="hidden md:block">{m.auction_dock_note()}</Meta>
+                </Show>
+              }
+            >
               {/* The one thing the board is for that is not looking
                   at it. Selling takes the whole panel rather than a
                   card on top of the lots, so the key that opened it
                   is also the way back out */}
               <Button
+                tone={selling() ? 'ghost' : 'primary'}
                 onClick={() => {
                   setSelling(!selling());
                 }}
@@ -457,13 +492,26 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
 
           {/* An offer to a friend, opened over wherever they were
               found: their row in the list, or their profile */}
-          <TradeOfferDialog
-            player={props.user.uid}
-            friend={game.trading()}
-            onClose={() => {
-              game.setTrading(null);
-            }}
-          />
+          {/* Made when the offer starts rather than with the page: dialogs stack in
+              the order they were made, and the profile it is opened from is made when
+              it first opens, so an offer made with the page sat behind it */}
+          <Show when={lastTrading()}>
+            {(friend) => (
+              <TradeOfferDialog
+                player={props.user.uid}
+                friend={friend()}
+                isOpen={game.trading() != null}
+                onClose={() => {
+                  game.setTrading(null);
+                }}
+                onGone={() => {
+                  if (game.trading() == null) {
+                    setLastTrading(null);
+                  }
+                }}
+              />
+            )}
+          </Show>
 
           {/* Listing is its own dialog, opened as the sheet closes:
               the pokemon is about to leave the records it was read from */}
@@ -535,18 +583,23 @@ function Banned(props: {
     <Show when={profile()?.banned === true} fallback={props.children(() => profile()?.role ?? '')}>
       <div class="flex h-full items-center justify-center px-4">
         <div
-          class="flex max-w-md flex-col gap-3 rounded-panel border-4 border-ember bg-paper p-4
-          text-center shadow-pop"
+          class="flex w-full max-w-105 flex-col gap-3 overflow-hidden rounded-sheet border-2
+            border-line bg-paper pb-[22px] text-center shadow-sheet"
         >
-          <h1>{m.refusal_banned()}</h1>
-          <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
-          <Button
-            onClick={() => {
-              signOut().catch(() => undefined);
-            }}
-          >
-            {m.ui_sign_out()}
-          </Button>
+          <header class="bg-linear-to-b from-ember-soft to-paper px-6 pt-[30px] pb-5">
+            <h1 class="font-display text-3xl leading-tight font-semibold">{m.refusal_banned()}</h1>
+          </header>
+          <div class="flex flex-col gap-3 px-6">
+            <Note>{profile()?.banReason === '' ? m.banned_no_reason() : profile()?.banReason}</Note>
+            <Button
+              class="h-11 justify-center"
+              onClick={() => {
+                signOut().catch(() => undefined);
+              }}
+            >
+              {m.ui_sign_out()}
+            </Button>
+          </div>
         </div>
       </div>
     </Show>
@@ -565,25 +618,11 @@ export default function Home(): JSX.Element {
           <div class="flex h-full items-center justify-center px-4">
             <Show when={!auth.loading()} fallback={<Note>{m.landing_loading()}</Note>}>
               {/* The title screen: the game's name and what it is, then
-                  the one thing there is to do about it, on the same white
-                  sheet every dialog is drawn on */}
-              <div
-                class="relative flex w-full max-w-sm flex-col gap-4 rounded-panel border-2 border-line
-                  bg-paper px-5 pt-7 pb-5 shadow-sheet"
-              >
-                <header class="flex flex-col items-center gap-1 text-center">
-                  <h1 class="text-4xl font-black tracking-tight">Overwander</h1>
-                  <p class="text-sm text-muted">{m.landing_tagline()}</p>
-                </header>
-                {/* Worth changing before signing in as much as after: the
-                    menu that carries it is behind the sign-in */}
-                <ThemeToggle
-                  class="absolute top-3 right-3 flex size-8 cursor-pointer items-center justify-center
-                    rounded-full border-0 bg-line-soft p-0 text-muted shadow-none transition-colors
-                    hover:bg-tide-soft hover:text-tide-dark active:translate-y-0 [&_svg]:size-4"
-                />
+                  the one thing there is to do about it, on a card with
+                  a tinted header */}
+              <TitleCard>
                 <LoginForm />
-              </div>
+              </TitleCard>
             </Show>
           </div>
         }

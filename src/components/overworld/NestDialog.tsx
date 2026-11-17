@@ -3,8 +3,8 @@ import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import type { Buddy } from '../../overworld/core';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button, Dialog, DialogActions, Meta } from '../styled';
-import { CounterSpent, CounterTerms, HeadingPortrait } from '../forms/terms';
+import { Button, Dialog, DialogActions, HeroBand, Meta } from '../styled';
+import { CounterSpent, CounterTerms } from '../forms/terms';
 import type { EggSource, EggState } from '../../game/overworld/journey';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -89,7 +89,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
     if (offer == null) {
       return m.nest_heading();
     }
-    return offer.state === 'bare' ? BARE[offer.from]() : FOUND[offer.from]();
+    return offer.state === 'bare' ? m.nest_bare_line() : FOUND[offer.from]();
   };
 
   return (
@@ -97,19 +97,25 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
       isOpen={props.offer != null}
       onClose={props.onClose}
       title={m.nest_title()}
-      lead={
-        <HeadingPortrait>
-          <AnimatedSprite species={Species.Egg} direction="Down" still fill label="" />
-        </HeadingPortrait>
+      width="wide"
+      hero={
+        <HeroBand
+          tone="leaf"
+          stage={
+            <span class="mb-0.5 size-14">
+              <AnimatedSprite species={Species.Egg} direction="Down" still fill label="" />
+            </span>
+          }
+        >
+          {heading()}
+        </HeroBand>
       }
       description={heading()}
     >
       <Show when={props.offer}>
         {(offer) => (
           <div class="flex flex-col gap-3">
-            <CounterTerms
-              often={offer().state === 'taken' ? m.ow_used_this_while() : OFTEN[offer().from]()}
-            />
+            <CounterTerms often={offer().state === 'taken' ? undefined : OFTEN[offer().from]()} />
             <Show when={offer().state === 'taken'}>
               <CounterSpent says={AGAIN[offer().from]()} quoted={false} />
             </Show>
@@ -124,7 +130,10 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
               {/* What taking it commits the player to: the pokemon
                   already walking with them is what pays for it */}
               <Meta>{m.nest_commitment()}</Meta>
-              <div class="flex items-center gap-2 rounded-panel border-2 border-line bg-paper px-3 py-1.5">
+              <div
+                class="flex min-h-[52px] items-center gap-2.5 rounded-card border-2 border-line-soft
+                  bg-paper px-3 py-2"
+              >
                 <Show
                   when={props.buddy}
                   fallback={<span class="text-sm">{m.nest_walks_with_you()}</span>}
@@ -156,7 +165,7 @@ export default function NestDialog(props: NestDialogProps): JSX.Element {
         )}
       </Show>
 
-      <DialogActions>
+      <DialogActions stack>
         <Show when={asking()}>
           <Button tone="primary" disabled={props.busy} onClick={props.onAccept}>
             {m.nest_take()}

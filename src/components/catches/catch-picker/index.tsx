@@ -55,6 +55,8 @@ const SORT_NOTES = new Map<string, () => string>([['level', m.catch_picker_stron
 export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   const auth = useAuth();
   const [opened, setOpened] = createSignal(false);
+  /** The question a single pick asks twice, while the dock is drawing it */
+  const [asked, setAsked] = createSignal<{ name: string; answer: () => void } | null>(null);
   /** Bumped by a give or a take, so the records are read again */
   const [handled, setHandled] = createSignal(0);
 
@@ -318,6 +320,9 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
             setHandled((count) => count + 1);
           }}
           onDone={close}
+          onAsk={(question) => {
+            setAsked(props.dock === true ? question : null);
+          }}
         />
       </Show>
     </Suspense>
@@ -342,14 +347,34 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       <Dialog
         isOpen={showing()}
         onClose={close}
-        width="wide"
+        width={props.width ?? 'wide'}
         title={
           props.title ?? (props.viewOnly === true ? m.catch_picker_theirs() : m.pick_catch_title())
         }
         description={purpose()}
       >
         {box()}
-        <DialogActions>
+        <DialogActions
+          note={
+            <Show when={props.dock === true && asked()}>
+              {(question) => (
+                <Meta class="hidden md:block">
+                  {m.catch_picker_dock_picked({ name: question().name })}
+                </Meta>
+              )}
+            </Show>
+          }
+        >
+          <Show when={props.dock === true && asked()}>
+            {(question) => (
+              <Button tone="primary" onClick={question().answer}>
+                {m.catch_picker_dock_give({
+                  verb: props.verb ?? m.catch_picker_pick_verb(),
+                  name: question().name,
+                })}
+              </Button>
+            )}
+          </Show>
           <Show when={props.multiple !== true && props.value != null && props.viewOnly !== true}>
             <Button
               onClick={() => {

@@ -1,5 +1,6 @@
 import type { JSX, ParentProps } from 'solid-js';
 import { Tab, TabList } from 'terracotta';
+import { CountPill } from './row-card';
 
 /**
  * A rail: the column of places down the left of a sheet (boxes,
@@ -34,17 +35,19 @@ export function railRow(current: boolean): string {
   return `${ROW} ${current ? CURRENT : AT_REST}`;
 }
 
-/** How many a row holds, in a pill at its right end */
-export function RailCount(props: ParentProps<{ lit?: boolean }>): JSX.Element {
+/** How many a row holds, in a pill at its right end (`hot` for what waits on the player) */
+export function RailCount(props: ParentProps<{ lit?: boolean; hot?: boolean }>): JSX.Element {
+  const look = (): 'quiet' | 'lit' | 'hot' => {
+    if (props.hot === true) {
+      return 'hot';
+    }
+    return props.lit === true ? 'lit' : 'quiet';
+  };
+
   return (
-    <span
-      class={`ml-auto inline-flex h-[22px] min-w-[26px] shrink-0 items-center justify-center
-        rounded-full px-1.5 font-display text-xs font-semibold tabular-nums ${
-          props.lit === true ? 'bg-tide text-on-accent' : 'bg-line-soft text-muted'
-        }`}
-    >
+    <CountPill class="ml-auto" look={look()}>
       {props.children}
-    </span>
+    </CountPill>
   );
 }
 

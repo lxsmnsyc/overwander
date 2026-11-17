@@ -105,6 +105,10 @@ export function RowButton(props: RowButtonProps): JSX.Element {
  * The quieter half of a row: how far away it is, how long it has left,
  * what it is carrying. It reads second because it is read second
  */
-export function Meta(props: ParentProps & { class?: string }): JSX.Element {
-  return <span class={`text-xs text-muted ${props.class ?? ''}`}>{props.children}</span>;
+export function Meta(props: ParentProps & { class?: string; title?: string }): JSX.Element {
+  return (
+    <span title={props.title} class={`text-xs text-muted ${props.class ?? ''}`}>
+      {props.children}
+    </span>
+  );
 }

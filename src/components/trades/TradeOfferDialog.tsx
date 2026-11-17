@@ -7,8 +7,9 @@ import { TRADE_GOLD_LIMIT, offerTrade } from '../../auth/trades';
 import { useGame } from '../app/game-context';
 import watchLive from '../app/watch';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
-import NamedCatch from './NamedCatch';
-import { Button, Dialog, DialogActions, Field, Meta, Note, Row, Select, useToast } from '../styled';
+import { Button, Dialog, DialogActions, Meta, Pill, Segmented, useToast } from '../styled';
+import PickBox from './PickBox';
+import SwapIcon from './SwapIcon';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -23,9 +24,12 @@ import { m } from '../../i18n/paraglide/messages.js';
 export interface TradeOfferDialogProps {
   /** The signed-in player, whose pokemon goes out */
   player: string;
-  /** Who the offer is for, or null while nobody is */
+  /** Who the offer is for: kept through the fade that closes it */
   friend: string | null;
+  isOpen: boolean;
   onClose: () => void;
+  /** Called once the closing fade is over */
+  onGone?: () => void;
 }
 
 /** Which way the gold on the offer points */
@@ -53,8 +57,11 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   // friend says nothing about the next
   createEffect(
     on(
-      () => props.friend,
-      () => {
+      () => [props.friend, props.isOpen] as const,
+      ([, open]) => {
+        if (!open) {
+          return;
+        }
         setOffered(null);
         setAsked(null);
         setGoldMode('none');
@@ -88,11 +95,11 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   const gold = (): number => mine()?.gold ?? 0;
 
   const [buddy] = createResource(
-    () => (props.friend == null ? null : props.player),
+    () => (props.isOpen ? props.player : null),
     async (uid) => getBuddy(uid),
   );
   const [onlyOne] = createResource(
-    () => (props.friend == null ? null : props.player),
+    () => (props.isOpen ? props.player : null),
     async (uid) => (await countCaught(uid)) <= 1,
   );
 
@@ -163,86 +170,112 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   return (
     <>
       <Dialog
-        isOpen={props.friend != null && picking() == null}
+        isOpen={props.isOpen && picking() == null}
         onClose={props.onClose}
+        afterLeave={props.onGone}
+        width="wider"
         title={m.trade_title({ name: named() })}
         description={m.trade_description()}
       >
-        <div class="flex flex-col gap-3">
-          <Row class="items-center justify-between">
-            <span class="font-semibold">
-              <Show when={offered()} fallback={m.trade_nothing_picked()}>
-                {(id) => <NamedCatch id={id()} />}
-              </Show>
-            </span>
-            <Button
-              onClick={() => {
-                setPicking('mine');
-              }}
-            >
-              {offered() == null ? m.trade_pick_yours() : m.ui_change()}
-            </Button>
-          </Row>
-
-          <Row class="items-center justify-between">
-            <span class="font-semibold">
-              <Show when={asked()} fallback={m.trade_for_their_pick({ name: named() })}>
-                {(id) => <NamedCatch id={id()} say={(name) => m.trade_for({ name })} />}
-              </Show>
-            </span>
-            <Row>
-              <Show when={asked() != null}>
+        <div class="flex flex-col gap-3.5">
+          {/* The two sides face each other across a swap mark; on a
+              phone they stack with the mark between */}
+          <div class="flex flex-col items-stretch gap-2.5 sm:flex-row">
+            <section class="flex min-w-0 flex-1 flex-col gap-2.5 rounded-card border-2 border-tide bg-tide-soft/40 p-3.5">
+              <h4 class="text-tide-dark">{m.trade_you_give()}</h4>
+              <PickBox id={offered()} empty={m.trade_nothing_picked()}>
                 <Button
                   onClick={() => {
-                    setAsked(null);
+                    setPicking('mine');
                   }}
                 >
-                  {m.trade_their_pick()}
+                  {offered() == null ? m.trade_pick_yours() : m.ui_change()}
                 </Button>
+              </PickBox>
+              <Show when={goldMode() === 'give' && riding() > 0}>
+                <Pill tone="gold" size="medium" class="self-start">
+                  {m.trade_gold_from_you({ gold: formatNumber(riding()) })}
+                </Pill>
               </Show>
+            </section>
+
+            <span
+              role="img"
+              aria-label={m.trade_swap()}
+              class="flex size-11 shrink-0 items-center justify-center self-center rounded-full
+                bg-tide text-on-accent shadow-[0_3px_0_0_var(--blue-shade)]"
+            >
+              <SwapIcon class="size-5 max-sm:rotate-90" />
+            </span>
+
+            <section class="flex min-w-0 flex-1 flex-col gap-2.5 rounded-card border-2 border-gold bg-gold-soft/50 p-3.5">
+              <h4 class="text-gold-dark">{m.trade_you_ask()}</h4>
+              <PickBox
+                id={asked()}
+                empty={m.trade_for_their_pick({ name: named() })}
+                note={m.trade_named_exactly()}
+              >
+                <Button
+                  onClick={() => {
+                    setPicking('theirs');
+                  }}
+                >
+                  {asked() == null ? m.trade_ask_for_one() : m.ui_change()}
+                </Button>
+              </PickBox>
               <Button
+                tone="quiet"
+                class="self-start"
+                disabled={asked() == null}
                 onClick={() => {
-                  setPicking('theirs');
+                  setAsked(null);
                 }}
               >
-                {asked() == null ? m.trade_ask_for_one() : m.ui_change()}
+                {m.trade_their_pick()}
               </Button>
-            </Row>
-          </Row>
 
-          <Select<GoldMode>
-            label={m.trade_gold()}
-            value={goldMode()}
-            options={readGoldModes()}
-            onChange={(mode) => {
-              setGoldMode(mode);
-            }}
-          />
-          <Show when={goldMode() !== 'none'}>
-            <Row class="items-center">
-              <Field label={m.trade_amount()}>
-                <input
-                  type="number"
-                  min={0}
-                  max={most()}
-                  value={amount()}
-                  onInput={(event) => {
-                    setAmount(Number(event.currentTarget.value));
-                  }}
-                />
-              </Field>
+              <Show when={goldMode() === 'ask' && riding() < 0}>
+                <Pill tone="gold" size="medium" class="self-start">
+                  {m.trade_gold_from_them({ gold: formatNumber(-riding()) })}
+                </Pill>
+              </Show>
+            </section>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <h4>{m.trade_gold()}</h4>
+            <Segmented
+              label={m.trade_gold()}
+              value={goldMode()}
+              options={readGoldModes()}
+              onChange={(mode) => {
+                setGoldMode(mode);
+              }}
+            />
+            <Show when={goldMode() !== 'none'}>
+              <input
+                type="number"
+                aria-label={m.trade_amount()}
+                class="h-10 w-[140px]"
+                min={0}
+                max={most()}
+                value={amount()}
+                onInput={(event) => {
+                  setAmount(Number(event.currentTarget.value));
+                }}
+              />
               <Meta>
                 {goldMode() === 'give'
                   ? m.trade_gold_taken_now({ gold: formatNumber(gold()) })
                   : m.trade_gold_taken_later()}
               </Meta>
-            </Row>
-          </Show>
+            </Show>
+          </div>
 
-          <Note>{m.trade_ask_note()}</Note>
+          <Meta>{m.trade_ask_note()}</Meta>
         </div>
 
-        <DialogActions>
+        <DialogActions stack>
           <Button tone="primary" disabled={!ready()} onClick={send}>
             {m.trade_send()}
           </Button>
@@ -254,6 +287,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
           than over it: two panels fighting for the close press is the
           thing being avoided */}
       <CatchPicker
+        fill
         open={picking() === 'mine'}
         onClose={() => {
           setPicking(null);
@@ -268,6 +302,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
         }}
       />
       <CatchPicker
+        fill
         open={picking() === 'theirs'}
         onClose={() => {
           setPicking(null);

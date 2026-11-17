@@ -1,6 +1,7 @@
 import {
   For,
   type JSX,
+  type ParentProps,
   type Resource,
   Show,
   Suspense,
@@ -17,7 +18,8 @@ import {
   verifySignInCode,
 } from '../../auth/actions';
 import listSignInProviders, { type SignInProvider } from '../../auth/sign-in-options';
-import { Button, Checkbox, Note, Status, TabBar, TabButton, TabGroup, TextField } from '../styled';
+import { Button, Checkbox, Note, Segmented, Status, TextField } from '../styled';
+import { ThemeToggle } from './theme';
 import { KeyIcon } from '../icons';
 import createClientSignal from './client-signal';
 import describeFailure from '../../i18n/refusals';
@@ -67,23 +69,21 @@ function PasswordStep(props: {
         event.preventDefault();
       }}
     >
-      <TabGroup
-        horizontal
+      <Segmented
+        fill
+        label={m.login_mode()}
         value={mode()}
+        options={[
+          { value: Mode.SignIn, label: m.login_sign_in() },
+          { value: Mode.Create, label: m.login_create() },
+        ]}
         onChange={(value) => {
           setMode(value);
         }}
-      >
-        <TabBar class="w-full">
-          <TabButton value={Mode.SignIn} class="flex-1 justify-center">
-            {m.login_sign_in()}
-          </TabButton>
-          <TabButton value={Mode.Create} class="flex-1 justify-center">
-            {m.login_create()}
-          </TabButton>
-        </TabBar>
-      </TabGroup>
+      />
       <TextField
+        labelFace
+        tall
         label={m.login_email()}
         kind="email"
         placeholder={m.login_email_placeholder()}
@@ -94,6 +94,8 @@ function PasswordStep(props: {
         }}
       />
       <TextField
+        labelFace
+        tall
         label={creating() ? m.login_new_password() : m.login_password()}
         kind="password"
         hint={creating() ? m.login_password_hint({ count: PASSWORD_MIN }) : undefined}
@@ -108,7 +110,7 @@ function PasswordStep(props: {
       <Button
         type="submit"
         tone="primary"
-        class="justify-center"
+        class="h-[46px] justify-center text-[15px]"
         onClick={props.run(async () => {
           if (creating()) {
             await registerWithEmail(email(), password());
@@ -137,8 +139,10 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
         event.preventDefault();
       }}
     >
-      <Note>{backup() ? m.login_step_backup() : m.login_step_app()}</Note>
+      <Note class="text-[14px]">{backup() ? m.login_step_backup() : m.login_step_app()}</Note>
       <TextField
+        labelFace
+        tall
         label={backup() ? m.login_backup_code() : m.login_code()}
         placeholder={backup() ? 'xxxxx-xxxxx' : '123 456'}
         autocomplete="one-time-code"
@@ -160,7 +164,7 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
       <Button
         type="submit"
         tone="primary"
-        class="justify-center"
+        class="h-[46px] justify-center text-[15px]"
         onClick={props.run(async () =>
           backup() ? verifyBackupCode(code().trim()) : verifySignInCode(code().trim(), trust()),
         )}
@@ -169,7 +173,7 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
       </Button>
       <div class="grid grid-cols-2 gap-2">
         <Button
-          class="justify-center"
+          class="h-11 justify-center"
           onClick={() => {
             setBackup(!backup());
             setCode('');
@@ -177,7 +181,7 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
         >
           {backup() ? m.login_use_app() : m.login_use_backup()}
         </Button>
-        <Button class="justify-center" onClick={props.onBack}>
+        <Button class="h-11 justify-center" onClick={props.onBack}>
           {m.ui_back()}
         </Button>
       </div>
@@ -190,7 +194,7 @@ function ProviderButtons(props: { run: Run; providers: Resource<SignInProvider[]
     <For each={props.providers() ?? []}>
       {(provider) => (
         <Button
-          class="justify-center"
+          class="h-11 justify-center"
           label={m.login_with({ provider: PROVIDERS[provider].label })}
           onClick={props.run(PROVIDERS[provider].signIn)}
         >
@@ -226,17 +230,46 @@ function OtherWays(props: {
       <div class="grid grid-cols-2 gap-2">
         <Show when={passkey()}>
           <Button
-            class="justify-center"
+            class="h-11 justify-center"
             label={m.login_with_passkey()}
             onClick={props.run(signInWithPasskey)}
           >
             <KeyIcon class="size-4" aria-hidden="true" />
-            {m.login_passkey()}
+            {m.login_with_passkey()}
           </Button>
         </Show>
         <ProviderButtons run={props.run} providers={props.providers} />
       </div>
     </Show>
+  );
+}
+
+/**
+ * The title card both signed-out screens stand the form in: a tinted
+ * header with the name and what it is, the theme switch at its corner
+ * (worth changing before signing in as much as after, and the menu
+ * that carries it is behind the sign-in), and the body under it
+ */
+export function TitleCard(props: ParentProps): JSX.Element {
+  return (
+    <div
+      class="relative flex w-full max-w-105 flex-col gap-3 overflow-hidden rounded-sheet border-2
+        border-line bg-paper pb-[22px] shadow-sheet"
+    >
+      <header
+        class="flex flex-col items-center bg-linear-to-b from-tide-soft to-paper px-6 pt-[30px]
+          pb-5 text-center"
+      >
+        <h1 class="font-display text-[44px] leading-none font-semibold">Overwander</h1>
+        <p class="mt-1.5 text-sm text-muted">{m.landing_tagline()}</p>
+      </header>
+      <ThemeToggle
+        class="absolute top-3.5 right-3.5 flex size-10 cursor-pointer items-center justify-center
+          rounded-button border-2 border-line bg-paper p-0 text-muted shadow-pop
+          hover:border-tide hover:text-tide-dark [&_svg]:size-[18px]"
+      />
+      {props.children}
+    </div>
   );
 }
 
@@ -257,7 +290,7 @@ export default function LoginForm(): JSX.Element {
   };
 
   return (
-    <div class="flex flex-col gap-3 text-left">
+    <div class="flex flex-col gap-3 px-6 text-left">
       <Show
         when={secondFactor()}
         fallback={

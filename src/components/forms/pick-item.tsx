@@ -44,11 +44,15 @@ export interface PickItemInput {
 /** The tray itself, and what is said over it, for a form that holds one or two */
 export function ItemTray(props: {
   input: PickItemInput;
+  /** Whether the purse is said elsewhere, so the tray leaves its chip out */
+  hideHave?: boolean;
   onPick: (picked: ItemAmount) => void;
 }): JSX.Element {
   return (
     <>
-      <Show when={props.input.have}>{(have) => <CounterTerms have={have()} />}</Show>
+      <Show when={props.hideHave === true ? undefined : props.input.have}>
+        {(have) => <CounterTerms have={have()} />}
+      </Show>
       <Show
         when={
           props.input.entries == null || props.input.entries.length > 0 || props.input.none == null
@@ -58,6 +62,7 @@ export function ItemTray(props: {
         <Show when={props.input.intro}>{(intro) => <Meta class="block">{intro()}</Meta>}</Show>
         <Show when={props.input.step}>{(step) => <CounterStep>{step()}</CounterStep>}</Show>
         <InventoryPicker
+          fill
           inline
           player={props.input.player}
           verb={props.input.verb}
@@ -92,7 +97,7 @@ function PickItemView(props: FormProps<PickItemInput, ItemAmount>): JSX.Element 
       <DialogSection class="flex flex-col gap-3">
         <ItemTray input={props.input} onPick={props.submit} />
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button onClick={props.cancel}>{props.leave}</Button>
       </DialogActions>
     </>

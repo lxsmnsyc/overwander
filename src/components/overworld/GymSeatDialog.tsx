@@ -18,12 +18,12 @@ import { openForm } from '../forms/stack';
 import { PickTeamForm } from '../forms/pick-team';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import PlayerPlate from '../profile/PlayerPlate';
-import { Button, Dialog, DialogActions, Meta, Note, useToast } from '../styled';
+import { Button, Dialog, DialogActions, HeroBand, Meta, Note, useToast } from '../styled';
 import AtlasSprite from '../sprites/AtlasSprite';
 import { OW_SPRITE_ROOT } from '../../canvas/overworld/char-sprites';
 import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
-import { CounterSpent, CounterStep, CounterTerms, HeadingPortrait } from '../forms/terms';
+import { CounterSpent, CounterStep, CounterTerms, DockNote } from '../forms/terms';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -114,6 +114,7 @@ function SeatCounter(
         egg: false,
         progress: 0,
         fainted: false,
+        level: entry.level,
         label: m.ow_lineup_square({
           species: getSpeciesData(entry.species).name,
           level: entry.level,
@@ -234,15 +235,21 @@ function SeatCounter(
         isOpen={props.cell != null && picking() == null}
         onClose={props.onClose}
         title={m.gym_seat_title()}
-        lead={
-          <HeadingPortrait>
-            <AtlasSprite
-              sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
-              name={landmarkPicture(Landmark.GymSeat) ?? ''}
-              size={28}
-              label=""
-            />
-          </HeadingPortrait>
+        width="wide"
+        hero={
+          <HeroBand
+            tone="tide"
+            stage={
+              <AtlasSprite
+                sheet={`${OW_SPRITE_ROOT}/${LANDMARK_SHEET}`}
+                name={landmarkPicture(Landmark.GymSeat) ?? ''}
+                size={56}
+                label=""
+              />
+            }
+          >
+            {m.gym_seat_description()}
+          </HeroBand>
         }
         description={m.gym_seat_description()}
       >
@@ -250,8 +257,16 @@ function SeatCounter(
           {/* What a challenge moves either way, and how often it can be tried */}
           <CounterTerms
             rows={[
-              { label: m.ow_win(), value: m.gym_seat_win_value({ stake: stake() }) },
-              { label: m.gym_seat_lose(), value: m.gym_seat_lose_value({ stake: stake() }) },
+              {
+                label: m.ow_win(),
+                value: m.gym_seat_win_value({ stake: stake() }),
+                tone: 'leaf',
+              },
+              {
+                label: m.gym_seat_lose(),
+                value: m.gym_seat_lose_value({ stake: stake() }),
+                tone: 'ember',
+              },
             ]}
             often={m.gym_seat_often({
               daily: formatNumber(SEAT_DAILY_TAKE),
@@ -272,9 +287,10 @@ function SeatCounter(
               <>
                 {/* Who is sitting there, with a way to look them up */}
                 <div
-                  class={`flex w-full items-center gap-2 rounded-panel border-2 px-3 py-2 text-left ${
-                    mine() ? 'border-leaf bg-leaf-soft' : 'border-line bg-paper'
-                  }`}
+                  class={`flex min-h-[52px] w-full items-center gap-2.5 rounded-card border-2 px-3.5
+                    py-2.5 text-left ${
+                      mine() ? 'border-leaf bg-leaf-soft' : 'border-line-soft bg-paper'
+                    }`}
                 >
                   <div class="flex min-w-0 grow flex-col gap-0.5">
                     <PlayerPlate
@@ -286,10 +302,7 @@ function SeatCounter(
                       sprite={props.holder.latest?.sprite ?? null}
                     />
                     <Meta class="text-left">
-                      {m.gym_seat_standing({
-                        count: lineup().length,
-                        defenses: seated().defenses,
-                      })}
+                      {m.gym_seat_standing({ defenses: seated().defenses })}
                     </Meta>
                   </div>
                   <Show when={!mine()}>
@@ -308,6 +321,7 @@ function SeatCounter(
                   entries={lineup()}
                   capacity={Math.max(1, lineup().length)}
                   columns={3}
+                  tone="tide"
                   cardOnly
                 />
 
@@ -335,7 +349,14 @@ function SeatCounter(
           </Show>
         </div>
 
-        <DialogActions>
+        <DialogActions
+          stack
+          note={
+            <Show when={held() != null && !mine() && !cooling() && !spent()}>
+              <DockNote>{m.counter_note_decline()}</DockNote>
+            </Show>
+          }
+        >
           <Show
             when={held() != null && !mine()}
             fallback={

@@ -21,6 +21,7 @@ export type ButtonTone =
   | 'danger'
   | 'accent'
   | 'caution'
+  | 'ghost-danger'
   | 'quiet'
   | 'pressed';
 
@@ -48,6 +49,10 @@ const TONES: Record<ButtonTone, string> = {
   // red enough to be read before it is pressed, not loud enough to be
   // the thing the eye lands on
   caution: 'border-ember/40 bg-ember-soft text-ember-dark shadow-rest hover:border-ember',
+  // The board's danger button: a white button with an ember edge and
+  // ember words, for removing, declining or ending something
+  'ghost-danger':
+    'border-ember bg-paper text-ember-dark shadow-pop hover:bg-ember-soft hover:shadow-pop-lift',
   // A way to step back out, which needs no edge to be found
   quiet: 'border-transparent bg-transparent text-muted shadow-none hover:text-ink',
   // A toggle that is on: the panel it opened is showing

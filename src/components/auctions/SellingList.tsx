@@ -10,19 +10,23 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { useGame } from '../app/game-context';
 import PlayerPlate from '../profile/PlayerPlate';
 import { AuctionLotLabel } from './auction-tab/lots';
-import { describeRemaining, describeStanding } from './auction-tab/time';
+import { describeRemaining } from './auction-tab/time';
 import {
-  Badge,
-  type BadgeTone,
   Button,
+  GroupLabel,
   LIST_PAGE,
   List,
-  ListRow,
   Meta,
   Note,
+  Pill,
+  type PillTone,
+  RowActions,
+  RowCard,
+  RowText,
   Status,
   createPager,
 } from '../styled';
+import LotFace from './LotFace';
 import describeFailure from '../../i18n/refusals';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -59,10 +63,10 @@ const enum LotState {
 }
 
 const LOT_STATE_LABELS: Record<LotState, () => string> = {
-  [LotState.Running]: m.auction_lot_running,
-  [LotState.Sold]: m.auction_lot_sold,
-  [LotState.Unsold]: m.auction_nobody_bid,
-  [LotState.Done]: m.auction_lot_settled,
+  [LotState.Running]: m.auction_pill_running,
+  [LotState.Sold]: m.auction_pill_sold,
+  [LotState.Unsold]: m.auction_pill_unsold,
+  [LotState.Done]: m.auction_pill_settled,
 };
 
 /**
@@ -70,10 +74,10 @@ const LOT_STATE_LABELS: Record<LotState, () => string> = {
  * the lot waiting to be taken back, since it is the only one that
  * asks the player for anything
  */
-const LOT_STATE_TONES: Record<LotState, BadgeTone> = {
+const LOT_STATE_TONES: Record<LotState, PillTone> = {
   [LotState.Running]: 'leaf',
   [LotState.Sold]: 'gold',
-  [LotState.Unsold]: 'ember',
+  [LotState.Unsold]: 'neutral',
   [LotState.Done]: 'neutral',
 };
 
@@ -93,15 +97,18 @@ function getLotState(auction: AuctionRecord, at: number): LotState {
  */
 function describeLot(auction: AuctionRecord, state: LotState, at: number): string {
   if (state === LotState.Running) {
-    return m.auction_lot_standing({
-      standing: describeStanding(auction),
-      remaining: describeRemaining(auction.endsAt, at),
-    });
+    const standing = isBidOn(auction)
+      ? m.auction_line_running({ amount: formatNumber(auction.bid) })
+      : m.auction_line_opening({ amount: formatNumber(auction.startingBid) });
+
+    return `${standing} · ${describeRemaining(auction.endsAt, at)}`;
   }
   if (state === LotState.Unsold) {
-    return m.auction_lot_returns();
+    return m.auction_line_unsold();
   }
-  return m.ui_gold({ amount: formatNumber(auction.bid) });
+  return isBidOn(auction)
+    ? m.auction_line_sold({ amount: formatNumber(auction.bid) })
+    : m.auction_line_back();
 }
 
 /**
@@ -151,20 +158,37 @@ export default function SellingList(props: SellingListProps): JSX.Element {
   const paged = createPager(listed, LIST_PAGE);
 
   /**
-   * How many are sitting in escrow waiting to be taken back. It is
-   * said above the list as well as on the rows, because it is the one
-   * thing here a player is being asked to act on
+   * The page cut into what is on the block, what is waiting in escrow
+   * to come back, and what has closed, in that order
    */
-  const stranded = (): number => {
+  const groups = (): { title: string; rows: [string, AuctionRecord][] }[] => {
     const now = Date.now();
-    let count = 0;
+    const running: [string, AuctionRecord][] = [];
+    const escrow: [string, AuctionRecord][] = [];
+    const closed: [string, AuctionRecord][] = [];
 
-    for (const [, lot] of listed()) {
-      if (canReclaim(lot, props.player, now)) {
-        count += 1;
+    for (const entry of paged.shown()) {
+      if (getLotState(entry[1], now) === LotState.Running) {
+        running.push(entry);
+      } else if (canReclaim(entry[1], props.player, now)) {
+        escrow.push(entry);
+      } else {
+        closed.push(entry);
       }
     }
-    return count;
+
+    const found: { title: string; rows: [string, AuctionRecord][] }[] = [];
+
+    if (running.length > 0) {
+      found.push({ title: m.auction_group_block(), rows: running });
+    }
+    if (escrow.length > 0) {
+      found.push({ title: m.auction_group_escrow(), rows: escrow });
+    }
+    if (closed.length > 0) {
+      found.push({ title: m.auction_group_closed(), rows: closed });
+    }
+    return found;
   };
 
   const takeBack = (id: string): void => {
@@ -181,50 +205,56 @@ export default function SellingList(props: SellingListProps): JSX.Element {
 
   return (
     <>
-      <Show when={stranded() > 0}>
-        <Note>{m.auction_stranded({ count: stranded() })}</Note>
-      </Show>
-
       <Show when={listed().length} fallback={<Note>{m.auction_none_listed()}</Note>}>
-        <List>
-          <For each={paged.shown()}>
-            {([id, lot]) => {
-              const state = (): LotState => getLotState(lot, Date.now());
+        <For each={groups()}>
+          {(group) => (
+            <>
+              <GroupLabel>{group.title}</GroupLabel>
+              <List>
+                <For each={group.rows}>
+                  {([id, lot]) => {
+                    const state = (): LotState => getLotState(lot, Date.now());
 
-              return (
-                <ListRow class="flex-col items-stretch sm:flex-row sm:items-center">
-                  <div class="flex grow flex-col gap-0.5">
-                    <span class="font-medium">
-                      <AuctionLotLabel auction={lot} />
-                    </span>
-                    <Meta>{describeLot(lot, state(), Date.now())}</Meta>
-                  </div>
-                  <Show when={lot.bidder !== ''}>
-                    <span class="flex min-w-0 items-center gap-2">
-                      <Meta>
-                        {state() === LotState.Running ? m.auction_leading() : m.auction_won_by()}
-                      </Meta>
-                      <BidderPlate uid={lot.bidder} />
-                    </span>
-                  </Show>
-                  <Badge tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]()}</Badge>
-                  {/* Nothing hands an unsold lot back on its own, so
-                      this is the only way it ever returns */}
-                  <Show when={canReclaim(lot, props.player, Date.now())}>
-                    <Button
-                      tone="primary"
-                      onClick={() => {
-                        takeBack(id);
-                      }}
-                    >
-                      {m.auction_take_back_short()}
-                    </Button>
-                  </Show>
-                </ListRow>
-              );
-            }}
-          </For>
-        </List>
+                    return (
+                      <RowCard>
+                        <LotFace auction={lot} />
+                        <RowText
+                          name={<AuctionLotLabel auction={lot} />}
+                          line={describeLot(lot, state(), Date.now())}
+                        />
+                        <Show when={lot.bidder !== ''}>
+                          <span class="flex min-w-0 items-center gap-2">
+                            <Meta>
+                              {state() === LotState.Running
+                                ? m.auction_leading()
+                                : m.auction_won_by()}
+                            </Meta>
+                            <BidderPlate uid={lot.bidder} />
+                          </span>
+                        </Show>
+                        <Pill tone={LOT_STATE_TONES[state()]}>{LOT_STATE_LABELS[state()]()}</Pill>
+                        {/* Nothing hands an unsold lot back on its own, so
+                            this is the only way it ever returns */}
+                        <Show when={canReclaim(lot, props.player, Date.now())}>
+                          <RowActions>
+                            <Button
+                              tone="primary"
+                              onClick={() => {
+                                takeBack(id);
+                              }}
+                            >
+                              {m.auction_collect()}
+                            </Button>
+                          </RowActions>
+                        </Show>
+                      </RowCard>
+                    );
+                  }}
+                </For>
+              </List>
+            </>
+          )}
+        </For>
         {paged.controls()}
       </Show>
 

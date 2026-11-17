@@ -1,7 +1,7 @@
 import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
 import { type Profile, getProfiles } from '../../auth/profile';
 import PlayerPlate from '../profile/PlayerPlate';
-import { LIST_PAGE, List, ListRow, Note, type Pager, createPager } from '../styled';
+import { LIST_PAGE, List, Note, type Pager, RowCard, createPager } from '../styled';
 import { useGame } from '../app/game-context';
 import { settled } from '../app/resource-reads';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -37,7 +37,7 @@ function Watchers(
       <List>
         <For each={props.page.shown()}>
           {(uid) => (
-            <ListRow selected={uid === props.player}>
+            <RowCard tone={uid === props.player ? 'leaf' : 'plain'} class="min-h-0 py-1.5">
               <PlayerPlate
                 name={uid === props.player ? m.battle_you() : named(uid)}
                 sprite={names()?.get(uid)?.sprite ?? null}
@@ -49,7 +49,7 @@ function Watchers(
                       }
                 }
               />
-            </ListRow>
+            </RowCard>
           )}
         </For>
       </List>

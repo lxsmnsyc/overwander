@@ -1,5 +1,6 @@
 import { type JSX, Show, createSignal, onCleanup } from 'solid-js';
 import Button from './button';
+import { SETTING_ROW } from './card';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -17,6 +18,8 @@ export interface KeyBindProps {
   value: string;
   onChange: (key: string) => void;
   description?: string;
+  /** Drawn as a settings row: the key as a keycap, and a Change button after it */
+  row?: boolean;
   class?: string;
 }
 
@@ -67,6 +70,38 @@ export default function KeyBind(props: KeyBindProps): JSX.Element {
     });
   };
 
+  const spoken = (): string =>
+    listening()
+      ? m.key_press_for({ label: props.label })
+      : m.key_bound({ label: props.label, key: keyLabel(props.value) });
+
+  if (props.row === true) {
+    return (
+      <div class={`flex justify-between text-sm ${SETTING_ROW} ${props.class ?? ''}`}>
+        <span class="flex min-w-0 grow flex-col gap-0.5">
+          <span class="font-extrabold">{props.label}</span>
+          <Show when={props.description}>
+            {(said) => <span class="text-xs text-muted">{said()}</span>}
+          </Show>
+        </span>
+        <span
+          aria-hidden="true"
+          class={`inline-flex h-[34px] min-w-11 items-center justify-center rounded-[10px] border-2
+            border-b-4 px-2.5 font-display text-sm font-semibold ${
+              listening()
+                ? 'border-tide bg-tide-soft text-tide-dark'
+                : 'border-line bg-parchment text-ink'
+            }`}
+        >
+          {listening() ? m.key_press() : keyLabel(props.value)}
+        </span>
+        <Button class="h-[34px]" onClick={listen} label={spoken()}>
+          {m.key_change()}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div class={`flex items-start justify-between gap-3 text-sm ${props.class ?? ''}`}>
       <span class="flex flex-col gap-0.5">
@@ -80,11 +115,7 @@ export default function KeyBind(props: KeyBindProps): JSX.Element {
         onClick={listen}
         // Said in full, since the button itself is a key name and a
         // key name on its own says nothing about what it is for
-        aria-label={
-          listening()
-            ? m.key_press_for({ label: props.label })
-            : m.key_bound({ label: props.label, key: keyLabel(props.value) })
-        }
+        aria-label={spoken()}
       >
         <span class="min-w-16 text-center font-mono">
           {listening() ? m.key_press() : keyLabel(props.value)}

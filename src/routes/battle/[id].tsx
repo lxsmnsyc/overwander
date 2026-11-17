@@ -3,7 +3,7 @@ import { useParams } from '@solidjs/router';
 import { clientOnly } from '@solidjs/start';
 import { type JSX, Show } from 'solid-js';
 import { useAuth } from '../../auth/context';
-import LoginForm from '../../components/app/LoginForm';
+import LoginForm, { TitleCard } from '../../components/app/LoginForm';
 import { Note } from '../../components/styled';
 
 /** The engine and its canvas only run in a browser, like the game's own fights */
@@ -22,10 +22,10 @@ export default function BattlePage(): JSX.Element {
         fallback={
           <div class="flex h-full items-center justify-center px-4">
             <Show when={!auth.loading()} fallback={<Note>Loading session…</Note>}>
-              <div class="flex w-full max-w-sm flex-col gap-3 text-center">
-                <Note>Sign in to watch this battle.</Note>
+              <TitleCard>
+                <Note class="px-6 text-center">Sign in to watch this battle.</Note>
                 <LoginForm />
-              </div>
+              </TitleCard>
             </Show>
           </div>
         }

@@ -5,10 +5,11 @@ import {
   acceptFriendRequest,
   dropFriendRequest,
 } from '../../auth/friends';
-import { Button, Divider, LIST_PAGE, List, Note, Status, createPager } from '../styled';
+import { Button, GroupLabel, LIST_PAGE, List, Note, Status, createPager } from '../styled';
 import FriendEntry from './FriendEntry';
 import { useGame } from '../app/game-context';
 import describeFailure from '../../i18n/refusals';
+import { formatDate } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -71,13 +72,14 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
         when={props.waiting.incoming.length > 0}
         fallback={<Note>{m.friends_no_requests()}</Note>}
       >
+        <GroupLabel>{m.friends_asked_of_you()}</GroupLabel>
         <List>
           <For each={received.shown()}>
             {(uid) => (
               <FriendEntry
                 uid={uid}
-                since={asked().get(uid)}
-                when={(date) => m.friends_asked({ date })}
+                line={m.friends_wants()}
+                title={m.friends_asked({ date: formatDate(asked().get(uid) ?? 0) })}
                 onOpen={() => {
                   game.setVisiting(uid);
                 }}
@@ -92,6 +94,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
                   {m.friends_accept()}
                 </Button>
                 <Button
+                  tone="ghost-danger"
                   disabled={busy() === uid}
                   onClick={() => {
                     answer(uid, dropFriendRequest(uid));
@@ -107,8 +110,7 @@ export default function RequestsTab(props: RequestsTabProps): JSX.Element {
       </Show>
 
       <Show when={props.waiting.outgoing.length > 0}>
-        <Divider />
-        <Note>{m.friends_waiting()}</Note>
+        <GroupLabel>{m.friends_waiting()}</GroupLabel>
         <List>
           <For each={sent.shown()}>
             {(uid) => (

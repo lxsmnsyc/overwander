@@ -11,7 +11,8 @@ import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
 import type { CatchOption } from '../catches/catch-picker';
-import { MOVE_SLOT, MOVE_SLOTS, MoveLine } from '../catches/MovePicker';
+import { MoveLine } from '../catches/MovePicker';
+import { MOVE_CARD, MoveStripe } from './move-card';
 import {
   Button,
   DialogActions,
@@ -106,16 +107,19 @@ function Offers<T>(props: {
         <List>
           <For each={props.choices}>
             {(choice) => (
-              <ListRow class="flex-nowrap p-0" selected={props.chosen === choice}>
+              <ListRow
+                class="min-h-[52px] flex-nowrap rounded-card p-0"
+                selected={props.chosen === choice}
+              >
                 <RowButton
-                  class="flex items-center gap-2 px-3 py-2"
+                  class="flex items-center gap-2 px-3.5 py-2.5"
                   pressed={props.chosen === choice}
                   disabled={choice.refused != null}
                   onClick={() => {
                     props.onChoose(choice);
                   }}
                 >
-                  <span class="grow font-semibold">{choice.label}</span>
+                  <span class="grow font-extrabold">{choice.label}</span>
                   <Show when={choice.refused ?? choice.detail}>
                     {(said) => (
                       <span class="shrink-0 text-right text-xs text-muted tabular-nums">
@@ -141,7 +145,7 @@ function Offers<T>(props: {
               }}
             />
           </Show>
-          <ul class={MOVE_SLOTS}>
+          <ul class="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-2">
             <For
               each={found()}
               fallback={
@@ -156,7 +160,7 @@ function Offers<T>(props: {
                     type="button"
                     aria-pressed={props.chosen === choice}
                     disabled={choice.refused != null}
-                    class={`${MOVE_SLOT} w-full cursor-pointer disabled:cursor-not-allowed
+                    class={`${MOVE_CARD} w-full cursor-pointer disabled:cursor-not-allowed
                   disabled:opacity-55 ${
                     props.chosen === choice
                       ? 'border-leaf bg-leaf-soft'
@@ -166,6 +170,7 @@ function Offers<T>(props: {
                       props.onChoose(choice);
                     }}
                   >
+                    <MoveStripe move={moveOf()(choice.value)} />
                     <MoveLine move={moveOf()(choice.value)} />
                     <Show when={choice.refused}>
                       {(why) => <Meta class="shrink-0">{why()}</Meta>}
@@ -207,8 +212,8 @@ function PickCatchThenBody<T>(
   return (
     <>
       <DialogSection class="flex flex-col gap-3">
-        <Show when={props.input.cost != null || props.input.have != null}>
-          <CounterTerms cost={props.input.cost} have={props.input.have} />
+        <Show when={props.input.have != null}>
+          <CounterTerms have={props.input.have} />
         </Show>
         <PickOne
           options={props.options.latest ?? []}
@@ -241,7 +246,7 @@ function PickCatchThenBody<T>(
           )}
         </Show>
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={!ready()}

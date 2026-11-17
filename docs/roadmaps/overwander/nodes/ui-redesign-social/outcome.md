@@ -1,0 +1,72 @@
+# Outcome: ui-redesign-social
+
+## Built
+
+Built to the approved boards `ProfileSocial`, `Trades`, `Auctions`, `Raids`, `Duels`, `Friends` and `Gifts`, read element by element while each screen was built. Behaviour is meant to be unchanged (what trades, bids, sales, raids, duels, friend requests, gifts and notices send, accept and refuse; how lobbies and live views update). Every inventory item in `log.md` is ticked. Nothing was captured or opened in a browser (the story does that).
+
+- **Row card** (`src/components/styled/row-card.tsx`, exported from `styled`): `RowCard` (52px card, soft keyline, tones `plain | leaf | quiet | ember | gold`), `RowText` (name over a quiet line), `RowActions` (buttons at the right, on their own line on a phone), `Pill` (state word, sizes `small | medium | large`) and `GroupLabel` (label face over a group of rows). The social lists, the lair cards, the notice rows' relatives and the spectator list use them.
+- **Profile panes**: `FriendsTab` has the pane head (search above `SEARCH_FROM` 300px wide, "n of m friends", Add a friend at the right; the button now lives in the tab and takes `onAdd`), a Friends group and a "Blocked · n" group (the old sentence is its tooltip), each row a face, name, "Friends since" or "Blocked" line and buttons. `RequestsTab` has "Asked of you" and "Waiting on them" groups, the line "Wants to be friends" (the date is the row's tooltip). `FriendEntry` is a `RowCard` (props `line`, `pill`, `title` added). `TradesTab` is a head `Segmented` (Pending with an ember count, Settled), groups "Offered to you" and "Waiting on them" (the long sentence is its tooltip), deal line under the name, Accept and Take back keep the second press "Sure?", Decline outlined danger; settled rows have a pill (Made, Declined, Taken back) and the date. `BidsList` and `SellingList` are lot rows with a 44px `LotFace` (new, `auctions/LotFace.tsx`: the pokemon sprite or the item icon), a state pill, View (a pokemon lot opens its record read-only through `game.setSheet`) and Collect; Selling groups by On the block, Waiting to come out of escrow and Closed.
+- **Trade offer** (`trades/TradeOfferDialog.tsx`, new `PickBox.tsx`, `SwapIcon.tsx`): `wider` width (new `DialogWidth`, 50rem), two framed side cards (You give in tide, You ask for in gold) with the pokemon's sprite, name and gender and nature, Pick or Change, "Leave it to their pick", gold pills, a round swap mark between them (rotated on a phone where the sides stack), a gold `Segmented` (No gold, I give gold, I ask for gold) with the amount and its note, and the ask note. The answer picker opens at `rail` width (`CatchPicker` `width` prop).
+- **Raids**: `RaidsTab` is a `broad` sheet: Invited (ember cards, count pill, Open and Dismiss), Gathering with the next-window pill at the heading's right, a two-column grid of lair cards (52px sleeping boss on a square, name, types, where and team count, Open), dock note `raid_dock_note`. `RaidLobby.tsx` became `raids/raid-lobby/` (`index`, `rows`, `teams`, `boss-card`, `chart`, `key`, `report`): the boss card has a 150px field with the boss asleep on its floor, level and name, types, Tera type, Weak to, Resists and Immune rows and the hosting pill; the trainers pane has the heading with `n / 6` and the search at the right, row cards (plate with the Host pill, party strip), your row first and lit, the watching disclosure and the notice line; the dock is as before. `RaidDialog` puts the sleeping boss on a 170px field in `Dialog`'s `hero` slot, then the terms chips, the description and the dock (Walk on, the action).
+- **Duels**: `DuelsTab` is a `wider` sheet with the intro in a tide card, Invited and Your lobbies as row cards (Open button), and a dock holding Host a lobby and Host and watch beside Close (`DuelsTab` takes `onClose`; `routes/index.tsx` no longer draws that dock). `DuelLobby.tsx` became `duels/duel-lobby/` (`index`, `rows`, `seat`, `chips`, `report`): `rail` width, rules chips with Change rules as a button at the right, an arena of two seat cards (face, name, Host pill, seat number, party in small squares, Change team, Watch instead, the Ready stamp) with a 48px VS between (stacked on a phone), open seat as a dashed card, the watching disclosure with faces. `DuelRulesDialog` is `medium`, a two-column grid of `Select`s with label-face names, the stat ceiling, the three bans as `Switch`es, the note, Save and Cancel. `SpectatorList` rows are `RowCard`s.
+- **Friends and invite**: `AddFriendDialog` is `medium`: your code in a tinted card (26px Fredoka) with Copy, their code with a 44px field and Look up, the found trainer as a row ("Found", View, Add). `LobbyInviteDialog` is `medium`: the role is a full-width `Segmented`, the code row has a 44px field and Invite, the friends as row cards with Invite, Invited or "Already here".
+- **Gifts and notifications**: `GiftsTab` is `rail` width with a `Segmented` (Pokemon, Items, Encounters, each with its count), the head note, an eight-wide grid, the same hover cards, and the dock note `gifts_dock_note` (the admin dashboard modes `viewOnly` and `everything` are unchanged and omit the head note). `NotificationsTab` rows are a 60px card with a 6px colour edge by kind, the sender's face and name, a kind pill, the line, the date and the action as the primary button; the dialog is `wider` with the dock note `notices_dock_note`.
+- **Auctions**: `rail` width. `auction-tab/rail.tsx` is the left rail (Your gold pill, then Everything, Items, Pokemon with counts, a chip row on a phone); the three kinds narrow what is loaded and add no read. `ItemGrid` and `CatchGrid` take `columns` and draw eight wide here. The lot hover card gains a state pill and keeps seller, bid, View and the bid, collect and take-back buttons. Selling is `auction-tab/sell.tsx` (title, the 24-hour line, From your bag, From your records); the `?` hint sits in the dialog's `aside` (`SellHint` in `src/routes/index.tsx`); the in-body Back button is gone because the dock already holds it (the dock now says "Point at a lot to read it" and Add a lot is the primary button). `BidDialog` is `medium` with a lot row (face, name, "Sold by X · time left", top-bid pill) over the Your bid field. `AuctionDialog` is one `medium` sheet titled "Put up <name>": the lot row, Opening bid with the terms note under it ("Each bid must raise it by at least N. Runs for 24 hours."), quiet rows for Least raise and for what listing means, and a primary "Put it up for a day" that asks "Sure?" on the second press in place.
+- **Follow-ups after the coordinator's decisions**:
+  - Lot and gift hover cards stand across the foot of the screen below `md` (`HoverCard` prop `sheet`, opt-in; the auction pokemon lots, the gift boxes and `ItemGrid` where `sheet` is passed, which the auction items and gift items do).
+  - Sell-mode trays are ten wide: `InventoryPicker` and `CatchPicker` take `columns` (`BoxWidth` gained 10, `ItemGrid` `columns` 6, 8 or 10).
+  - The profile dock says each social pane's own line (`profile_dock_friends`, `_requests`, `_trades`, `_bids`, `_selling`); the shell's notes stay for its panes (`profile-sheet/index.tsx`).
+  - The trade answer picker draws its second press in the dock: "<name> picked" and "Give <name>" (`CatchPicker` prop `dock`, opt-in, with the box reporting the question through `onAsk`).
+  - Listing is one sheet: lot row, the two fields, the gold terms card, and a primary "Put it up for a day" that asks "Sure?" on the second press in place (editing a field clears the ask). The second dialog is gone.
+  - Review fixes: the pills are one capitalised word (Winning, Outbid, Won, Lost, Collected, On the block, Sold, Unsold, Settled) with lines templated from the data ("Yours is the top bid", "Outbid at N", "Nobody bid. Collect it from here." on a neutral Unsold pill); the listing nameplate reads "Put up <name>"; `PickBox` and the listing dialog read records under `Suspense`; an empty kind says "Nothing of this kind is up right now."; `CatchBox` takes `narrow` and `CatchGrid` passes 6 whenever a caller sets `columns`, so a phone keeps 6 across; Invited lair rows use `RowActions`; the duel dock reads Host and watch, then Host a lobby (primary on top on a phone); "Leave it to their pick" always shows (disabled until a pick is named); the selling hint is the dialog's `aside`; the picker clears its dock question on cleanup; `ItemGrid` has its own `sheet` prop.
+  - Notices and settled trades show `formatRelative` ("2 minutes ago") with the absolute date as the tooltip (`Meta` takes `title`).
+- **Phone**: every dock built or touched here passes `DialogActions stack`; lobbies and the trade sides stack; rows put their buttons on their own line; rails are chip rows.
+- **New strings** (en, ja, es): `friends_group`, `friends_blocked_group`, `friends_blocked_on`, `friends_asked_of_you`, `friends_wants`, `friends_found`, `trade_waiting_note`, `trade_you_give`, `trade_you_ask`, `trade_gold_from_you`, `trade_gold_from_them`, `trade_named_exactly`, `trade_swap`, `raid_dock_note`, `gifts_head_note`, `gifts_dock_note`, `notices_dock_note`, `auction_group_block`, `auction_group_escrow`, `auction_group_closed`, `auction_your_gold`, `auction_filter_all`, `auction_dock_note`, `auction_sell_lede`, `auction_top_bid`, `auction_opens_at`, `auction_sold_by_line`, `auction_item_line`, `auction_your_bid`. Reworded: `friends_count`, `friends_waiting`, `trade_gold_give`, `trade_gold_ask`, `trade_their_pick`, `trade_offered_to_you`, `trade_waiting`, `duels_ready_stamp`. Added later: `profile_dock_*` (5), `catch_picker_dock_picked`, `catch_picker_dock_give`. Deleted as unused: `auction_stranded`, `auction_take_back_short`, `trade_settled_on`, `auction_put_up`, `auction_confirm_title`, `auction_confirm_description`, `auction_title`, `auction_state_*` (5), `auction_you_bid`, `auction_lot_running`, `auction_lot_sold`, `auction_lot_settled`, `auction_lot_standing`, `auction_lot_returns`. Added: `auction_put_up_title`, `auction_pill_*` (9), `auction_line_*` (11), `auction_no_lots_kind`, `auction_terms_note`.
+
+## Deviations
+
+- Outside the owned and shared paths, kept small and additive:
+  - `src/components/profile/profile-sheet/body.tsx`: the Friends pane mounts `FriendsTab` with `onAdd`; its wrapper and the `Button` import are gone.
+  - `src/components/catches/catch-picker/index.tsx` and `options.ts`: a `width` prop (default `wide`), used by the trade answer picker.
+  - `src/components/catches/CatchGrid.tsx`: a `columns` prop (default the box width setting). `src/components/items/ItemGrid.tsx`: a `columns` prop (6, 8 or 10; the tray's page size follows) and a `sheet` prop.
+  - `src/components/styled/*` (shared): `row-card.tsx`, the `index.ts` exports, `Segmented` option `hot`, `Button` tone `ghost-danger`, `Select` `labelFace`, `Dialog` width `wider`.
+  - `src/routes/index.tsx` (shared): widths, dock notes, `DuelsTab onClose`, the renamed lobby imports. `src/i18n/messages/{en,ja,es}.json`.
+- Not built as the board draws it, and why (the coordinator accepted these):
+  - Selling: the board puts a Take back button on a running lot. The game reclaims only a lot nobody bid on, once it has closed, so a running lot has none; the escrow row's button reads Collect.
+  - The lair's hero is the field with the boss on it placed in `Dialog`'s `hero` slot, not a `HeroBand`: the board draws no bubble beside it.
+  - Widths are the nearest `DialogWidth`: `medium` (560) for the 504 boards, `wide` (704) for the 624 lair, `wider` (800) for the 804 boards.
+  - A notice's kind pill, line and action are the game's own words, not the board's sample text. The answer picker's Give button names the record ("Give Lv. 12 Zubat"), as the picker names records.
+- Shared pieces touched for the follow-ups, all opt-in: `HoverCard` `sheet`, `CatchPicker` `dock` and `columns`, `InventoryPicker` `columns`, `CatchBox` `BoxWidth` 10, `Meta` `title`, and `PickerBox` `onAsk`.
+- Behaviour that is new, small, and uses what already existed: a Bids row for a pokemon lot has View, which opens the record read-only the way the board's hover card does. The raid lobby lists your own row first, then the host's (before it was the host's, with your row pinned on scroll).
+- The brief asked for the splits as their own first commit. `raid-lobby/` and `duel-lobby/` are their own commits (`refactor: split ...`) but came after the profile panes and the trade offer. The auction board was split inside the auctions commits (`rail.tsx`, `sell.tsx`, `lot-actions.tsx`); `board.tsx` is about 630 lines after `lot-actions.tsx` (the lot card and its buttons) was taken out.
+- No browser check, so nothing about spacing at 390px or in the night theme is verified beyond reading the classes.
+
+## Stubs left
+
+- None.
+
+## Gotchas
+
+- `FriendEntry` now stands for a row card: a screen that wants a face, a name and a line uses it with `line`, `pill` and the buttons as children.
+- `GroupLabel` renders an `h4`, which the base layer already styles as the label face; `title` on it is the tooltip that holds the longer sentence the old heading carried.
+- `Pill` takes `size`, not a height class: two height utilities on one element are settled by CSS order, not by the order written.
+- The auctions rail is a `TabGroup` of `RailTab`s with one `TabPane` per kind, each holding the same board; the kind is `readKind(value)` in `rail.tsx` because lint refuses comparing a number to the enum.
+- `CounterTerms` children stand at the end of the chip row, so `grow` spacers and buttons there line up at the right (the duel rules chips use this).
+- A `DialogActions` with a `note` puts the buttons on the dock's row; `stack` only changes a phone.
+
+## Proposed learnings
+
+- A list row in the social screens is a `RowCard` with `RowText`, an optional `Pill` and `RowActions`, never a bare `ListRow` | one row shape across friends, trades, bids, selling, lairs and duels | src/components | no
+- A height on a shared chip is a prop of the chip, not a utility class passed in | two height utilities on one element are decided by stylesheet order | src/components/styled | no
+
+## Verification
+
+- `pnpm typecheck`: exit 0.
+- `rtk proxy pnpm exec oxlint src test`: exit 0.
+- `pnpm exec oxfmt src/components src/routes src/i18n/messages`: run, clean.
+- `pnpm exec vitest run test/components test/i18n`: 16 files, 101 tests passed.
+- No full suite, no database suite, no e2e, no captures: they belong to the story.
+
+## Size
+
+- Estimated L, actual L.

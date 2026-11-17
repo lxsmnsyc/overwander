@@ -69,7 +69,7 @@ import NestDialog from '../NestDialog';
 import PortalDialog from '../PortalDialog';
 import HoneyTreeDialog from '../HoneyTreeDialog';
 import StopDialog from '../StopDialog';
-import SafariDialog from '../SafariDialog';
+import SafariDialog from '../safari-dialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import type { ConversationHandle } from '../../forms/conversation';
 import { visitNpc } from '../visit-npc';

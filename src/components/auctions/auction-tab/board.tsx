@@ -1,6 +1,6 @@
-import { BidDialog, bidRefusal } from './bidding';
+import { BidDialog } from './bidding';
 import { nameItemLot } from './lots';
-import { describeRemaining, describeStanding, describeStandingShort, now } from './time';
+import { describeStanding, describeStandingShort, now } from './time';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -8,7 +8,6 @@ import {
   canReclaim,
   claimAuction,
   isAuctionableCatch,
-  isAuctionableItem,
   isLive,
   placeBid,
   reclaimAuction,
@@ -24,29 +23,26 @@ import matchesAuction, {
 import { useGame } from '../../app/game-context';
 import CatchCard from '../../catches/CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../../catches/CatchGrid';
-import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
+import type { CatchOption } from '../../catches/catch-picker';
 import { asBoxEntry, describeCatch } from '../../catches/catch-summary';
 import { describeItem, titleCatch } from '../../details';
-import InventoryPicker from '../../items/InventoryPicker';
-import ItemGrid, { type ItemAction, type ItemCell } from '../../items/ItemGrid';
+import ItemGrid, { type ItemCell } from '../../items/ItemGrid';
 import {
-  Badge,
   Button,
-  Card,
-  Detail,
-  Hint,
-  HintList,
   HoverCard,
   Note,
   Panel,
-  Row,
   SEARCH_FROM,
   Search,
   Status,
+  TabGroup,
+  TabPane,
 } from '../../styled';
+import createLotActions, { type LotClaim } from './lot-actions';
+import LotRail, { LotKind, readKind } from './rail';
+import SellPane from './sell';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
-import { AUCTION_DURATION } from '../../../model/auction-record';
-import { type JSX, type Resource, Show, createSignal, from } from 'solid-js';
+import { For, type JSX, type Resource, Show, createSignal, from } from 'solid-js';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
 import { formatNumber } from '../../../i18n/format';
@@ -68,17 +64,6 @@ export interface AuctionTabProps {
    * nothing on it bids, collects or takes anything back
    */
   viewOnly?: boolean;
-}
-
-/**
- * What a lot that has stopped taking bids is waiting for: the player to
- * come and get it. A won lot is collected and an unsold one is taken
- * back, which are the same button with different words on it
- */
-interface LotClaim {
-  said: string;
-  label: string;
-  onClaim: () => void;
 }
 
 /**
@@ -129,8 +114,6 @@ export function AuctionBoard(
 
   const onlyOne = (): boolean | undefined => props.onlyOne();
 
-  const sellable = (): CatchOption[] | undefined => props.sellable();
-
   const standing = (): { auction: string; endsAt: number } | null | undefined => props.standing();
 
   const revision = (): number => props.revision;
@@ -175,6 +158,9 @@ export function AuctionBoard(
    * rather than scrolled
    */
   const [query, setQuery] = createSignal('');
+
+  /** Which kind of lot the rail has the board narrowed to */
+  const [kind, setKind] = createSignal<LotKind>(LotKind.Everything);
 
   /**
    * Whether the block would take it at all.
@@ -328,27 +314,6 @@ export function AuctionBoard(
   };
 
   /**
-   * Whose lot it is and what it stands at, for the card that comes up
-   * over a square.
-   *
-   * A tray of squares has nowhere to write either — a picture is what a
-   * lot is recognised by, which is the whole reason the board is drawn
-   * this way — so both are in the window over one, and the seller is the
-   * way to their profile: what somebody else has caught and fought is
-   * most of what says whether their lot is worth bidding on
-   */
-  const lotDetails = (auction: AuctionRecord): JSX.Element => (
-    <>
-      <Detail label={m.auction_owned_by()}>
-        {auction.seller === props.player ? m.auction_you() : describeSeller(auction)}
-      </Detail>
-      <Detail label={m.auction_bidding()}>
-        {describeStanding(auction)} · {describeRemaining(auction.endsAt, now())}
-      </Detail>
-    </>
-  );
-
-  /**
    * The one thing to do about a lot: bid on it, or come and get it once
    * bidding is over. A seller's own lot offers neither, which is
    * `BidControls` answering with nothing
@@ -375,84 +340,21 @@ export function AuctionBoard(
     return lot == null ? undefined : nameOf(lot);
   };
 
-  const lotActions = (id: string, auction: AuctionRecord): JSX.Element => (
-    <Show when={props.viewOnly !== true}>
-      <Show
-        when={claimOf(id, auction)}
-        fallback={
-          // The button asks; the dialog it asks for stands with the panel
-          // rather than inside this card. A card is put away the moment
-          // the pointer leaves it, and it takes whatever is mounted inside
-          // it — which was this dialog, gone before it could be typed in
-          <Show when={auction.seller !== props.player}>
-            <Button
-              tone="primary"
-              disabled={bidRefusal(auction, props.player, gold()) != null}
-              title={bidRefusal(auction, props.player, gold()) ?? undefined}
-              onClick={() => {
-                setBidding(id);
-              }}
-            >
-              {m.auction_bid()}
-            </Button>
-          </Show>
-        }
-      >
-        {(taking) => (
-          <Button tone="primary" onClick={taking().onClaim}>
-            {taking().label}
-          </Button>
-        )}
-      </Show>
-    </Show>
-  );
+  const { lotDetails, lotActions, lotChoices } = createLotActions({
+    player: props.player,
+    viewOnly: props.viewOnly,
+    gold,
+    describeSeller,
+    claimOf,
+    onBid: (id) => {
+      setBidding(id);
+    },
+  });
 
-  /**
-   * What can be done with one lot: look up whose it is, and bid on it
-   * or collect it. Two of them on a live lot, which is what puts the
-   * tray's squares under a card rather than a label
-   */
-  const lotChoices = (id: string, auction: AuctionRecord): ItemAction[] => {
-    const choices: ItemAction[] = [];
+  const biddingSeller = (): string | undefined => {
+    const lot = bidLot();
 
-    // A board is where a seller worth trading with again is found, so
-    // whose it is presses
-    if (auction.seller !== props.player) {
-      choices.push({
-        label: describeSeller(auction),
-        onPress: () => {
-          game.setVisiting(auction.seller);
-        },
-      });
-    }
-    if (props.viewOnly === true) {
-      return choices;
-    }
-
-    const taking = claimOf(id, auction);
-
-    if (taking != null) {
-      choices.push({ label: taking.label, tone: 'primary', onPress: taking.onClaim });
-      return choices;
-    }
-    if (auction.seller === props.player) {
-      return choices;
-    }
-    const refusal = bidRefusal(auction, props.player, gold());
-
-    // The button asks; the dialog it asks for stands with the panel
-    // rather than inside the tray, which is put away the moment the
-    // pointer leaves it
-    choices.push({
-      label: m.auction_bid(),
-      tone: 'primary',
-      disabled: refusal != null,
-      title: refusal ?? undefined,
-      onPress: () => {
-        setBidding(id);
-      },
-    });
-    return choices;
+    return lot == null ? undefined : describeSeller(lot);
   };
 
   /**
@@ -542,33 +444,50 @@ export function AuctionBoard(
    * the bag's squares and the box's — because a lot is recognised by its
    * picture rather than read: a board of names all set the same way is
    * read word by word. What a row used to carry beside the name is in
-   * the card that comes up over a square
+   * the card that comes up over a square. The rail narrows what is
+   * drawn to the items or to the pokemon
    */
+  /** What an empty board says: nothing up, nothing of this kind, or nothing matching */
+  const emptyNote = (): string => {
+    if (query().length > 0) {
+      return m.auction_no_match();
+    }
+    return board().length === 0 ? m.auction_empty() : m.auction_no_lots_kind();
+  };
+
   const onTheBlock = (): JSX.Element => (
     <Show
-      when={board().length}
-      fallback={<Note>{query().length === 0 ? m.auction_empty() : m.auction_no_match()}</Note>}
+      when={
+        (kind() !== LotKind.Pokemon && itemLots().length > 0) ||
+        (kind() !== LotKind.Items && boxed().length > 0)
+      }
+      fallback={<Note>{emptyNote()}</Note>}
     >
-      <Show when={itemLots().length}>
+      <Show when={kind() !== LotKind.Pokemon && itemLots().length}>
         <h4>{m.auction_items()}</h4>
         {/* Narrowed by the board's own search, so the tray draws none
             of its own */}
-        <ItemGrid bare entries={itemLots()} />
+        <ItemGrid bare sheet fill columns={8} entries={itemLots()} />
       </Show>
 
-      <Show when={boxed().length}>
+      <Show when={kind() !== LotKind.Items && boxed().length}>
         <h4>{m.auction_pokemon()}</h4>
         {/* Narrowed by the board's own search too, so the grid draws
             none of its own */}
         <CatchGrid
           bare
           cardOnly
+          fill
+          columns={8}
+          // Only the rows the lots fill, as the board draws it
+          capacity={Math.max(1, Math.ceil(boxed().length / 8)) * 8}
           entries={boxed()}
           cell={(entry) => (
             <Show when={lotOf(entry().id)}>
               {(lot) => (
                 <HoverCard
                   class="block size-full"
+                  sheet
                   trigger={<span class="block size-full" />}
                   title={titleCatch(lots()?.get(entry().id))}
                   quietTitle
@@ -585,7 +504,7 @@ export function AuctionBoard(
                       >
                         {m.friends_view()}
                       </Button>
-                      {lotActions(lot()[0], lot()[1])}
+                      {lotActions(lot()[0], lot()[1], close)}
                     </>
                   )}
                 >
@@ -603,16 +522,27 @@ export function AuctionBoard(
   );
 
   /**
-   * The board itself: what there is to bid on, and what the player is
-   * holding to bid with
+   * The board itself: a rail of what the player holds and the kinds of
+   * lot, and beside it the search and the lots
    */
   const shopping = (): JSX.Element => (
-    <>
-      <Row class="justify-center">
-        <Show when={props.viewOnly !== true}>
-          <Badge tone="gold">{m.ui_gold({ amount: formatNumber(gold()) })}</Badge>
-        </Show>
-        <Show when={board().length > SEARCH_FROM}>
+    <TabGroup
+      horizontal
+      value={kind()}
+      onChange={(value) => {
+        setKind(readKind(value));
+      }}
+      class="flex flex-col gap-3 md:flex-row md:gap-5"
+    >
+      <LotRail
+        gold={props.viewOnly === true ? undefined : gold()}
+        everything={board().length}
+        items={itemLots().length}
+        pokemon={boxed().length}
+      />
+
+      <div class="flex min-w-0 grow flex-col gap-2.5">
+        <Show when={board().length > SEARCH_FROM || query() !== ''}>
           <Search
             vocabulary={AUCTION_VOCABULARY}
             example="price:<500"
@@ -623,16 +553,18 @@ export function AuctionBoard(
             }}
           />
         </Show>
-      </Row>
 
-      {/* One list, newest first, whatever is standing on each lot.
-          It is the panel rather than a card in it: the board *is* this
-          dialog, and a titled box around the only thing on the screen
-          is a label on a room somebody is already standing in */}
-      <Show when={auctions()} fallback={<Note>{m.auction_loading()}</Note>}>
-        {onTheBlock()}
-      </Show>
-    </>
+        {/* One list, newest first, whatever is standing on each lot.
+            It is the panel rather than a card in it: the board *is* this
+            dialog, and a titled box around the only thing on the screen
+            is a label on a room somebody is already standing in */}
+        <Show when={auctions()} fallback={<Note>{m.auction_loading()}</Note>}>
+          <For each={[LotKind.Everything, LotKind.Items, LotKind.Pokemon]}>
+            {(value) => <TabPane value={value}>{onTheBlock()}</TabPane>}
+          </For>
+        </Show>
+      </div>
+    </TabGroup>
   );
 
   return (
@@ -643,79 +575,15 @@ export function AuctionBoard(
           scrolling past their own bag to get back to what they came
           for */}
       <Show when={props.adding === true} fallback={shopping()}>
-        <Card
-          title={m.auction_sell()}
-          aside={
-            <Hint title={m.auction_about_selling()}>
-              <HintList>
-                <li>{m.auction_hint_duration({ hours: AUCTION_DURATION / 3_600_000 })}</li>
-                <li>{m.auction_hint_catches()}</li>
-                <li>{m.auction_hint_items()}</li>
-                <li>{m.auction_hint_unsold()}</li>
-              </HintList>
-            </Hint>
-          }
-        >
-          <Show
-            when={running() == null}
-            fallback={
-              <Note>
-                {m.auction_running({ remaining: describeRemaining(running() ?? 0, now()) })}
-              </Note>
-            }
-          >
-            <h4>{m.auction_from_bag()}</h4>
-            <InventoryPicker
-              inline
-              revision={revision()}
-              value={null}
-              verb={m.auction_sell()}
-              empty={m.auction_bag_empty()}
-              filter={(entry) => isAuctionableItem(entry.item)}
-              onPick={(picked) => {
-                if (picked != null) {
-                  setOffered({ lot: AuctionLot.Item, item: picked });
-                }
-              }}
-            />
-
-            <h4>{m.auction_from_records()}</h4>
-            {/* Two different lists in one. What does not qualify for
-                the block at all is **left out** — it would be most of a
-                box, and a hundred greyed rows say nothing. The three
-                that would otherwise qualify are **refused and told**,
-                since a player looking for one of them wants the reason:
-                a raid is fighting on a frozen copy of a record that has
-                to still be there when it ends, an egg is a sealed box
-                only its owner can see into, and the buddy is not
-                something to sell by misreading a list */}
-            <CatchPicker
-              inline
-              options={sellable()}
-              value={null}
-              verb={m.auction_sell()}
-              empty={m.auction_records_empty()}
-              filter={mayGoUp}
-              onPick={(picked) => {
-                if (picked != null) {
-                  setOffered({ lot: AuctionLot.Catch, catchId: picked });
-                }
-              }}
-            />
-          </Show>
-          {/* Back to the board. It says where it goes rather than
-              "Done", since nothing has been finished by pressing it —
-              the listing itself happens in the dialog */}
-          <Row class="justify-center">
-            <Button
-              onClick={() => {
-                props.onAdding?.(false);
-              }}
-            >
-              {m.auction_back_to_board()}
-            </Button>
-          </Row>
-        </Card>
+        <SellPane
+          running={running()}
+          revision={revision()}
+          sellable={props.sellable}
+          mayGoUp={mayGoUp}
+          onPick={(subject) => {
+            setOffered(subject);
+          }}
+        />
       </Show>
 
       <Status message={status()} />
@@ -729,6 +597,7 @@ export function AuctionBoard(
         lot={bidLot()}
         gold={gold()}
         name={biddingName()}
+        seller={biddingSeller()}
         onClose={() => {
           setBidding(null);
         }}

@@ -16,11 +16,11 @@ import { m } from '../../i18n/paraglide/messages.js';
  * locked square is an offer the server would refuse.
  */
 
-/** How many fit a page: six across, three down. */
-const PAGE = 18;
+/** How many fit a page: eight across, two down. */
+const PAGE = 16;
 
 /** How tall one character is drawn in the shelf, in pixels. */
-const SQUARE = 44;
+const SQUARE = 36;
 
 export interface SpritePickerProps {
   /** The sheet worn now */
@@ -39,7 +39,7 @@ function Shelf(props: SpritePickerProps & { earned: () => string[] }): JSX.Eleme
   return (
     <Show when={props.earned().length > 0} fallback={<Note>{m.profile_sprite_none()}</Note>}>
       <div class="flex flex-col gap-2">
-        <div class="grid grid-cols-6 gap-1.5">
+        <div class="grid grid-cols-4 gap-1.5 rounded-card border-4 border-tide bg-parchment p-2 sm:grid-cols-8">
           <For each={pager.shown()}>
             {(sheet) => (
               <button
@@ -47,8 +47,13 @@ function Shelf(props: SpritePickerProps & { earned: () => string[] }): JSX.Eleme
                 disabled={props.disabled}
                 aria-pressed={sheet === props.value}
                 title={getCharsetName(sheet)}
-                class={`flex items-end justify-center rounded-xl border-2 p-1
-                  ${sheet === props.value ? 'border-tide bg-tide-soft' : 'border-line bg-paper'}`}
+                class={`flex h-[54px] items-end justify-center rounded-button border-2 p-1
+                  transition-[translate,border-color] duration-(--motion-quick) ease-spring
+                  hover:-translate-y-0.5 hover:border-tide ${
+                    sheet === props.value
+                      ? 'border-leaf bg-leaf-soft ring-3 ring-leaf/20'
+                      : 'border-line bg-paper'
+                  }`}
                 onClick={() => {
                   props.onChange(sheet);
                 }}
@@ -69,7 +74,9 @@ export default function SpritePicker(props: SpritePickerProps): JSX.Element {
 
   return (
     <div class="flex flex-col gap-1">
-      <span class="text-sm font-bold">{m.profile_character()}</span>
+      <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
+        {m.profile_character()}
+      </span>
       <Suspense fallback={<Note>{m.profile_sprite_reading()}</Note>}>
         <Shelf
           value={props.value}

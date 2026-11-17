@@ -1,17 +1,11 @@
-import { type JSX, createSignal } from 'solid-js';
+import { type JSX, Show, createSignal } from 'solid-js';
 import type { ItemAmount } from '../items/InventoryPicker';
-import {
-  Button,
-  DialogActions,
-  DialogSection,
-  TabBar,
-  TabButton,
-  TabGroup,
-  TabPane,
-} from '../styled';
+import { Button, DialogActions, DialogSection, Pill, Segmented } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 import { type FormProps, defineForm } from './form';
 import { ItemTray, type PickItemInput } from './pick-item';
+import { DockNote } from './terms';
+import { formatNumber } from '../../i18n/format';
 
 /**
  * A counter's two trays on one screen: his crate to buy from and the
@@ -41,41 +35,57 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
   return (
     <>
       <DialogSection class="flex flex-col gap-3">
-        <TabGroup
-          horizontal
-          value={side()}
-          onChange={(value: Side) => {
-            setSide(value);
-          }}
-          class="flex flex-col gap-3"
+        {/* Buy or Sell is what the tray shows, not an act on it */}
+        <div class="flex flex-wrap items-center gap-2.5">
+          <Segmented
+            label={m.shop_title()}
+            value={side()}
+            options={[
+              { value: Side.Buy, label: m.shop_buy() },
+              { value: Side.Sell, label: m.shop_sell() },
+            ]}
+            onChange={(next) => {
+              setSide(next);
+            }}
+          />
+          {/* What the purse holds, as the gold chip beside the choice */}
+          <Show when={props.input.buy.have}>
+            {(have) => (
+              <Pill size="medium" tone="gold" class="gap-1.5">
+                {formatNumber(have().amount)} {have().unit}
+              </Pill>
+            )}
+          </Show>
+        </div>
+        <Show
+          when={side() === Side.Sell}
+          fallback={
+            <ItemTray
+              hideHave
+              input={props.input.buy}
+              onPick={(picked) => {
+                props.submit([false, picked]);
+              }}
+            />
+          }
         >
-          <TabBar class="self-start">
-            <TabButton value={Side.Buy}>{m.shop_buy()}</TabButton>
-            <TabButton value={Side.Sell}>{m.shop_sell()}</TabButton>
-          </TabBar>
-          <TabPane value={Side.Buy}>
-            <div class="flex flex-col gap-3">
-              <ItemTray
-                input={props.input.buy}
-                onPick={(picked) => {
-                  props.submit([false, picked]);
-                }}
-              />
-            </div>
-          </TabPane>
-          <TabPane value={Side.Sell}>
-            <div class="flex flex-col gap-3">
-              <ItemTray
-                input={props.input.sell}
-                onPick={(picked) => {
-                  props.submit([true, picked]);
-                }}
-              />
-            </div>
-          </TabPane>
-        </TabGroup>
+          <ItemTray
+            hideHave
+            input={props.input.sell}
+            onPick={(picked) => {
+              props.submit([true, picked]);
+            }}
+          />
+        </Show>
       </DialogSection>
-      <DialogActions>
+      <DialogActions
+        stack
+        note={
+          <Show when={side() === Side.Buy}>
+            <DockNote>{m.shop_press_buy()}</DockNote>
+          </Show>
+        }
+      >
         <Button onClick={props.cancel}>{props.leave}</Button>
       </DialogActions>
     </>
@@ -86,5 +96,6 @@ function ShopView(props: FormProps<ShopInput, ShopPick>): JSX.Element {
 export const ShopForm = defineForm<ShopInput, ShopPick>({
   title: (input) => input.buy.title ?? m.shop_title(),
   prompt: (input) => input.buy.prompt ?? m.shop_prompt(),
+  width: 'medium',
   view: (props) => <ShopView {...props} />,
 });

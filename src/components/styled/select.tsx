@@ -45,6 +45,8 @@ export interface SelectProps<V> {
    * whole screen under it shows rather than one field of a form
    */
   accent?: boolean;
+  /** The word above is the label face, small capitals */
+  labelFace?: boolean;
 }
 
 /** The small square of colour an option carries */
@@ -116,6 +118,7 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
       hint={props.hint}
       error={props.error}
       required={props.required}
+      labelFace={props.labelFace}
       class={props.class}
     >
       {(parts) => (

@@ -8,13 +8,21 @@ import { RowButton } from '../styled';
  * Exported because the rows that keep the name somewhere else draw the
  * same picture: a friend's row, the plate below
  */
-export function PlayerFace(props: { sprite?: string | null; size?: number }): JSX.Element {
+export function PlayerFace(props: {
+  sprite?: string | null;
+  size?: number;
+  /** A rounded square with a white edge standing on the page, as the profile's hero has it */
+  square?: boolean;
+}): JSX.Element {
   const room = (): number => props.size ?? 32;
 
   return (
     <span
-      class="flex shrink-0 items-center justify-center rounded-full border-2 border-tide
-        bg-line-soft"
+      class={`flex shrink-0 items-center justify-center ${
+        props.square === true
+          ? 'rounded-[22px] border-[3px] border-paper bg-tide-soft shadow-pop-sm'
+          : 'rounded-full border-2 border-tide bg-line-soft'
+      }`}
       style={{ width: `${room()}px`, height: `${room()}px` }}
     >
       <TrainerSprite sheet={props.sprite ?? DEFAULT_CHARSET} size={Math.round(room() * 0.82)} />

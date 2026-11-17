@@ -1,5 +1,5 @@
 import { For, type JSX } from 'solid-js';
-import { Dialog } from '../styled';
+import { Dialog, HeroBand } from '../styled';
 import { type Frame, dropFrame, frames, topFrame } from './stack';
 
 /**
@@ -23,7 +23,15 @@ export default function FormHost(): JSX.Element {
           }}
           title={frame.title()}
           description={frame.line()}
-          lead={frame.lead?.()}
+          // Whoever is speaking stands on the band's stage, and their line is
+          // its bubble; a frame with nobody speaking keeps the plain line
+          hero={
+            frame.lead == null ? undefined : (
+              <HeroBand tone="tide" size="talk" stage={frame.lead()}>
+                {frame.line()}
+              </HeroBand>
+            )
+          }
           width={frame.width?.()}
           insistent={frame.insistent?.()}
         >

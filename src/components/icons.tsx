@@ -892,3 +892,36 @@ export function ClockIcon(props: ComponentProps<'svg'>): JSX.Element {
     </svg>
   );
 }
+
+/** A bookmark, for the quest board's nameplate */
+export function BookmarkIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2.4"
+      stroke="currentColor"
+      {...props}
+    >
+      <path d="M6 3h12v18l-6-4-6 4z" />
+    </svg>
+  );
+}
+
+/** A folded page, for the news nameplate */
+export function PageIcon(props: ComponentProps<'svg'>): JSX.Element {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="2.4"
+      stroke="currentColor"
+      {...props}
+    >
+      <path d="M4 5h13v14H6a2 2 0 0 1-2-2z" />
+      <path d="M17 9h3v8a2 2 0 0 1-2 2M8 9h5M8 13h5" />
+    </svg>
+  );
+}

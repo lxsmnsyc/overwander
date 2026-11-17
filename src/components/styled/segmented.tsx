@@ -1,4 +1,5 @@
 import { For, type JSX } from 'solid-js';
+import { CountPill } from './row-card';
 import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta';
 
 /**
@@ -14,6 +15,10 @@ import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta';
 export interface SegmentedOption<V> {
   value: V;
   label: string;
+  /** How many it holds, in a pill after the label */
+  count?: number;
+  /** The count is what waits on the player, so it reads ember */
+  hot?: boolean;
 }
 
 export interface SegmentedProps<V> {
@@ -22,6 +27,8 @@ export interface SegmentedProps<V> {
   value: V;
   options: SegmentedOption<V>[];
   onChange: (value: V) => void;
+  /** Stretch across the column, each key taking an equal share */
+  fill?: boolean;
   class?: string;
 }
 
@@ -41,7 +48,7 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
           props.onChange(value);
         }
       }}
-      class={`${TRACK} ${props.class ?? ''}`}
+      class={`${TRACK} ${props.fill === true ? 'w-full' : ''} ${props.class ?? ''}`}
     >
       <RadioGroupLabel as="span" class="sr-only">
         {props.label}
@@ -50,13 +57,18 @@ export default function Segmented<V>(props: SegmentedProps<V>): JSX.Element {
         {(option) => (
           <RadioGroupOption
             value={option.value}
-            class={`${KEY} ${
+            class={`${KEY} ${props.fill === true ? 'flex-1 text-center' : ''} ${
               option.value === props.value
                 ? 'border-line bg-paper text-ink'
                 : 'border-transparent bg-transparent text-muted hover:text-ink'
             }`}
           >
             <RadioGroupLabel as="span">{option.label}</RadioGroupLabel>
+            {option.count == null ? null : (
+              <CountPill class="ml-1.5" look={option.hot === true ? 'hot' : 'quiet'}>
+                {option.count}
+              </CountPill>
+            )}
           </RadioGroupOption>
         )}
       </For>

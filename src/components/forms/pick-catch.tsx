@@ -80,8 +80,8 @@ function PickCatchBody(
   return (
     <>
       <DialogSection class="flex flex-col gap-3">
-        <Show when={props.input.cost != null || props.input.have != null}>
-          <CounterTerms cost={props.input.cost} have={props.input.have} />
+        <Show when={props.input.have != null}>
+          <CounterTerms have={props.input.have} />
         </Show>
         <Show
           when={max() > 1}
@@ -104,6 +104,7 @@ function PickCatchBody(
           <CounterStep>{props.input.step ?? m.pick_catch_step()}</CounterStep>
           {/* Live, so the picker draws no confirm of its own: the dock's button is the one press */}
           <CatchPicker
+            fill
             inline
             multiple
             live
@@ -122,7 +123,7 @@ function PickCatchBody(
         </Show>
         <Status message={refused()} />
       </DialogSection>
-      <DialogActions>
+      <DialogActions stack>
         <Button
           tone="primary"
           disabled={!ready()}

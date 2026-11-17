@@ -22,19 +22,8 @@ import {
   startTotp,
   unlockSecurity,
 } from '../../auth/security';
-import {
-  Badge,
-  Button,
-  Card,
-  List,
-  ListRow,
-  Meta,
-  Note,
-  Panel,
-  Row,
-  Status,
-  TextField,
-} from '../styled';
+import { Badge, Button, Meta, Note, Row, SETTING_ROW, Status, TextField } from '../styled';
+import { SettingCard, SettingNote, SettingState } from './setting-card';
 import createClientSignal from '../app/client-signal';
 import { formatDate } from '../../i18n/format';
 import describeFailure from '../../i18n/refusals';
@@ -97,17 +86,15 @@ function TwoFactorCard(props: {
   const [codes, setCodes] = createSignal<string[] | null>(null);
 
   return (
-    <Card title={m.security_totp_title()}>
+    <SettingCard loose title={m.security_totp_title()}>
       <Show
         when={!props.enabled}
         fallback={
           <>
-            <Row>
-              <Badge tone="leaf">{m.security_on()}</Badge>
-              <Meta>{m.security_totp_on()}</Meta>
-            </Row>
-            <Show when={codes()}>{(fresh) => <BackupCodes codes={fresh()} />}</Show>
-            <Row>
+            <SettingState
+              label={m.security_two_step()}
+              state={<Badge tone="leaf">{m.security_on()}</Badge>}
+            >
               <Button
                 disabled={busy()}
                 onClick={() => {
@@ -131,29 +118,31 @@ function TwoFactorCard(props: {
               >
                 {m.security_turn_off()}
               </Button>
-            </Row>
+            </SettingState>
+            <Show when={codes()}>{(fresh) => <BackupCodes codes={fresh()} />}</Show>
           </>
         }
       >
         <Show
           when={setup()}
           fallback={
-            <>
-              <Note>{m.security_totp_offer()}</Note>
-              <Row>
-                <Button
-                  tone="primary"
-                  disabled={busy()}
-                  onClick={() => {
-                    act(async () => {
-                      setSetup(await startTotp(props.password));
-                    });
-                  }}
-                >
-                  {m.security_set_up()}
-                </Button>
-              </Row>
-            </>
+            <SettingState
+              label={m.security_two_step()}
+              description={m.security_two_step_description()}
+              state={<Badge>{m.security_off()}</Badge>}
+            >
+              <Button
+                tone="primary"
+                disabled={busy()}
+                onClick={() => {
+                  act(async () => {
+                    setSetup(await startTotp(props.password));
+                  });
+                }}
+              >
+                {m.security_set_up()}
+              </Button>
+            </SettingState>
           }
         >
           {(started) => (
@@ -194,7 +183,7 @@ function TwoFactorCard(props: {
         </Show>
       </Show>
       <Status message={wrong()} tone="alert" />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -209,28 +198,27 @@ function PasskeyList(props: {
       when={(props.passkeys() ?? []).length > 0}
       fallback={<Note>{m.security_no_passkeys()}</Note>}
     >
-      <List>
-        <For each={props.passkeys()}>
-          {(one) => (
-            <ListRow>
-              <span class="grow">{one.name === '' ? m.login_passkey() : one.name}</span>
-              <Meta>{m.security_added({ date: formatDate(one.createdAt) })}</Meta>
-              <Button
-                tone="danger"
-                disabled={props.busy}
-                onClick={() => {
-                  props.act(async () => {
-                    await removePasskey(one.id);
-                    props.onChanged();
-                  });
-                }}
-              >
-                {m.ui_remove_action()}
-              </Button>
-            </ListRow>
-          )}
-        </For>
-      </List>
+      <For each={props.passkeys()}>
+        {(one) => (
+          <SettingState
+            label={one.name === '' ? m.login_passkey() : one.name}
+            description={m.security_added({ date: formatDate(one.createdAt) })}
+          >
+            <Button
+              tone="danger"
+              disabled={props.busy}
+              onClick={() => {
+                props.act(async () => {
+                  await removePasskey(one.id);
+                  props.onChanged();
+                });
+              }}
+            >
+              {m.ui_remove_action()}
+            </Button>
+          </SettingState>
+        )}
+      </For>
     </Show>
   );
 }
@@ -245,12 +233,12 @@ function PasskeysCard(): JSX.Element {
   };
 
   return (
-    <Card title={m.security_passkeys_title()}>
-      <Note>{m.security_passkeys_note()}</Note>
+    <SettingCard title={m.security_passkeys_title()}>
+      <SettingNote>{m.security_passkeys_note()}</SettingNote>
       <Suspense fallback={<Note>{m.security_passkeys_loading()}</Note>}>
         <PasskeyList passkeys={passkeys} act={act} busy={busy()} onChanged={changed} />
       </Suspense>
-      <Row class="items-end">
+      <div class={`flex items-end gap-2 ${SETTING_ROW}`}>
         <TextField
           label={m.security_passkey_name()}
           class="grow"
@@ -274,9 +262,9 @@ function PasskeysCard(): JSX.Element {
         >
           {m.security_add_passkey()}
         </Button>
-      </Row>
+      </div>
       <Status message={wrong()} tone="alert" />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -322,7 +310,7 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
   };
 
   return (
-    <Card title={m.security_confirm_title()}>
+    <SettingCard loose title={m.security_confirm_title()}>
       <Show when={!none()} fallback={<Note>{m.security_no_password()}</Note>}>
         <Note>{m.security_confirm_note()}</Note>
         <Row class="items-end">
@@ -344,7 +332,7 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
         </Row>
       </Show>
       <Status message={wrong()} tone="alert" />
-    </Card>
+    </SettingCard>
   );
 }
 
@@ -358,7 +346,7 @@ export default function SecurityPane(): JSX.Element {
   );
 
   return (
-    <Panel>
+    <>
       <Show
         when={password()}
         fallback={
@@ -381,6 +369,6 @@ export default function SecurityPane(): JSX.Element {
           </Suspense>
         )}
       </Show>
-    </Panel>
+    </>
   );
 }

@@ -108,6 +108,8 @@ interface InventoryPickerCommonProps {
    * one. For callers that are already in a dialog
    */
   inline?: boolean;
+  /** Squares across in the tray, for a caller that lists more than the bag's six */
+  columns?: 6 | 8 | 10;
   /**
    * Whether the dialog is open. Leave it out and the picker opens and
    * shuts itself from its own button
@@ -192,6 +194,8 @@ interface InventoryPickerCommonProps {
    * bumps it so the list catches up
    */
   revision?: unknown;
+  /** Whether the tray runs the full width of what holds it (see `ItemGrid`) */
+  fill?: boolean;
   /** The tray's search, kept by a caller that draws the tray again (see `ItemGrid`) */
   query?: string;
   onQuery?: (typed: string) => void;
@@ -453,6 +457,8 @@ function PickerList(
         }
       >
         <ItemGrid
+          columns={props.columns}
+          fill={props.fill}
           entries={cells()}
           verb={props.verb}
           disabled={props.disabled}

@@ -13,10 +13,9 @@ import { NICKNAME_LIMIT, asNickname } from '../../model/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
 import BattleData from '../app/BattleData';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
-import TeamRow, { TeamRows } from '../catches/TeamRow';
+import TeamStrip from '../catches/TeamStrip';
 import {
   Button,
-  Card,
   Dialog,
   DialogActions,
   Field,
@@ -24,7 +23,6 @@ import {
   HintList,
   Meta,
   Note,
-  Row,
   Status,
 } from '../styled';
 import describeFailure from '../../i18n/refusals';
@@ -89,17 +87,30 @@ function PresetRow(props: {
   const gone = (): number => props.preset.catches.length - (party.latest?.length ?? 0);
 
   return (
-    <TeamRow name={props.preset.name} catches={party.latest ?? []}>
-      <span class="truncate font-bold">{props.preset.name}</span>
-      <Show when={gone() > 0}>
-        <Meta>{m.profile_team_gone({ count: gone() })}</Meta>
-      </Show>
-      <span class="grow" />
-      <Button onClick={props.onEdit}>{m.profile_edit()}</Button>
-      <Button tone="caution" onClick={props.onDelete}>
+    // A white row: the name over its pokemon on the left, the buttons at the end
+    <li
+      aria-label={props.preset.name}
+      class="flex min-h-13 flex-wrap items-center gap-x-2.5 gap-y-2 rounded-card border-2
+        border-line-soft bg-paper px-3 py-2"
+    >
+      <div class="flex min-w-0 grow basis-60 flex-col gap-1">
+        <span class="flex items-baseline gap-2">
+          <span class="truncate text-sm font-extrabold">{props.preset.name}</span>
+          <Show when={gone() > 0}>
+            <Meta>{m.profile_team_gone({ count: gone() })}</Meta>
+          </Show>
+        </span>
+        <div class="w-full max-w-80">
+          <TeamStrip catches={party.latest ?? []} />
+        </div>
+      </div>
+      <Button class="h-[34px]" onClick={props.onEdit}>
+        {m.profile_edit()}
+      </Button>
+      <Button tone="caution" class="h-[34px]" onClick={props.onDelete}>
         {m.profile_delete()}
       </Button>
-    </TeamRow>
+    </li>
   );
 }
 
@@ -163,33 +174,33 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
   };
 
   return (
-    <Card
-      title={m.pick_team_saved_tab()}
-      aside={
-        <Row>
-          <Hint title={m.profile_teams_about()}>
-            <HintList>
-              <li>{m.profile_teams_hint_size({ max: TEAM_SIZE })}</li>
-              <li>{m.profile_teams_hint_load()}</li>
-              <li>{m.profile_teams_hint_limit({ max: TEAM_PRESET_LIMIT })}</li>
-            </HintList>
-          </Hint>
-          <Button
-            tone="primary"
-            disabled={full()}
-            title={full() ? m.profile_teams_full({ max: TEAM_PRESET_LIMIT }) : undefined}
-            onClick={() => {
-              start(null);
-            }}
-          >
-            {m.profile_new_team()}
-          </Button>
-        </Row>
-      }
-    >
+    <div class="flex flex-col gap-2.5">
+      {/* What saved teams are for, how many are used, and the way to write one */}
+      <div class="flex flex-wrap items-center gap-2.5">
+        <Meta class="grow">
+          {m.profile_teams_lede({ count: held().length, max: TEAM_PRESET_LIMIT })}
+        </Meta>
+        <Hint title={m.profile_teams_about()}>
+          <HintList>
+            <li>{m.profile_teams_hint_size({ max: TEAM_SIZE })}</li>
+            <li>{m.profile_teams_hint_load()}</li>
+            <li>{m.profile_teams_hint_limit({ max: TEAM_PRESET_LIMIT })}</li>
+          </HintList>
+        </Hint>
+        <Button
+          tone="primary"
+          disabled={full()}
+          title={full() ? m.profile_teams_full({ max: TEAM_PRESET_LIMIT }) : undefined}
+          onClick={() => {
+            start(null);
+          }}
+        >
+          {m.profile_new_team()}
+        </Button>
+      </div>
       <Show when={held().length > 0} fallback={<Note>{m.profile_no_teams()}</Note>}>
         <BattleData>
-          <TeamRows>
+          <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
             <For each={held()}>
               {([id, preset]) => (
                 <PresetRow
@@ -204,7 +215,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                 />
               )}
             </For>
-          </TeamRows>
+          </ul>
         </BattleData>
       </Show>
       <Status message={status()} />
@@ -266,6 +277,6 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
           <Button onClick={close}>{m.battle_cancel()}</Button>
         </DialogActions>
       </Dialog>
-    </Card>
+    </div>
   );
 }

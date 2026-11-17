@@ -47,7 +47,7 @@ export const BOX_SIZE = BOX_COLUMNS * BOX_ROWS;
  * five rows drawn narrower or wider, so a box stays one screenful
  * either way
  */
-export type BoxWidth = 5 | 6 | 8;
+export type BoxWidth = 5 | 6 | 8 | 10;
 
 /** How many a box of a given width holds, which is what a page of them is */
 export function boxSizeOf(columns: BoxWidth): number {
@@ -79,6 +79,15 @@ function squaresOf(count: number): null[] {
 }
 
 export type { BoxEntry };
+
+/** The frame colours a tray can take, and the wash inside each */
+export type TrayTone = 'tide' | 'ember' | 'gold';
+
+const TRAYS: Record<TrayTone, string> = {
+  tide: 'border-tide bg-tide-soft',
+  ember: 'border-ember bg-ember-soft',
+  gold: 'border-gold bg-gold-soft',
+};
 
 /**
  * An empty square of a box that keeps gaps, standing where a pokemon
@@ -114,6 +123,14 @@ export interface CatchBoxProps {
    */
   numbered?: boolean;
   /**
+   * A line-up laid out as a tray across the whole width it is given,
+   * framed and washed in a place's colour (ember for a Rocket stop,
+   * tide for a gym seat, gold for the Factory's crate), its squares
+   * wide rather than tall. For the counters, where the box is a thing
+   * to read rather than to keep
+   */
+  tone?: TrayTone;
+  /**
    * Whether it is a team rather than a box: a plain row of squares with
    * no frame round it, each pokemon filling its square, and the level
    * left to the card. A team is read at a glance beside something
@@ -145,6 +162,8 @@ export interface CatchBoxProps {
    * half a box of nothing beside it
    */
   columns?: 3 | BoxWidth;
+  /** Squares across below `md`, for a caller that asked for a wide box: a phone keeps six */
+  narrow?: 3 | BoxWidth;
   /**
    * How many squares the box draws, for a box that is not the box: a
    * team preview is one row of six, not thirty squares five of which
@@ -251,6 +270,7 @@ const COLUMNS: Record<3 | BoxWidth, string> = {
   5: 'grid-cols-5',
   6: 'grid-cols-6',
   8: 'grid-cols-8',
+  10: 'grid-cols-10',
 };
 
 /**
@@ -263,6 +283,7 @@ const WIDTH: Record<3 | BoxWidth, string> = {
   5: 'max-w-md',
   6: 'max-w-lg',
   8: 'max-w-2xl',
+  10: 'max-w-4xl',
 };
 
 /**
@@ -289,8 +310,12 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   /** The shape of one square: square, or wide in a box that fills */
   // Square on a phone, where a wide square leaves the sprite too small
   // to tell under its badges
-  const aspect = (): string =>
-    props.fill === true ? 'aspect-square sm:aspect-[7/4]' : 'aspect-square';
+  const aspect = (): string => {
+    if (props.tone != null) {
+      return 'aspect-square sm:aspect-[5/2]';
+    }
+    return props.fill === true ? 'aspect-square sm:aspect-[7/4]' : 'aspect-square';
+  };
 
   /**
    * What is standing in a square, if anything. The last box of a
@@ -397,7 +422,24 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   const width = (): BoxWidth =>
     props.columns == null || props.columns === 3 ? BOX_COLUMNS : props.columns;
 
-  const columns = (): 3 | BoxWidth => props.columns ?? BOX_COLUMNS;
+  /** Whether the screen is `md` or wider; a wide box draws its `narrow` count below it */
+  const [roomy, setRoomy] = createSignal(true);
+
+  onMount(() => {
+    const query = globalThis.matchMedia('(min-width: 48rem)');
+    const read = (): void => {
+      setRoomy(query.matches);
+    };
+
+    read();
+    query.addEventListener('change', read);
+    onCleanup(() => {
+      query.removeEventListener('change', read);
+    });
+  });
+
+  const columns = (): 3 | BoxWidth =>
+    !roomy() && props.narrow != null ? props.narrow : (props.columns ?? BOX_COLUMNS);
 
   /**
    * How many squares are drawn: what the caller asked for, or at least
@@ -634,12 +676,17 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   );
 
   /** The frame round the squares, without the grid that lays them out */
-  const framed = (): string =>
-    props.compact === true
-      ? 'w-full'
-      : `mx-auto my-1 w-full rounded-card border-4 border-tide bg-parchment p-2 shadow-pop ${
-          props.fill === true ? '' : WIDTH[columns()]
-        }`;
+  const framed = (): string => {
+    if (props.compact === true) {
+      return 'w-full';
+    }
+    if (props.tone != null) {
+      return `w-full rounded-card border-4 p-2 ${TRAYS[props.tone]}`;
+    }
+    return `mx-auto my-1 w-full rounded-card border-4 border-tide bg-parchment p-2 shadow-pop ${
+      props.fill === true ? '' : WIDTH[columns()]
+    }`;
+  };
 
   const grid = (): string =>
     `grid ${props.compact === true ? 'gap-1' : 'gap-1.5'} ${COLUMNS[columns()]}`;

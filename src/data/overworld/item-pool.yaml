@@ -64,6 +64,10 @@ uncommon:
   # a richer band than a dearer pearl would break the ladder
   RareBone: 5
   SuperPotion: 10
+  # The PP restoratives, held for a cooldown: the plain two are the
+  # commoner find and the two that clear it outright sit a band up
+  Ether: 6
+  Elixir: 4
   FullHeal: 6
   # The only thing the Move Reminder takes. It is dug up rather than
   # bought because nothing sells one: a forgotten move costs a walk,
@@ -91,6 +95,8 @@ scarce:
   # What a party comes back from a lost fight on, all of it bottled
   # and sold. The herb is a Revive that grows out of the ground
   MaxPotion: 6
+  MaxEther: 5
+  MaxElixir: 3
   Revive: 6
   RevivalHerb: 4
   # The stones that hold a sky out longer, and the clay that does

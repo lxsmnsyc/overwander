@@ -34,6 +34,18 @@ HealPowder:
   name: ばんのうごな
 RevivalHerb:
   name: ふっかつそう
+Ether:
+  name: ピーピーエイド
+  description: もたせた ポケモンが さいしょに つかった わざの まちじかんを はんぶんに して、 なくなる。 きのみでは ないので きんちょうかんでも とめられない。
+MaxEther:
+  name: ピーピーリカバー
+  description: もたせた ポケモンが さいしょに つかった わざの まちじかんを なくして、 なくなる。 きのみでは ないので きんちょうかんでも とめられない。
+Elixir:
+  name: ピーピーエイダー
+  description: もたせた ポケモンの すべての わざが いっぺんに まちじかんに なった とき、 その まちじかんを すべて はんぶんに して、 なくなる。
+MaxElixir:
+  name: ピーピーマックス
+  description: もたせた ポケモンの すべての わざが いっぺんに まちじかんに なった とき、 その まちじかんを すべて なくして、 なくなる。
 templates:
   restore: HPを {restore} かいふくする。
   restoreAll: HPを ぜんかいふくする。

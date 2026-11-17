@@ -34,6 +34,18 @@ HealPowder:
   name: Polvo Curación
 RevivalHerb:
   name: Hierba Revivir
+Ether:
+  name: Éter
+  description: Reduce a la mitad la recarga del primer movimiento que use el portador y se gasta. No es una baya, así que Nerviosismo no lo impide.
+MaxEther:
+  name: Éter Máximo
+  description: Elimina la recarga del primer movimiento que use el portador y se gasta. No es una baya, así que Nerviosismo no lo impide.
+Elixir:
+  name: Elixir
+  description: Reduce a la mitad todas las recargas en cuanto todos los movimientos del portador están recargando a la vez, y se gasta.
+MaxElixir:
+  name: Elixir Máximo
+  description: Elimina todas las recargas en cuanto todos los movimientos del portador están recargando a la vez, y se gasta.
 templates:
   restore: Restaura {restore} PS.
   restoreAll: Restaura todos los PS.

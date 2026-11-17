@@ -1,4 +1,4 @@
-import type { Items } from '../ids/items';
+import { Items } from '../ids/items';
 import { NON_VOLATILE_STATUSES, Statuses } from '../ids/status';
 import { itemText } from './__create';
 import recordsFile from './records/medicine.yaml';
@@ -97,6 +97,31 @@ for (const [item, record] of readFamilyRecords('medicine', recordsFile)) {
   }
   MEDICINES.set(item, effect);
 }
+
+/**
+ * What a PP restorative does to a cooldown, which is this game's
+ * spent PP. They are held, not used, so they are not medicine above
+ * and have no entry in `MEDICINES`. They are written in this family
+ * because they are medicine in the mainline, but they are found rather
+ * than sold at the medicine counter, which holds only what is used.
+ *
+ * `every` is whether it waits for all of the holder's moves to be
+ * cooling down at once (an Elixir) rather than the first one to start
+ * (an Ether); `full` is whether it clears the cooldown rather than
+ * halving what is left of it. The battle side is
+ * [`src/battle/items/pp-restoratives.ts`](../../battle/items/pp-restoratives.ts)
+ */
+export interface PPRestorative {
+  every: boolean;
+  full: boolean;
+}
+
+export const PP_RESTORATIVES = new Map<Items, PPRestorative>([
+  [Items.Ether, { every: false, full: false }],
+  [Items.MaxEther, { every: false, full: true }],
+  [Items.Elixir, { every: true, full: false }],
+  [Items.MaxElixir, { every: true, full: true }],
+]);
 
 /**
  * Whether the item is medicine

@@ -677,8 +677,9 @@ export const enum Items {
   SportBall = 319,
 
   /**
-   * TODO: the PP restoratives, which clear cooldowns the way a Leppa
-   * Berry already does
+   * The PP restoratives, held, which halve or clear cooldowns the way
+   * a Leppa Berry already does. See
+   * [`src/battle/items/pp-restoratives.ts`](../../battle/items/pp-restoratives.ts)
    */
   Ether = 320,
   MaxEther = 321,

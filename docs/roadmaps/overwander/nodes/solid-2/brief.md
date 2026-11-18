@@ -36,9 +36,20 @@ Move the app from solid-js 1.9 to Solid 2.0, along with the router, meta tags, t
 
 ## Children
 
-- `solid-2-spike` (early: false): bumps the packages and switches the build plugin on the story branch, then lists what breaks and proposes the split. Gated.
-- The remaining children are written from the spike's outcome. Expected shape: one child per area (styled primitives and dialogs, overworld and canvas mounts, battle, catches and boxes, social and shell, routes and server functions, tests), then one child for the skills and mirrors, then `solid-2-build-times` last.
-- `solid-2-build-times`: compares `pnpm exec vite build` wall time on Solid 1.x and 2.0 once the branch builds. The base is `main` at the commit `feat/solid-2` was cut from, in a plain `git clone` under the scratchpad with its own `pnpm install` (not a worktree); the other side is `feat/solid-2` in the main checkout. Run perf-pass's `bench.py` with both `--dir`s, `--warmup 1 --runs 5` at least, with no suite or dev server running, and report median, spread and whether the change beats the noise. Leave out the stamp scripts in `pnpm build`: they do not touch Solid. Delete the clone afterwards.
+Run in this order, one at a time: `solid-2-spike` (done, PR #301), `solid-2-codemod`, `solid-2-server-calls`, `solid-2-styled`, `solid-2-overworld-battle`, `solid-2-catches`, `solid-2-social`, `solid-2-shell-routes`, `solid-2-tests`, `solid-2-conventions`, `solid-2-build-times`. The spike's outcome on the story branch (`nodes/solid-2-spike/outcome.md`) holds the error map, the one-to-one list and the links every child needs.
+
+## Decisions
+
+Agreed with the maintainer on 2026-11-18. Every child follows them; a child that has to deviate says so in its outcome.
+
+1. Resources: `createMemo(async)` under `<Loading>`, declared in a parent and read in a child, as `resource-suspense` does today. `refresh` replaces `refetch`; `<Errored>` catches errors; `isPending` and `latest` replace `.loading` and `.latest`.
+2. Effects: split each `createEffect` into its compute and apply parts by hand. `on(...)` goes with it. Keep `effect-props`' rule: stateful effects read props through memos.
+3. Writes from owned scope (a signal set in a component body, memo or effect compute): derive the value with a memo where possible, otherwise move the write to `onSettled`. `{ ownedWrite: true }` only as a last resort, with a comment saying why.
+4. `createStoreSignal` (`src/components/app/store-signal.ts`) is rebuilt on `from(store.subscribe)`.
+5. `useSubmission` (2 files): replaced by plain calls.
+6. Server reads stay POST. `readOnly` keys on `fn.id`, the call counter on the id from the path, and a response with `X-Server-Function-Unknown` reloads the tab.
+7. Test setup: `solid-2-tests` measures and chooses, likely a `test.projects` split (component tests in the browser setting, the rest on Node).
+8. Entries: keep the authored client and server entries, so `guardServerCalls()` visibly runs before the app mounts.
 
 ## Acceptance
 

@@ -1,7 +1,7 @@
 ---
 id: spawn-lifetimes-core
 title: Spawn slot clocks and the server check, pure
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

@@ -40,3 +40,8 @@
 ## Size
 
 - Estimated M, actual M.
+
+## Landed
+
+- Commit `739508a0a` on `batch/overwander`. Fresh review clean; nits left: `src/server/overworld/spawns.ts:127` falls back to the chunk middle when the spawn index is past the cell list, and `deriveEncounter` still falls back to `chunk.biome` without a cell (`src/server/gifts.ts:239`, `src/overworld/stop/index.ts:67`).
+- Deviations accepted: `src/server/npcs/breeder.ts`, `src/server/npcs/trader.ts`, `src/overworld/npcs/trader/interact.ts` (callers of changed signatures).

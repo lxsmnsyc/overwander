@@ -58,3 +58,15 @@ export interface LiveSpawn {
   home: number;
   spawn: Spawn;
 }
+
+/** A pokemon fades in over this long from the start of its cycle */
+export const FADE_IN_MS = 600;
+
+/** The same, when it starts inside the near ring, so nothing pops up beside a walker */
+export const FADE_IN_NEAR_MS = 2_400;
+
+/** The last stretch of a cycle fades the sprite out */
+export const FADE_OUT_MS = 600;
+
+/** How close to the player, in cells, a start counts as beside them */
+export const NEAR_RING_CELLS = 4;

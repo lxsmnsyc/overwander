@@ -10,6 +10,7 @@ import type Npc from '../../data/overworld/npc';
 import type Phenomenon from '../../data/overworld/phenomenon';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../../overworld/chunk-snapshot';
 import { SLOT_COUNT } from '../../overworld/spawn-life';
+import { type SpawnFade, isDrawn, wasStanding } from './spawn-radius';
 import { liveSpawns } from '../../overworld/spawn-life/lifetimes';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../overworld/board/ground';
@@ -124,7 +125,7 @@ export interface BoardView {
    * under, so an interaction can derive the same encounter every
    * observer sees
    */
-  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>;
+  spawns: Map<number, BoardSpawn>;
   caches: Map<number, ItemStack[]>;
   phenomena: Map<number, Phenomenon>;
   /** What every plant on the board is bearing: patches and trees together */
@@ -133,6 +134,15 @@ export interface BoardView {
   coats: Map<number, string>;
   /** How each Max Raid's pillar burns this window: purple over a Gigantamax */
   beacons: Map<number, RaidBeacon>;
+}
+
+/** A pokemon standing on the board, with what its fade reads */
+export interface BoardSpawn {
+  id: string;
+  spawn: Spawn;
+  shiny: boolean;
+  female: boolean;
+  fade: SpawnFade;
 }
 
 /** The window's Max Raids by the colour their pillar burns */
@@ -210,7 +220,10 @@ export function viewChunks(originX: number, originY: number): [x: number, y: num
  * standing for the rest of its cycle, so putting the lure buddy away
  * never takes a spawn back off the board
  */
-const shown = new Map<string, { end: number; staged: ChunkSnapshot }>();
+const shown = new Map<
+  string,
+  { end: number; staged: ChunkSnapshot; distance: number; standing: boolean }
+>();
 
 /** The walls the last board carried, so a step only works out the edge it walks into */
 let lastWalls: {
@@ -291,7 +304,7 @@ export function buildBoardView(
   }
   const landmarks = new Map<number, Landmark>();
   const decorations = new Map<number, Decoration>();
-  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>();
+  const spawns = new Map<number, BoardSpawn>();
   const caches = new Map<number, ItemStack[]>();
   const phenomena = new Map<number, Phenomenon>();
   const berries = new Map<number, ItemStack>();
@@ -327,7 +340,7 @@ export function buildBoardView(
       // On the board rather than out in the country beyond it: what
       // is drawn past the board is a view, and nothing is standing in
       // a view
-      if (seat == null || reachOf(seat) > BOARD_RADIUS) {
+      if (seat == null || !isDrawn(reachOf(seat))) {
         continue;
       }
 
@@ -340,11 +353,21 @@ export function buildBoardView(
       if (fled.has(spawnKey(x, y, staged.timestamp, individualValue))) {
         continue;
       }
-      shown.set(live.id, { end: live.cycle.end, staged });
+      // How far it was and whether it was already there the first time
+      // the board saw it: the fade reads both and they never change
+      const seen = shown.get(live.id) ?? {
+        end: live.cycle.end,
+        staged,
+        distance: reachOf(seat),
+        standing: wasStanding(live.cycle, instant),
+      };
+
+      shown.set(live.id, seen);
       spots.set(seat, spot);
       spawns.set(seat, {
         id: live.id,
         spawn: live.spawn,
+        fade: { cycle: live.cycle, distance: seen.distance, standing: seen.standing },
         // Whether it sparkles for *this* player, worked out the way the
         // server will work it out when the meeting is staged: the same
         // roll, the same species-day boost, the same sky, and the same

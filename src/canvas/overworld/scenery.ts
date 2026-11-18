@@ -49,6 +49,12 @@ export interface SpawnCoat {
    * announces and then keeps an aura under. Null for everything else
    */
   rank: SpawnRank;
+  /**
+   * How much of it is drawn at a local instant, from 0 to 1: it fades in
+   * as its cycle begins and out as it ends. Left out, it is always drawn
+   * whole, which is what a still board and a reduced-motion player get
+   */
+  alpha?: (now: number) => number;
 }
 
 /** The two kinds worth an aura of their own */

@@ -3860,11 +3860,18 @@ export default function createChunkView(
           // everything lying on the ground, and sized by the sheet:
           // the description carries a shadow size per pokemon
           const placement = { scale, anchor: 'shadow' } as const;
+          // The fade of its cycle, which a press ignores: pickOn below
+          // takes the whole sprite however faint it is drawn
+          const fade = standing.alpha?.(worldTime()) ?? 1;
 
+          if (fade < 1) {
+            animating = true;
+          }
           const thrown = {
             ...placement,
             color: COLORS.shadow,
             squash: shadowSquash(),
+            ...(fade < 1 ? { alpha: fade } : {}),
           };
 
           if (!shade(sprite.shadowOf(middle.x, middle.y, thrown))) {
@@ -3875,7 +3882,7 @@ export default function createChunkView(
           // and what makes them look like they are standing up out
           // of the board
           const stood = sprite.quadOf(middle.x, middle.y, placement);
-          const alpha = veil(index, Standing.Spawn, stood);
+          const alpha = veil(index, Standing.Spawn, stood) * fade;
 
           pickOn(index, stood, true);
 

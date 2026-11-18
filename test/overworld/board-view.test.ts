@@ -6,12 +6,17 @@ import {
   runningWindows,
   viewChunks,
 } from '../../src/game/overworld/board-view';
-import { BOARD_CELLS, BOARD_CENTER } from '../../src/game/overworld/board-metrics';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS } from '../../src/game/overworld/board-metrics';
 import AleaRNG from '../../src/core/alea';
 import { chunkOfCell } from '../../src/overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../src/overworld/chunk-snapshot';
 import { SLOT_PERIOD, SLOT_TOTAL } from '../../src/overworld/spawn-life';
-import { cycleAt, liveSpawns, parseSpawnId } from '../../src/overworld/spawn-life/lifetimes';
+import {
+  cycleAt,
+  cycleOf,
+  liveSpawns,
+  parseSpawnId,
+} from '../../src/overworld/spawn-life/lifetimes';
 import { spawnKey } from '../../src/overworld/safari';
 import getWorld from '../../src/overworld/current';
 import { isLavaAt } from '../../src/overworld/terrain/ground';
@@ -157,6 +162,56 @@ describe('the spawns a board draws', () => {
       expect(unread.at(seat)?.snapshot.chunk).toBeDefined();
       expect(spawn.id).toBe(landed.spawns.get(seat)?.id);
     }
+  });
+
+  it('marks one that was already standing and keeps the mark through a rebuild', () => {
+    const view = build(NOON);
+
+    expect(view.spawns.size).toBeGreaterThan(0);
+    for (const [seat, spawn] of view.spawns) {
+      const { cycle, standing } = spawn.fade;
+
+      expect(cycle.start).toBeLessThanOrEqual(NOON);
+      expect(cycle.end).toBeGreaterThan(NOON);
+      expect(standing).toBe(NOON - cycle.start > 1_000);
+      expect(build(NOON + 3_000).spawns.get(seat)?.fade.standing ?? standing).toBe(standing);
+    }
+  });
+
+  it('does not mark one that the board sees as its cycle begins', () => {
+    const view = build(NOON + 7 * SLOT_PERIOD);
+    let checked = 0;
+
+    for (const [seat, spawn] of view.spawns) {
+      const parsed = parseSpawnId(spawn.id);
+      const chunk = view.at(seat)?.snapshot.chunk;
+
+      if (parsed == null || chunk == null) {
+        throw new Error('the spawn names no cycle');
+      }
+
+      // The next cycle of the same slot, seen 20 ms after its start
+      const next = cycleOf(chunk, 480, parsed.slot, spawn.fade.cycle.cycle + 1);
+
+      if (next == null) {
+        continue;
+      }
+
+      const arrived = build(next.start + 20);
+      const found = [...arrived.spawns.values()].find(
+        (held) => held.fade.cycle.start === next.start,
+      );
+
+      if (found == null) {
+        continue;
+      }
+      checked++;
+      expect(found.fade.standing).toBe(false);
+      expect(found.fade.distance).toBeLessThanOrEqual(BOARD_RADIUS);
+      // One is enough: a later build would find the others already seen
+      break;
+    }
+    expect(checked).toBeGreaterThan(0);
   });
 
   it("draws the cave's slots in a cave and the ground's on the ground", () => {

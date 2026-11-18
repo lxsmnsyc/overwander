@@ -1,6 +1,7 @@
 import type { JSX } from '@solidjs/web';
 import { Show } from 'solid-js';
 import { FieldFrame } from './form';
+import spellAria from './aria';
 
 /**
  * A box to type in, with the word for it above and its help below.
@@ -86,8 +87,8 @@ export default function TextField(props: TextFieldProps): JSX.Element {
             disabled={props.disabled}
             autocomplete={props.autocomplete}
             aria-describedby={parts.describedBy}
-            aria-invalid={props.error == null ? undefined : true}
-            aria-required={props.required}
+            aria-invalid={props.error == null ? undefined : 'true'}
+            aria-required={spellAria(props.required)}
             class={`w-full ${props.tall === true ? 'h-11 text-sm' : ''} ${props.leading == null ? '' : 'pl-8'} ${props.error == null ? '' : WRONG}`}
             onInput={(event) => {
               props.onChange(event.currentTarget.value);

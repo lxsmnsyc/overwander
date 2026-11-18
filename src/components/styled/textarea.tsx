@@ -1,5 +1,6 @@
 import type { JSX } from '@solidjs/web';
 import { FieldFrame } from './form';
+import spellAria from './aria';
 
 /**
  * The same field for something longer than a line — a note on an
@@ -48,8 +49,8 @@ export default function TextArea(props: TextAreaProps): JSX.Element {
           placeholder={props.placeholder}
           disabled={props.disabled}
           aria-describedby={parts.describedBy}
-          aria-invalid={props.error == null ? undefined : true}
-          aria-required={props.required}
+          aria-invalid={props.error == null ? undefined : 'true'}
+          aria-required={spellAria(props.required)}
           class={`w-full resize-y ${props.error == null ? '' : WRONG}`}
           onInput={(event) => {
             props.onChange(event.currentTarget.value);

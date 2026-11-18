@@ -12,8 +12,11 @@ import { type ParentProps, createContext, useContext } from 'solid-js';
  * dropped inside a dialog counted as outside it. A dialog carrying its
  * own container fixes both: what belongs to it is inside it, so it
  * stacks with it and closes with it.
+ *
+ * Null outside every dialog, with a default, since a context with none
+ * throws where nothing provides it
  */
-const HostContext = createContext<HTMLElement | undefined>();
+const HostContext = createContext<HTMLElement | null>(null);
 
 /**
  * What the app's own container is called. The app draws it last inside
@@ -61,7 +64,7 @@ export function PortalHost(props: ParentProps): JSX.Element {
   }
 
   return (
-    <HostContext value={host}>
+    <HostContext value={host ?? null}>
       {props.children}
       {host}
     </HostContext>

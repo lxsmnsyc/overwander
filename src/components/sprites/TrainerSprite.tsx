@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
 import type OWCharSprite from '../../canvas/overworld/char-sprite';
 import loadOWChar from '../../canvas/overworld/char-sprites';
 
@@ -30,13 +30,13 @@ const DEFAULT_SIZE = 96;
 export default function TrainerSprite(props: TrainerSpriteProps): JSX.Element {
   const [sprite, setSprite] = createSignal<OWCharSprite | null>(null);
 
-  createEffect(() => {
-    const sheet = props.sheet;
+  // Through a memo, so a caller rebuilding its props with the same
+  // sheet does not load it again
+  const path = createMemo(() => props.sheet);
+
+  createEffect(path, (sheet) => {
     let live = true;
 
-    onCleanup(() => {
-      live = false;
-    });
     setSprite(null);
     loadOWChar(sheet)
       .then((loaded) => {
@@ -50,6 +50,9 @@ export default function TrainerSprite(props: TrainerSpriteProps): JSX.Element {
       .catch(() => {
         // The room stays held and empty, like a charset still arriving
       });
+    return () => {
+      live = false;
+    };
   });
 
   const size = (): number => props.size ?? DEFAULT_SIZE;
@@ -83,7 +86,7 @@ export default function TrainerSprite(props: TrainerSpriteProps): JSX.Element {
     <span
       role="img"
       aria-label={props.label ?? ''}
-      aria-hidden={props.label == null || props.label === '' ? true : undefined}
+      aria-hidden={props.label == null || props.label === '' ? 'true' : undefined}
       class={`flex items-end justify-center ${props.class ?? ''}`}
       style={{ height: `${size()}px` }}
     >

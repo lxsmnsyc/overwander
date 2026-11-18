@@ -548,75 +548,80 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
    */
   const [step, setStep] = createSignal(0);
 
-  createEffect(() => {
-    const species = drawing();
-    const shiny = sparkling();
-    const female = feminine();
-    let live = true;
+  // Kept as a load in an effect rather than an async memo: a sheet
+  // still loading draws an empty box, and must not hold up whatever
+  // boundary the sprite stands under
+  createEffect(
+    () => ({ species: drawing(), shiny: sparkling(), female: feminine() }),
+    (wanted) => {
+      let live = true;
 
-    onCleanup(() => {
-      live = false;
-    });
+      loadSpeciesSprite(wanted.species, { shiny: wanted.shiny, female: wanted.female })
+        .then((loaded) => {
+          if (live) {
+            setSprite(loaded);
+          }
+        })
+        .catch(() => {
+          // A sheet that will not load leaves the box empty; whatever it
+          // was illustrating is named beside it in words
+        });
+      return () => {
+        live = false;
+      };
+    },
+  );
 
-    loadSpeciesSprite(species, { shiny, female })
-      .then((loaded) => {
-        if (live) {
-          setSprite(loaded);
-        }
-      })
-      .catch(() => {
-        // A sheet that will not load leaves the box empty; whatever it
-        // was illustrating is named beside it in words
+  createEffect(
+    () => ({ drawn: sprite(), wanted: clip(), direction: facing(), duration: stretched() }),
+    (playing) => {
+      if (playing.drawn == null) {
+        return;
+      }
+      playing.drawn.play(playing.drawn.has(playing.wanted) ? playing.wanted : SpriteAnim.Idle, {
+        direction: playing.direction,
+        loop: true,
+        // Only where a caller asked for a pace: everything else plays at
+        // the speed it was drawn at
+        duration: playing.duration,
       });
-  });
+      setStep((count) => count + 1);
+    },
+  );
 
-  createEffect(() => {
-    const drawn = sprite();
+  createEffect(
+    () => {
+      const drawn = sprite();
 
-    if (drawn == null) {
-      return;
-    }
+      if (drawn == null || held()) {
+        return null;
+      }
+      // Read here rather than inside the tick: the clock is a plain
+      // animation frame with no owner and nothing tracking, so a prop
+      // first read in there builds its memo ownerless and keeps it
+      // forever. Taking it in the compute re-registers when it changes.
+      //
+      // Nought is a pokemon holding its first frame, which is what a
+      // player asking for less motion is asking for: the picture is
+      // still there and still the right one, it simply does not breathe
+      return { drawn, speed: settings().reduceMotion ? 0 : pace() };
+    },
+    (playing) => {
+      if (playing == null) {
+        return undefined;
+      }
+      const { drawn, speed } = playing;
 
-    const wanted = clip();
-
-    drawn.play(drawn.has(wanted) ? wanted : SpriteAnim.Idle, {
-      direction: facing(),
-      loop: true,
-      // Only where a caller asked for a pace: everything else plays at
-      // the speed it was drawn at
-      duration: stretched(),
-    });
-    setStep((count) => count + 1);
-  });
-
-  createEffect(() => {
-    const drawn = sprite();
-
-    if (drawn == null || held()) {
-      return;
-    }
-
-    // Read here rather than inside the tick: the clock is a plain
-    // animation frame with no owner and nothing tracking, so a prop
-    // first read in there builds its memo ownerless and keeps it
-    // forever. Taking it in the effect re-registers when it changes.
-    //
-    // Nought is a pokemon holding its first frame, which is what a
-    // player asking for less motion is asking for: the picture is
-    // still there and still the right one, it simply does not breathe
-    const speed = settings().reduceMotion ? 0 : pace();
-
-    onCleanup(
-      ticking((elapsed) => {
+      return ticking((elapsed) => {
         const showing = drawn.frame;
 
         drawn.update(elapsed * speed);
         if (drawn.frame !== showing) {
           setStep((count) => count + 1);
         }
-      }),
-    );
-  });
+      });
+    },
+  );
 
   const drawn = createMemo((): Drawn | null => {
     // The playhead is not reactive, so the frame count is what says a
@@ -725,7 +730,7 @@ export default function AnimatedSprite(props: AnimatedSpriteProps): JSX.Element 
     <span
       role="img"
       aria-label={props.label ?? ''}
-      aria-hidden={props.label == null || props.label === '' ? true : undefined}
+      aria-hidden={props.label == null || props.label === '' ? 'true' : undefined}
       style={box()}
       class={`relative block shrink-0 ${props.class ?? ''}`}
     >

@@ -1,5 +1,5 @@
 import { type JSX, Portal } from '@solidjs/web';
-import { Loading, type ParentProps, Show, children, createEffect, createSignal } from 'solid-js';
+import { Loading, type ParentProps, Show, children, createSignal } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
@@ -282,13 +282,10 @@ export function Dialog(props: DialogProps): JSX.Element {
   /**
    * Whether the dialog is showing, which is the caller's answer until
    * something asks to close: then it goes false here first, the fade
-   * runs, and `onClose` is what the end of the fade reports
+   * runs, and `onClose` is what the end of the fade reports. A new
+   * `isOpen` from the caller replaces whatever was written here
    */
-  const [showing, setShowing] = createSignal(props.isOpen);
-
-  createEffect(() => {
-    setShowing(props.isOpen);
-  });
+  const [showing, setShowing] = createSignal(() => props.isOpen);
 
   /**
    * Whether the closing was this dialog's own doing — Escape, the
@@ -318,7 +315,10 @@ export function Dialog(props: DialogProps): JSX.Element {
       // A caller that refused the close keeps its dialog. Hiding is this
       // dialog's own doing and only a change of `isOpen` puts it back,
       // so a handler that declined left the panel gone while whatever it
-      // was standing over stayed open underneath, refusing every press
+      // was standing over stayed open underneath, refusing every press.
+      // A caller that accepted reads as still open here too, since its
+      // write has not flushed yet; its change of `isOpen` re-derives
+      // `showing` to false in the same flush, so this stays correct
       if (props.isOpen) {
         setShowing(true);
       }

@@ -87,7 +87,7 @@ interface CardHold {
   close: () => void;
 }
 
-const Holding = createContext<CardHold>();
+const Holding = createContext<CardHold | null>(null);
 
 /**
  * The card on screen at each level, keyed by the card it was opened
@@ -165,9 +165,12 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * Whether the card is on screen at all, which lasts past `open` by
    * the length of the fade. The portal is what it gates: a portal
    * inside the fade is content drawn somewhere else, where an opacity
-   * set out here never reaches it
+   * set out here never reaches it.
+   *
+   * Opening puts it on screen; closing leaves it standing, and the end
+   * of the fade is what writes it false
    */
-  const [present, setPresent] = createSignal(false);
+  const [present, setPresent] = createSignal<boolean>((was) => open() || (was ?? false));
   /** Dev-only: the triangle on screen, if one is being drawn */
   const [shape, setShape] = createSignal<SafeShape | null>(null);
   let fading: ReturnType<typeof setTimeout> | undefined;
@@ -204,6 +207,8 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
   let timer: ReturnType<typeof setTimeout> | undefined;
   /** The pointer's way in, while it is crossing the gap to the card */
   let crossing: (() => void) | undefined;
+  /** The wait for the pointer after the last inner card went, if one is running */
+  let settling: (() => void) | undefined;
 
   const cancel = (): void => {
     if (timer != null) {
@@ -213,7 +218,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     crossing?.();
   };
 
-  const level = outer ?? null;
+  const level = outer;
 
   /** Put this card away now, without its fade, for the next one at its level */
   const shut = (): void => {
@@ -256,18 +261,23 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * where it is and closes only if the answer is somewhere else
    */
   const settle = (): void => {
+    settling?.();
+
     const check = (event: PointerEvent): void => {
       if (holds(card(), event.target) || holds(trigger, event.target)) {
         return;
       }
-      document.removeEventListener('pointermove', check);
+      settling?.();
       hide(0);
     };
 
+    // Torn down by this card going too. It is called from an inner
+    // card's teardown, where there is no owner to hang a cleanup on
     document.addEventListener('pointermove', check);
-    onCleanup(() => {
+    settling = () => {
       document.removeEventListener('pointermove', check);
-    });
+      settling = undefined;
+    };
   };
 
   const holding: CardHold = {
@@ -441,36 +451,30 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
    * While this card is up, the card it was opened from stays up: the
    * pointer being in here is the reason that one is still wanted
    */
-  createEffect(() => {
-    if (!open() || outer == null) {
-      return;
+  createEffect(open, (isOpen) => {
+    if (!isOpen || outer == null) {
+      return undefined;
     }
     outer.hold();
-    onCleanup(outer.release);
-  });
-
-  /** Opening puts the card on screen; the fade decides when it leaves */
-  createEffect(() => {
-    if (open()) {
-      setPresent(true);
-    }
+    return outer.release;
   });
 
   // While it is on screen at all, fading out included
-  createEffect(() => {
-    if (!present()) {
-      return;
+  createEffect(present, (shown) => {
+    if (!shown) {
+      return undefined;
     }
     SHOWING.set(level, shut);
-    onCleanup(() => {
+    return () => {
       if (SHOWING.get(level) === shut) {
         SHOWING.delete(level);
       }
-    });
+    };
   });
 
   onCleanup(() => {
     cancel();
+    settling?.();
     drawSafeArea(null);
   });
 
@@ -484,7 +488,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
         // Focusable, so the card is reachable without a pointer, and
         // described rather than labelled: the trigger already says
         // what it is
-        tabIndex={0}
+        tabindex={0}
         // The caller's classes *replace* the default rather than
         // joining it: a trigger filling a grid cell has to say so, and
         // two display utilities in one list are settled by the order

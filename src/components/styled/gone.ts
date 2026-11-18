@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from 'solid-js';
+import { createEffect } from 'solid-js';
 
 /**
  * Shut something that hangs off a host once the host has nothing left
@@ -16,22 +16,23 @@ export default function closeWhenGone(
   open: () => boolean,
   close: () => void,
 ): void {
-  createEffect(() => {
-    const anchor = host();
-
-    if (!open() || anchor == null) {
-      return;
-    }
-
-    const watch = new ResizeObserver(() => {
-      if (anchor.getClientRects().length === 0) {
-        close();
+  createEffect(
+    () => (open() ? host() : undefined),
+    (anchor) => {
+      if (anchor == null) {
+        return undefined;
       }
-    });
 
-    watch.observe(anchor);
-    onCleanup(() => {
-      watch.disconnect();
-    });
-  });
+      const watch = new ResizeObserver(() => {
+        if (anchor.getClientRects().length === 0) {
+          close();
+        }
+      });
+
+      watch.observe(anchor);
+      return () => {
+        watch.disconnect();
+      };
+    },
+  );
 }

@@ -24,6 +24,7 @@ import { SearchIcon } from '../../icons';
 import { Badge, BadgeDismiss, type BadgeTone } from '../feedback';
 import SearchGuide from './guide';
 import Suggestions, { type SearchDrop } from './suggestions';
+import spellAria from '../aria';
 
 /**
  * Finding one row in a list of them.
@@ -138,21 +139,41 @@ function roleOf(term: string, vocabulary: QueryVocabulary): TermRole {
   return token.negated ? 'refuses' : 'narrows';
 }
 
+/** Badges and the text still in the box, read back as one query */
+function joinQuery(terms: string[], typed: string): string {
+  const parts: string[] = [];
+
+  for (const part of [...terms, typed]) {
+    const trimmed = part.trim();
+
+    if (trimmed !== '') {
+      parts.push(trimmed);
+    }
+  }
+  return parts.join(' ');
+}
+
 export default function Search(props: SearchProps): JSX.Element {
-  const seeded = splitTerms(props.value);
+  // The box starts from the caller's value once; the effect below
+  // follows it after that
+  const start = untrack(() => ({
+    value: props.value,
+    plain: props.vocabulary == null,
+    seeded: splitTerms(props.value),
+  }));
   /**
    * The terms already asked for, as they were typed. They are the
    * badges in the box, and are the query with whatever is still being
    * typed added to the end of them
    */
-  const [terms, setTerms] = createSignal(props.vocabulary == null ? [] : seeded.terms);
+  const [terms, setTerms] = createSignal(start.plain ? [] : start.seeded.terms);
   /**
    * What is in the box, which is not the same thing as what is being
    * searched for. The letters land here at once — a field that lagged
    * behind the keyboard would feel broken — and are handed on when the
    * typing stops
    */
-  const [typed, setTyped] = createSignal(props.vocabulary == null ? props.value : seeded.rest);
+  const [typed, setTyped] = createSignal(start.plain ? start.value : start.seeded.rest);
   /** Where the caret is, which is what decides the word being finished */
   const [caret, setCaret] = createSignal(0);
   const [open, setOpen] = createSignal(false);
@@ -175,18 +196,7 @@ export default function Search(props: SearchProps): JSX.Element {
   const optionId = (index: number): string => `${listId}-${index}`;
 
   /** The badges and the box read back as one query */
-  const query = (): string => {
-    const parts: string[] = [];
-
-    for (const part of [...terms(), typed()]) {
-      const trimmed = part.trim();
-
-      if (trimmed !== '') {
-        parts.push(trimmed);
-      }
-    }
-    return parts.join(' ');
-  };
+  const query = (): string => joinQuery(terms(), typed());
 
   const cancel = (): void => {
     if (waiting != null) {
@@ -204,10 +214,12 @@ export default function Search(props: SearchProps): JSX.Element {
    * when a picker reopens — puts that in the box too. Once the wait is
    * over the two agree, so this does nothing while somebody types
    */
-  createEffect(() => {
-    const settled = props.value;
-
-    if (settled !== untrack(query)) {
+  createEffect(
+    () => props.value,
+    (settled) => {
+      if (settled === query()) {
+        return;
+      }
       cancel();
       if (props.vocabulary == null) {
         setTyped(settled);
@@ -218,8 +230,8 @@ export default function Search(props: SearchProps): JSX.Element {
         setTyped(parts.rest);
       }
       setOpen(false);
-    }
-  });
+    },
+  );
 
   /** What the box is offering, or nothing where it has nothing to offer */
   const offering = (): QueryCompletion | null => {
@@ -257,16 +269,16 @@ export default function Search(props: SearchProps): JSX.Element {
    * The list is fixed to the window, so anything that moves the box
    * under it moves it too
    */
-  createEffect(() => {
-    if (!open()) {
-      return;
+  createEffect(open, (isOpen) => {
+    if (!isOpen) {
+      return undefined;
     }
     window.addEventListener('scroll', measure, true);
     window.addEventListener('resize', measure);
-    onCleanup(() => {
+    return () => {
       window.removeEventListener('scroll', measure, true);
       window.removeEventListener('resize', measure);
-    });
+    };
   });
 
   const settle = (): void => {
@@ -369,8 +381,11 @@ export default function Search(props: SearchProps): JSX.Element {
         kept.push(term);
       }
     }
+    // Asked with the badges as they now are: the signal reads the old
+    // ones until the write lands
     setTerms(kept);
-    settle();
+    cancel();
+    props.onChange(joinQuery(kept, typed()));
   };
 
   /**
@@ -518,7 +533,7 @@ export default function Search(props: SearchProps): JSX.Element {
             autocomplete="off"
             role={props.vocabulary == null ? undefined : 'combobox'}
             aria-autocomplete={props.vocabulary == null ? undefined : 'list'}
-            aria-expanded={props.vocabulary == null ? undefined : open()}
+            aria-expanded={spellAria(props.vocabulary == null ? undefined : open())}
             aria-controls={props.vocabulary == null ? undefined : listId}
             aria-activedescendant={
               open() && suggestions().length > 0 ? optionId(active()) : undefined

@@ -5,6 +5,7 @@ import type { QuerySuggestion } from '../../../core/query';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { usePortalHost } from '../portal-host';
 import { DROP } from '../transition';
+import spellAria from '../aria';
 
 /**
  * What the box is offering to finish the word with.
@@ -59,14 +60,14 @@ export default function Suggestions(props: SuggestionsProps): JSX.Element {
    * The arrows walk past the bottom of a list taller than its box, so
    * the row they are on is brought back into it
    */
-  createEffect(() => {
-    const panel = list();
-    const row = panel?.querySelector<HTMLElement>(`#${CSS.escape(props.optionId(props.active))}`);
-
-    if (props.open) {
-      row?.scrollIntoView({ block: 'nearest' });
-    }
-  });
+  createEffect(
+    () => (props.open ? { panel: list(), row: props.optionId(props.active) } : null),
+    (shown) => {
+      shown?.panel
+        ?.querySelector<HTMLElement>(`#${CSS.escape(shown.row)}`)
+        ?.scrollIntoView({ block: 'nearest' });
+    },
+  );
 
   return (
     <Portal mount={host()}>
@@ -99,7 +100,7 @@ export default function Suggestions(props: SuggestionsProps): JSX.Element {
               <li
                 id={props.optionId(at())}
                 role="option"
-                aria-selected={at() === props.active}
+                aria-selected={spellAria(at() === props.active)}
                 class={`${OPTION} ${at() === props.active ? ACTIVE : ''}`}
                 // Pressed rather than clicked: a click would have taken
                 // the focus off the box first, and the box closing the

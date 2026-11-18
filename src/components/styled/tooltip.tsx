@@ -5,7 +5,7 @@ import {
   createContext,
   createEffect,
   createSignal,
-  onCleanup,
+  untrack,
   useContext,
 } from 'solid-js';
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
@@ -165,7 +165,11 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
       <Show when={props.notch}>
         {(notch) => (
           <span
-            ref={notch().ref}
+            // Handed on untracked: the caller's ref is fixed, and a ref
+            // binding is read once
+            ref={(element: HTMLSpanElement) => {
+              untrack(notch).ref(element);
+            }}
             aria-hidden="true"
             class={`absolute size-3 rotate-45 border-line bg-paper ${
               notch().below
@@ -258,9 +262,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
    * somewhere else is what takes it down. Listened for only while the
    * card is up: a bag of thirty squares is thirty of these
    */
-  createEffect(() => {
-    if (!wanted()) {
-      return;
+  createEffect(wanted, (up) => {
+    if (!up) {
+      return undefined;
     }
 
     const away = (event: PointerEvent): void => {
@@ -270,9 +274,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     };
 
     document.addEventListener('pointerdown', away, true);
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('pointerdown', away, true);
-    });
+    };
   });
 
   /** The touch's way in: hold to ask, rather than hover to ask */

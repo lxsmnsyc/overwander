@@ -8,6 +8,7 @@ import { DROP, dropOrigin } from './transition';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
+import spellAria from './aria';
 
 /**
  * One choice out of a list that is too long to show at once.
@@ -148,8 +149,8 @@ export default function Select<V>(props: SelectProps<V>): JSX.Element {
             type="button"
             id={parts.id}
             aria-describedby={parts.describedBy}
-            aria-invalid={props.error == null ? undefined : true}
-            aria-required={props.required}
+            aria-invalid={props.error == null ? undefined : 'true'}
+            aria-required={spellAria(props.required)}
             class={`${BUTTON} ${props.accent === true ? ACCENT : ''} ${
               props.error == null ? '' : 'border-ember'
             } ${props.value == null ? 'text-muted' : ''}`}

@@ -1,7 +1,7 @@
 ---
 id: i18n-form-names
 title: Name every form and category in ja and es
-status: todo
+status: active
 priority: should
 type: fix
 outline: false

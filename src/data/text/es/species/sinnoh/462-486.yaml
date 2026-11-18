@@ -4,6 +4,21 @@ Rotom:
   Rotom:
     name: Rotom
     category: Pokémon Plasma
+  RotomFan:
+    name: Rotom Ventilador
+    category: Pokémon Plasma
+  RotomMow:
+    name: Rotom Corte
+    category: Pokémon Plasma
+  RotomHeat:
+    name: Rotom Calor
+    category: Pokémon Plasma
+  RotomWash:
+    name: Rotom Lavado
+    category: Pokémon Plasma
+  RotomFrost:
+    name: Rotom Frío
+    category: Pokémon Plasma
 Uxie:
   Uxie:
     name: Uxie
@@ -20,9 +35,15 @@ Dialga:
   Dialga:
     name: Dialga
     category: Pokémon Temporal
+  DialgaOrigin:
+    name: Dialga (Forma Origen)
+    category: Pokémon Temporal
 Palkia:
   Palkia:
     name: Palkia
+    category: Pokémon Espacial
+  PalkiaOrigin:
+    name: Palkia (Forma Origen)
     category: Pokémon Espacial
 Heatran:
   Heatran:

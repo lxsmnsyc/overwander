@@ -22,6 +22,18 @@ import { writeKeptFile } from './keep-written.ts';
  * the games show by default, never kanji. The files it writes are
  * generated: edit this script or the English, not them.
  *
+ * A species or form PokeAPI does not name is filled in, field by field,
+ * from the first of these that has an answer:
+ *
+ * - `overrides/species.yaml`, which also wins over PokeAPI's own words.
+ * - A regional form (Alolan, Galarian, Hisuian, Paldean) is the base
+ *   species' name in that locale and the region: es `Zoroark de Hisui`,
+ *   ja `ゾロアーク（ヒスイのすがた）`.
+ * - A form PokeAPI knows by a label only is the base species' name and
+ *   the label: `Vivillon (Motivo Oriental)`, `ビビヨン（みやびなもよう）`.
+ * - A category is the one of the form's base species, the entry whose
+ *   key starts the form's key.
+ *
  * A rerun keeps what it does not write (see `keepWritten`). An official
  * entry whose PokeAPI row disappears keeps its last name. A field beside
  * the names (a `description`) and an entry it did not match (an engine's
@@ -46,6 +58,8 @@ const SPANISH = '7';
 
 const LOCALES = ['ja', 'es'] as const;
 
+const OVERRIDES = 'scripts/i18n/overrides';
+
 type Locale = (typeof LOCALES)[number];
 
 const HEADER =
@@ -56,6 +70,8 @@ const HEADER =
 interface Official {
   name: Partial<Record<Locale, string>>;
   category?: Partial<Record<Locale, string>>;
+  /** A form's label in each locale, where PokeAPI has the label but no full name */
+  label?: Partial<Record<Locale, string>>;
 }
 
 type Row = Record<string, string>;
@@ -284,6 +300,18 @@ function toOfficial(
     }
   }
 
+  // A form's label stands in for a full name PokeAPI does not give
+  if (!withCategory) {
+    for (const locale of LOCALES) {
+      const label = readLocaleName(entry.extras, locale);
+
+      if (label != null) {
+        official.label ??= {};
+        official.label[locale] = label;
+      }
+    }
+  }
+
   // A species' category is its genus, which the species table keeps beside the name
   if (withCategory) {
     official.category = {};
@@ -334,12 +362,13 @@ const WORDS = v.object({ name: v.string(), category: v.optional(v.string()) });
 const TABLE = v.record(v.string(), v.string());
 
 /** One locale's fields for one entry */
-type Entry = Record<string, string>;
+type Entry = { name?: string; category?: string };
 
 function writeEntries(
   folder: string,
   find: (english: string) => Official | undefined,
   nested: boolean,
+  fill?: FillFamily,
 ): Tally {
   const tally: Tally = { matched: 0, unmatched: [] };
 
@@ -365,6 +394,7 @@ function writeEntries(
 
     for (const [family, entries] of groups) {
       const found: Record<Locale, Record<string, Entry>> = { ja: {}, es: {} };
+      const matches = new Map<string, Official>();
 
       for (const [key, value] of Object.entries(entries)) {
         // The item templates are sentences, not names
@@ -380,6 +410,7 @@ function writeEntries(
           continue;
         }
         tally.matched++;
+        matches.set(key, official);
 
         // Each locale writes only the fields it has an official word for
         for (const locale of LOCALES) {
@@ -397,6 +428,10 @@ function writeEntries(
             found[locale][key] = entry;
           }
         }
+      }
+      // A species or form PokeAPI leaves a gap in is filled from the overrides and the rules
+      if (fill != null && family != null) {
+        fill(entries, found, matches, tally);
       }
       for (const locale of LOCALES) {
         if (Object.keys(found[locale]).length > 0) {
@@ -421,6 +456,146 @@ function writeEntries(
     }
   }
   return tally;
+}
+
+/** What the overrides file may set for one entry in one locale */
+const OVERRIDE_WORDS = v.strictObject({
+  name: v.optional(v.string()),
+  category: v.optional(v.string()),
+});
+
+const OVERRIDES_FILE = v.record(
+  v.string(),
+  v.strictObject({ ja: v.optional(OVERRIDE_WORDS), es: v.optional(OVERRIDE_WORDS) }),
+);
+
+type SpeciesOverrides = v.InferOutput<typeof OVERRIDES_FILE>;
+
+function readOverrides(file: string): SpeciesOverrides {
+  // Gaps PokeAPI leaves, written by hand, by the key of the entry in the English file
+  const path = join(OVERRIDES, file);
+
+  return existsSync(path) ? v.parse(OVERRIDES_FILE, parse(readFileSync(path, 'utf8')) ?? {}) : {};
+}
+
+/** A regional form's region, in each locale */
+const REGIONS: Record<string, Record<Locale, string>> = {
+  Alolan: { ja: 'アローラ', es: 'Alola' },
+  Galarian: { ja: 'ガラル', es: 'Galar' },
+  Hisuian: { ja: 'ヒスイ', es: 'Hisui' },
+  Paldean: { ja: 'パルデア', es: 'Paldea' },
+};
+
+const REGIONAL_NAME = /^(Alolan|Galarian|Hisuian|Paldean) (.+)$/;
+
+function nameRegionalForm(locale: Locale, base: string, region: string): string {
+  const where = REGIONS[region][locale];
+
+  return locale === 'ja' ? `${base}（${where}のすがた）` : `${base} de ${where}`;
+}
+
+function nameLabelledForm(locale: Locale, base: string, label: string): string {
+  return locale === 'ja' ? `${base}（${label}）` : `${base} (${label})`;
+}
+
+/** The entry of the family whose key is the longest start of this key, the form's base */
+function findBaseKey(key: string, keys: Iterable<string>): string | undefined {
+  let best: string | undefined;
+
+  for (const other of keys) {
+    if (other !== key && key.startsWith(other) && (best == null || other.length > best.length)) {
+      best = other;
+    }
+  }
+  return best;
+}
+
+type FillFamily = (
+  entries: Record<string, unknown>,
+  found: Record<Locale, Record<string, Entry>>,
+  matches: ReadonlyMap<string, Official>,
+  tally: Tally,
+) => void;
+
+function createFillFamily(overrides: SpeciesOverrides): FillFamily {
+  return (entries, found, matches, tally) => {
+    const words = new Map<string, { name: string; category?: string }>();
+
+    for (const [key, value] of Object.entries(entries)) {
+      if (key !== 'templates') {
+        words.set(key, v.parse(WORDS, value));
+      }
+    }
+
+    // A base comes before the forms that start with its key
+    const keys = [...words.keys()].sort((a, b) => a.length - b.length);
+    const byEnglish = new Map<string, string>();
+
+    for (const [key, entry] of words) {
+      byEnglish.set(entry.name, key);
+    }
+
+    for (const locale of LOCALES) {
+      const entriesOf = found[locale];
+
+      // The overrides win over PokeAPI
+      for (const key of keys) {
+        const override = overrides[key]?.[locale];
+
+        if (override != null) {
+          entriesOf[key] = { ...entriesOf[key], ...override };
+        }
+      }
+
+      for (const key of keys) {
+        const entry = words.get(key);
+        const baseKey = findBaseKey(key, keys);
+
+        if (entry == null) {
+          continue;
+        }
+
+        // A name PokeAPI and the overrides leave out
+        if (entriesOf[key]?.name == null) {
+          const regional = REGIONAL_NAME.exec(entry.name);
+          const regionalBase = regional == null ? undefined : byEnglish.get(regional[2]);
+          const label = matches.get(key)?.label?.[locale];
+
+          if (regional != null && regionalBase != null && entriesOf[regionalBase]?.name != null) {
+            entriesOf[key] = {
+              ...entriesOf[key],
+              name: nameRegionalForm(locale, entriesOf[regionalBase].name, regional[1]),
+            };
+          } else if (label != null && baseKey != null && entriesOf[baseKey]?.name != null) {
+            entriesOf[key] = {
+              ...entriesOf[key],
+              name: nameLabelledForm(locale, entriesOf[baseKey].name, label),
+            };
+          }
+        }
+
+        // A category is the base species' own
+        if (
+          entry.category != null &&
+          entriesOf[key]?.category == null &&
+          baseKey != null &&
+          entriesOf[baseKey]?.category != null
+        ) {
+          entriesOf[key] = { ...entriesOf[key], category: entriesOf[baseKey].category };
+        }
+      }
+    }
+
+    // What the overrides and the rules named is counted, the rest stays in English
+    for (const key of keys) {
+      const at = tally.unmatched.indexOf(key);
+
+      if (at !== -1 && (found.ja[key]?.name != null || found.es[key]?.name != null)) {
+        tally.unmatched.splice(at, 1);
+        tally.matched++;
+      }
+    }
+  };
 }
 
 function writeTable(file: string, find: (english: string) => Official | undefined): Tally {
@@ -471,7 +646,7 @@ async function main(): Promise<void> {
     await readTable('pokemon_form_names'),
     'pokemon_form_id',
     'pokemon_name',
-    undefined,
+    'form_name',
     normalizeFormName,
   );
 
@@ -480,11 +655,18 @@ async function main(): Promise<void> {
     writeEntries(
       'species',
       (name) => {
-        const found = species.get(normalizeName(name)) ?? forms.get(normalizeFormName(name));
+        const named = species.get(normalizeName(name));
 
-        return found == null ? undefined : toOfficial(found, true);
+        if (named != null) {
+          return toOfficial(named, true);
+        }
+
+        const formed = forms.get(normalizeFormName(name));
+
+        return formed == null ? undefined : toOfficial(formed, false);
       },
       true,
+      createFillFamily(readOverrides('species.yaml')),
     ),
   );
 

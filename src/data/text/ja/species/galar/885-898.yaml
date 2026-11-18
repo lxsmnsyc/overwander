@@ -14,9 +14,15 @@ Zacian:
   Zacian:
     name: ザシアン
     category: つわものポケモン
+  ZacianCrowned:
+    name: ザシアン（けんのおう）
+    category: つわものポケモン
 Zamazenta:
   Zamazenta:
     name: ザマゼンタ
+    category: つわものポケモン
+  ZamazentaCrowned:
+    name: ザマゼンタ（たてのおう）
     category: つわものポケモン
 Eternatus:
   Eternatus:
@@ -28,6 +34,9 @@ Kubfu:
     category: けんぽうポケモン
   Urshifu:
     name: ウーラオス
+    category: けんぽうポケモン
+  UrshifuRapidStrike:
+    name: ウーラオス（れんげきのかた）
     category: けんぽうポケモン
 Regieleki:
   Regieleki:
@@ -49,3 +58,9 @@ Calyrex:
   Calyrex:
     name: バドレックス
     category: キングポケモン
+  CalyrexIce:
+    name: バドレックス（はくばじょうのすがた）
+    category: エンペラーポケモン
+  CalyrexShadow:
+    name: バドレックス（こくばじょうのすがた）
+    category: エンペラーポケモン

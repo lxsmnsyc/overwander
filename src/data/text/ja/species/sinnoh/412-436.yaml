@@ -10,6 +10,18 @@ Burmy:
   Mothim:
     name: ガーメイル
     category: ミノガポケモン
+  BurmySandy:
+    name: ミノムッチ（すなちのミノ）
+    category: みのむしポケモン
+  BurmyTrash:
+    name: ミノムッチ（ゴミのミノ）
+    category: みのむしポケモン
+  WormadamSandy:
+    name: ミノマダム（すなちのミノ）
+    category: みのむしポケモン
+  WormadamTrash:
+    name: ミノマダム（ゴミのミノ）
+    category: みのむしポケモン
 Combee:
   Combee:
     name: ミツハニー
@@ -35,12 +47,21 @@ Cherubi:
   Cherrim:
     name: チェリム
     category: サクラポケモン
+  CherrimSunshine:
+    name: チェリム（ポジフォルム）
+    category: サクラポケモン
 Shellos:
   Shellos:
     name: カラナクシ
     category: ウミウシポケモン
   Gastrodon:
     name: トリトドン
+    category: ウミウシポケモン
+  ShellosEast:
+    name: カラナクシ（ひがしのうみ）
+    category: ウミウシポケモン
+  GastrodonEast:
+    name: トリトドン（ひがしのうみ）
     category: ウミウシポケモン
 Drifloon:
   Drifloon:

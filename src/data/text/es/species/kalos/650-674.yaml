@@ -30,6 +30,9 @@ Froakie:
   Greninja:
     name: Greninja
     category: Pokémon Ninja
+  GreninjaAsh:
+    name: Greninja Ash
+    category: Pokémon Ninja
 Bunnelby:
   Bunnelby:
     name: Bunnelby
@@ -57,6 +60,63 @@ Scatterbug:
   Vivillon:
     name: Vivillon
     category: Pokémon Escamaposa
+  VivillonSavannah:
+    name: Vivillon (Motivo Sabana)
+    category: Pokémon Escamaposa
+  VivillonSun:
+    name: Vivillon (Motivo Solar)
+    category: Pokémon Escamaposa
+  VivillonPolar:
+    name: Vivillon (Motivo Taiga)
+    category: Pokémon Escamaposa
+  VivillonRiver:
+    name: Vivillon (Motivo Oasis)
+    category: Pokémon Escamaposa
+  VivillonOcean:
+    name: Vivillon (Motivo Océano)
+    category: Pokémon Escamaposa
+  VivillonFancy:
+    name: Vivillon (Motivo Fantasía)
+    category: Pokémon Escamaposa
+  VivillonTundra:
+    name: Vivillon (Motivo Tundra)
+    category: Pokémon Escamaposa
+  VivillonGarden:
+    name: Vivillon (Motivo Vergel)
+    category: Pokémon Escamaposa
+  VivillonModern:
+    name: Vivillon (Motivo Moderno)
+    category: Pokémon Escamaposa
+  VivillonMarine:
+    name: Vivillon (Motivo Marino)
+    category: Pokémon Escamaposa
+  VivillonJungle:
+    name: Vivillon (Motivo Jungla)
+    category: Pokémon Escamaposa
+  VivillonIcySnow:
+    name: Vivillon (Motivo Polar)
+    category: Pokémon Escamaposa
+  VivillonElegant:
+    name: Vivillon (Motivo Oriental)
+    category: Pokémon Escamaposa
+  VivillonMonsoon:
+    name: Vivillon (Motivo Monzón)
+    category: Pokémon Escamaposa
+  VivillonPokeBall:
+    name: Vivillon (Motivo Poké Ball)
+    category: Pokémon Escamaposa
+  VivillonSandstorm:
+    name: Vivillon (Motivo Desierto)
+    category: Pokémon Escamaposa
+  VivillonHighPlains:
+    name: Vivillon (Motivo Estepa)
+    category: Pokémon Escamaposa
+  VivillonContinental:
+    name: Vivillon (Motivo Continental)
+    category: Pokémon Escamaposa
+  VivillonArchipelago:
+    name: Vivillon (Motivo Isleño)
+    category: Pokémon Escamaposa
 Litleo:
   Litleo:
     name: Litleo
@@ -74,6 +134,45 @@ Flabebe:
   Florges:
     name: Florges
     category: Pokémon Jardín
+  FlabebeBlue:
+    name: Flabébé (Flor Azul)
+    category: Pokémon Monoflor
+  FloetteBlue:
+    name: Floette (Flor Azul)
+    category: Pokémon Monoflor
+  FlorgesBlue:
+    name: Florges (Flor Azul)
+    category: Pokémon Jardín
+  FlabebeWhite:
+    name: Flabébé (Flor Blanca)
+    category: Pokémon Monoflor
+  FloetteWhite:
+    name: Floette (Flor Blanca)
+    category: Pokémon Monoflor
+  FlorgesWhite:
+    name: Florges (Flor Blanca)
+    category: Pokémon Jardín
+  FlabebeYellow:
+    name: Flabébé (Flor Amarilla)
+    category: Pokémon Monoflor
+  FloetteYellow:
+    name: Floette (Flor Amarilla)
+    category: Pokémon Monoflor
+  FlorgesYellow:
+    name: Florges (Flor Amarilla)
+    category: Pokémon Jardín
+  FlabebeOrange:
+    name: Flabébé (Flor Naranja)
+    category: Pokémon Monoflor
+  FloetteOrange:
+    name: Floette (Flor Naranja)
+    category: Pokémon Monoflor
+  FlorgesOrange:
+    name: Florges (Flor Naranja)
+    category: Pokémon Jardín
+  FloetteEternal:
+    name: Floette (Flor Eterna)
+    category: Pokémon Monoflor
 Skiddo:
   Skiddo:
     name: Skiddo

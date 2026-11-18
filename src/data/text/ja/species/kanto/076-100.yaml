@@ -7,6 +7,12 @@ Ponyta:
   Rapidash:
     name: ギャロップ
     category: ひのうまポケモン
+  PonytaGalar:
+    category: いっかくポケモン
+    name: ポニータ（ガラルのすがた）
+  RapidashGalar:
+    category: いっかくポケモン
+    name: ギャロップ（ガラルのすがた）
 Slowpoke:
   Slowpoke:
     name: ヤドン
@@ -16,6 +22,15 @@ Slowpoke:
     category: やどかりポケモン
   Slowking:
     name: ヤドキング
+    category: おうじゃポケモン
+  SlowbroGalar:
+    name: ヤドラン（ガラルのすがた）
+    category: やどかりポケモン
+  SlowpokeGalar:
+    name: ヤドン（ガラルのすがた）
+    category: まぬけポケモン
+  SlowkingGalar:
+    name: ヤドキング（ガラルのすがた）
     category: おうじゃポケモン
 Magnemite:
   Magnemite:
@@ -33,6 +48,9 @@ Farfetchd:
     category: かるがもポケモン
   Sirfetchd:
     name: ネギガナイト
+    category: かるがもポケモン
+  FarfetchdGalar:
+    name: カモネギ（ガラルのすがた）
     category: かるがもポケモン
 Doduo:
   Doduo:
@@ -54,6 +72,12 @@ Grimer:
     category: ヘドロポケモン
   Muk:
     name: ベトベトン
+    category: ヘドロポケモン
+  MukAlola:
+    name: ベトベトン（アローラのすがた）
+    category: ヘドロポケモン
+  GrimerAlola:
+    name: ベトベター（アローラのすがた）
     category: ヘドロポケモン
 Shellder:
   Shellder:
@@ -100,3 +124,9 @@ Voltorb:
   Electrode:
     name: マルマイン
     category: ボールポケモン
+  VoltorbHisui:
+    category: きゅうたいポケモン
+    name: ビリリダマ（ヒスイのすがた）
+  ElectrodeHisui:
+    category: きゅうたいポケモン
+    name: マルマイン（ヒスイのすがた）

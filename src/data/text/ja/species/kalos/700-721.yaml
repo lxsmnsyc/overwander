@@ -22,6 +22,12 @@ Goomy:
   Goodra:
     name: ヌメルゴン
     category: ドラゴンポケモン
+  GoodraHisui:
+    category: からこもりポケモン
+    name: ヌメルゴン（ヒスイのすがた）
+  SliggooHisui:
+    category: マイマイポケモン
+    name: ヌメイル（ヒスイのすがた）
 Klefki:
   Klefki:
     name: クレッフィ
@@ -40,12 +46,21 @@ Pumpkaboo:
   Gourgeist:
     name: パンプジン
     category: かぼちゃポケモン
+  PumpkabooSuper:
+    name: バケッチャ（とくだいサイズ）
+    category: かぼちゃポケモン
+  GourgeistSuper:
+    name: パンプジン（とくだいサイズ）
+    category: かぼちゃポケモン
 Bergmite:
   Bergmite:
     name: カチコール
     category: ひょうかいポケモン
   Avalugg:
     name: クレベース
+    category: ひょうざんポケモン
+  AvaluggHisui:
+    name: クレベース（ヒスイのすがた）
     category: ひょうざんポケモン
 Noibat:
   Noibat:
@@ -66,6 +81,12 @@ Zygarde:
   Zygarde:
     name: ジガルデ
     category: ちつじょポケモン
+  ZygardeComplete:
+    name: ジガルデ（パーフェクトフォルム）
+    category: ちつじょポケモン
+  ZygardeTenPercent:
+    name: ジガルデ（１０％フォルム）
+    category: ちつじょポケモン
 Diancie:
   Diancie:
     name: ディアンシー
@@ -74,6 +95,9 @@ Hoopa:
   Hoopa:
     name: フーパ
     category: いたずらポケモン
+  HoopaUnbound:
+    name: ときはなたれしフーパ
+    category: まじんポケモン
 Volcanion:
   Volcanion:
     name: ボルケニオン

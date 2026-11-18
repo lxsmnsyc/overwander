@@ -7,6 +7,24 @@ Milcery:
   Alcremie:
     name: マホイップ
     category: クリームポケモン
+  AlcremieLove:
+    name: マホイップ（ハートアメざいく）
+    category: クリームポケモン
+  AlcremieStar:
+    name: マホイップ（スターアメざいく）
+    category: クリームポケモン
+  AlcremieBerry:
+    name: マホイップ（ベリーアメざいく）
+    category: クリームポケモン
+  AlcremieClover:
+    name: マホイップ（よつばアメざいく）
+    category: クリームポケモン
+  AlcremieFlower:
+    name: マホイップ（おはなアメざいく）
+    category: クリームポケモン
+  AlcremieRibbon:
+    name: マホイップ（リボンアメざいく）
+    category: クリームポケモン
 Falinks:
   Falinks:
     name: タイレーツ
@@ -30,6 +48,9 @@ Eiscue:
   Eiscue:
     name: コオリッポ
     category: ペンギンポケモン
+  EiscueNoice:
+    name: コオリッポ（ナイスフェイス）
+    category: ペンギンポケモン
 Indeedee:
   Indeedee:
     name: イエッサン
@@ -40,6 +61,9 @@ Indeedee:
 Morpeko:
   Morpeko:
     name: モルペコ
+    category: にめんポケモン
+  MorpekoHangry:
+    name: モルペコ（はらぺこもよう）
     category: にめんポケモン
 Dracozolt:
   Dracozolt:

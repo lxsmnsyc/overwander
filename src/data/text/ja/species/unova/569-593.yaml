@@ -7,6 +7,12 @@ Zorua:
   Zoroark:
     name: ゾロアーク
     category: ばけぎつねポケモン
+  ZoruaHisui:
+    category: うらみぎつねポケモン
+    name: ゾロア（ヒスイのすがた）
+  ZoroarkHisui:
+    category: のろいぎつねポケモン
+    name: ゾロアーク（ヒスイのすがた）
 Minccino:
   Minccino:
     name: チラーミィ
@@ -57,6 +63,24 @@ Deerling:
     category: きせつポケモン
   Sawsbuck:
     name: メブキジカ
+    category: きせつポケモン
+  DeerlingSummer:
+    name: シキジカ（なつのすがた）
+    category: きせつポケモン
+  DeerlingAutumn:
+    name: シキジカ（あきのすがた）
+    category: きせつポケモン
+  DeerlingWinter:
+    name: シキジカ（ふゆのすがた）
+    category: きせつポケモン
+  SawsbuckSummer:
+    name: メブキジカ（なつのすがた）
+    category: きせつポケモン
+  SawsbuckAutumn:
+    name: メブキジカ（あきのすがた）
+    category: きせつポケモン
+  SawsbuckWinter:
+    name: メブキジカ（ふゆのすがた）
     category: きせつポケモン
 Emolga:
   Emolga:

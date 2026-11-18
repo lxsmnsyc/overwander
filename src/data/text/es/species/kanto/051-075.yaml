@@ -10,6 +10,15 @@ Meowth:
   Perrserker:
     name: Perrserker
     category: Pokémon Vikingo
+  MeowthAlola:
+    name: Meowth de Alola
+    category: Pokémon Gato Araña
+  MeowthGalar:
+    name: Meowth de Galar
+    category: Pokémon Gato Araña
+  PersianAlola:
+    name: Persian de Alola
+    category: Pokémon Gato Fino
 Psyduck:
   Psyduck:
     name: Psyduck
@@ -26,12 +35,19 @@ Mankey:
     category: Pokémon Mono Cerdo
   Annihilape:
     name: Annihilape
+    category: Pokémon Mono Furia
 Growlithe:
   Growlithe:
     name: Growlithe
     category: Pokémon Perrito
   Arcanine:
     name: Arcanine
+    category: Pokémon Leyenda
+  GrowlitheHisui:
+    category: Pokémon Explorador
+    name: Growlithe de Hisui
+  ArcanineHisui:
+    name: Arcanine de Hisui
     category: Pokémon Leyenda
 Poliwag:
   Poliwag:
@@ -93,3 +109,12 @@ Geodude:
   Golem:
     name: Golem
     category: Pokémon Megatón
+  GolemAlola:
+    name: Golem de Alola
+    category: Pokémon Megatón
+  GeodudeAlola:
+    name: Geodude de Alola
+    category: Pokémon Roca
+  GravelerAlola:
+    name: Graveler de Alola
+    category: Pokémon Roca

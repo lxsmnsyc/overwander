@@ -1,0 +1,458 @@
+# Gaps PokeAPI leaves, by the key of the entry in the English species files.
+# A value here wins over PokeAPI and over the rules in official-names.ts.
+# Only the fields PokeAPI lacks are written; a form takes its base species' category otherwise.
+#
+# Sources: the official Japanese zukan (zukan.pokemon.co.jp) for ja categories and form
+# names, WikiDex for es categories (Spain, "Pokémon" + the word) and form names.
+# Names marked coined below have no official wording this was checked against.
+
+Dipplin:
+  ja: { category: りんごあめポケモン }
+  es: { category: Pokémon Manzamelo }
+Hydrapple:
+  es: { category: Pokémon Manzanhidra }
+Archaludon:
+  es: { category: Pokémon Aleación }
+Enamorus:
+  es: { category: Pokémon Amorodio }
+Clodsire:
+  es: { category: Pokémon Pez Púas }
+Farigiraf:
+  es: { category: Pokémon Gran Cuello }
+Dudunsparce:
+  es: { category: Pokémon Serpiente Tierra }
+Overqwil:
+  es: { category: Pokémon Espinoso }
+Sneasler:
+  es: { category: Pokémon Escalada }
+Ursaluna:
+  es: { category: Pokémon Turba }
+Wyrdeer:
+  es: { category: Pokémon Gran Cuerno }
+Annihilape:
+  es: { category: Pokémon Mono Furia }
+Kleavor:
+  es: { category: Pokémon Hacha }
+Poltchageist:
+  ja: { category: まっちゃポケモン }
+  es: { category: Pokémon Matcha }
+Sinistcha:
+  ja: { category: まっちゃポケモン }
+  es: { category: Pokémon Matcha }
+IronValiant:
+  es: { category: Pokémon Paradoja }
+Koraidon:
+  es: { category: Pokémon Paradoja }
+Miraidon:
+  es: { category: Pokémon Paradoja }
+WalkingWake:
+  es: { category: Pokémon Paradoja }
+IronLeaves:
+  es: { category: Pokémon Paradoja }
+GougingFire:
+  es: { category: Pokémon Paradoja }
+RagingBolt:
+  es: { category: Pokémon Paradoja }
+Munkidori:
+  ja: { category: けらいポケモン }
+  es: { category: Pokémon Esbirro }
+Fezandipiti:
+  ja: { category: けらいポケモン }
+  es: { category: Pokémon Esbirro }
+Ogerpon:
+  ja: { category: おめんポケモン }
+  es: { category: Pokémon Máscara }
+Terapagos:
+  es: { category: Pokémon Teracristal }
+Pecharunt:
+  es: { category: Pokémon Controlador }
+Sprigatito:
+  es: { category: Pokémon Gato Planta }
+Floragato:
+  es: { category: Pokémon Gato Planta }
+Meowscarada:
+  es: { category: Pokémon Mago }
+Fuecoco:
+  es: { category: Pokémon Fuegodrilo }
+Crocalor:
+  es: { category: Pokémon Fuegodrilo }
+Skeledirge:
+  es: { category: Pokémon Cantante }
+Quaxly:
+  es: { category: Pokémon Patito }
+Quaxwell:
+  es: { category: Pokémon Disciplinado }
+Quaquaval:
+  es: { category: Pokémon Bailarín }
+Lechonk:
+  es: { category: Pokémon Gorrino }
+Oinkologne:
+  es: { category: Pokémon Gorrino }
+Tarountula:
+  es: { category: Pokémon Ovillo }
+Spidops:
+  es: { category: Pokémon Trampa }
+Nymble:
+  es: { category: Pokémon Saltamontes }
+Lokix:
+  es: { category: Pokémon Saltamontes }
+Pawmi:
+  es: { category: Pokémon Ratón }
+Pawmo:
+  es: { category: Pokémon Ratón }
+Pawmot:
+  es: { category: Pokémon Palmada }
+Tandemaus:
+  es: { category: Pokémon Pareja }
+Maushold:
+  es: { category: Pokémon Familia }
+Fidough:
+  es: { category: Pokémon Perrito }
+Dachsbun:
+  es: { category: Pokémon Perro }
+Smoliv:
+  es: { category: Pokémon Aceituna }
+Dolliv:
+  es: { category: Pokémon Aceituna }
+Arboliva:
+  es: { category: Pokémon Aceituna }
+Nacli:
+  es: { category: Pokémon Halita }
+Naclstack:
+  es: { category: Pokémon Halita }
+Garganacl:
+  es: { category: Pokémon Halita }
+Charcadet:
+  es: { category: Pokémon Piroescudero }
+Armarouge:
+  es: { category: Pokémon Piroguerrero }
+Ceruledge:
+  es: { category: Pokémon Piroespada }
+Tadbulb:
+  es: { category: Pokémon Electrocuajo }
+Bellibolt:
+  es: { category: Pokémon Electrorrana }
+Wattrel:
+  es: { category: Pokémon Paíño }
+Kilowattrel:
+  es: { category: Pokémon Fregata }
+Bramblin:
+  es: { category: Pokémon Estepicursor }
+Toedscool:
+  es: { category: Pokémon Auricularia }
+Capsakid:
+  es: { category: Pokémon Habanero }
+Scovillain:
+  es: { category: Pokémon Habanero }
+Rellor:
+  es: { category: Pokémon Pelotero }
+Flittle:
+  es: { category: Pokémon Volantes }
+Tinkatink:
+  es: { category: Pokémon Forja }
+Tinkatuff:
+  es: { category: Pokémon Martillo }
+Tinkaton:
+  es: { category: Pokémon Martillo }
+Wiglett:
+  es: { category: Pokémon Cóngrido }
+Wugtrio:
+  es: { category: Pokémon Cóngrido }
+Finizen:
+  es: { category: Pokémon Delfín }
+Palafin:
+  es: { category: Pokémon Delfín }
+Varoom:
+  es: { category: Pokémon Monocilindro }
+Revavroom:
+  es: { category: Pokémon Policilindro }
+Cyclizar:
+  es: { category: Pokémon Montura }
+Orthworm:
+  es: { category: Pokémon Lombriz }
+Glimmet:
+  es: { category: Pokémon Mineral }
+Glimmora:
+  es: { category: Pokémon Mineral }
+Greavard:
+  es: { category: Pokémon Can Fantasma }
+Houndstone:
+  es: { category: Pokémon Can Fantasma }
+Cetoddle:
+  es: { category: Pokémon Geoballena }
+Cetitan:
+  es: { category: Pokémon Geoballena }
+Veluza:
+  es: { category: Pokémon Sueltalastre }
+Dondozo:
+  es: { category: Pokémon Gran Siluro }
+Tatsugiri:
+  es: { category: Pokémon Mimetismo }
+Frigibax:
+  es: { category: Pokémon Aleta Hielo }
+Arctibax:
+  es: { category: Pokémon Aleta Hielo }
+Baxcalibur:
+  es: { category: Pokémon Dragón Hielo }
+Gimmighoul:
+  es: { category: Pokémon Cofre }
+Gholdengo:
+  es: { category: Pokémon Tesoro }
+GreatTusk:
+  es: { category: Pokémon Paradoja }
+ScreamTail:
+  es: { category: Pokémon Paradoja }
+FlutterMane:
+  es: { category: Pokémon Paradoja }
+SlitherWing:
+  es: { category: Pokémon Paradoja }
+SandyShocks:
+  es: { category: Pokémon Paradoja }
+IronTreads:
+  es: { category: Pokémon Paradoja }
+IronBundle:
+  es: { category: Pokémon Paradoja }
+IronHands:
+  es: { category: Pokémon Paradoja }
+IronMoth:
+  es: { category: Pokémon Paradoja }
+IronThorns:
+  es: { category: Pokémon Paradoja }
+RoaringMoon:
+  es: { category: Pokémon Paradoja }
+TingLu:
+  es: { category: Pokémon Debacle }
+ChiYu:
+  es: { category: Pokémon Debacle }
+Basculegion:
+  es: { category: Pokémon Gran Pez }
+Kingambit:
+  es: { category: Pokémon Gran Espada }
+CalyrexIce:
+  ja: { name: バドレックス（はくばじょうのすがた）, category: エンペラーポケモン }
+  es: { name: Calyrex (Jinete Glacial), category: Pokémon Emperador }
+CalyrexShadow:
+  ja: { name: バドレックス（こくばじょうのすがた）, category: エンペラーポケモン }
+  es: { name: Calyrex (Jinete Espectral), category: Pokémon Emperador }
+TyphlosionHisui:
+  ja: { category: おにびポケモン }
+  es: { category: Pokémon Fuego Fatuo }
+SliggooHisui:
+  ja: { category: マイマイポケモン }
+  es: { category: Pokémon Caracol }
+GoodraHisui:
+  ja: { category: からこもりポケモン }
+  es: { category: Pokémon Retracción }
+HoopaUnbound:
+  ja: { name: ときはなたれしフーパ, category: まじんポケモン }
+  es: { name: Hoopa Desatado, category: Pokémon Genio Burlón }
+GrowlitheHisui:
+  ja: { category: みはりポケモン }
+  es: { category: Pokémon Explorador }
+PonytaGalar:
+  ja: { category: いっかくポケモン }
+  es: { category: Pokémon Unicorne }
+RapidashGalar:
+  ja: { category: いっかくポケモン }
+  es: { category: Pokémon Unicorne }
+VoltorbHisui:
+  ja: { category: きゅうたいポケモン }
+  es: { category: Pokémon Esfera }
+ElectrodeHisui:
+  ja: { category: きゅうたいポケモン }
+  es: { category: Pokémon Esfera }
+MrMimeGalar:
+  ja: { category: ダンスポケモン }
+  es: { category: Pokémon Danza }
+ArticunoGalar:
+  ja: { category: れいこくポケモン }
+  es: { category: Pokémon Calculador }
+ZapdosGalar:
+  ja: { category: けんきゃくポケモン }
+  es: { category: Pokémon Patas Recias }
+MoltresGalar:
+  ja: { category: じゃあくポケモン }
+  es: { category: Pokémon Malignidad }
+LilligantHisui:
+  ja: { category: スピンポケモン }
+  es: { category: Pokémon Pirueta }
+BasculinWhite:
+  ja: { category: おんこうポケモン }
+  es: { name: Basculin (Forma Raya Blanca), category: Pokémon Manso }
+DarmanitanGalar:
+  ja: { category: だるまポケモン }
+  es: { category: Pokémon Daruma }
+ZoruaHisui:
+  ja: { category: うらみぎつねポケモン }
+  es: { category: Pokémon Zorro Rencor }
+ZoroarkHisui:
+  ja: { category: のろいぎつねポケモン }
+  es: { category: Pokémon Maldizorro }
+BraviaryHisui:
+  ja: { category: おたけびポケモン }
+  es: { category: Pokémon Grito Guerra }
+SilvallyFighting:
+  ja: { name: シルヴァディ（タイプ：ファイト） }
+  es: { name: 'Silvally (Tipo: Lucha)' }
+SilvallyFlying:
+  ja: { name: シルヴァディ（タイプ：フライング） }
+  es: { name: 'Silvally (Tipo: Volador)' }
+SilvallyPoison:
+  ja: { name: シルヴァディ（タイプ：ポイズン） }
+  es: { name: 'Silvally (Tipo: Veneno)' }
+SilvallyGround:
+  ja: { name: シルヴァディ（タイプ：グラウンド） }
+  es: { name: 'Silvally (Tipo: Tierra)' }
+SilvallyRock:
+  ja: { name: シルヴァディ（タイプ：ロック） }
+  es: { name: 'Silvally (Tipo: Roca)' }
+SilvallyBug:
+  ja: { name: シルヴァディ（タイプ：バグ） }
+  es: { name: 'Silvally (Tipo: Bicho)' }
+SilvallyGhost:
+  ja: { name: シルヴァディ（タイプ：ゴースト） }
+  es: { name: 'Silvally (Tipo: Fantasma)' }
+SilvallySteel:
+  ja: { name: シルヴァディ（タイプ：スチール） }
+  es: { name: 'Silvally (Tipo: Acero)' }
+SilvallyFire:
+  ja: { name: シルヴァディ（タイプ：ファイヤー） }
+  es: { name: 'Silvally (Tipo: Fuego)' }
+SilvallyWater:
+  ja: { name: シルヴァディ（タイプ：ウオーター） }
+  es: { name: 'Silvally (Tipo: Agua)' }
+SilvallyGrass:
+  ja: { name: シルヴァディ（タイプ：グラス） }
+  es: { name: 'Silvally (Tipo: Planta)' }
+SilvallyElectric:
+  ja: { name: シルヴァディ（タイプ：エレクトロ） }
+  es: { name: 'Silvally (Tipo: Eléctrico)' }
+SilvallyPsychic:
+  ja: { name: シルヴァディ（タイプ：サイキック） }
+  es: { name: 'Silvally (Tipo: Psíquico)' }
+SilvallyIce:
+  ja: { name: シルヴァディ（タイプ：アイス） }
+  es: { name: 'Silvally (Tipo: Hielo)' }
+SilvallyDragon:
+  ja: { name: シルヴァディ（タイプ：ドラゴン） }
+  es: { name: 'Silvally (Tipo: Dragón)' }
+SilvallyDark:
+  ja: { name: シルヴァディ（タイプ：ダーク） }
+  es: { name: 'Silvally (Tipo: Siniestro)' }
+SilvallyFairy:
+  ja: { name: シルヴァディ（タイプ：フェアリー） }
+  es: { name: 'Silvally (Tipo: Hada)' }
+NecrozmaDuskMane:
+  ja: { name: ネクロズマ（たそがれのたてがみ） }
+  es: { name: Necrozma (Melena Crepuscular) }
+NecrozmaDawnWings:
+  ja: { name: ネクロズマ（あかつきのつばさ） }
+  es: { name: Necrozma (Alas del Alba) }
+NecrozmaUltra:
+  ja: { name: ウルトラネクロズマ }
+  es: { name: Ultra-Necrozma }
+# coined
+AlcremieBerry:
+  ja: { name: マホイップ（ベリーアメざいく） }
+  es: { name: Alcremie (Confite Fruto) }
+# coined
+AlcremieLove:
+  ja: { name: マホイップ（ハートアメざいく） }
+  es: { name: Alcremie (Confite Corazón) }
+# coined
+AlcremieStar:
+  ja: { name: マホイップ（スターアメざいく） }
+  es: { name: Alcremie (Confite Estrella) }
+# coined
+AlcremieClover:
+  ja: { name: マホイップ（よつばアメざいく） }
+  es: { name: Alcremie (Confite Trébol) }
+# coined
+AlcremieFlower:
+  ja: { name: マホイップ（おはなアメざいく） }
+  es: { name: Alcremie (Confite Flor) }
+# coined
+AlcremieRibbon:
+  ja: { name: マホイップ（リボンアメざいく） }
+  es: { name: Alcremie (Confite Lazo) }
+EiscueNoice:
+  ja: { name: コオリッポ（ナイスフェイス） }
+  es: { name: Eiscue (Cara Deshielo) }
+VivillonSavannah:
+  ja: { name: ビビヨン（サバンナのもよう） }
+  es: { name: Vivillon (Motivo Sabana) }
+PichuSpikyEared:
+  ja: { name: ギザみみピチュー }
+  es: { name: Pichu Picoreja }
+TaurosPaldeaCombat:
+  ja: { name: ケンタロス（パルデアのすがた・コンバットしゅ） }
+  es: { name: Tauros de Paldea (Variedad Combatiente) }
+TaurosPaldeaBlaze:
+  ja: { name: ケンタロス（パルデアのすがた・ブレイズしゅ） }
+  es: { name: Tauros de Paldea (Variedad Ardiente) }
+TaurosPaldeaAqua:
+  ja: { name: ケンタロス（パルデアのすがた・ウォーターしゅ） }
+  es: { name: Tauros de Paldea (Variedad Acuática) }
+# coined
+OgerponTealTera:
+  ja: { name: オーガポン（みどりのめん・テラスタルフォルム） }
+  es: { name: 'Ogerpon (Máscara Turquesa, forma teracristal)' }
+# coined
+OgerponWellspringTera:
+  ja: { name: オーガポン（いどのめん・テラスタルフォルム） }
+  es: { name: 'Ogerpon (Máscara Fuente, forma teracristal)' }
+# coined
+OgerponHearthflameTera:
+  ja: { name: オーガポン（かまどのめん・テラスタルフォルム） }
+  es: { name: 'Ogerpon (Máscara Horno, forma teracristal)' }
+# coined
+OgerponCornerstoneTera:
+  ja: { name: オーガポン（いしずえのめん・テラスタルフォルム） }
+  es: { name: 'Ogerpon (Máscara Cimiento, forma teracristal)' }
+DarmanitanGalarZen:
+  ja: { name: ヒヒダルマ（ガラルのすがた・ダルマモード） }
+  es: { name: Darmanitan de Galar (Modo Daruma) }
+RotomHeat:
+  ja: { name: ヒートロトム }
+  es: { name: Rotom Calor }
+RotomWash:
+  ja: { name: ウォッシュロトム }
+  es: { name: Rotom Lavado }
+RotomFrost:
+  ja: { name: フロストロトム }
+  es: { name: Rotom Frío }
+RotomFan:
+  ja: { name: スピンロトム }
+  es: { name: Rotom Ventilador }
+RotomMow:
+  ja: { name: カットロトム }
+  es: { name: Rotom Corte }
+KyuremBlack:
+  ja: { name: ブラックキュレム }
+  es: { name: Kyurem Negro }
+KyuremWhite:
+  ja: { name: ホワイトキュレム }
+  es: { name: Kyurem Blanco }
+GreninjaAsh:
+  ja: { name: サトシゲッコウガ }
+  es: { name: Greninja Ash }
+SinisteaAntique:
+  es: { name: Sinistea (Forma Genuina) }
+PolteageistAntique:
+  es: { name: Polteageist (Forma Genuina) }
+EnamorusTherian:
+  es: { name: Enamorus (Forma Tótem) }
+DudunsparceThree:
+  es: { name: Dudunsparce (Forma Trinodular) }
+MausholdThree:
+  es: { name: Maushold (Familia de Tres) }
+PalafinHero:
+  es: { name: Palafin (Forma Heroica) }
+TatsugiriDroopy:
+  es: { name: Tatsugiri (Forma Lánguida) }
+TatsugiriStretchy:
+  es: { name: Tatsugiri (Forma Recta) }
+DialgaOrigin:
+  es: { name: Dialga (Forma Origen) }
+PalkiaOrigin:
+  es: { name: Palkia (Forma Origen) }

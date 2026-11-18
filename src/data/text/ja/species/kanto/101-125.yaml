@@ -7,12 +7,18 @@ Exeggcute:
   Exeggutor:
     name: ナッシー
     category: やしのみポケモン
+  ExeggutorAlola:
+    name: ナッシー（アローラのすがた）
+    category: やしのみポケモン
 Cubone:
   Cubone:
     name: カラカラ
     category: こどくポケモン
   Marowak:
     name: ガラガラ
+    category: ほねずきポケモン
+  MarowakAlola:
+    name: ガラガラ（アローラのすがた）
     category: ほねずきポケモン
 Tyrogue:
   Hitmonlee:
@@ -40,6 +46,9 @@ Koffing:
     category: どくガスポケモン
   Weezing:
     name: マタドガス
+    category: どくガスポケモン
+  WeezingGalar:
+    name: マタドガス（ガラルのすがた）
     category: どくガスポケモン
 Rhyhorn:
   Rhyhorn:
@@ -103,6 +112,9 @@ MrMime:
   MimeJr:
     name: マネネ
     category: マイムポケモン
+  MrMimeGalar:
+    category: ダンスポケモン
+    name: バリヤード（ガラルのすがた）
 Scyther:
   Scyther:
     name: ストライク

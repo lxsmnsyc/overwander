@@ -67,6 +67,12 @@ Rattata:
   Raticate:
     name: ラッタ
     category: ねずみポケモン
+  RattataAlola:
+    name: コラッタ（アローラのすがた）
+    category: ねずみポケモン
+  RaticateAlola:
+    name: ラッタ（アローラのすがた）
+    category: ねずみポケモン
 Spearow:
   Spearow:
     name: オニスズメ
@@ -91,3 +97,9 @@ Pikachu:
   Pichu:
     name: ピチュー
     category: こねずみポケモン
+  PichuSpikyEared:
+    name: ギザみみピチュー
+    category: こねずみポケモン
+  RaichuAlola:
+    name: ライチュウ（アローラのすがた）
+    category: ねずみポケモン

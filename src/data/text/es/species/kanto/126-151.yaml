@@ -18,6 +18,15 @@ Tauros:
   Tauros:
     name: Tauros
     category: Pokémon Toro Bravo
+  TaurosPaldeaAqua:
+    name: Tauros de Paldea (Variedad Acuática)
+    category: Pokémon Toro Bravo
+  TaurosPaldeaBlaze:
+    name: Tauros de Paldea (Variedad Ardiente)
+    category: Pokémon Toro Bravo
+  TaurosPaldeaCombat:
+    name: Tauros de Paldea (Variedad Combatiente)
+    category: Pokémon Toro Bravo
 Magikarp:
   Magikarp:
     name: Magikarp
@@ -100,14 +109,23 @@ Articuno:
   Articuno:
     name: Articuno
     category: Pokémon Congelar
+  ArticunoGalar:
+    category: Pokémon Calculador
+    name: Articuno de Galar
 Zapdos:
   Zapdos:
     name: Zapdos
     category: Pokémon Eléctrico
+  ZapdosGalar:
+    category: Pokémon Patas Recias
+    name: Zapdos de Galar
 Moltres:
   Moltres:
     name: Moltres
     category: Pokémon Llama
+  MoltresGalar:
+    category: Pokémon Malignidad
+    name: Moltres de Galar
 Dratini:
   Dratini:
     name: Dratini

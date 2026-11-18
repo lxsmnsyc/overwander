@@ -10,6 +10,15 @@ Meowth:
   Perrserker:
     name: ニャイキング
     category: バイキングポケモン
+  MeowthAlola:
+    name: ニャース（アローラのすがた）
+    category: ばけねこポケモン
+  MeowthGalar:
+    name: ニャース（ガラルのすがた）
+    category: ばけねこポケモン
+  PersianAlola:
+    name: ペルシアン（アローラのすがた）
+    category: シャムネコポケモン
 Psyduck:
   Psyduck:
     name: コダック
@@ -33,6 +42,12 @@ Growlithe:
     category: こいぬポケモン
   Arcanine:
     name: ウインディ
+    category: でんせつポケモン
+  GrowlitheHisui:
+    category: みはりポケモン
+    name: ガーディ（ヒスイのすがた）
+  ArcanineHisui:
+    name: ウインディ（ヒスイのすがた）
     category: でんせつポケモン
 Poliwag:
   Poliwag:
@@ -94,3 +109,12 @@ Geodude:
   Golem:
     name: ゴローニャ
     category: メガトンポケモン
+  GolemAlola:
+    name: ゴローニャ（アローラのすがた）
+    category: メガトンポケモン
+  GeodudeAlola:
+    name: イシツブテ（アローラのすがた）
+    category: がんせきポケモン
+  GravelerAlola:
+    name: ゴローン（アローラのすがた）
+    category: がんせきポケモン

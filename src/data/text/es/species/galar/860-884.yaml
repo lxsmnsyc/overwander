@@ -7,6 +7,24 @@ Milcery:
   Alcremie:
     name: Alcremie
     category: Pokémon Nata
+  AlcremieLove:
+    name: Alcremie (Confite Corazón)
+    category: Pokémon Nata
+  AlcremieStar:
+    name: Alcremie (Confite Estrella)
+    category: Pokémon Nata
+  AlcremieBerry:
+    name: Alcremie (Confite Fruto)
+    category: Pokémon Nata
+  AlcremieClover:
+    name: Alcremie (Confite Trébol)
+    category: Pokémon Nata
+  AlcremieFlower:
+    name: Alcremie (Confite Flor)
+    category: Pokémon Nata
+  AlcremieRibbon:
+    name: Alcremie (Confite Lazo)
+    category: Pokémon Nata
 Falinks:
   Falinks:
     name: Falinks
@@ -30,6 +48,9 @@ Eiscue:
   Eiscue:
     name: Eiscue
     category: Pokémon Pingüino
+  EiscueNoice:
+    name: Eiscue (Cara Deshielo)
+    category: Pokémon Pingüino
 Indeedee:
   Indeedee:
     name: Indeedee
@@ -40,6 +61,9 @@ Indeedee:
 Morpeko:
   Morpeko:
     name: Morpeko
+    category: Pokémon Dos Caras
+  MorpekoHangry:
+    name: Morpeko (Forma Voraz)
     category: Pokémon Dos Caras
 Dracozolt:
   Dracozolt:
@@ -63,3 +87,4 @@ Duraludon:
     category: Pokémon Aleación
   Archaludon:
     name: Archaludon
+    category: Pokémon Aleación

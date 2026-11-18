@@ -74,6 +74,10 @@ Wooper:
     category: Pokémon Pez Agua
   Clodsire:
     name: Clodsire
+    category: Pokémon Pez Púas
+  WooperPaldea:
+    name: Wooper de Paldea
+    category: Pokémon Pez Agua
 Murkrow:
   Murkrow:
     name: Murkrow
@@ -97,4 +101,79 @@ Unown:
     category: Pokémon Símbolo
   UnownQuestion:
     name: Unown
+    category: Pokémon Símbolo
+  UnownB:
+    name: Unown (B)
+    category: Pokémon Símbolo
+  UnownC:
+    name: Unown (C)
+    category: Pokémon Símbolo
+  UnownD:
+    name: Unown (D)
+    category: Pokémon Símbolo
+  UnownE:
+    name: Unown (E)
+    category: Pokémon Símbolo
+  UnownF:
+    name: Unown (F)
+    category: Pokémon Símbolo
+  UnownG:
+    name: Unown (G)
+    category: Pokémon Símbolo
+  UnownH:
+    name: Unown (H)
+    category: Pokémon Símbolo
+  UnownI:
+    name: Unown (I)
+    category: Pokémon Símbolo
+  UnownJ:
+    name: Unown (J)
+    category: Pokémon Símbolo
+  UnownK:
+    name: Unown (K)
+    category: Pokémon Símbolo
+  UnownL:
+    name: Unown (L)
+    category: Pokémon Símbolo
+  UnownM:
+    name: Unown (M)
+    category: Pokémon Símbolo
+  UnownN:
+    name: Unown (N)
+    category: Pokémon Símbolo
+  UnownO:
+    name: Unown (O)
+    category: Pokémon Símbolo
+  UnownP:
+    name: Unown (P)
+    category: Pokémon Símbolo
+  UnownQ:
+    name: Unown (Q)
+    category: Pokémon Símbolo
+  UnownR:
+    name: Unown (R)
+    category: Pokémon Símbolo
+  UnownS:
+    name: Unown (S)
+    category: Pokémon Símbolo
+  UnownT:
+    name: Unown (T)
+    category: Pokémon Símbolo
+  UnownU:
+    name: Unown (U)
+    category: Pokémon Símbolo
+  UnownV:
+    name: Unown (V)
+    category: Pokémon Símbolo
+  UnownW:
+    name: Unown (W)
+    category: Pokémon Símbolo
+  UnownX:
+    name: Unown (X)
+    category: Pokémon Símbolo
+  UnownY:
+    name: Unown (Y)
+    category: Pokémon Símbolo
+  UnownZ:
+    name: Unown (Z)
     category: Pokémon Símbolo

@@ -4,6 +4,9 @@ Giratina:
   Giratina:
     name: Giratina
     category: Pokémon Renegado
+  GiratinaOrigin:
+    name: Giratina (Forma Origen)
+    category: Pokémon Renegado
 Cresselia:
   Cresselia:
     name: Cresselia
@@ -23,7 +26,61 @@ Shaymin:
   Shaymin:
     name: Shaymin
     category: Pokémon Gratitud
+  ShayminSky:
+    name: Shaymin (Forma Cielo)
+    category: Pokémon Gratitud
 Arceus:
   Arceus:
     name: Arceus
+    category: Pokémon Alfa
+  ArceusBug:
+    name: Arceus (Tipo Bicho)
+    category: Pokémon Alfa
+  ArceusIce:
+    name: Arceus (Tipo Hielo)
+    category: Pokémon Alfa
+  ArceusDark:
+    name: Arceus (Tipo Siniestro)
+    category: Pokémon Alfa
+  ArceusFire:
+    name: Arceus (Tipo Fuego)
+    category: Pokémon Alfa
+  ArceusRock:
+    name: Arceus (Tipo Roca)
+    category: Pokémon Alfa
+  ArceusGhost:
+    name: Arceus (Tipo Fantasma)
+    category: Pokémon Alfa
+  ArceusGrass:
+    name: Arceus (Tipo Planta)
+    category: Pokémon Alfa
+  ArceusSteel:
+    name: Arceus (Tipo Acero)
+    category: Pokémon Alfa
+  ArceusWater:
+    name: Arceus (Tipo Agua)
+    category: Pokémon Alfa
+  ArceusFairy:
+    name: Arceus (Tipo Hada)
+    category: Pokémon Alfa
+  ArceusDragon:
+    name: Arceus (Tipo Dragón)
+    category: Pokémon Alfa
+  ArceusFlying:
+    name: Arceus (Tipo Volador)
+    category: Pokémon Alfa
+  ArceusGround:
+    name: Arceus (Tipo Tierra)
+    category: Pokémon Alfa
+  ArceusPoison:
+    name: Arceus (Tipo Veneno)
+    category: Pokémon Alfa
+  ArceusPsychic:
+    name: Arceus (Tipo Psíquico)
+    category: Pokémon Alfa
+  ArceusElectric:
+    name: Arceus (Tipo Eléctrico)
+    category: Pokémon Alfa
+  ArceusFighting:
+    name: Arceus (Tipo Lucha)
     category: Pokémon Alfa

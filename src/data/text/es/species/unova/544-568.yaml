@@ -14,14 +14,25 @@ Petilil:
   Lilligant:
     name: Lilligant
     category: Pokémon Adornofloral
+  LilligantHisui:
+    category: Pokémon Pirueta
+    name: Lilligant de Hisui
 Basculin:
   Basculin:
     name: Basculin
     category: Pokémon Violento
   Basculegion:
     name: Basculegion
+    category: Pokémon Gran Pez
   BasculegionFemale:
     name: Basculegion
+    category: Pokémon Gran Pez
+  BasculinWhite:
+    name: Basculin (Forma Raya Blanca)
+    category: Pokémon Manso
+  BasculinBlue:
+    name: Basculin (Forma Raya Azul)
+    category: Pokémon Violento
 Sandile:
   Sandile:
     name: Sandile
@@ -39,6 +50,18 @@ Darumaka:
   Darmanitan:
     name: Darmanitan
     category: Pokémon Candente
+  DarmanitanGalar:
+    category: Pokémon Daruma
+    name: Darmanitan de Galar
+  DarmanitanGalarZen:
+    name: Darmanitan de Galar (Modo Daruma)
+    category: Pokémon Daruma
+  DarmanitanZen:
+    name: Darmanitan (Modo Daruma)
+    category: Pokémon Candente
+  DarumakaGalar:
+    name: Darumaka de Galar
+    category: Pokémon Daruma
 Maractus:
   Maractus:
     name: Maractus
@@ -71,6 +94,9 @@ Yamask:
   Runerigus:
     name: Runerigus
     category: Pokémon Resquemor
+  YamaskGalar:
+    name: Yamask de Galar
+    category: Pokémon Espíritu
 Tirtouga:
   Tirtouga:
     name: Tirtouga

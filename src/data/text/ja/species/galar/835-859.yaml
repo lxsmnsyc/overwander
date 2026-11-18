@@ -19,6 +19,7 @@ Applin:
     category: りんごじるポケモン
   Dipplin:
     name: カミッチュ
+    category: りんごあめポケモン
   Hydrapple:
     name: カミツオロチ
     category: りんごオロチポケモン
@@ -33,6 +34,12 @@ Cramorant:
   Cramorant:
     name: ウッウ
     category: うのみポケモン
+  CramorantGulping:
+    name: ウッウ（うのみのすがた）
+    category: うのみポケモン
+  CramorantGorging:
+    name: ウッウ（まるのみのすがた）
+    category: うのみポケモン
 Arrokuda:
   Arrokuda:
     name: サシカマス
@@ -46,6 +53,9 @@ Toxel:
     category: あかごポケモン
   Toxtricity:
     name: ストリンダー
+    category: パンクポケモン
+  ToxtricityLowKey:
+    name: ストリンダー（ローなすがた）
     category: パンクポケモン
 Sizzlipede:
   Sizzlipede:
@@ -67,6 +77,12 @@ Sinistea:
     category: こうちゃポケモン
   Polteageist:
     name: ポットデス
+    category: こうちゃポケモン
+  SinisteaAntique:
+    name: ヤバチャ（しんさくフォルム）
+    category: こうちゃポケモン
+  PolteageistAntique:
+    name: ポットデス（しんさくフォルム）
     category: こうちゃポケモン
 Hatenna:
   Hatenna:

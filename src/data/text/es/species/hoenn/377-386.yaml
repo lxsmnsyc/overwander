@@ -24,9 +24,15 @@ Kyogre:
   Kyogre:
     name: Kyogre
     category: Pokémon Cuenca Mar
+  KyogrePrimal:
+    name: Kyogre (Regresión Primigenia)
+    category: Pokémon Cuenca Mar
 Groudon:
   Groudon:
     name: Groudon
+    category: Pokémon Continente
+  GroudonPrimal:
+    name: Groudon (Regresión Primigenia)
     category: Pokémon Continente
 Rayquaza:
   Rayquaza:
@@ -39,4 +45,13 @@ Jirachi:
 Deoxys:
   Deoxys:
     name: Deoxys
+    category: Pokémon ADN
+  DeoxysSpeed:
+    name: Deoxys (Forma Velocidad)
+    category: Pokémon ADN
+  DeoxysAttack:
+    name: Deoxys (Forma Ataque)
+    category: Pokémon ADN
+  DeoxysDefense:
+    name: Deoxys (Forma Defensa)
     category: Pokémon ADN

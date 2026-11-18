@@ -20,6 +20,9 @@ Cyndaquil:
   Typhlosion:
     name: Typhlosion
     category: Pokémon Volcán
+  TyphlosionHisui:
+    category: Pokémon Fuego Fatuo
+    name: Typhlosion de Hisui
 Totodile:
   Totodile:
     name: Totodile

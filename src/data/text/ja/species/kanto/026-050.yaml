@@ -7,6 +7,12 @@ Sandshrew:
   Sandslash:
     name: サンドパン
     category: ねずみポケモン
+  SandshrewAlola:
+    name: サンド（アローラのすがた）
+    category: ねずみポケモン
+  SandslashAlola:
+    name: サンドパン（アローラのすがた）
+    category: ねずみポケモン
 NidoranF:
   NidoranF:
     name: ニドラン♀
@@ -43,6 +49,12 @@ Vulpix:
     category: きつねポケモン
   Ninetales:
     name: キュウコン
+    category: きつねポケモン
+  VulpixAlola:
+    name: ロコン（アローラのすがた）
+    category: きつねポケモン
+  NinetalesAlola:
+    name: キュウコン（アローラのすがた）
     category: きつねポケモン
 Jigglypuff:
   Jigglypuff:
@@ -97,4 +109,10 @@ Diglett:
     category: もぐらポケモン
   Dugtrio:
     name: ダグトリオ
+    category: もぐらポケモン
+  DiglettAlola:
+    name: ディグダ（アローラのすがた）
+    category: もぐらポケモン
+  DugtrioAlola:
+    name: ダグトリオ（アローラのすがた）
     category: もぐらポケモン

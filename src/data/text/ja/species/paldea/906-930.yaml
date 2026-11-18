@@ -71,6 +71,9 @@ Tandemaus:
   Maushold:
     name: イッカネズミ
     category: ファミリーポケモン
+  MausholdThree:
+    name: イッカネズミ（３びきかぞく）
+    category: ファミリーポケモン
 Fidough:
   Fidough:
     name: パピモッチ

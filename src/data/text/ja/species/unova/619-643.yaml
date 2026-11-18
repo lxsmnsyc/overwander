@@ -39,6 +39,9 @@ Rufflet:
   Braviary:
     name: ウォーグル
     category: ゆうもうポケモン
+  BraviaryHisui:
+    category: おたけびポケモン
+    name: ウォーグル（ヒスイのすがた）
 Vullaby:
   Vullaby:
     name: バルチャイ
@@ -87,9 +90,15 @@ Tornadus:
   Tornadus:
     name: トルネロス
     category: せんぷうポケモン
+  TornadusTherian:
+    name: トルネロス（れいじゅうフォルム）
+    category: せんぷうポケモン
 Thundurus:
   Thundurus:
     name: ボルトロス
+    category: らいげきポケモン
+  ThundurusTherian:
+    name: ボルトロス（れいじゅうフォルム）
     category: らいげきポケモン
 Reshiram:
   Reshiram:

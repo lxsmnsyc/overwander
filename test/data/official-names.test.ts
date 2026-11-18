@@ -10,6 +10,8 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import * as v from 'valibot';
+import { parse } from 'yaml';
 import type * as LocaleModule from '../../src/i18n/locale';
 import { getAbilityData } from '../../src/data/abilities';
 import {
@@ -260,5 +262,76 @@ describe('Zenith names', () => {
     expect(zenith.name).toBe('ゼニスバタフリー');
     active.locale = 'en';
     expect(zenith.name).toBe('Zenith Butterfree');
+  });
+});
+
+const FAMILIES = v.record(
+  v.string(),
+  v.record(
+    v.string(),
+    v.object({ name: v.optional(v.string()), category: v.optional(v.string()) }),
+  ),
+);
+
+const MARKUP = /[{}<>]/;
+
+describe('every species and form entry', () => {
+  it('reads a form and a Gen 9 category in each locale', () => {
+    active.locale = 'es';
+    expect(getSpeciesData(Species.Sprigatito).category).toBe('Pokémon Gato Planta');
+    expect(getSpeciesData(Species.ZoroarkHisui).name).toBe('Zoroark de Hisui');
+    expect(getSpeciesData(Species.ZoroarkHisui).category).toBe('Pokémon Maldizorro');
+    active.locale = 'ja';
+    expect(getSpeciesData(Species.ZoroarkHisui).name).toBe('ゾロアーク（ヒスイのすがた）');
+    expect(getSpeciesData(Species.ZoroarkHisui).category).toBe('のろいぎつねポケモン');
+    // A form's category is its base species' own unless the games say otherwise
+    expect(getSpeciesData(Species.ZoroarkHisui).category).not.toBe(
+      getSpeciesData(Species.Zoroark).category,
+    );
+    expect(getSpeciesData(Species.RattataAlola).category).toBe(
+      getSpeciesData(Species.Rattata).category,
+    );
+  });
+
+  it('has a ja and es name and category, free of markup', () => {
+    const missing: string[] = [];
+    const root = 'src/data/text';
+
+    for (const entry of readdirSync(join(root, 'en/species'), {
+      recursive: true,
+      withFileTypes: true,
+    })) {
+      if (!entry.isFile() || !entry.name.endsWith('.yaml')) {
+        continue;
+      }
+
+      const file = join(entry.parentPath, entry.name).slice(join(root, 'en/').length);
+      const english = v.parse(FAMILIES, parse(readFileSync(join(root, 'en', file), 'utf8')));
+
+      for (const locale of ['ja', 'es']) {
+        const path = join(root, locale, file);
+        const written = existsSync(path)
+          ? v.parse(FAMILIES, parse(readFileSync(path, 'utf8')))
+          : {};
+
+        for (const [family, members] of Object.entries(english)) {
+          for (const [key, words] of Object.entries(members)) {
+            const found = new Map(Object.entries(written[family] ?? {})).get(key);
+
+            if (found?.name == null || found.name === '') {
+              missing.push(`${locale} name ${key}`);
+            }
+            if (words.category != null && (found?.category == null || found.category === '')) {
+              missing.push(`${locale} category ${key}`);
+            }
+            // A name or category scraped with markup still in it
+            if (MARKUP.test(found?.name ?? '') || MARKUP.test(found?.category ?? '')) {
+              missing.push(`${locale} markup ${key}`);
+            }
+          }
+        }
+      }
+    }
+    expect(missing).toEqual([]);
   });
 });

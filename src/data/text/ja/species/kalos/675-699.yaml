@@ -24,6 +24,9 @@ Honedge:
   Aegislash:
     name: ギルガルド
     category: おうけんポケモン
+  AegislashBlade:
+    name: ギルガルド（ブレードフォルム）
+    category: おうけんポケモン
 Spritzee:
   Spritzee:
     name: シュシュプ

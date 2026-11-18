@@ -8,19 +8,46 @@ Landorus:
   Landorus:
     name: ランドロス
     category: ほうじょうポケモン
+  LandorusTherian:
+    name: ランドロス（れいじゅうフォルム）
+    category: ほうじょうポケモン
 Kyurem:
   Kyurem:
     name: キュレム
+    category: きょうかいポケモン
+  KyuremBlack:
+    name: ブラックキュレム
+    category: きょうかいポケモン
+  KyuremWhite:
+    name: ホワイトキュレム
     category: きょうかいポケモン
 Keldeo:
   Keldeo:
     name: ケルディオ
     category: わかごまポケモン
+  KeldeoResolute:
+    name: ケルディオ（かくごのすがた）
+    category: わかごまポケモン
 Meloetta:
   Meloetta:
     name: メロエッタ
     category: せんりつポケモン
+  MeloettaPirouette:
+    name: メロエッタ（ステップフォルム）
+    category: せんりつポケモン
 Genesect:
   Genesect:
     name: ゲノセクト
+    category: こせいだいポケモン
+  GenesectBurn:
+    name: ゲノセクト（ブレイズカセット）
+    category: こせいだいポケモン
+  GenesectDouse:
+    name: ゲノセクト（アクアカセット）
+    category: こせいだいポケモン
+  GenesectShock:
+    name: ゲノセクト（イナズマカセット）
+    category: こせいだいポケモン
+  GenesectChill:
+    name: ゲノセクト（フリーズカセット）
     category: こせいだいポケモン

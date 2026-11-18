@@ -7,9 +7,81 @@ TypeNull:
   Silvally:
     name: シルヴァディ
     category: じんこうポケモン
+  SilvallyBug:
+    name: シルヴァディ（タイプ：バグ）
+    category: じんこうポケモン
+  SilvallyIce:
+    name: シルヴァディ（タイプ：アイス）
+    category: じんこうポケモン
+  SilvallyRock:
+    name: シルヴァディ（タイプ：ロック）
+    category: じんこうポケモン
+  SilvallyFire:
+    name: シルヴァディ（タイプ：ファイヤー）
+    category: じんこうポケモン
+  SilvallyDark:
+    name: シルヴァディ（タイプ：ダーク）
+    category: じんこうポケモン
+  SilvallyGhost:
+    name: シルヴァディ（タイプ：ゴースト）
+    category: じんこうポケモン
+  SilvallySteel:
+    name: シルヴァディ（タイプ：スチール）
+    category: じんこうポケモン
+  SilvallyWater:
+    name: シルヴァディ（タイプ：ウオーター）
+    category: じんこうポケモン
+  SilvallyGrass:
+    name: シルヴァディ（タイプ：グラス）
+    category: じんこうポケモン
+  SilvallyFairy:
+    name: シルヴァディ（タイプ：フェアリー）
+    category: じんこうポケモン
+  SilvallyFlying:
+    name: シルヴァディ（タイプ：フライング）
+    category: じんこうポケモン
+  SilvallyPoison:
+    name: シルヴァディ（タイプ：ポイズン）
+    category: じんこうポケモン
+  SilvallyGround:
+    name: シルヴァディ（タイプ：グラウンド）
+    category: じんこうポケモン
+  SilvallyDragon:
+    name: シルヴァディ（タイプ：ドラゴン）
+    category: じんこうポケモン
+  SilvallyPsychic:
+    name: シルヴァディ（タイプ：サイキック）
+    category: じんこうポケモン
+  SilvallyFighting:
+    name: シルヴァディ（タイプ：ファイト）
+    category: じんこうポケモン
+  SilvallyElectric:
+    name: シルヴァディ（タイプ：エレクトロ）
+    category: じんこうポケモン
 Minior:
   Minior:
     name: メテノ
+    category: ながれぼしポケモン
+  MiniorRed:
+    name: メテノ（あかいろのコア）
+    category: ながれぼしポケモン
+  MiniorBlue:
+    name: メテノ（みずいろのコア）
+    category: ながれぼしポケモン
+  MiniorGreen:
+    name: メテノ（みどりいろのコア）
+    category: ながれぼしポケモン
+  MiniorOrange:
+    name: メテノ（だいだいいろのコア）
+    category: ながれぼしポケモン
+  MiniorYellow:
+    name: メテノ（きいろのコア）
+    category: ながれぼしポケモン
+  MiniorIndigo:
+    name: メテノ（あおいろのコア）
+    category: ながれぼしポケモン
+  MiniorViolet:
+    name: メテノ（むらさきいろのコア）
     category: ながれぼしポケモン
 Komala:
   Komala:
@@ -26,6 +98,9 @@ Togedemaru:
 Mimikyu:
   Mimikyu:
     name: ミミッキュ
+    category: ばけのかわポケモン
+  MimikyuBusted:
+    name: ミミッキュ（ばれたすがた）
     category: ばけのかわポケモン
 Bruxish:
   Bruxish:

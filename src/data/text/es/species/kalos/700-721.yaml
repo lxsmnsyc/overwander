@@ -22,6 +22,12 @@ Goomy:
   Goodra:
     name: Goodra
     category: Pokémon Dragón
+  GoodraHisui:
+    category: Pokémon Retracción
+    name: Goodra de Hisui
+  SliggooHisui:
+    category: Pokémon Caracol
+    name: Sliggoo de Hisui
 Klefki:
   Klefki:
     name: Klefki
@@ -40,12 +46,21 @@ Pumpkaboo:
   Gourgeist:
     name: Gourgeist
     category: Pokémon Calabaza
+  PumpkabooSuper:
+    name: Pumpkaboo (Tamaño Extragrande)
+    category: Pokémon Calabaza
+  GourgeistSuper:
+    name: Gourgeist (Tamaño Extragrande)
+    category: Pokémon Calabaza
 Bergmite:
   Bergmite:
     name: Bergmite
     category: Pokémon Témpano
   Avalugg:
     name: Avalugg
+    category: Pokémon Iceberg
+  AvaluggHisui:
+    name: Avalugg de Hisui
     category: Pokémon Iceberg
 Noibat:
   Noibat:
@@ -66,6 +81,12 @@ Zygarde:
   Zygarde:
     name: Zygarde
     category: Pokémon Equilibrio
+  ZygardeComplete:
+    name: Zygarde (Forma Completa)
+    category: Pokémon Equilibrio
+  ZygardeTenPercent:
+    name: Zygarde (Forma 10%)
+    category: Pokémon Equilibrio
 Diancie:
   Diancie:
     name: Diancie
@@ -74,6 +95,9 @@ Hoopa:
   Hoopa:
     name: Hoopa
     category: Pokémon Travesura
+  HoopaUnbound:
+    name: Hoopa Desatado
+    category: Pokémon Genio Burlón
 Volcanion:
   Volcanion:
     name: Volcanion

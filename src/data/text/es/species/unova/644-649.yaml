@@ -8,19 +8,46 @@ Landorus:
   Landorus:
     name: Landorus
     category: Pokémon Fertilidad
+  LandorusTherian:
+    name: Landorus (Forma Tótem)
+    category: Pokémon Fertilidad
 Kyurem:
   Kyurem:
     name: Kyurem
+    category: Pokémon Frontera
+  KyuremBlack:
+    name: Kyurem Negro
+    category: Pokémon Frontera
+  KyuremWhite:
+    name: Kyurem Blanco
     category: Pokémon Frontera
 Keldeo:
   Keldeo:
     name: Keldeo
     category: Pokémon Potro
+  KeldeoResolute:
+    name: Keldeo (Forma Brío)
+    category: Pokémon Potro
 Meloetta:
   Meloetta:
     name: Meloetta
     category: Pokémon Melodía
+  MeloettaPirouette:
+    name: Meloetta (Forma Danza)
+    category: Pokémon Melodía
 Genesect:
   Genesect:
     name: Genesect
+    category: Pokémon Paleozoico
+  GenesectBurn:
+    name: Genesect (PiroROM)
+    category: Pokémon Paleozoico
+  GenesectDouse:
+    name: Genesect (HidroROM)
+    category: Pokémon Paleozoico
+  GenesectShock:
+    name: Genesect (FulgoROM)
+    category: Pokémon Paleozoico
+  GenesectChill:
+    name: Genesect (CrioROM)
     category: Pokémon Paleozoico

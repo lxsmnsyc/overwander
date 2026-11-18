@@ -16,6 +16,15 @@ Necrozma:
   Necrozma:
     name: Necrozma
     category: Pokémon Prisma
+  NecrozmaUltra:
+    name: Ultra-Necrozma
+    category: Pokémon Prisma
+  NecrozmaDuskMane:
+    name: Necrozma (Melena Crepuscular)
+    category: Pokémon Prisma
+  NecrozmaDawnWings:
+    name: Necrozma (Alas del Alba)
+    category: Pokémon Prisma
 Magearna:
   Magearna:
     name: Magearna

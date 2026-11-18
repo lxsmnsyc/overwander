@@ -206,6 +206,9 @@ export default defineConfig(({ mode }) => ({
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
     testTimeout: 20_000,
+    // Temporary, until the solid-2-tests child settles how the tests
+    // run (possibly per group through `test.projects`).
+    //
     // Said outright, since the Solid plugin reads it: an explicit `node`
     // gives the tests the server build of Solid, as SolidStart did. Left
     // unset, the plugin compiles them for the browser, where `isServer`

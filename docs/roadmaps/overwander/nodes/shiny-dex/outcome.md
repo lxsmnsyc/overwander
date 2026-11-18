@@ -40,3 +40,7 @@
 ## Size
 
 - Estimated M, actual M.
+
+## Landed
+
+- Commit `996224263` on `batch/overwander`. Fresh review clean. Nits left: the count tiles reserve a second label line in regular mode too; the legend keeps its regular wording in shiny mode. The maintainer kept the forms mark as it is.

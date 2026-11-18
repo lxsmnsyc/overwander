@@ -1,7 +1,8 @@
 ---
 id: shiny-dex
 title: Shiny dex
-status: active
+status: done
+spent: 180703
 priority: should
 type: feature
 outline: false
@@ -57,20 +58,20 @@ Made by the planner so the maintainer can review them. Change here before the wo
 
 ## Steps
 
-- [ ] `pokedex-record.ts`: `countDexShinySpecies(dex, spec)` counting base forms with any shiny in the tally, and a per-species `hasSeenShiny`. Tests in `test/model/pokedex.test.ts` (forms roll up, a shiny caught but never seen counts as seen, zero stays zero).
-- [ ] Session store `dexShiny`, exposed through `useGame()`.
-- [ ] `PokedexTab.tsx`: the `Segmented` mode, entries built from shiny flags in shiny mode, the region tallies and tiles from shiny data, the star rule. Keep the file readable: if it grows past reading in one sitting, split per the `component-layout` skill.
-- [ ] `PokedexGrid.tsx`: a `shiny` flag on `DexEntry` (or the grid) that draws the caught square in the shiny coat.
-- [ ] `SpeciesFormsDialog.tsx`: read the mode, light forms by shiny, draw the shiny coat.
-- [ ] Strings in en, ja, es, and a changeset only if the repo uses one for this kind of change (check `.changeset`).
+- [x] `pokedex-record.ts`: `countDexShinySpecies(dex, spec)` counting base forms with any shiny in the tally, and a per-species `hasSeenShiny`. Tests in `test/model/pokedex.test.ts` (forms roll up, a shiny caught but never seen counts as seen, zero stays zero).
+- [x] Session store `dexShiny`, exposed through `useGame()`.
+- [x] `PokedexTab.tsx`: the `Segmented` mode, entries built from shiny flags in shiny mode, the region tallies and tiles from shiny data, the star rule. Keep the file readable: if it grows past reading in one sitting, split per the `component-layout` skill.
+- [x] `PokedexGrid.tsx`: a `shiny` flag on `DexEntry` (or the grid) that draws the caught square in the shiny coat.
+- [x] `SpeciesFormsDialog.tsx`: read the mode, light forms by shiny, draw the shiny coat.
+- [x] Strings in en, ja, es, and a changeset only if the repo uses one for this kind of change (check `.changeset`).
 
 ## Acceptance
 
-- [ ] With a dex that holds a caught shiny Gyarados and a seen-only shiny Pidgey, shiny mode shows the first as caught in its shiny coat, the second as a silhouette, and a regular-caught Pidgey in any other state as unmet. Counts and region tallies match (a component test or a test on the pure entry builder).
-- [ ] A region where every row has a caught shiny shows the star; one short by a row does not.
-- [ ] Switching the mode keeps the search text and the page sensible (the page clamps, as it does when a filter narrows the list).
-- [ ] The regular mode is unchanged (existing tests pass).
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
+- [x] With a dex that holds a caught shiny Gyarados and a seen-only shiny Pidgey, shiny mode shows the first as caught in its shiny coat, the second as a silhouette, and a regular-caught Pidgey in any other state as unmet. Counts and region tallies match (a component test or a test on the pure entry builder).
+- [x] A region where every row has a caught shiny shows the star; one short by a row does not.
+- [x] Switching the mode keeps the search text and the page sensible (the page clamps, as it does when a filter narrows the list).
+- [x] The regular mode is unchanged (existing tests pass).
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
 
 ## Sizing
 

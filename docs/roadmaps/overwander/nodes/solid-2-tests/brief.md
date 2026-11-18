@@ -1,7 +1,7 @@
 ---
 id: solid-2-tests
 title: Settle how the tests run on Solid 2.0 and fix the suite
-status: active
+status: done
 priority: could
 type: refactor
 story: solid-2
@@ -13,6 +13,7 @@ spike: false
 verify: pnpm typecheck && pnpm exec oxlint src test && pnpm test
 gate: false
 added: 2026-11-18
+spent: 586624
 owns:
   - vite.config.ts
   - test/**

@@ -1,7 +1,7 @@
 ---
 id: solid-2-build-times
 title: Compare build times on Solid 1.x and 2.0
-status: todo
+status: active
 priority: could
 type: chore
 story: solid-2
@@ -39,6 +39,7 @@ Measure `pnpm exec vite build` wall time on Solid 1.x and on the finished 2.0 br
 ## Acceptance
 
 - [ ] `outcome.md` gives median, spread and change for both sides, and whether the change beats the noise as `bench.py` judges it.
+- [ ] `outcome.md` also gives `pnpm exec vitest run` wall time on both sides (`bench.py --warmup 0 --runs 2`), since `solid-2-tests` only timed the new posture on a loaded machine (417 s) against 94.6 s for the stopgap on a quiet one. Name any failing file.
 - [ ] The clone is deleted and no process is left running.
 
 ## Sizing
@@ -49,6 +50,6 @@ M: little code, but ten builds of about half a minute each plus two installs.
 
 - Read the `solid-2` story brief first, its Decisions section above all, and `solid-2-spike`'s outcome on the story branch (`git show origin/feat/solid-2:docs/roadmaps/overwander/nodes/solid-2-spike/outcome.md`): it links the migration guide, `node_modules/solid-js/CHEATSHEET.md` and the library READMEs.
 - Work in the main checkout on your own branch cut from `feat/solid-2`; run `pnpm install` first, since `node_modules` may hold the 1.x tree.
-- `pnpm typecheck` stays red until every area is done. Judge your node by the errors in your owned paths: `pnpm typecheck 2>&1 | grep -E '<your paths>'` prints nothing.
+- Before each timed run check the machine is quiet (`uptime` load, `ps` for other vitest, vite, VMs or builds, including other projects). Record the load. Kill nothing you did not start; if the machine stays busy, wait and say so.
 - Load the ts-style skill before writing TypeScript. Prose avoids em-dashes.
 - Never touch the `db` service on port 54322 or the root `.env`. Do not run `pnpm test:db` or `pnpm test:e2e`. Stop every `pnpm dev` you start (check with `ps` before you reply).

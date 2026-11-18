@@ -13,7 +13,7 @@ spike: false
 verify: pnpm typecheck && pnpm exec oxlint src test && pnpm test
 gate: false
 added: 2026-11-18
-spent: 586624
+spent: 586619
 owns:
   - vite.config.ts
   - test/**

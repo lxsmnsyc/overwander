@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { Listing as ListingPage, PlayerRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
@@ -29,14 +29,13 @@ function opened(at: number): string {
  * reading half is a component of its own
  */
 function PlayerList(props: {
-  listing: Resource<ListingPage<PlayerRow>>;
+  listing: Accessor<ListingPage<PlayerRow>>;
   search: string;
   page: number;
   onSearch: (value: string) => void;
   onPage: (page: number) => void;
 }): JSX.Element {
-  const page = (): ListingPage<PlayerRow> =>
-    props.listing() ?? { rows: [], total: 0, pages: 1, page: 0, capped: false };
+  const page = (): ListingPage<PlayerRow> => props.listing();
 
   return (
     <Listing
@@ -101,10 +100,9 @@ function PlayerList(props: {
 export default function AdminPlayers(): JSX.Element {
   const [search, setSearch] = createSignal('');
   const [page, setPage] = createSignal(0);
-  const [listing] = createResource(
-    () => [search(), page()] as const,
-    async ([wanted, at]) => listPlayers(wanted, at),
-  );
+  // Read again on a search or a page turn. The list stays up while it
+  // is read, the search box with it
+  const listing = createMemo(async () => listPlayers(search(), page()));
 
   return (
     <Loading fallback={<Note>Reading the accounts…</Note>}>

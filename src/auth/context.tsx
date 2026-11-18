@@ -5,6 +5,7 @@ import {
   createContext,
   createSignal,
   onSettled,
+  untrack,
   useContext,
 } from 'solid-js';
 import type { JSX } from '@solidjs/web';
@@ -24,13 +25,9 @@ export interface AuthState {
 
 const AuthContext = createContext<AuthState>();
 
+/** The session, from the `AuthProvider` above. Without one it throws: a missing provider is a bug */
 export function useAuth(): AuthState {
-  const state = useContext(AuthContext);
-
-  if (state == null) {
-    throw new Error('useAuth must be used inside AuthProvider');
-  }
-  return state;
+  return useContext(AuthContext);
 }
 
 /**
@@ -67,7 +64,9 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
   onSettled(() => {
     // No session here, and none coming: the shell settles as
     // signed-out rather than sitting on "loading" for ever
-    if (location.pathname.startsWith(SESSIONLESS) && !DEMOS_WITH_PLAYER.has(location.pathname)) {
+    const path = untrack(() => location.pathname);
+
+    if (path.startsWith(SESSIONLESS) && !DEMOS_WITH_PLAYER.has(path)) {
       setLoading(false);
       return undefined;
     }

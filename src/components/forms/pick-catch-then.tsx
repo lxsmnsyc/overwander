@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
@@ -17,6 +17,7 @@ import {
   RowButton,
   SEARCH_FROM,
   Search,
+  spellAria,
 } from '../styled';
 import type { Choice } from './choice';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -151,7 +152,7 @@ function Offers<T>(props: {
                 <li>
                   <button
                     type="button"
-                    aria-pressed={props.chosen === choice}
+                    aria-pressed={spellAria(props.chosen === choice)}
                     disabled={choice.refused != null}
                     class={`${MOVE_CARD} w-full cursor-pointer disabled:cursor-not-allowed
                   disabled:opacity-55 ${
@@ -181,14 +182,14 @@ function Offers<T>(props: {
 
 function PickCatchThenBody<T>(
   props: FormProps<PickCatchThenInput<T>, [CatchOption, T]> & {
-    options: Resource<CatchOption[]>;
+    options: Accessor<CatchOption[]>;
   },
 ): JSX.Element {
   const [picked, setPicked] = createSignal<string | null>(null);
   const [chosen, setChosen] = createSignal<Choice<T> | null>(null);
 
   const option = (): CatchOption | undefined => {
-    for (const one of props.options.latest ?? []) {
+    for (const one of props.options()) {
       if (one.id === picked()) {
         return one;
       }
@@ -209,7 +210,7 @@ function PickCatchThenBody<T>(
           <CounterTerms have={props.input.have} />
         </Show>
         <PickOne
-          options={props.options.latest ?? []}
+          options={props.options()}
           picked={picked()}
           onPick={(id) => {
             setPicked(id);
@@ -270,7 +271,9 @@ export function pickCatchThenForm<T>(): ActionForm<PickCatchThenInput<T>, [Catch
     prompt: (input) => input.prompt ?? m.pick_catch_then_prompt(),
     width: 'wide',
     view: (props) => {
-      const [options] = createResource(() => props.input.player, loadCatchOptions);
+      // Asked again only for another player, not for an input built again
+      const player = createMemo(() => props.input.player);
+      const options = createMemo(async () => loadCatchOptions(player()));
 
       return (
         <Loading fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>

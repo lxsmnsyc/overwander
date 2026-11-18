@@ -1,12 +1,4 @@
-import {
-  For,
-  Loading,
-  type ParentProps,
-  type Resource,
-  Show,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, type ParentProps, Show, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import {
   registerWithEmail,
@@ -18,6 +10,7 @@ import {
   verifySignInCode,
 } from '../../auth/actions';
 import listSignInProviders, { type SignInProvider } from '../../auth/sign-in-options';
+import { createLoad } from './create-load';
 import { Button, Checkbox, Note, Segmented, Status, TextField } from '../styled';
 import { ThemeToggle } from './theme';
 import { KeyIcon } from '../icons';
@@ -189,9 +182,9 @@ function CodeStep(props: { run: Run; error: string | null; onBack: () => void })
   );
 }
 
-function ProviderButtons(props: { run: Run; providers: Resource<SignInProvider[]> }): JSX.Element {
+function ProviderButtons(props: { run: Run; providers: Accessor<SignInProvider[]> }): JSX.Element {
   return (
-    <For each={props.providers() ?? []}>
+    <For each={props.providers()}>
       {(provider) => (
         <Button
           class="h-11 justify-center"
@@ -214,12 +207,12 @@ function ProviderButtons(props: { run: Run; providers: Resource<SignInProvider[]
 function OtherWays(props: {
   run: Run;
   mode: Mode;
-  providers: Resource<SignInProvider[]>;
+  providers: Accessor<SignInProvider[]>;
 }): JSX.Element {
   const passkey = (): boolean => props.mode === Mode.SignIn;
 
   return (
-    <Show when={passkey() || (props.providers()?.length ?? 0) > 0}>
+    <Show when={passkey() || props.providers().length > 0}>
       <div
         class="flex items-center gap-2 text-xs font-extrabold tracking-wide text-muted uppercase
           before:h-0.5 before:flex-1 before:bg-line-soft after:h-0.5 after:flex-1
@@ -275,7 +268,11 @@ export function TitleCard(props: ParentProps): JSX.Element {
 
 export default function LoginForm(): JSX.Element {
   const client = createClientSignal();
-  const [providers] = createResource(client, async () => listSignInProviders());
+  // None during the server render and the hydrating pass, which draw
+  // the same card, then asked once the browser has the page. Never
+  // waited on: the buttons appear when the answer lands
+  const asked = createLoad(client, async () => listSignInProviders());
+  const providers = (): SignInProvider[] => asked.latest() ?? [];
   const [secondFactor, setSecondFactor] = createSignal(false);
   const [mode, setMode] = createSignal(Mode.SignIn);
   const [error, setError] = createSignal<string | null>(null);
@@ -308,9 +305,7 @@ export default function LoginForm(): JSX.Element {
                 setSecondFactor(true);
               }}
             />
-            <Loading>
-              <OtherWays run={run} mode={mode()} providers={providers} />
-            </Loading>
+            <OtherWays run={run} mode={mode()} providers={providers} />
           </>
         }
       >

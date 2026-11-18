@@ -299,7 +299,11 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     <span
       ref={(element) => {
         host = element;
-        floating.refs.setReference(element);
+        // Floating UI reads its own options as it takes the element,
+        // which in a ref callback is an untracked read on purpose
+        untrack(() => {
+          floating.refs.setReference(element);
+        });
       }}
       // Nothing to select: a hold on the trigger is asking about it,
       // and a phone that answers by selecting the word instead has

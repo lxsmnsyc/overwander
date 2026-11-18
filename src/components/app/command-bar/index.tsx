@@ -1,5 +1,5 @@
 import { type JSX, Portal } from '@solidjs/web';
-import { Show, createEffect, createSignal, createUniqueId, onCleanup } from 'solid-js';
+import { Show, createEffect, createSignal, createUniqueId } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
@@ -9,7 +9,7 @@ import {
 } from 'terracotta/dialog';
 import { Transition, TransitionChild } from 'terracotta/transition';
 import type { QueryCompletion, QuerySuggestion } from '../../../core/query';
-import { usePortalHost } from '../../styled';
+import { spellAria, usePortalHost } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
 import COMMAND_VOCABULARY from './commands';
 import FADE, { SHEER } from '../../styled/transition';
@@ -94,33 +94,36 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
    * nothing on the page has the keyboard: a slash typed into a search
    * box is a slash
    */
-  createEffect(() => {
-    if (!props.allowed) {
-      return;
-    }
-    const onKey = (event: KeyboardEvent): void => {
-      if (event.key !== '/' || !forTheGame(event)) {
-        return;
+  createEffect(
+    () => props.allowed,
+    (allowed) => {
+      if (!allowed) {
+        return undefined;
       }
-      event.preventDefault();
-      setLine('');
-      setCaret(0);
-      setActive(0);
-      setArrowed(false);
-      setResult(null);
-      setOpen(true);
-      getPosition(props.player)
-        .then((standing) => {
-          setOrigin(standing ?? ORIGIN);
-        })
-        .catch(() => undefined);
-    };
+      const onKey = (event: KeyboardEvent): void => {
+        if (event.key !== '/' || !forTheGame(event)) {
+          return;
+        }
+        event.preventDefault();
+        setLine('');
+        setCaret(0);
+        setActive(0);
+        setArrowed(false);
+        setResult(null);
+        setOpen(true);
+        getPosition(props.player)
+          .then((standing) => {
+            setOrigin(standing ?? ORIGIN);
+          })
+          .catch(() => undefined);
+      };
 
-    window.addEventListener('keydown', onKey);
-    onCleanup(() => {
-      window.removeEventListener('keydown', onKey);
-    });
-  });
+      window.addEventListener('keydown', onKey);
+      return () => {
+        window.removeEventListener('keydown', onKey);
+      };
+    },
+  );
 
   /** What the bar is offering, or nothing where it has nothing to offer */
   const offering = (): QueryCompletion | null =>
@@ -298,7 +301,7 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     role="combobox"
                     aria-label="Command"
                     aria-autocomplete="list"
-                    aria-expanded={suggestions().length > 0}
+                    aria-expanded={spellAria(suggestions().length > 0)}
                     aria-controls={listId}
                     aria-activedescendant={
                       suggestions().length > 0 ? optionId(active()) : undefined

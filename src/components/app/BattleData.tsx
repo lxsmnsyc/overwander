@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type ParentProps, createResource } from 'solid-js';
+import { Loading, type ParentProps, Show, createMemo } from 'solid-js';
 import ensureBattleData from '../../data/battle-data';
 
 /**
@@ -14,17 +14,18 @@ import ensureBattleData from '../../data/battle-data';
 
 /**
  * The read that suspends. It is a child rather than the provider
- * itself, because a component that reads its own resource suspends
+ * itself, because a component that reads its own async memo suspends
  * the boundary it is meant to be inside
  */
-function Loaded(props: ParentProps<{ ready: () => unknown }>): JSX.Element {
-  props.ready();
-
-  return <>{props.children}</>;
+function Loaded(props: ParentProps<{ ready: () => boolean }>): JSX.Element {
+  return <Show when={props.ready()}>{props.children}</Show>;
 }
 
 export default function BattleData(props: ParentProps<{ fallback?: JSX.Element }>): JSX.Element {
-  const [ready] = createResource(ensureBattleData);
+  const ready = createMemo(async () => {
+    await ensureBattleData();
+    return true;
+  });
 
   return (
     <Loading fallback={props.fallback}>

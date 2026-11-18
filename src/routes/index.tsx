@@ -1,10 +1,11 @@
 import { Title } from '@solidjs/meta';
 import { type JSX, clientOnly } from '@solidjs/web';
-import { type Accessor, Show, createEffect, createSignal, from } from 'solid-js';
+import { type Accessor, Show, createSignal } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';
 import CommandBar from '../components/app/command-bar';
+import watchLive from '../components/app/watch';
 import { runsTheGame } from '../model/staff';
 import { useAuth } from '../auth/context';
 import type { PlayerIdentity } from '../auth/user';
@@ -133,16 +134,12 @@ const DESCRIPTIONS: Record<Panelled, () => string> = {
  */
 function GameView(props: { user: PlayerIdentity }): JSX.Element {
   const game = useGame();
-  // The friend being offered a trade, kept until the dialog's fade is over
-  const [lastTrading, setLastTrading] = createSignal<string | null>(null);
-
-  createEffect(() => {
-    const friend = game.trading();
-
-    if (friend != null) {
-      setLastTrading(friend);
-    }
-  });
+  // The friend being offered a trade, kept until the dialog's fade is
+  // over: written derived, so a new offer replaces it and the fade's
+  // end clears it
+  const [lastTrading, setLastTrading] = createSignal<string | null>(
+    (was) => game.trading() ?? was ?? null,
+  );
   /**
    * Whether the seller's side of the auction board is open. It lives
    * here because the button that opens it is in the dialog's top bar
@@ -573,10 +570,11 @@ function Banned(props: {
    */
   children: (role: Accessor<string>) => JSX.Element;
 }): JSX.Element {
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.uid, (record) => {
-      set(record);
-    }),
+  // Null until the first answer, and opened again for another uid.
+  // Never opened during the server render
+  const profile = watchLive<string, Profile | null>(
+    () => props.uid,
+    (uid, set) => watchProfile(uid, set),
   );
 
   return (

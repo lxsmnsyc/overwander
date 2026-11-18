@@ -1,11 +1,4 @@
-import {
-  type Accessor,
-  type ParentProps,
-  createContext,
-  createEffect,
-  onCleanup,
-  useContext,
-} from 'solid-js';
+import { type Accessor, type ParentProps, createContext, createEffect, useContext } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { useAuth } from '../../auth/context';
 import type Weather from '../../data/overworld/weather';
@@ -270,13 +263,9 @@ const GameContext = createContext<GameState>();
 /** How long after one quest's tune another is held back, in milliseconds */
 const QUEST_SOUND_GAP = 3000;
 
+/** The game's state, from the `GameProvider` above. Without one it throws: a missing provider is a bug */
 export function useGame(): GameState {
-  const state = useContext(GameContext);
-
-  if (state == null) {
-    throw new Error('useGame must be used inside GameProvider');
-  }
-  return state;
+  return useContext(GameContext);
 }
 
 /** A store's value and its setter, the way a component reads and writes it */
@@ -358,14 +347,16 @@ export default function GameProvider(
     },
   });
 
-  createEffect(() => {
+  createEffect(
     // Who is playing on this screen, which on the dashboard is nobody
-    const user = props.managing === true ? null : auth.user();
-
-    if (user != null) {
-      onCleanup(session.start(user));
-    }
-  });
+    () => (props.managing === true ? null : auth.user()),
+    (user) => {
+      if (user == null) {
+        return undefined;
+      }
+      return session.start(user);
+    },
+  );
 
   const [dialog, setDialog] = storeSignal(session.dialog);
   const [position, setPosition] = storeSignal(session.position);

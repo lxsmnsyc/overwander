@@ -14,21 +14,27 @@ import type { JSX } from '@solidjs/web';
  * opinion of its own role counts for nothing
  */
 export interface Staff {
-  uid: string;
+  uid: Accessor<string>;
   role: Accessor<string>;
 }
 
 const StaffContext = createContext<Staff>();
 
-export function StaffProvider(props: ParentProps<Staff>): JSX.Element {
-  return <StaffContext value={{ uid: props.uid, role: props.role }}>{props.children}</StaffContext>;
+/**
+ * A provider reads its value once, so both fields are accessors that
+ * read the props: the session can change under the dashboard
+ */
+export function StaffProvider(
+  props: ParentProps<{ uid: string; role: Accessor<string> }>,
+): JSX.Element {
+  return (
+    <StaffContext value={{ uid: () => props.uid, role: () => props.role() }}>
+      {props.children}
+    </StaffContext>
+  );
 }
 
+/** Who is reading the dashboard. Outside it this throws: a missing provider is a bug */
 export default function useStaff(): Staff {
-  const staff = useContext(StaffContext);
-
-  if (staff == null) {
-    throw new Error('useStaff must be used inside the dashboard');
-  }
-  return staff;
+  return useContext(StaffContext);
 }

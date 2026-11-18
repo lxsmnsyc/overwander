@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { Show, createEffect, createMemo, createSignal, onSettled } from 'solid-js';
 import { atClockHour } from '../../data/day-clock';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../../canvas/overworld/metrics';
@@ -189,35 +189,40 @@ export default function ShadowDemo(): JSX.Element {
    */
   let sprite: SpeciesSpriteAnimation | null = null;
 
-  createEffect(() => {
-    const wanted = species();
+  createEffect(species, (wanted) => {
+    // Dropped where somebody has already picked another one: the
+    // sheets arrive in whatever order they finish
+    let live = true;
 
     sprite = null;
     loadSpeciesSprite(wanted)
       .then((loaded) => {
-        // Dropped where somebody has already picked another one: the
-        // sheets arrive in whatever order they finish
-        if (wanted === species()) {
+        if (live) {
           sprite = loaded;
         }
       })
       .catch(() => {
         sprite = null;
       });
+    return () => {
+      live = false;
+    };
   });
 
-  createEffect(() => {
+  // The canvas is drawn once it is in the page, and the frame loop
+  // reads every knob as it paints
+  onSettled(() => {
     const drawing = canvas;
 
     if (drawing == null) {
-      return;
+      return undefined;
     }
 
     const batch = QuadBatch.create(drawing);
 
     if (batch == null) {
       setRefused(true);
-      return;
+      return undefined;
     }
 
     const bakery = new Bakery();
@@ -350,10 +355,10 @@ export default function ShadowDemo(): JSX.Element {
       batch.end();
     });
 
-    onCleanup(() => {
+    return () => {
       cancelAnimationFrame(frame);
       batch.dispose();
-    });
+    };
   });
 
   return (

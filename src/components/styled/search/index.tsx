@@ -217,11 +217,13 @@ export default function Search(props: SearchProps): JSX.Element {
   createEffect(
     () => props.value,
     (settled) => {
-      if (settled === query()) {
+      // What is in the box is read, not followed: a keystroke must not
+      // put the caller's last value back
+      if (settled === untrack(query)) {
         return;
       }
       cancel();
-      if (props.vocabulary == null) {
+      if (untrack(() => props.vocabulary) == null) {
         setTyped(settled);
       } else {
         const parts = splitTerms(settled);

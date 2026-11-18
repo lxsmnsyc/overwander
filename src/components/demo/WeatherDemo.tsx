@@ -1,5 +1,5 @@
 import { useSearchParams } from '@solidjs/router';
-import { For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
@@ -257,181 +257,192 @@ function SkyStage(props: SkyStageProps): JSX.Element {
    */
   let clock = 0;
 
-  createEffect((last: number) => {
-    clock += (props.stepped - last) * STEP;
-    return props.stepped;
-  }, props.stepped);
+  // The step the clock was last moved to, undefined before the first
+  let stepped: number | undefined;
 
-  createEffect(() => {
-    const drawing = canvas;
+  createEffect(
+    () => props.stepped,
+    (step) => {
+      clock += (step - (stepped ?? step)) * STEP;
+      stepped = step;
+    },
+  );
 
-    if (drawing == null) {
-      return;
-    }
+  createEffect(
+    () => ({ webgl: props.webgl, report: props.onRenderer }),
+    ({ webgl, report }) => {
+      const drawing = canvas;
 
-    const batch = props.webgl ? QuadBatch.create(drawing) : null;
-    const context = batch == null ? drawing.getContext('2d') : null;
-
-    props.onRenderer(batch == null ? '2D' : 'WebGL');
-
-    if (batch == null && context == null) {
-      return;
-    }
-
-    let last = 0;
-    let frame = 0;
-
-    const paint = (now: number): void => {
-      frame = requestAnimationFrame(paint);
-
-      const elapsed = last === 0 ? 0 : now - last;
-
-      last = now;
-      if (props.running) {
-        clock += elapsed;
+      if (drawing == null) {
+        return undefined;
       }
 
-      const width = drawing.clientWidth;
-      const height = drawing.clientHeight;
-      const ratio = window.devicePixelRatio;
+      const batch = webgl ? QuadBatch.create(drawing) : null;
+      const context = batch == null ? drawing.getContext('2d') : null;
 
-      if (!(width > 0) || !(height > 0)) {
-        return;
+      report(batch == null ? '2D' : 'WebGL');
+
+      if (batch == null && context == null) {
+        return undefined;
       }
 
-      const country = BIOME_COLORS[props.ground];
-      const shade = shadeOf(country, CHECK_SHADE);
-      const columns = Math.ceil(width / CHECK);
-      const rows = Math.ceil(height / CHECK);
-      const wide = Math.min(width, height) * MARK_SIZE;
-      const placed = fitPicture(width, height);
-      /**
-       * The camera the sky stands in front of, where there is a board
-       * to stand it on. Without one every painter falls back to the
-       * flat sky, which is the other half of what this page is for
-       */
-      const camera: SkyCamera | undefined = props.board ? { yaw: props.yaw, ...placed } : undefined;
-      const cells = props.board ? boardCells(placed, props.yaw) : [];
-      let marks: { x: number; y: number; wide: number; reach: number }[];
+      let last = 0;
+      let frame = 0;
 
-      if (props.board) {
-        marks = marksOn(placed, props.yaw);
-      } else {
-        marks = [];
-        for (const mark of MARKS) {
-          marks.push({ x: mark.x * width, y: mark.y * height, wide, reach: wide * MARK_REACH });
+      const paint = (now: number): void => {
+        frame = requestAnimationFrame(paint);
+
+        const elapsed = last === 0 ? 0 : now - last;
+
+        last = now;
+        if (props.running) {
+          clock += elapsed;
         }
-      }
-      // Laid back with the ground where there is a board under them,
-      // and round where the sky is being drawn on the glass
-      const lamps: Lamp[] = [];
 
-      for (const mark of marks) {
-        lamps.push({
-          x: mark.x,
-          y: mark.y,
-          reach: mark.reach,
-          squash: props.board ? GROUND_DEPTH : 1,
-        });
-      }
+        const width = drawing.clientWidth;
+        const height = drawing.clientHeight;
+        const ratio = window.devicePixelRatio;
 
-      if (batch != null) {
-        batch.begin(width, height, ratio);
-        // The country behind the board as well as under it: a wash is
-        // a multiply or a screen, and it lands on nothing without
-        // something opaque beneath it
-        batch.solid(props.board ? shadeOf(country, BEYOND_SHADE) : country, [
-          { x: 0, y: 0 },
-          { x: width, y: 0 },
-          { x: width, y: height },
-          { x: 0, y: height },
-        ]);
+        if (!(width > 0) || !(height > 0)) {
+          return;
+        }
+
+        const country = BIOME_COLORS[props.ground];
+        const shade = shadeOf(country, CHECK_SHADE);
+        const columns = Math.ceil(width / CHECK);
+        const rows = Math.ceil(height / CHECK);
+        const wide = Math.min(width, height) * MARK_SIZE;
+        const placed = fitPicture(width, height);
+        /**
+         * The camera the sky stands in front of, where there is a board
+         * to stand it on. Without one every painter falls back to the
+         * flat sky, which is the other half of what this page is for
+         */
+        const camera: SkyCamera | undefined = props.board
+          ? { yaw: props.yaw, ...placed }
+          : undefined;
+        const cells = props.board ? boardCells(placed, props.yaw) : [];
+        let marks: { x: number; y: number; wide: number; reach: number }[];
+
+        if (props.board) {
+          marks = marksOn(placed, props.yaw);
+        } else {
+          marks = [];
+          for (const mark of MARKS) {
+            marks.push({ x: mark.x * width, y: mark.y * height, wide, reach: wide * MARK_REACH });
+          }
+        }
+        // Laid back with the ground where there is a board under them,
+        // and round where the sky is being drawn on the glass
+        const lamps: Lamp[] = [];
+
+        for (const mark of marks) {
+          lamps.push({
+            x: mark.x,
+            y: mark.y,
+            reach: mark.reach,
+            squash: props.board ? GROUND_DEPTH : 1,
+          });
+        }
+
+        if (batch != null) {
+          batch.begin(width, height, ratio);
+          // The country behind the board as well as under it: a wash is
+          // a multiply or a screen, and it lands on nothing without
+          // something opaque beneath it
+          batch.solid(props.board ? shadeOf(country, BEYOND_SHADE) : country, [
+            { x: 0, y: 0 },
+            { x: width, y: 0 },
+            { x: width, y: height },
+            { x: 0, y: height },
+          ]);
+          if (props.board) {
+            for (const cell of cells) {
+              if (props.checkered || !cell.dark) {
+                batch.solid(cell.dark ? shade : country, cell.corners);
+              }
+            }
+          } else if (props.checkered) {
+            for (let row = 0; row < rows; row++) {
+              for (let column = row % 2; column < columns; column += 2) {
+                const left = column * CHECK;
+                const top = row * CHECK;
+
+                batch.solid(shade, [
+                  { x: left, y: top },
+                  { x: left + CHECK, y: top },
+                  { x: left + CHECK, y: top + CHECK },
+                  { x: left, y: top + CHECK },
+                ]);
+              }
+            }
+          }
+          for (const mark of marks) {
+            batch.solid('#f4b63f', [
+              { x: mark.x - mark.wide, y: mark.y - mark.wide },
+              { x: mark.x + mark.wide, y: mark.y - mark.wide },
+              { x: mark.x + mark.wide, y: mark.y + mark.wide },
+              { x: mark.x - mark.wide, y: mark.y + mark.wide },
+            ]);
+          }
+          batchWash(batch, width, height, props.weather, clock, props.strength, lamps, camera);
+          batchSky(batch, width, height, props.weather, clock, props.strength, camera);
+          batch.end();
+          return;
+        }
+        if (context == null) {
+          return;
+        }
+
+        const across = Math.max(1, Math.round(width * ratio));
+        const down = Math.max(1, Math.round(height * ratio));
+
+        if (drawing.width !== across || drawing.height !== down) {
+          drawing.width = across;
+          drawing.height = down;
+        }
+        context.setTransform(ratio, 0, 0, ratio, 0, 0);
+        context.globalCompositeOperation = 'source-over';
+        context.globalAlpha = 1;
+        context.fillStyle = props.board ? shadeOf(country, BEYOND_SHADE) : country;
+        context.fillRect(0, 0, width, height);
         if (props.board) {
           for (const cell of cells) {
-            if (props.checkered || !cell.dark) {
-              batch.solid(cell.dark ? shade : country, cell.corners);
+            if (!props.checkered && cell.dark) {
+              continue;
             }
+            context.fillStyle = cell.dark ? shade : country;
+            context.beginPath();
+            context.moveTo(cell.corners[0].x, cell.corners[0].y);
+            for (const corner of cell.corners.slice(1)) {
+              context.lineTo(corner.x, corner.y);
+            }
+            context.closePath();
+            context.fill();
           }
         } else if (props.checkered) {
+          context.fillStyle = shade;
           for (let row = 0; row < rows; row++) {
             for (let column = row % 2; column < columns; column += 2) {
-              const left = column * CHECK;
-              const top = row * CHECK;
-
-              batch.solid(shade, [
-                { x: left, y: top },
-                { x: left + CHECK, y: top },
-                { x: left + CHECK, y: top + CHECK },
-                { x: left, y: top + CHECK },
-              ]);
+              context.fillRect(column * CHECK, row * CHECK, CHECK, CHECK);
             }
           }
         }
+        context.fillStyle = '#f4b63f';
         for (const mark of marks) {
-          batch.solid('#f4b63f', [
-            { x: mark.x - mark.wide, y: mark.y - mark.wide },
-            { x: mark.x + mark.wide, y: mark.y - mark.wide },
-            { x: mark.x + mark.wide, y: mark.y + mark.wide },
-            { x: mark.x - mark.wide, y: mark.y + mark.wide },
-          ]);
+          context.fillRect(mark.x - mark.wide, mark.y - mark.wide, mark.wide * 2, mark.wide * 2);
         }
-        batchWash(batch, width, height, props.weather, clock, props.strength, lamps, camera);
-        batchSky(batch, width, height, props.weather, clock, props.strength, camera);
-        batch.end();
-        return;
-      }
-      if (context == null) {
-        return;
-      }
+        paintSky(context, width, height, props.weather, clock, props.strength, lamps, camera);
+      };
 
-      const across = Math.max(1, Math.round(width * ratio));
-      const down = Math.max(1, Math.round(height * ratio));
+      frame = requestAnimationFrame(paint);
 
-      if (drawing.width !== across || drawing.height !== down) {
-        drawing.width = across;
-        drawing.height = down;
-      }
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      context.globalCompositeOperation = 'source-over';
-      context.globalAlpha = 1;
-      context.fillStyle = props.board ? shadeOf(country, BEYOND_SHADE) : country;
-      context.fillRect(0, 0, width, height);
-      if (props.board) {
-        for (const cell of cells) {
-          if (!props.checkered && cell.dark) {
-            continue;
-          }
-          context.fillStyle = cell.dark ? shade : country;
-          context.beginPath();
-          context.moveTo(cell.corners[0].x, cell.corners[0].y);
-          for (const corner of cell.corners.slice(1)) {
-            context.lineTo(corner.x, corner.y);
-          }
-          context.closePath();
-          context.fill();
-        }
-      } else if (props.checkered) {
-        context.fillStyle = shade;
-        for (let row = 0; row < rows; row++) {
-          for (let column = row % 2; column < columns; column += 2) {
-            context.fillRect(column * CHECK, row * CHECK, CHECK, CHECK);
-          }
-        }
-      }
-      context.fillStyle = '#f4b63f';
-      for (const mark of marks) {
-        context.fillRect(mark.x - mark.wide, mark.y - mark.wide, mark.wide * 2, mark.wide * 2);
-      }
-      paintSky(context, width, height, props.weather, clock, props.strength, lamps, camera);
-    };
-
-    frame = requestAnimationFrame(paint);
-
-    onCleanup(() => {
-      cancelAnimationFrame(frame);
-      batch?.dispose();
-    });
-  });
+      return () => {
+        cancelAnimationFrame(frame);
+        batch?.dispose();
+      };
+    },
+  );
 
   /** Two fingers, the same gesture the board itself takes */
   const twist = createTwist();

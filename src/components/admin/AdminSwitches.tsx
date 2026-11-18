@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { type SwitchRow, listSwitches, setSwitch } from '../../auth/admin';
 import { Badge, Button, Card, List, ListRow, Note, Status, Switch, TextField } from '../styled';
@@ -109,11 +109,11 @@ function SwitchLine(props: {
 }
 
 function SwitchList(props: {
-  switches: Resource<SwitchRow[]>;
+  switches: Accessor<SwitchRow[]>;
   onChanged: () => void;
 }): JSX.Element {
   const rowFor = (feature: string): SwitchRow | undefined => {
-    for (const row of props.switches() ?? []) {
+    for (const row of props.switches()) {
       if (row.feature === feature) {
         return row;
       }
@@ -133,7 +133,7 @@ function SwitchList(props: {
 }
 
 export default function AdminSwitches(): JSX.Element {
-  const [switches, { refetch }] = createResource(listSwitches);
+  const switches = createMemo(async () => listSwitches());
 
   return (
     <Card>
@@ -145,7 +145,7 @@ export default function AdminSwitches(): JSX.Element {
         <SwitchList
           switches={switches}
           onChanged={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(switches).catch(() => undefined);
           }}
         />
       </Loading>

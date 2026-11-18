@@ -1,10 +1,20 @@
 import { useSearchParams } from '@solidjs/router';
 import type { JSX } from '@solidjs/web';
-import { createResource } from 'solid-js';
 import { type CaughtPokemon, asCaughtPokemon } from '../../model/caught-record';
 import type { PokedexView } from '../../auth/pokedex';
 import { Species } from '../../data/ids/species';
 import { CatchSheetBody } from '../catches/catch-dialog/sheet';
+import type { Load } from '../app/create-load';
+
+/** A read that has already answered, as the sheet takes its reads */
+function answerWith<T>(value: () => T): Load<T> {
+  return {
+    latest: value,
+    failed: () => null,
+    errored: () => false,
+    refresh: () => undefined,
+  };
+}
 
 /**
  * The catch sheet with a made-up pokemon, for looking at its layout
@@ -37,19 +47,19 @@ export default function CatchSheetDemo(): JSX.Element {
       origin: { timestamp: Date.now(), x: 0, y: 0, biome: 0 },
     });
 
-  const [detail] = createResource(() => ({ id: 'demo', caught: caught() }));
-  const [owners] = createResource(() => new Map<string, string>());
-  const [dex] = createResource((): PokedexView => ({
+  const detail = answerWith(() => ({ id: 'demo', caught: caught() }));
+  const owners = answerWith(() => new Map<string, string>());
+  const dex = answerWith((): PokedexView => ({
     seenSpecies: 0,
     caughtSpecies: 0,
     seen: [],
     caught: [],
   }));
-  const [evolutions] = createResource(() => []);
-  const [no] = createResource(() => false);
-  const [candies] = createResource(() => 42);
-  const [bag] = createResource(() => []);
-  const [buddy] = createResource((): string | null => null);
+  const evolutions = answerWith(() => []);
+  const no = answerWith(() => false);
+  const candies = answerWith(() => 42);
+  const bag = answerWith(() => []);
+  const buddy = answerWith((): string | null => null);
 
   return (
     <CatchSheetBody

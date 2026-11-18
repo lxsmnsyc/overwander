@@ -1,4 +1,4 @@
-import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
+import { FilePicker, Written, createSubmission, refusalOf } from './shared';
 import { packExtras } from '../../auth/sprites';
 import {
   Button,
@@ -10,7 +10,6 @@ import {
   Switch,
   TextField,
 } from '../styled';
-import { useSubmission } from '@solidjs/router';
 import type { JSX } from '@solidjs/web';
 import { Show, createSignal } from 'solid-js';
 
@@ -19,29 +18,16 @@ export default function ExtrasForm(): JSX.Element {
   const [count, setCount] = createSignal(0);
   const [name, setName] = createSignal('');
   const [compact, setCompact] = createSignal(true);
-  const packing = useSubmission(packExtras);
-  const [form, setForm] = createSignal<HTMLFormElement>();
 
-  const ready = (): boolean => count() > 0 && name().trim().length > 0 && !packing.pending;
+  const packing = createSubmission(packExtras, () => {
+    setCount(0);
+    setName('');
+  });
 
-  clearedOnSuccess(
-    form,
-    () => packing.result,
-    () => {
-      setCount(0);
-      setName('');
-    },
-  );
+  const ready = (): boolean => count() > 0 && name().trim().length > 0 && !packing.pending();
 
   return (
-    <form
-      ref={(element) => {
-        setForm(element);
-      }}
-      action={packExtras}
-      method="post"
-      enctype="multipart/form-data"
-    >
+    <form method="post" enctype="multipart/form-data" onSubmit={packing.submit}>
       <input type="hidden" name="name" value={name()} />
       <input type="hidden" name="compact" value={compact() ? 'on' : ''} />
       <FormSection
@@ -84,11 +70,11 @@ export default function ExtrasForm(): JSX.Element {
         </FormGrid>
         <FormActions note="Writes the sheet and its description.">
           <Button type="submit" tone="primary" disabled={!ready()}>
-            {packing.pending ? 'Packing…' : 'Pack'}
+            {packing.pending() ? 'Packing…' : 'Pack'}
           </Button>
         </FormActions>
-        <Status message={refusalOf(packing.error)} tone="alert" />
-        <Show when={packing.result}>
+        <Status message={refusalOf(packing.error())} tone="alert" />
+        <Show when={packing.result()}>
           {(done) => (
             <Written
               paths={done().written}

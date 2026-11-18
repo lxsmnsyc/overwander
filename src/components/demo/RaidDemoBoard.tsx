@@ -1,7 +1,7 @@
 import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { Show, createEffect, createSignal } from 'solid-js';
 import type Battle from '../../battle/battle';
 import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';
@@ -185,37 +185,50 @@ export default function RaidDemoBoard(): JSX.Element {
   const [built, setBuilt] = createSignal<RaidBattle | null>(null);
   const [revision, setRevision] = createSignal(0);
 
-  createEffect(() => {
-    const staged = createRaidBattle(
-      `demo:${seed()}`,
-      createDemoRaidTeams(seed(), shadow(), totem(), max(), alpha(), noble(), pinned(), tera()),
-    );
+  createEffect(
+    // Every knob is read here, and the fight is built in the apply
+    (): Parameters<typeof createDemoRaidTeams> => [
+      seed(),
+      shadow(),
+      totem(),
+      max(),
+      alpha(),
+      noble(),
+      pinned(),
+      tera(),
+    ],
+    (knobs) => {
+      const staged = createRaidBattle(`demo:${knobs[0]}`, createDemoRaidTeams(...knobs));
 
-    // Initialized but not started: the canvas starts it once it has
-    // every sheet, the way a real fight waits
-    staged.battle.initialize();
-    setBuilt(staged);
+      // Initialized but not started: the canvas starts it once it has
+      // every sheet, the way a real fight waits
+      staged.battle.initialize();
+      setBuilt(staged);
 
-    // A battle left running would keep ticking behind whatever
-    // replaced it — a new seed, or the page being left
-    onCleanup(() => {
-      staged.battle.end();
-    });
-  });
+      // A battle left running would keep ticking behind whatever
+      // replaced it: a new seed, or the page being left
+      return () => {
+        staged.battle.end();
+      };
+    },
+  );
 
-  createEffect(() => {
-    if (built() == null) {
-      return;
-    }
+  createEffect(
+    () => built() != null,
+    (running) => {
+      if (!running) {
+        return undefined;
+      }
 
-    const timer = setInterval(() => {
-      setRevision((value) => value + 1);
-    }, POLL_INTERVAL);
+      const timer = setInterval(() => {
+        setRevision((value) => value + 1);
+      }, POLL_INTERVAL);
 
-    onCleanup(() => {
-      clearInterval(timer);
-    });
-  });
+      return () => {
+        clearInterval(timer);
+      };
+    },
+  );
 
   /**
    * How it ended, once the engine says it has. The outcome mechanics

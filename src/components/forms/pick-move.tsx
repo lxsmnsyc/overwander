@@ -15,6 +15,7 @@ import {
   SEARCH_FROM,
   Search,
   createPager,
+  spellAria,
 } from '../styled';
 import { CostBadge, type CounterCost, CounterStep, CounterTerms } from './terms';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -97,7 +98,7 @@ function PickMoveView(props: FormProps<PickMoveInput, Moves>): JSX.Element {
                 <li>
                   <button
                     type="button"
-                    aria-pressed={chosen() === move}
+                    aria-pressed={spellAria(chosen() === move)}
                     disabled={refused() != null}
                     class={`${MOVE_CARD} w-full cursor-pointer disabled:cursor-not-allowed
                       disabled:opacity-55 ${

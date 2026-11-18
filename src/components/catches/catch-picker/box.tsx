@@ -400,9 +400,14 @@ export default function PickerBox(
     // with the picks still lit and the button still counting them. A
     // player who handed six pokemon to Nurse Joy saw the same six
     // still selected and the same button still offering to hand them
-    // over, which reads as a press that did nothing
+    // over, which reads as a press that did nothing.
+    //
+    // The caller's write lands on the next microtask, so `value` is read
+    // after it: read now, it would still be the picks before this press
     if (props.inline === true) {
-      setDraft(untrack(chosen));
+      queueMicrotask(() => {
+        setDraft(untrack(chosen));
+      });
     }
   };
 
@@ -422,13 +427,13 @@ export default function PickerBox(
    * are showing, drafted together. One that is refused is stepped over
    * rather than ending the run
    */
-  const pickRun = (option: CatchOption): boolean => {
+  const pickRun = (option: CatchOption): string[] | null => {
     const shown = options();
     const from = shown.findIndex((one) => one.id === runFrom);
     const to = shown.findIndex((one) => one.id === option.id);
 
     if (from < 0 || to < 0) {
-      return false;
+      return null;
     }
     const taken = [...draft()];
 
@@ -441,7 +446,7 @@ export default function PickerBox(
       }
     }
     setDraft(taken);
-    return true;
+    return taken;
   };
 
   const press = (option: CatchOption, shift = false): void => {
@@ -455,14 +460,22 @@ export default function PickerBox(
       return;
     }
     if (props.multiple === true) {
-      if (shift && runFrom != null && pickRun(option)) {
+      // A write lands at the next flush, so the caller is told the
+      // run computed here rather than a read of the draft, which would
+      // still be the one before this press
+      const run = shift && runFrom != null ? pickRun(option) : null;
+
+      if (run != null) {
         runFrom = option.id;
         if (props.live === true) {
-          props.onPick(draft());
+          props.onPick(run);
         }
         return;
       }
       runFrom = option.id;
+
+      let next = draft();
+
       if (isDrafted(option.id)) {
         const rest: string[] = [];
 
@@ -471,14 +484,15 @@ export default function PickerBox(
             rest.push(id);
           }
         }
-        setDraft(rest);
+        next = rest;
       } else if (draft().length < limit()) {
-        setDraft([...draft(), option.id]);
+        next = [...draft(), option.id];
       }
+      setDraft(next);
       // A live picker has no confirm of its own: the caller's button
       // is the confirm, so the caller is told on every press
       if (props.live === true) {
-        props.onPick(draft());
+        props.onPick(next);
       }
       return;
     }

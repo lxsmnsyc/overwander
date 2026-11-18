@@ -1,5 +1,5 @@
-import { type ComponentProps, Dynamic, type JSX } from '@solidjs/web';
-import { For, Show, createEffect, createSignal, onCleanup, onSettled } from 'solid-js';
+import type { ComponentProps, JSX } from '@solidjs/web';
+import { For, Show, createSignal, onSettled } from 'solid-js';
 import { Popover, PopoverButton, PopoverPanel } from 'terracotta/popover';
 import { TabPanel } from 'terracotta/tabs';
 import { Transition } from 'terracotta/transition';
@@ -21,7 +21,8 @@ import {
 } from '../../overworld/chunk-snapshot';
 import type { FieldMove } from '../../overworld/field-moves';
 import { GameDialog, useGame } from './game-context';
-import { watchProfile } from '../../auth/profile';
+import { type Profile, watchProfile } from '../../auth/profile';
+import watchLive from './watch';
 import { listMysteryGifts } from '../../auth/gifts';
 import { NoticeKind } from '../../auth/notifications';
 import { getDueQuests } from '../../auth/quests';
@@ -41,7 +42,7 @@ import {
 } from '../icons';
 import { PlayerFace } from '../profile/PlayerPlate';
 import { WeatherFavors, getWeatherIcon } from '../overworld/WeatherIcon';
-import { CloseButton, TabBar, TabButton, TabGroup } from '../styled';
+import { CloseButton, TabBar, TabButton, TabGroup, spellAria } from '../styled';
 import { GROW, MORPH } from '../styled/transition';
 import FullscreenToggle from './FullscreenToggle';
 import { ThemeToggle } from './theme';
@@ -288,8 +289,6 @@ export default function GameMenu(): JSX.Element {
   /** Which group of keys a phone's keypad is showing */
   const [tab, setTab] = createSignal(0);
   const [now, setNow] = createSignal(localNow());
-  const [gold, setGold] = createSignal<number | null>(null);
-  const [trainer, setTrainer] = createSignal<{ name: string; sprite: string } | null>(null);
 
   /** The way in, kept so the bound key can hand it the keyboard */
   let button: HTMLButtonElement | undefined;
@@ -359,6 +358,19 @@ export default function GameMenu(): JSX.Element {
     game.setDialog(dialog);
   };
 
+  // Watched rather than read once: gold moves at a vendor, on the
+  // board and at the end of a raid, and the name and the face change
+  // in the profile. Null before the first answer and while signed out
+  const profile = watchLive<string, Profile | null>(
+    () => auth.user()?.uid,
+    (uid, set) => watchProfile(uid, set),
+  );
+  const gold = (): number | null => profile()?.gold ?? null;
+  const trainer = (): { name: string; sprite: string } | null => {
+    const read = profile();
+
+    return read == null ? null : { name: read.nickname, sprite: read.sprite };
+  };
   const period = (): string => TIME_OF_DAY_NAMES[getTimeOfDay(now())];
   const clock = (): string => worldClock(now(), settings().clock);
   const place = (): string => game.place() ?? m.menu_somewhere();
@@ -404,26 +416,6 @@ export default function GameMenu(): JSX.Element {
     .catch(() => {
       // The device's own clock stands in until a reading lands
     });
-
-  // Watched rather than read once: gold moves at a vendor, on the
-  // board and at the end of a raid, and the name and the face change
-  // in the profile
-  createEffect(() => {
-    const user = auth.user();
-
-    if (user == null) {
-      setGold(null);
-      setTrainer(null);
-      return;
-    }
-
-    const stop = watchProfile(user.uid, (profile) => {
-      setGold(profile?.gold ?? 0);
-      setTrainer(profile == null ? null : { name: profile.nickname, sprite: profile.sprite });
-    });
-
-    onCleanup(stop);
-  });
 
   /**
    * The bound key puts the keyboard on the trainer button rather than
@@ -613,11 +605,7 @@ export default function GameMenu(): JSX.Element {
                               }
                             }}
                           >
-                            <Dynamic
-                              component={entry.icon}
-                              class="size-5 shrink-0 text-tide"
-                              aria-hidden="true"
-                            />
+                            <entry.icon class="size-5 shrink-0 text-tide" aria-hidden="true" />
                             <span class="min-w-0 truncate">{entry.label()}</span>
                             <Show when={countFor(entry.dialog) > 0}>
                               <span class={`${COUNT} ml-auto`}>{countFor(entry.dialog)}</span>
@@ -692,14 +680,19 @@ export default function GameMenu(): JSX.Element {
           {(() => {
             const sky = game.weather();
 
-            return sky == null ? (
-              ''
-            ) : (
+            if (sky == null) {
+              return '';
+            }
+
+            // A plain lookup: the whole block is drawn again when the sky turns
+            const Icon = getWeatherIcon(sky);
+
+            return (
               <span
                 class="flex size-10 shrink-0 items-center justify-center rounded-button
                   bg-gold-soft text-gold-dark"
               >
-                <Dynamic component={getWeatherIcon(sky)} class="size-5.5" aria-hidden="true" />
+                <Icon class="size-5.5" aria-hidden="true" />
               </span>
             );
           })()}
@@ -749,15 +742,13 @@ export default function GameMenu(): JSX.Element {
               {(() => {
                 const sky = game.weather();
 
-                return sky == null ? (
-                  ''
-                ) : (
-                  <Dynamic
-                    component={getWeatherIcon(sky)}
-                    class="size-7.5 shrink-0 text-gold-dark"
-                    aria-hidden="true"
-                  />
-                );
+                if (sky == null) {
+                  return '';
+                }
+
+                const Icon = getWeatherIcon(sky);
+
+                return <Icon class="size-7.5 shrink-0 text-gold-dark" aria-hidden="true" />;
               })()}
               <div class="flex min-w-0 flex-col gap-1">
                 <span class="font-extrabold text-ink">
@@ -798,7 +789,7 @@ export default function GameMenu(): JSX.Element {
             {(offer) => (
               <button
                 type="button"
-                aria-pressed={offer.active}
+                aria-pressed={spellAria(offer.active)}
                 disabled={offer.busy}
                 class="group flex cursor-pointer flex-col items-center gap-1 border-0 bg-transparent
                   p-0 text-[11px] font-extrabold text-white shadow-none

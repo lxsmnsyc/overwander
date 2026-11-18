@@ -1,6 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
 import { type DemoRules, type MoveDemo as Staged, aimFor, createMoveDemo } from './demo-move';
 import BattleField from '../battle/BattleField';
@@ -100,51 +100,54 @@ export default function MoveDemo(): JSX.Element {
   const [revision, setRevision] = createSignal(0);
   const [restaged, setRestaged] = createSignal(0);
 
-  createEffect(() => {
-    const move = chosen();
+  createEffect(
+    // The reset count is read so pressing Reset stages the same move again
+    // and the grown form is read so its switches stage the move again
+    () => ({ move: chosen(), giant: params.giant, reset: restaged() }),
+    ({ move, giant }) => {
+      if (move == null) {
+        setStaged(null);
+        return undefined;
+      }
 
-    // Read so pressing Reset stages the same move again
-    restaged();
-    if (move == null) {
-      setStaged(null);
-      return;
-    }
+      const demo = createMoveDemo(move, rules);
 
-    const demo = createMoveDemo(move, rules);
-    const giant = params.giant;
+      // A real pokemon rather than the doll, which is never drawn grown
+      if (giant === 'dynamax' || giant === 'gigantamax') {
+        demo.caster.setAppearance(giant === 'gigantamax' ? Species.Charizard : demo.caster.species);
+        demo.caster.gigantamax = giant === 'gigantamax';
+        dynamax(demo.caster, { permanent: true });
+      }
 
-    // A real pokemon rather than the doll, which is never drawn grown
-    if (giant === 'dynamax' || giant === 'gigantamax') {
-      demo.caster.setAppearance(giant === 'gigantamax' ? Species.Charizard : demo.caster.species);
-      demo.caster.gigantamax = giant === 'gigantamax';
-      dynamax(demo.caster, { permanent: true });
-    }
+      // Initialized but not started: the field starts it once every
+      // sheet has arrived, the way a real fight waits
+      demo.battle.initialize();
+      setStaged(demo);
 
-    // Initialized but not started: the field starts it once every
-    // sheet has arrived, the way a real fight waits
-    demo.battle.initialize();
-    setStaged(demo);
+      // A battle left running would go on ticking behind whatever
+      // replaced it: another move, or the page being left
+      return () => {
+        demo.battle.end();
+      };
+    },
+  );
 
-    // A battle left running would go on ticking behind whatever
-    // replaced it — another move, or the page being left
-    onCleanup(() => {
-      demo.battle.end();
-    });
-  });
+  createEffect(
+    () => staged() != null,
+    (running) => {
+      if (!running) {
+        return undefined;
+      }
 
-  createEffect(() => {
-    if (staged() == null) {
-      return;
-    }
+      const timer = setInterval(() => {
+        setRevision((count) => count + 1);
+      }, POLL_INTERVAL);
 
-    const timer = setInterval(() => {
-      setRevision((count) => count + 1);
-    }, POLL_INTERVAL);
-
-    onCleanup(() => {
-      clearInterval(timer);
-    });
-  });
+      return () => {
+        clearInterval(timer);
+      };
+    },
+  );
 
   /**
    * What the move is, in the terms the engine resolves it in. It is

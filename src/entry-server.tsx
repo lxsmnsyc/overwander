@@ -19,6 +19,6 @@ export function render(
         <App />
       </Document>
     ),
-    { manifest, nonce: context.nonce, signal: getRequestEvent()?.request.signal },
+    { manifest, nonce: context.nonce ?? undefined, signal: getRequestEvent()?.request.signal },
   );
 }

@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, createMemo, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { Listing as ListingPage, RaidRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
@@ -46,14 +46,13 @@ function windowAt(timestamp: number): string {
 }
 
 function RaidList(props: {
-  listing: Resource<ListingPage<RaidRow>>;
+  listing: Accessor<ListingPage<RaidRow>>;
   search: string;
   page: number;
   onSearch: (value: string) => void;
   onPage: (page: number) => void;
 }): JSX.Element {
-  const page = (): ListingPage<RaidRow> =>
-    props.listing() ?? { rows: [], total: 0, pages: 1, page: 0, capped: false };
+  const page = (): ListingPage<RaidRow> => props.listing();
 
   return (
     <Listing
@@ -101,10 +100,9 @@ function RaidList(props: {
 export default function AdminRaids(): JSX.Element {
   const [search, setSearch] = createSignal('');
   const [page, setPage] = createSignal(0);
-  const [listing] = createResource(
-    () => [search(), page()] as const,
-    async ([wanted, at]) => listRaids(wanted, at),
-  );
+  // Read again on a search or a page turn. The list stays up while it
+  // is read, the search box with it
+  const listing = createMemo(async () => listRaids(search(), page()));
 
   return (
     <Loading fallback={<Note>Reading the lobbies…</Note>}>

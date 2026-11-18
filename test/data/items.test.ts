@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
@@ -196,6 +197,7 @@ import { NATURE_NAMES } from '../../src/data/ids/text';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

@@ -1,6 +1,7 @@
 import { type InventoryEntry, getInventory } from '../../auth/inventory';
 import { hasVisited } from '../../auth/npcs';
 import { getProfile } from '../../auth/profile';
+import ensureLearnSets from '../../data/learnset-data';
 import type Npc from '../../data/ids/npcs';
 import { type NpcVisit, getNpc } from '../../overworld/npcs';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
@@ -68,6 +69,9 @@ export function visitNpc(options: VisitOptions): ConversationHandle {
         await talk.say(data.quote);
         return;
       }
+      // Their scripts read what a species learns (a reminder, a tutor, a trader's offers)
+      await ensureLearnSets();
+
       // Loaded here rather than with the world, the first time anybody talks to them
       const { default: script } = await load();
 

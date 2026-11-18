@@ -54,8 +54,11 @@ Loaded later, on top of the startup set:
 | Change | Startup gzip | Difference |
 | --- | --- | --- |
 | Official ja and es names (i18n-official-names) | 1280.2 KiB | +79.4 KiB (+6.6%) |
+| Learn sets on their own loader (boot-learnsets-loader), measured on `2e8cebe27`: 1554.0 KiB before, 1234.2 KiB brotli before and 1124.8 KiB after | 1400.7 KiB | -153.3 KiB (-9.9%) |
 
 Every locale's registry text is bundled with English, so each locale costs every player its download, shown or not. `boot-lazy-registries` should load only the active locale's.
+
+The learn sets (`src/data/species/learnsets/`) now load as their own chunk (`learnsets`, 876.8 KiB raw, 154.4 KiB gzip), fetched after the first frame by `ensureLearnSets` in `src/data/learnset-data.ts`. `ensureBattleData` waits on it too, because the TMs are registered off every species' teachable list. The server and the tests take them at once through `registerGameData`.
 
 ## Recording a change
 

@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { registerMoves } from '../../src/data/moves';
 import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
@@ -54,6 +55,7 @@ export function createBattle(
   if (!dataRegistered) {
     registerMoves();
     registerSpecies();
+    registerLearnSets();
     registerItems();
     dataRegistered = true;
   }

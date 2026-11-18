@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { registerMoves } from '../../src/data/moves';
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
@@ -29,6 +30,7 @@ import { getSpeciesData, registerSpecies } from '../../src/data/species';
 beforeAll(() => {
   registerMoves();
   registerSpecies();
+  registerLearnSets();
 });
 
 /**

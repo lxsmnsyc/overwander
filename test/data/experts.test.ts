@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
@@ -141,6 +142,7 @@ const ALL_ROLES = [BuildRole.SpecialCore, BuildRole.PhysicalCore, ...SUPPORT_ROL
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

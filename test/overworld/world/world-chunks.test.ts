@@ -1,3 +1,4 @@
+import registerLearnSets from '../../../src/data/species/learnsets';
 import { getMoveData, registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../../src/model/local-time';
@@ -83,6 +84,7 @@ import findChunk from './helpers';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

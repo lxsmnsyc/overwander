@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { Slots, getSlots } from '../../src/data/constants/slots';
@@ -28,6 +29,7 @@ import World from '../../src/overworld/world';
 beforeAll(() => {
   registerMoves();
   registerSpecies();
+  registerLearnSets();
 });
 
 const world = new World('overworld');

@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -53,6 +54,7 @@ const SPRITE_ROOT = 'public/sprites';
 // Moves first: the withdrawn machines are registered whatever species exist
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 
 /** The outline the candy drawing is drawn in, which no swap repaints. */

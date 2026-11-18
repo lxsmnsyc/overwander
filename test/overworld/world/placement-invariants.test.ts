@@ -1,3 +1,4 @@
+import registerLearnSets from '../../../src/data/species/learnsets';
 import { registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
@@ -15,6 +16,7 @@ import World, { Depth, Generation } from '../../../src/overworld/world';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

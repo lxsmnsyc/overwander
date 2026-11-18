@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerAbilities, { getSpeciesSignature } from '../../src/data/abilities';
 import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
@@ -23,6 +24,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 
 const EVEN_STATS: Record<Stats, number> = {

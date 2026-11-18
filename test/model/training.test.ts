@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import {
   type EffortTrained,
@@ -55,6 +56,7 @@ import { raisedMovePoints } from '../../src/server/training';
 // what the market makes of a vitamin
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 
 function trained(

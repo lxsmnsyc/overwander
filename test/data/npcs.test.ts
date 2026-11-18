@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { existsSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
@@ -62,6 +63,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

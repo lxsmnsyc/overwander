@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import {
   AUCTION_DURATION,
@@ -32,6 +33,7 @@ import { registerSpecies } from '../../src/data/species';
 
 // getSpawnRarity reads the registry, so the species have to be in it
 registerSpecies();
+registerLearnSets();
 
 const OPENED = 1_000_000;
 

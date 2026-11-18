@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../src/data/abilities';
 import registerBiomeSpawns from '../../src/data/biome';
@@ -15,6 +16,7 @@ import createOverworld from '../../src/overworld/setup';
 
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

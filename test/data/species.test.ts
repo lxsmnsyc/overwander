@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import type { EvolutionData } from '../../src/data/species';
 import {
   getFoldedDragon,
@@ -135,6 +136,7 @@ import { getSpeciesRegion } from '../../src/data/species/regions';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

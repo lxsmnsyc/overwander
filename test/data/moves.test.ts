@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { TYPE_MAX_MOVES } from '../../src/data/moves/max-moves';
 import { GENERIC_Z_MOVES } from '../../src/data/moves/z-moves';
 import { FIXED_G_MAX_MOVES, G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
@@ -40,6 +41,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

@@ -125,10 +125,6 @@ describe('a locale laid over English', () => {
         eager: true,
         import: 'default',
       }),
-      learnsets: import.meta.glob('../../src/data/species/learnsets/**/*.yaml', {
-        eager: true,
-        import: 'default',
-      }),
       text: {
         ...import.meta.glob('../../src/data/text/en/species/**/*.yaml', {
           eager: true,

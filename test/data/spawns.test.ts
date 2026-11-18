@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -43,6 +44,7 @@ import { SURFACES, everyPool } from './helpers';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

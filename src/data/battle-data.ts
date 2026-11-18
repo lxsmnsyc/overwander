@@ -16,6 +16,8 @@
  * at the top of whichever privileged call reads one of these
  * registries.
  */
+import ensureLearnSets from './learnset-data';
+
 let loading: Promise<void> | undefined;
 
 let loaded = false;
@@ -30,11 +32,15 @@ export function isBattleDataReady(): boolean {
 
 export default async function ensureBattleData(): Promise<void> {
   loading ??= (async (): Promise<void> => {
+    // The learn sets ride along: the machines are registered off what
+    // every species can be taught, so the items cannot be filled
+    // before them
     const [moves, abilities, items] = await Promise.all([
       import('./moves'),
       import('./abilities'),
       import('./items'),
-    ]);
+      ensureLearnSets(),
+    ] as const);
 
     moves.registerMoves();
     abilities.default();

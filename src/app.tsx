@@ -4,6 +4,7 @@ import { FileRoutes } from '@solidjs/start/router';
 import { type JSX, Suspense, createEffect, onMount } from 'solid-js';
 import AuthProvider from './auth/context';
 import ensureBattleData from './data/battle-data';
+import ensureLearnSets from './data/learnset-data';
 import registerWorldData from './data/world';
 import ThemeProvider from './components/app/theme';
 import settings, { loadSettings } from './components/app/settings';
@@ -32,6 +33,9 @@ export default function App(): JSX.Element {
   // it is usually already here, and the gates around those panels are
   // what covers the times it is not
   onMount(() => {
+    ensureLearnSets().catch(() => {
+      // Same as below: the readers wait on the promise and retry it
+    });
     ensureBattleData().catch(() => {
       // Nothing to do about it here: every panel that reads one of
       // those registries waits on the same promise, and a failed

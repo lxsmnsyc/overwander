@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import type Biome from '../../src/data/ids/biome';
 import { TimeOfDay } from '../../src/data/ids/biome';
@@ -17,6 +18,7 @@ import { getSpeciesData, registerSpecies } from '../../src/data/species';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

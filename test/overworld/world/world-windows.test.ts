@@ -1,3 +1,4 @@
+import registerLearnSets from '../../../src/data/species/learnsets';
 import { MAX_WING_STATS } from '../../../src/data/items/wings';
 import { registerMoves } from '../../../src/data/moves';
 import { describe, expect, it } from 'vitest';
@@ -82,6 +83,7 @@ import findChunk from './helpers';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

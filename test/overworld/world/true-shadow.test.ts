@@ -1,5 +1,6 @@
 // The true shadows: what a dark day stages, and nothing else does.
 
+import registerLearnSets from '../../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerAbilities from '../../../src/data/abilities';
 import registerBiomeSpawns, { fitsSurface, spawnBand } from '../../../src/data/biome';
@@ -33,6 +34,7 @@ import { canStageBoss } from '../../../src/overworld/raid/index';
 
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

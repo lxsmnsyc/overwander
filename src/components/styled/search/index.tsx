@@ -447,7 +447,65 @@ export default function Search(props: SearchProps): JSX.Element {
             )}
           </Show>
           <input
-            ref={box}
+            ref={(element: HTMLInputElement) => {
+              box = element;
+              // A listener of its own rather than Solid's delegated
+              // `onKeyDown`, which is answered at the document: a dialog
+              // panel takes Tab and Escape on its way there, traps the
+              // focus with them and stops them, so the box never heard
+              // either while it stood in one
+              element.addEventListener('keydown', (event) => {
+                const offered = suggestions();
+                const showing = open() && offered.length > 0;
+
+                if (showing && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setActive(
+                    (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
+                      offered.length,
+                  );
+                  setArrowed(true);
+                  return;
+                }
+                // Shift and Tab is somebody leaving the box, not somebody
+                // finishing a word
+                if (showing && event.key === 'Tab' && !event.shiftKey) {
+                  // Stopped as well as refused: a dialog panel moves the
+                  // focus itself rather than leaving it to the browser,
+                  // so refusing the key is not enough to keep it here
+                  event.preventDefault();
+                  event.stopPropagation();
+                  complete(offered);
+                  return;
+                }
+                if (showing && event.key === 'Enter') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  pick(offered[active()]);
+                  return;
+                }
+                if (event.key === 'Escape' && open()) {
+                  // The list first: somebody closing the suggestions has
+                  // not asked to clear what they typed
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setOpen(false);
+                  return;
+                }
+                if (event.key === 'Backspace' && caret() === 0 && box?.selectionEnd === 0) {
+                  event.preventDefault();
+                  reopen();
+                  return;
+                }
+                // Somebody who has finished typing and pressed Enter has
+                // said so; there is nothing left to wait for
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  settle();
+                }
+              });
+            }}
             type="search"
             value={typed()}
             placeholder={terms().length > 0 ? undefined : props.placeholder}
@@ -479,62 +537,6 @@ export default function Search(props: SearchProps): JSX.Element {
             }}
             onBlur={() => {
               setOpen(false);
-            }}
-            // A listener of its own rather than Solid's delegated
-            // `onKeyDown`, which is answered at the document: a dialog
-            // panel takes Tab and Escape on its way there, traps the
-            // focus with them and stops them, so the box never heard
-            // either while it stood in one
-            on:keydown={(event) => {
-              const offered = suggestions();
-              const showing = open() && offered.length > 0;
-
-              if (showing && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-                event.preventDefault();
-                event.stopPropagation();
-                setActive(
-                  (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
-                    offered.length,
-                );
-                setArrowed(true);
-                return;
-              }
-              // Shift and Tab is somebody leaving the box, not somebody
-              // finishing a word
-              if (showing && event.key === 'Tab' && !event.shiftKey) {
-                // Stopped as well as refused: a dialog panel moves the
-                // focus itself rather than leaving it to the browser,
-                // so refusing the key is not enough to keep it here
-                event.preventDefault();
-                event.stopPropagation();
-                complete(offered);
-                return;
-              }
-              if (showing && event.key === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                pick(offered[active()]);
-                return;
-              }
-              if (event.key === 'Escape' && open()) {
-                // The list first: somebody closing the suggestions has
-                // not asked to clear what they typed
-                event.preventDefault();
-                event.stopPropagation();
-                setOpen(false);
-                return;
-              }
-              if (event.key === 'Backspace' && caret() === 0 && box?.selectionEnd === 0) {
-                event.preventDefault();
-                reopen();
-                return;
-              }
-              // Somebody who has finished typing and pressed Enter has
-              // said so; there is nothing left to wait for
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                settle();
-              }
             }}
           />
           {/* The guide stands in the box, opposite the magnifier: the

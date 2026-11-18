@@ -1,9 +1,10 @@
 /// <reference types="vitest/config" />
-import { solidStart } from '@solidjs/start/config';
+import solid from '@solidjs/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import { fileRoutes } from 'filesystem-routing/vite';
 import { nitro } from 'nitro/vite';
-import solidMarked from 'vite-plugin-solid-marked';
-import { defineConfig, loadEnv } from 'vite';
+import solidMarked from 'unplugin-solid-marked';
+import { type Plugin, defineConfig, loadEnv } from 'vite';
 import yamlData from './scripts/vite/yaml.ts';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import COMPILE_OPTIONS from './src/i18n/compile-options.ts';
@@ -20,8 +21,10 @@ import COMPILE_OPTIONS from './src/i18n/compile-options.ts';
  * also drags in the production SSR manifest, which is not built during
  * a test run and throws on read.
  *
- * SolidStart stays, since it is what resolves the `server-only` marker
- * the modules under test import
+ * The Solid plugin stays, since it is what resolves the `server-only`
+ * marker the modules under test import. Start mode (entries, middleware,
+ * server functions) and the file routes stay out with Nitro: no test
+ * renders a page or serves a request
  */
 const forTests = process.env.VITEST != null;
 
@@ -35,13 +38,51 @@ const ENV_DIR = forTests ? 'test/env' : process.env.OVERWANDER_ENV_DIR;
 /**
  * One id per build, shared by the client and server bundles. A tab
  * names it on every server call, and a call from a build that is no
- * longer live is refused: server functions are addressed by their
- * place in a file, so an old tab's arguments would reach the wrong one
+ * longer live is refused: a server function keeps its id while its
+ * parameters change, so an old tab's arguments would reach it in the
+ * wrong order
  */
 const BUILD_ID =
   process.env.BUILD_ID != null && process.env.BUILD_ID !== ''
     ? process.env.BUILD_ID
     : String(Date.now());
+
+/**
+ * terracotta 2 has no root entry, only one per component. Until the
+ * codemod child of the solid-2 story points each import at its own
+ * entry, a bare `terracotta` import resolves to a module that
+ * re-exports the entries the app uses. Delete it with that child
+ */
+function terracottaRoot(): Plugin {
+  const id = '\0terracotta-root';
+  const entries = [
+    'button',
+    'color-scheme',
+    'disclosure',
+    'listbox',
+    'popover',
+    'radio-group',
+    'tabs',
+    'toggle',
+    'transition',
+  ];
+  let code = '';
+
+  for (const entry of entries) {
+    code += `export * from 'terracotta/${entry}';\n`;
+  }
+
+  return {
+    name: 'overwander:terracotta-root',
+    enforce: 'pre',
+    resolveId(source) {
+      return source === 'terracotta' ? id : null;
+    },
+    load(source) {
+      return source === id ? code : null;
+    },
+  };
+}
 
 /** The year-long cache the stamped files take, as `public/_headers` gives them */
 const IMMUTABLE = { 'cache-control': 'public, max-age=31536000, immutable' };
@@ -78,17 +119,31 @@ export default defineConfig(({ mode }) => ({
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
     yamlData(),
+    terracottaRoot(),
     paraglideVitePlugin(COMPILE_OPTIONS),
     tailwindcss(),
     // The release pages under docs/ are imported as components, and
-    // this is what turns them into JSX. It runs before SolidStart's
-    // own plugin because what it emits is JSX for that to compile,
-    // and it is what keeps a markdown parser out of the browser
-    solidMarked({}),
-    solidStart({
-      devOverlay: false,
-      middleware: 'src/middleware/index.ts',
-    }),
+    // this is what turns them into JSX. It runs before the Solid plugin
+    // because what it emits is JSX for that to compile, and it is what
+    // keeps a markdown parser out of the browser
+    solidMarked.vite({}),
+    forTests
+      ? solid()
+      : solid({
+          ssr: true,
+          start: {
+            middleware: './src/middleware/index.ts',
+            devtools: false,
+          },
+          serverFunctions: true,
+          // The route modules the file routes plugin emits end in a
+          // `?pick=` query, and this makes the plugin compile them too
+          extensions: ['.jsx', '.tsx'],
+        }),
+    // src/routes, served from `virtual:file-routes`. `httpMethods` turns
+    // the uppercase exports of a route module (the Better Auth handler)
+    // into request handlers, which the middleware dispatches
+    ...(forTests ? [] : [fileRoutes({ httpMethods: true, types: true })]),
     ...(forTests
       ? []
       : [
@@ -104,6 +159,16 @@ export default defineConfig(({ mode }) => ({
           }),
         ]),
   ],
+  resolve: {
+    // Solid 2 moved `solid-js/web` to `@solidjs/web` and folded
+    // `solid-js/store` into `solid-js`. The two aliases let the app boot
+    // while the imports are still the 1.x ones; the codemod child of the
+    // solid-2 story rewrites the imports and deletes them
+    alias: [
+      { find: /^solid-js\/web$/, replacement: '@solidjs/web' },
+      { find: /^solid-js\/store$/, replacement: 'solid-js' },
+    ],
+  },
   server: {
     watch: {
       // The sprite processor writes a credit row into docs/, and
@@ -115,10 +180,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   ssr: {
-    // `server-only` is a marker, not a library. SolidStart's
-    // `boundary-modules` plugin resolves it to an empty module on the
-    // server and refuses it on the client — which is the whole of how
-    // `src/server/*` is kept out of the browser bundle.
+    // `server-only` is a marker, not a library. The Solid plugin
+    // resolves it to an empty module on the server and refuses it on
+    // the client, which is the whole of how `src/server/*` is kept
+    // out of the browser bundle.
     //
     // It only gets to do that if Vite asks it. A bare import of a
     // package that is really there is **externalized** for SSR before
@@ -141,6 +206,14 @@ export default defineConfig(({ mode }) => ({
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
     testTimeout: 20_000,
+    // Temporary, until the solid-2-tests child settles how the tests
+    // run (possibly per group through `test.projects`).
+    //
+    // Said outright, since the Solid plugin reads it: an explicit `node`
+    // gives the tests the server build of Solid, as SolidStart did. Left
+    // unset, the plugin compiles them for the browser, where `isServer`
+    // is false and the modules that touch `window` at import fail
+    environment: 'node',
     /**
      * `test/db` needs the development database and clears it between cases,
      * so it runs on its own as `pnpm test:db` (see `vitest.db.ts`).

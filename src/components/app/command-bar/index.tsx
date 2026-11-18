@@ -308,6 +308,57 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     // at, and it was opened by a key rather than a press
                     ref={(element: HTMLInputElement) => {
                       box = element;
+                      // A listener of its own rather than Solid's
+                      // delegated one, which is answered at the document:
+                      // the dialog panel takes Tab and Escape on the way
+                      // there and traps the focus with them
+                      element.addEventListener('keydown', (event) => {
+                        const offered = suggestions();
+
+                        if (
+                          offered.length > 0 &&
+                          (event.key === 'ArrowDown' || event.key === 'ArrowUp')
+                        ) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          setActive(
+                            (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
+                              offered.length,
+                          );
+                          setArrowed(true);
+                          return;
+                        }
+                        if (offered.length > 0 && event.key === 'Tab' && !event.shiftKey) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          complete(offered);
+                          return;
+                        }
+                        // Tab finishes a word and Enter runs the line.
+                        // The list is open on nearly every keystroke,
+                        // since an empty word offers everything, so an
+                        // Enter that took the highlighted offer would
+                        // never reach a command. Arrowing into the list
+                        // is how somebody says they are choosing from it
+                        // Closed here rather than left to the dialog:
+                        // the game keeps several mounted at once, and
+                        // the one that answers Escape is not this one
+                        if (event.key === 'Escape') {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          close();
+                          return;
+                        }
+                        if (event.key === 'Enter') {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          if (arrowed() && offered.length > 0) {
+                            pick(offered[active()]);
+                            return;
+                          }
+                          run();
+                        }
+                      });
                       requestAnimationFrame(() => {
                         element.focus();
                       });
@@ -319,57 +370,6 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     }}
                     onClick={follow}
                     onFocus={follow}
-                    // A listener of its own rather than Solid's
-                    // delegated one, which is answered at the document:
-                    // the dialog panel takes Tab and Escape on the way
-                    // there and traps the focus with them
-                    on:keydown={(event) => {
-                      const offered = suggestions();
-
-                      if (
-                        offered.length > 0 &&
-                        (event.key === 'ArrowDown' || event.key === 'ArrowUp')
-                      ) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setActive(
-                          (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
-                            offered.length,
-                        );
-                        setArrowed(true);
-                        return;
-                      }
-                      if (offered.length > 0 && event.key === 'Tab' && !event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        complete(offered);
-                        return;
-                      }
-                      // Tab finishes a word and Enter runs the line.
-                      // The list is open on nearly every keystroke,
-                      // since an empty word offers everything, so an
-                      // Enter that took the highlighted offer would
-                      // never reach a command. Arrowing into the list
-                      // is how somebody says they are choosing from it
-                      // Closed here rather than left to the dialog:
-                      // the game keeps several mounted at once, and
-                      // the one that answers Escape is not this one
-                      if (event.key === 'Escape') {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        close();
-                        return;
-                      }
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (arrowed() && offered.length > 0) {
-                          pick(offered[active()]);
-                          return;
-                        }
-                        run();
-                      }
-                    }}
                   />
                 </span>
                 {/* Under the bar and inside the panel, so the panel

@@ -1,7 +1,7 @@
 ---
 id: solid-2-social
 title: Migrate the social screens to Solid 2.0
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2
@@ -42,6 +42,7 @@ Migrate the auctions, duels, friends, gifts, notifications, profile, quests, rai
 ## Context
 
 - Spike error map, row `social`: 64 files, 33 resources, 10 effect splits, 24 Suspense, plus solid-marked in 3 news files.
+- A resource read without waiting (`.latest`, `answered`, handler reads) uses `createLoad` from `src/components/app/create-load.ts` (settled in `solid-2-catches`); the profile sheet and raid lobby still import `resource-reads.ts`, move them off it. Call `refresh()` and key writes from handlers or promise callbacks only.
 - `news.test.tsx` fails on the solid-marked 1.0 change; fix it here.
 - `settings.ts` calls `matchMedia` at load; guard it for the server (the spike's test-posture gotcha).
 - Live views follow table changes over `src/server/live`; check one live list still updates.

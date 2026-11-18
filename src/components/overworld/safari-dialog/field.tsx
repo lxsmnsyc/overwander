@@ -7,19 +7,15 @@ import { isShadow, isShiny } from '../../../model/caught-record';
 import type { EncounterRecord } from '../../../model/encounter-record';
 import type SafariSession from '../../../overworld/safari';
 import { SafariState, describeFlight } from '../../../overworld/safari';
-import { FireIcon, SparklesIcon } from '../../icons';
 import { describeAbility, describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { Badge } from '../../styled';
-import Met from './met';
 import { BALL_LAND, BALL_REST, BALL_SHAKE, BALL_SPRITE, HELD_SPRITE } from './metrics';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 export interface FieldProps {
   session: SafariSession<EncounterRecord>;
-  /** Whether this player has caught the species standing there before */
-  owned: boolean;
   /** How many times the ball is set to rock, or null while the pokemon stands */
   rocking: number | null;
   revealsHeld?: boolean;
@@ -47,27 +43,20 @@ export default function Field(props: FieldProps): JSX.Element {
           shadow-[inset_0_-5px_0_rgb(0_0_0/0.15)]"
         style={{ background: 'var(--field-base)' }}
       />
-      {/* The pokemon's box, the way a battle names who is standing there */}
-      <div
-        class="absolute left-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-col gap-1.5
-          rounded-[14px] border-2 border-line bg-paper/95 px-3 py-2 font-display text-base
-          font-semibold shadow-pop backdrop-blur-sm top-7 sm:left-3.5"
+      {/* What a buddy reads off the pokemon, the one thing the nameplate
+          does not already say. No box at all without a buddy that reads */}
+      <Show
+        when={
+          (props.revealsHeld === true && props.session.encounter.items.length > 0) ||
+          props.revealsFlight === true ||
+          props.revealsAbility === true
+        }
       >
-        <Met encounter={props.session.encounter} />
-        <span class="flex flex-wrap gap-1 font-sans">
-          <Badge>{m.ow_level({ level: props.session.encounter.level })}</Badge>
-          <Show when={isShiny(props.session.encounter)}>
-            <Badge tone="gold">
-              <SparklesIcon aria-hidden="true" class="size-3.5 shrink-0" />
-              {m.safari_shiny()}
-            </Badge>
-          </Show>
-          <Show when={isShadow(props.session.encounter)}>
-            <Badge tone="arcane">
-              <FireIcon aria-hidden="true" class="size-3.5 shrink-0" />
-              {m.safari_shadow()}
-            </Badge>
-          </Show>
+        <div
+          class="absolute left-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-1
+            rounded-[14px] border-2 border-line bg-paper/95 px-3 py-2 shadow-pop
+            backdrop-blur-sm top-7 sm:left-3.5"
+        >
           <Show when={props.revealsHeld === true}>
             <For each={props.session.encounter.items}>
               {(item) => (
@@ -86,12 +75,8 @@ export default function Field(props: FieldProps): JSX.Element {
           <Show when={props.revealsAbility === true}>
             <Badge tone="leaf">{describeAbility(props.session.encounter.ability)}</Badge>
           </Show>
-          {/* Whether this player has caught one of it before */}
-          <Show when={props.owned}>
-            <Badge tone="gold">{m.safari_caught_before()}</Badge>
-          </Show>
-        </span>
-      </div>
+        </div>
+      </Show>
       <div class="absolute inset-x-0 top-4 bottom-12 flex items-end justify-center">
         {/* The ball stands where the pokemon did while it rocks:
           what is inside the ball is not also in the field */}

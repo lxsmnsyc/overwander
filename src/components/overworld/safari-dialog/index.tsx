@@ -27,7 +27,7 @@ import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
 import Commands from './commands';
 import Field from './field';
-import { appeared } from './met';
+import MeetingTitle from './met';
 import {
   BALL_LAND,
   BALL_REST,
@@ -535,11 +535,17 @@ function SafariBody(
       // ball is rocking, the answer is on its way, and leaving mid
       // throw settles the session under it
       insistent={props.insistent === true || throwing()}
-      // The nameplate says who has appeared; the field is the sheet's top,
-      // and the line under the title is for the screen reader alone
+      // The nameplate is the whole meeting in one line; the field is the
+      // sheet's top, and the line under the title is for the screen reader alone
       terse
       width="wide"
-      title={appeared(session()?.encounter ?? null)}
+      title={
+        <MeetingTitle
+          encounter={session()?.encounter ?? null}
+          // Latest rather than read, so the heading never waits on the dex
+          owned={props.owned.latest === true}
+        />
+      }
       description={m.safari_description()}
       hero={
         <Show when={session()}>
@@ -554,7 +560,6 @@ function SafariBody(
             return (
               <Field
                 session={active()}
-                owned={props.owned.latest === true}
                 rocking={rocking()}
                 revealsHeld={props.revealsHeld}
                 revealsFlight={props.revealsFlight}

@@ -3,12 +3,12 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../../src/data';
 import { SPAWN_BAND_KEYS } from '../../../src/data/biome';
 import { getBaseFormSpecies } from '../../../src/data/ids/forms';
-import { LURE_SPAWN_BONUS } from '../../../src/overworld/abilities/__create';
-import ChunkSnapshot, { SPAWN_COUNT } from '../../../src/overworld/chunk-snapshot';
+import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
+import type { LiveSpawn } from '../../../src/overworld/spawn-life';
+import { checkMeeting, liveSpawns } from '../../../src/overworld/spawn-life/lifetimes';
 import { getSpawnLevels } from '../../../src/overworld/encounter';
 import stageEncounter from '../../../src/overworld/encounter/stage';
 import createOverworld from '../../../src/overworld/setup';
-import { CHUNK_CELLS } from '../../../src/overworld/grid';
 import { spawnId } from '../../../src/model/snapshot-record';
 import { toLocalTime } from '../../../src/model/local-time';
 import { RaidKind, asRaidRecord, deriveRaidReward } from '../../../src/model/raid-record';
@@ -49,38 +49,58 @@ beforeAll(() => {
 
 const parameters = readFuzzParameters();
 
-/** As many spawns as a window publishes, a lure's included */
-const PUBLISHED = SPAWN_COUNT + LURE_SPAWN_BONUS;
-
 function readSnapshot(seed: string, place: CellInput, clock: ClockInput): ChunkSnapshot {
   const chunk = readWorld(seed, place.depth).getChunk(place.chunkX, place.chunkY);
 
   return new ChunkSnapshot(chunk, toLocalTime(clock.now, clock.zone), clock.zone);
 }
 
+/** The pokemon standing in the chunk at the clock, each with the snapshot its meeting is staged in */
+function readStanding(
+  seed: string,
+  place: CellInput,
+  clock: ClockInput,
+): [live: LiveSpawn, staged: ChunkSnapshot][] {
+  const { chunk } = readSnapshot(seed, place, clock);
+  const local = toLocalTime(clock.now, clock.zone);
+  const standing: [LiveSpawn, ChunkSnapshot][] = [];
+
+  for (const live of liveSpawns(chunk, clock.zone, local)) {
+    standing.push([live, new ChunkSnapshot(chunk, live.cycle.start, clock.zone)]);
+  }
+  return standing;
+}
+
 describe('spawns on the ground', () => {
   it('stand on the cell they were placed on, out of that cell’s own pool', () => {
     fc.assert(
       fc.property(seedArbitrary, cellArbitrary, clockArbitrary, (seed, place, clock) => {
-        const snapshot = readSnapshot(seed, place, clock);
-        const spawns = snapshot.getSpawns(PUBLISHED);
-        const cells = snapshot.getSpawnCells();
+        const local = toLocalTime(clock.now, clock.zone);
 
-        // Every spawn is on exactly one cell, in roll order
-        expect([...cells.values()]).toEqual(spawns);
-
-        for (const [cell, spawn] of cells) {
-          expect(snapshot.getSpawnAt(cell % CHUNK_CELLS, Math.floor(cell / CHUNK_CELLS))).toBe(
-            spawn,
+        for (const [live, staged] of readStanding(seed, place, clock)) {
+          // The server derives the same pokemon on the same cell, and a
+          // wrong individual value or a cell far away is refused
+          const met = checkMeeting(
+            staged.chunk,
+            clock.zone,
+            live.id,
+            live.spawn[1],
+            live.home,
+            local,
           );
 
+          expect(met?.id).toBe(live.id);
+          expect(
+            checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1] ^ 1, live.home, local),
+          ).toBeNull();
+
           // A street rolls the town's pool, which the snapshot keeps to itself
-          if (snapshot.chunk.isTownCell(cell)) {
+          if (staged.chunk.isTownCell(live.home)) {
             continue;
           }
 
           // The pool names the species before its shore, wings, coat or rare shape
-          const pool = snapshot.getCellPool(cell);
+          const pool = staged.getCellPool(live.home);
           const kinds = new Set<number>();
 
           for (const band of SPAWN_BAND_KEYS) {
@@ -88,7 +108,9 @@ describe('spawns on the ground', () => {
               kinds.add(getBaseFormSpecies(entry.species));
             }
           }
-          expect(kinds, `cell ${cell} of ${snapshot.key}`).toContain(getBaseFormSpecies(spawn[0]));
+          expect(kinds, `cell ${live.home} of ${staged.key}`).toContain(
+            getBaseFormSpecies(live.spawn[0]),
+          );
         }
       }),
       parameters,
@@ -103,17 +125,10 @@ describe('spawns on the ground', () => {
         clockArbitrary,
         playerArbitrary,
         (seed, place, clock, uid) => {
-          const snapshot = readSnapshot(seed, place, clock);
-          const spawns = snapshot.getSpawns(PUBLISHED);
-          const cells = [...snapshot.getSpawnCells().keys()];
-
-          for (const [index, spawn] of spawns.entries()) {
-            const id = spawnId(snapshot.key, snapshot.timestamp, index);
-            const cell = cells[index];
-
-            expect(stageEncounter(uid, snapshot, id, spawn, null, { cell }).biome).toBe(
-              snapshot.biomeAt(cell),
-            );
+          for (const [live, staged] of readStanding(seed, place, clock)) {
+            expect(
+              stageEncounter(uid, staged, live.id, live.spawn, null, { cell: live.home }).biome,
+            ).toBe(staged.biomeAt(live.home));
           }
         },
       ),
@@ -132,18 +147,14 @@ describe('spawns on the ground', () => {
         playerArbitrary,
         buddyArbitrary,
         (seed, place, clock, uid, buddy) => {
-          const snapshot = readSnapshot(seed, place, clock);
           const broken: string[] = [];
-          const cells = [...snapshot.getSpawnCells().keys()];
 
-          for (const [index, spawn] of snapshot.getSpawns(PUBLISHED).entries()) {
-            const id = spawnId(snapshot.key, snapshot.timestamp, index);
-
+          for (const [live, staged] of readStanding(seed, place, clock)) {
             checked += 1;
-            const cell = cells[index];
-
             broken.push(
-              ...checkEncounterRow(stageEncounter(uid, snapshot, id, spawn, buddy, { cell })),
+              ...checkEncounterRow(
+                stageEncounter(uid, staged, live.id, live.spawn, buddy, { cell: live.home }),
+              ),
             );
           }
           expect(broken).toEqual([]);

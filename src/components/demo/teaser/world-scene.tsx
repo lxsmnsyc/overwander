@@ -10,7 +10,6 @@ import {
   BOARD_CELLS,
   BOARD_CENTER,
   PLAYER_CELL,
-  PUBLISHED_SPAWNS,
   STEP_PACE,
 } from '../../../game/overworld/board-metrics';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
@@ -24,7 +23,7 @@ import { NPC_VISIT_TAGS } from '../../../overworld/npcs';
 import { CHARSETS, FREE_CHARSETS } from '../../../data/overworld/charsets';
 import { getSpeciesData } from '../../../data/species';
 import { isFeaturedSpecies } from '../../../data/species/day';
-import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
+import { SNAPSHOT_INTERVAL } from '../../../overworld/chunk-snapshot';
 import getWorld from '../../../overworld/current';
 import type { Depth } from '../../../overworld/depth';
 import { type CellFacts, canEnter } from '../../../overworld/field-moves';
@@ -66,7 +65,10 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
   const [yaw, setYaw] = createSignal(props.yaw);
   const origin = (): [number, number] => [at()[0] - BOARD_CENTER, at()[1] - BOARD_CENTER];
 
-  /** Every window over the board, rolled here the way the server would publish it */
+  /**
+   * Every window over the board. The pokemon are not in them: the board
+   * derives those from the chunk and the fixed instant
+   */
   const windows = (originX: number, originY: number): Map<string, WatchedWindow> => {
     const world = getWorld(props.depth);
     const timestamp = Math.floor(props.now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
@@ -74,16 +76,11 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
 
     for (const [x, y] of boardChunks(originX, originY)) {
       const chunk = world.getChunk(x, y);
-      const spawns = [];
-
-      for (const [species, individualValue, traitValue] of new ChunkSnapshot(
-        chunk,
-        timestamp,
-        offset,
-      ).getSpawns(PUBLISHED_SPAWNS)) {
-        spawns.push({ species, individualValue, traitValue });
-      }
-      records.set(`${x},${y}`, { x, y, record: { seed: chunk.seed, offset, timestamp, spawns } });
+      records.set(`${x},${y}`, {
+        x,
+        y,
+        record: { seed: chunk.seed, offset, timestamp, spawns: [] },
+      });
     }
     return records;
   };

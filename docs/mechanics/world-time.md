@@ -8,25 +8,30 @@ hour brings, and which family the day features.
 Different parts of a chunk refresh on different timers. The easier something is
 to obtain, the sooner it returns.
 
-| What changes                                                        | How often  |
-| ------------------------------------------------------------------- | ---------- |
-| The pokemon standing in a chunk                                     | 5 minutes  |
-| Item caches, berry patches, apricorn crops and honey trees          | 15 minutes |
-| Where things are happening, and what they are                       | 1 hour     |
-| The weather over a chunk                                            | 1 hour     |
-| Every raid: lairs, Max Raids, Totems, Alphas, Nobles, Tera crystals | 3 hours    |
-| Who is at a wandering-NPC cell or a Team Rocket cell                | 3 hours    |
-| Which counter a market stall is keeping, and what is on it          | 3 hours    |
-| Which trainer is standing at a trainer cell                         | 3 hours    |
-| Who holds a league seat or a Frontier Brain's house                 | 3 hours    |
-| The egg lying in a nest                                             | 12 hours   |
+| What changes                                                        | How often   |
+| ------------------------------------------------------------------- | ----------- |
+| One pokemon standing in a chunk (each slot has its own clock)       | 5.5 minutes |
+| Item caches, berry patches, apricorn crops and honey trees          | 15 minutes  |
+| Where things are happening, and what they are                       | 1 hour      |
+| The weather over a chunk                                            | 1 hour      |
+| Every raid: lairs, Max Raids, Totems, Alphas, Nobles, Tera crystals | 3 hours     |
+| Who is at a wandering-NPC cell or a Team Rocket cell                | 3 hours     |
+| Which counter a market stall is keeping, and what is on it          | 3 hours     |
+| Which trainer is standing at a trainer cell                         | 3 hours     |
+| Who holds a league seat or a Frontier Brain's house                 | 3 hours     |
+| The egg lying in a nest                                             | 12 hours    |
 
 An apricorn tree keeps its colour for good. Only the crop on it turns over.
 
-Every one of these is a whole number of five-minute windows and all of them are
-counted from the same instant, so a landmark never changes halfway through what
-a player is doing at it. An item cache that has been emptied stays empty while
-the pokemon around it turn over three times.
+The pokemon are not on a shared timer. Each of a chunk's slots runs its own cycle
+of 5.5 minutes: a pokemon stands for 3.5 to 4.5 minutes, the slot rests, and the
+next one arrives (see [Spawning](spawning.md)). Everything else in the table is a
+whole number of five-minute windows counted from the same instant, so a
+landmark never changes halfway through what a player is doing at it. An item
+cache that has been emptied stays empty while the pokemon around it come and go.
+
+A pokemon keeps the sky it arrived under: its species and coat are rolled when it
+arrives, from the time of day and weather at that moment.
 
 Windows follow each player's **local** clock. What a player eight hours ahead
 found in a chunk says nothing about what another player will find there.

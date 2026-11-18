@@ -29,9 +29,10 @@ When a slot's rest ends, it rolls again: a new species, a new individual with
 its own level, nature and values, and a new cell. The roll comes from the chunk,
 the zone and the slot's cycle number, so it is the same for everyone.
 
-A cycle never runs past the end of the local hour. Anything the hour changes,
-such as the weather and where things are happening, is settled before a pokemon
-arrives and holds until it leaves.
+A pokemon keeps what it arrived with, rolled under the weather of the hour it
+arrived in. When its stay runs past the end of the local hour, it stays only if
+its cell is still free in the new hour. If something the new hour brings lands
+on its cell, it leaves at the hour, so the board never empties all at once.
 
 ## Where a pokemon starts
 

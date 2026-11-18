@@ -1,8 +1,11 @@
 # Meeting pokemon
 
 Wild pokemon stand on the cells of a chunk and are met by walking up to one and
-clicking it. Every five minutes a chunk produces a fresh set of them, and every
-player who passes through the chunk during those five minutes sees the same set.
+clicking it. Each pokemon arrives, stays a few minutes and leaves on its own clock
+(see [Spawning](spawning.md)), so the set of a chunk changes a little at a time.
+Every player who passes through the chunk at one moment sees the same pokemon.
+One that has been caught or has run from a player is gone for that player only,
+until its stay ends and its slot rolls the next.
 
 Everything about a wild pokemon is decided before the player arrives and never
 changes: its level, nature, gender, ability, individual stats, size and moves.
@@ -10,9 +13,11 @@ Whether it is **shiny**, however, depends on the player looking at it.
 
 ## How many appear
 
-An ordinary walker sees **eight** pokemon in a chunk. Three more are always
-present but visible only to a player whose buddy attracts them, and a buddy that
-repels pokemon keeps some of them away.
+A chunk has **eight** slots for pokemon an ordinary walker sees, and about
+three in four of them are standing at any moment. Three more slots are visible
+only to a player whose buddy attracts them, and a buddy that repels pokemon
+keeps some of the eight away. A pokemon a player has already seen stays in sight
+until it leaves, even when the buddy is put away.
 
 | Buddy                                              | Pokemon visible |
 | -------------------------------------------------- | --------------- |
@@ -21,9 +26,10 @@ repels pokemon keeps some of them away.
 | Ordinary                                           | 8               |
 | With Arena Trap, Illuminate or No Guard (a "lure") | 11              |
 
-The extra pokemon are rolled for every chunk whether or not anybody can see them,
-so a lure changes who may meet them rather than whether they exist. A player
-without one can neither see nor reach the last three.
+The extra slots run for every chunk whether or not anybody can see them, so a
+lure changes who may meet them rather than whether they exist. A player without
+one can neither see nor reach the last three. The server checks each meeting
+against the clock, so a pokemon that has left (more than a second ago) cannot be met.
 
 ## Rarity
 
@@ -192,37 +198,37 @@ secretly a stronger pokemon.
 The pokemon walking beside a player changes what they find. Some effects come
 from the buddy's ability, others from what it is holding.
 
-| Effect                                       | Source    | What it does                                              |
-| -------------------------------------------- | --------- | --------------------------------------------------------- |
-| **Synchronize**                              | Ability   | Half of the pokemon met share the buddy's nature          |
-| **Cute Charm**                               | Ability   | Two in three come out the opposite gender to the buddy    |
-| **Arena Trap**, **Illuminate**, **No Guard** | Ability   | Three extra pokemon become visible and meetable           |
-| **Illuminate**                               | Ability   | A lantern as well: sees more than twice as far in the dark |
-| **Arena Trap**, **Shadow Tag**               | Ability   | A wild pokemon is half as likely to bolt from a failed throw |
-| **Magnet Pull**                              | Ability   | A Steel type cannot bolt at all                            |
-| **Purified**                                 | Ability   | Balls thrown at a shadow hold half again as often          |
-| **Gluttony**                                 | Ability   | Feeding carries a throw half again as far before it stops counting |
-| **Harvest**                                  | Ability   | A fed treat goes on working after a missed throw           |
-| **Honey Gather**                             | Ability   | Finds a berry every 384 steps walked                       |
-| **Forewarn**, **Anticipation**               | Ability   | Says how ready a wild pokemon is to run, before the first ball |
-| **Super Luck**                               | Ability   | Twice as often, a throw comes out critical                 |
-| **Sniper**                                   | Ability   | A critical throw gets two chances at its one shake         |
-| **Pickpocket**                               | Ability   | A pokemon that runs off leaves what it was carrying        |
-| **Stench**                                   | Ability   | Two fewer pokemon come near                               |
-| **Keen Eye**, **Intimidate**                 | Ability   | The bottom of the level band lifts by three               |
-| **Hustle**, **Pressure**, **Vital Spirit**   | Ability   | The top of the level band lifts by three                  |
-| **Compound Eyes**                            | Ability   | The two rare held-item slots turn up two and a half times as often |
-| **Frisk**                                    | Ability   | Shows what a wild pokemon is carrying before a throw      |
-| **Trace**                                    | Ability   | Shows what a wild pokemon's ability is before a throw     |
-| **Lightning Rod**, **Motor Drive**, **Volt Absorb**, **Storm Drain**, **Water Absorb**, **Sap Sipper**, **Flash Fire** | Ability | Balls thrown at a pokemon of their own type hold half again as often |
-| **Flame Body**, **Magma Armor**              | Ability   | An egg picked up beside it hatches in half the walk       |
-| **Pickup**                                   | Ability   | Finds an item every 512 steps walked                      |
-| **Shiny Charm**                              | Held item | Eight times the shiny odds                                |
-| **Exp. Share**                               | Held item | Half of catches also pay candy to the _buddy's_ family    |
-| **Lucky Egg**                                | Held item | Half of catches pay extra candy to the _caught_ family    |
-| **Luck Incense**                             | Held item | Doubles the gold a raid or a beaten grunt pays            |
-| **Pure Incense**, **Cleanse Tag**            | Held item | Three fewer pokemon appear, for crossing a chunk in peace |
-| **Amulet Coin**                              | Held item | Trebles the gold a raid or a beaten grunt pays            |
+| Effect                                                                                                                 | Source    | What it does                                                         |
+| ---------------------------------------------------------------------------------------------------------------------- | --------- | -------------------------------------------------------------------- |
+| **Synchronize**                                                                                                        | Ability   | Half of the pokemon met share the buddy's nature                     |
+| **Cute Charm**                                                                                                         | Ability   | Two in three come out the opposite gender to the buddy               |
+| **Arena Trap**, **Illuminate**, **No Guard**                                                                           | Ability   | Three extra pokemon become visible and meetable                      |
+| **Illuminate**                                                                                                         | Ability   | A lantern as well: sees more than twice as far in the dark           |
+| **Arena Trap**, **Shadow Tag**                                                                                         | Ability   | A wild pokemon is half as likely to bolt from a failed throw         |
+| **Magnet Pull**                                                                                                        | Ability   | A Steel type cannot bolt at all                                      |
+| **Purified**                                                                                                           | Ability   | Balls thrown at a shadow hold half again as often                    |
+| **Gluttony**                                                                                                           | Ability   | Feeding carries a throw half again as far before it stops counting   |
+| **Harvest**                                                                                                            | Ability   | A fed treat goes on working after a missed throw                     |
+| **Honey Gather**                                                                                                       | Ability   | Finds a berry every 384 steps walked                                 |
+| **Forewarn**, **Anticipation**                                                                                         | Ability   | Says how ready a wild pokemon is to run, before the first ball       |
+| **Super Luck**                                                                                                         | Ability   | Twice as often, a throw comes out critical                           |
+| **Sniper**                                                                                                             | Ability   | A critical throw gets two chances at its one shake                   |
+| **Pickpocket**                                                                                                         | Ability   | A pokemon that runs off leaves what it was carrying                  |
+| **Stench**                                                                                                             | Ability   | Two fewer pokemon come near                                          |
+| **Keen Eye**, **Intimidate**                                                                                           | Ability   | The bottom of the level band lifts by three                          |
+| **Hustle**, **Pressure**, **Vital Spirit**                                                                             | Ability   | The top of the level band lifts by three                             |
+| **Compound Eyes**                                                                                                      | Ability   | The two rare held-item slots turn up two and a half times as often   |
+| **Frisk**                                                                                                              | Ability   | Shows what a wild pokemon is carrying before a throw                 |
+| **Trace**                                                                                                              | Ability   | Shows what a wild pokemon's ability is before a throw                |
+| **Lightning Rod**, **Motor Drive**, **Volt Absorb**, **Storm Drain**, **Water Absorb**, **Sap Sipper**, **Flash Fire** | Ability   | Balls thrown at a pokemon of their own type hold half again as often |
+| **Flame Body**, **Magma Armor**                                                                                        | Ability   | An egg picked up beside it hatches in half the walk                  |
+| **Pickup**                                                                                                             | Ability   | Finds an item every 512 steps walked                                 |
+| **Shiny Charm**                                                                                                        | Held item | Eight times the shiny odds                                           |
+| **Exp. Share**                                                                                                         | Held item | Half of catches also pay candy to the _buddy's_ family               |
+| **Lucky Egg**                                                                                                          | Held item | Half of catches pay extra candy to the _caught_ family               |
+| **Luck Incense**                                                                                                       | Held item | Doubles the gold a raid or a beaten grunt pays                       |
+| **Pure Incense**, **Cleanse Tag**                                                                                      | Held item | Three fewer pokemon appear, for crossing a chunk in peace            |
+| **Amulet Coin**                                                                                                        | Held item | Trebles the gold a raid or a beaten grunt pays                       |
 
 Cute Charm does nothing when either pokemon is genderless.
 

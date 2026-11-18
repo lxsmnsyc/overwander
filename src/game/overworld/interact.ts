@@ -454,7 +454,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
 
     if (spawn != null) {
       // The server decides what stands there: a turned-over window's spawn is not met
-      const encounter = await startEncounter(spot.snapshot, spawn.id);
+      const encounter = await startEncounter(spot.snapshot, spawn.id, spot.cell, spawn.spawn[1]);
 
       return encounter == null ? m.interact_too_late() : meet(user, encounter);
     }

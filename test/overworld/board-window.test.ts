@@ -70,8 +70,8 @@ describe('the chunks a board asks for windows on', () => {
 
 /**
  * The board's fixtures are the world seed's answer, so a window that
- * has not landed is a chunk with nothing standing in it rather than a
- * board with nothing on it. Walking into a chunk used to take the
+ * has not landed is a chunk without its windowed content (caches,
+ * phenomena) rather than a board with nothing on it. Walking into a chunk used to take the
  * whole picture away while its record crossed the wire
  */
 describe('a board whose windows have not landed', () => {
@@ -81,8 +81,8 @@ describe('a board whose windows have not landed', () => {
     expect(view.snapshot).not.toBeNull();
     expect(view.walls).toBeInstanceOf(Set);
     expect(view.landmarks.size).toBeGreaterThan(0);
-    // Nothing is published, so nothing is standing there
-    expect(view.spawns.size).toBe(0);
+    // The pokemon come off the clock, so they stand without a window
+    expect(view.spawns.size).toBeGreaterThan(0);
     expect(view.chunks).toHaveLength(0);
   });
 

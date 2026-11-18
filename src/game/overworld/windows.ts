@@ -10,7 +10,11 @@ import {
 import type { Unwatch } from '../../auth/watch';
 import LRUMap from '../../core/lru-map';
 import type { SnapshotRecord } from '../../model/snapshot-record';
+import type Chunk from '../../overworld/chunk';
 import { CHUNK_CELLS } from '../../overworld/chunk';
+import { SLOT_PERIOD, SLOT_TOTAL } from '../../overworld/spawn-life';
+import { cycleOf, slotPhase } from '../../overworld/spawn-life/lifetimes';
+import { toZoneKey } from '../../model/local-time';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../overworld/chunk-snapshot';
 import getWorld from '../../overworld/current';
 import type { Depth } from '../../overworld/depth';
@@ -95,6 +99,43 @@ function onScreen(): boolean {
 }
 
 /** Whether two lists of chunks name the same chunks in the same order */
+/**
+ * The soonest local instant after `now` at which a pokemon appears or
+ * leaves in one of the chunks: the edge the board is rebuilt at, since
+ * spawns come and go on their own clocks and nothing else wakes it
+ */
+export function nextSpawnEdge(
+  chunks: readonly { chunk: Chunk; offset: number }[],
+  now: number,
+): number {
+  let soonest = Number.POSITIVE_INFINITY;
+
+  for (const { chunk, offset } of chunks) {
+    const key = `${chunk.seed}${toZoneKey(offset)}`;
+
+    for (let slot = 0; slot < SLOT_TOTAL; slot++) {
+      const current = Math.floor((now - slotPhase(key, slot)) / SLOT_PERIOD);
+
+      // The cycle standing now, and the next one: the edges after `now`
+      // are the end of the first or the start of the second
+      for (const cycle of [current, current + 1]) {
+        const found = cycleOf(chunk, offset, slot, cycle);
+
+        if (found == null) {
+          continue;
+        }
+        if (found.start > now) {
+          soonest = Math.min(soonest, found.start);
+        }
+        if (found.end > now) {
+          soonest = Math.min(soonest, found.end);
+        }
+      }
+    }
+  }
+  return soonest;
+}
+
 function sameChunks(was: [number, number][], now: [number, number][]): boolean {
   if (was.length !== now.length) {
     return false;
@@ -240,6 +281,45 @@ export default function createBoardWindows(deps: WindowsDeps): BoardWindows {
       kept == null || !isLive(kept) ? undefined : kept,
     );
 
+  /*
+   * Pokemon coming and going
+   */
+
+  let edge: ReturnType<typeof setTimeout> | null = null;
+
+  // A pokemon appears and leaves on its own clock, so the board is built
+  // again at the soonest of those instants. Rebuilding is what a new
+  // map in `live` asks for
+  const awaitEdge = (): void => {
+    if (edge != null) {
+      clearTimeout(edge);
+      edge = null;
+    }
+    if (!walk.placed.get() || overlapped.length === 0) {
+      return;
+    }
+
+    const now = localNow(zone);
+    const world = around();
+    const soonest = nextSpawnEdge(
+      overlapped.map(([cx, cy]) => ({ chunk: world.getChunk(cx, cy), offset: zone })),
+      now,
+    );
+
+    if (!Number.isFinite(soonest)) {
+      return;
+    }
+    // A hair past the edge, so the clock has crossed it when the board reads it
+    edge = setTimeout(
+      () => {
+        edge = null;
+        live.set(runningWindows(windows.get(), localNow(zone)));
+        awaitEdge();
+      },
+      soonest - now + 20,
+    );
+  };
+
   /** Open the watches the board's chunks need and close the ones it walked away from */
   const follow = (): void => {
     // Nothing is watched until the player has been put somewhere: chunk
@@ -257,6 +337,7 @@ export default function createBoardWindows(deps: WindowsDeps): BoardWindows {
       return;
     }
     overlapped = wanted;
+    awaitEdge();
 
     // A cave has the same chunk coordinates as the ground above it, so a
     // change of layer drops every window: kept, the board drew one layer's
@@ -539,6 +620,9 @@ export default function createBoardWindows(deps: WindowsDeps): BoardWindows {
       }
       if (expiry != null) {
         clearTimeout(expiry);
+      }
+      if (edge != null) {
+        clearTimeout(edge);
       }
       for (const stop of watched.values()) {
         stop();

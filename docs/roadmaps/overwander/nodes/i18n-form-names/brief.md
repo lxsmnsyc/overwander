@@ -1,7 +1,7 @@
 ---
 id: i18n-form-names
 title: Name every form and category in ja and es
-status: active
+status: done
 priority: should
 type: fix
 outline: false
@@ -42,17 +42,17 @@ Every species and form reads its name and category in Japanese and Spanish. Meas
 
 ## Steps
 
-- [ ] Regional forms are named by rule: es `<name> de <Región>` (Zoroark de Hisui, Raichu de Alola, Tauros de Paldea; the maintainer's convention), ja `<name>（<region>のすがた）` (ゾロアーク（ヒスイのすがた）). Their category is the species' own unless PokeAPI or the English gives a different one.
-- [ ] Every other form takes PokeAPI's full name where there is one, or one built from its form label, and a hand-written name otherwise.
-- [ ] Gaps PokeAPI leaves (missing categories, forms it does not name) are filled from an overrides file under `scripts/i18n/overrides/` that the generator merges, with the official names. No value is written straight into a generated field.
-- [ ] A test fails if any species or form entry in English lacks a ja or es name or category.
+- [x] Regional forms are named by rule: es `<name> de <Región>` (Zoroark de Hisui, Raichu de Alola, Tauros de Paldea; the maintainer's convention), ja `<name>（<region>のすがた）` (ゾロアーク（ヒスイのすがた）). Their category is the species' own unless PokeAPI or the English gives a different one.
+- [x] Every other form takes PokeAPI's full name where there is one, or one built from its form label, and a hand-written name otherwise.
+- [x] Gaps PokeAPI leaves (missing categories, forms it does not name) are filled from an overrides file under `scripts/i18n/overrides/` that the generator merges, with the official names. No value is written straight into a generated field.
+- [x] A test fails if any species or form entry in English lacks a ja or es name or category.
 
 ## Acceptance
 
-- [ ] Under es, Sprigatito's dex entry reads Pokémon Gato Planta, and a Hisuian Zoroark reads Zoroark de Hisui; under ja, ゾロアーク（ヒスイのすがた）.
-- [ ] `pnpm official-names` reruns with no diff.
-- [ ] A fresh review agent checks the names and categories against the official games; findings fixed before the PR.
-- [ ] Changeset `patch`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test`.
+- [x] Under es, Sprigatito's dex entry reads Pokémon Gato Planta, and a Hisuian Zoroark reads Zoroark de Hisui; under ja, ゾロアーク（ヒスイのすがた）.
+- [x] `pnpm official-names` reruns with no diff.
+- [x] A fresh review agent checks the names and categories against the official games; findings fixed before the PR.
+- [x] Changeset `patch`. Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test`.
 
 ## Sizing
 

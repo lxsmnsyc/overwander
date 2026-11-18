@@ -42,3 +42,8 @@
 ## Size
 
 - Estimated M, actual M. The code was small; finding the official wording took most of the time.
+
+## Landed
+
+- Commit `a5e8a1ea1` on `batch/overwander`, after a fresh review. It found seven Gen 9 es categories holding a WikiDex template fragment (`Pokémon {{NombreHaEs`; fixed to Gorrino, Pelotero, Volantes, Cóngrido and Gran Siluro, and the test now fails on markup), Silvally's types coined where PokeAPI has official labels (fixed), Alcremie's sweets disagreeing with the repo's sweet items (fixed to match them), the es Tauros breeds as `Raza` where WikiDex has `Variedad` (fixed), and the es Terastal Ogerpon wording (now `forma teracristal`, as Terapagos). The overrides schema is strict, so a misspelt field fails.
+- Left: an override keyed by a missing English entry is still ignored silently, and the generated header does not mention the overrides file.

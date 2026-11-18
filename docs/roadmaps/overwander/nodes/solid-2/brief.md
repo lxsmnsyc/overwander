@@ -50,6 +50,9 @@ Agreed with the maintainer on 2026-11-18. Every child follows them; a child that
 6. Server reads stay POST. `readOnly` keys on `fn.id`, the call counter on the id from the path. Skew protection is Solid 2.0's own build check (maintainer, 2026-11-18): the app's `X-Build` guard goes, and a response with `X-Server-Function-Unknown` reloads the tab.
 7. Test setup: `solid-2-tests` measures and chooses, likely a `test.projects` split (component tests in the browser setting, the rest on Node).
 8. Entries: keep the authored client and server entries, so whatever the client entry installs before mount (the call counter, the reload on an unknown build) visibly runs first.
+9. Contexts: 2.0's `useContext` throws without a provider, so a null check after it is dead. Per context, decide: a missing provider is a bug (drop the check) or normal (give `createContext` a `null` default and keep the check). Settled in `solid-2-styled` for `HostContext` and `Holding`.
+10. Boolean `aria-*` values go through `spellAria` (exported from `src/components/styled`), never a cast: 2.0 writes `true` as a bare attribute and drops `false`.
+11. Read the patterns `solid-2-styled`'s outcome lists under "Patterns settled" (effect-split shape, writable derived signals for effect-driven writes, `stop` variables for teardowns made in handlers, `flush()` only to measure moved DOM) and reuse them.
 
 ## Acceptance
 

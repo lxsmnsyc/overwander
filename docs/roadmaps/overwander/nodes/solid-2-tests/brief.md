@@ -37,6 +37,7 @@ Choose how the tests run under the new plugin, remove the spike's `test.environm
 
 - Spike gotchas: with the plugin's default (browser) setting 5 files fail (`window`, `matchMedia`, `renderToString` in the browser, one-argument `createEffect`); with `environment: 'node'` `windows.test.ts` fails (`Missing species data for 1014404`, something registers differently when `isServer` is true) and the run takes 605 s against 154 s.
 - Decided (story Decisions 7): measure, then choose. A `test.projects` split (component tests in the browser setting, the rest on Node) is the likely answer.
+- Solid 2 delegates events only inside the element `render` mounts into: a test that renders into a div and portals to `document.body` sees clicks do nothing. Render into the body or a container that holds the portal host.
 - Setters apply after a microtask: tests that set then read need `flush()`.
 - `test/components/resource-reads.test.ts` tests the 1.x `Resource` shape; rewrite it for the async-memo pattern.
 

@@ -1,7 +1,7 @@
 ---
 id: solid-2-styled
 title: Migrate the styled primitives, dialogs and floating UI to Solid 2.0
-status: active
+status: done
 priority: could
 type: refactor
 story: solid-2
@@ -13,6 +13,7 @@ spike: false
 verify: 
 gate: false
 added: 2026-11-18
+spent: 363000
 owns:
   - src/components/styled/**
   - src/components/icons*

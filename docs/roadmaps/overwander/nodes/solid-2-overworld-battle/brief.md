@@ -1,7 +1,7 @@
 ---
 id: solid-2-overworld-battle
 title: Migrate the overworld, canvas mounts and battle views to Solid 2.0
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2

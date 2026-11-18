@@ -1,7 +1,8 @@
 ---
 id: boot-true-shadows-yaml
 title: True shadows as YAML
-status: active
+status: dropped
+spent: 40000
 priority: could
 type: refactor
 outline: false

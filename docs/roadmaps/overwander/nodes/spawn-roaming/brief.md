@@ -1,7 +1,7 @@
 ---
 id: spawn-roaming
 title: Roaming wild pokemon
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

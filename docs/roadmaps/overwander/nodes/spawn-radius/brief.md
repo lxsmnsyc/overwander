@@ -1,7 +1,8 @@
 ---
 id: spawn-radius
 title: Spawn radius around the player
-status: active
+status: done
+spent: 171000
 priority: should
 type: feature
 outline: false
@@ -44,16 +45,16 @@ The player's side of the spawn rules: what is drawn, how pokemon fade in and out
 
 ## Steps
 
-- [ ] `spawn-radius.ts`: `spawnAlpha(live, now, distance)` and `isDrawn(distance)` as in the contract, pure, with unit tests (fade in, near fade in, fade out, already standing, a press during a fade).
-- [ ] Mark each board spawn with whether it started inside the near ring (distance to the player when its cycle started, or at first draw if the chunk was not loaded then). Keep the "already standing" case instant.
-- [ ] Draw: multiply the sprite's alpha by `spawnAlpha` in the chunk view. A press on a fading spawn still opens it (the server decides).
-- [ ] Reduce motion: with the setting on, fades are skipped or shortened like other motion (`device-settings` skill, `src/components/app/settings.ts`).
+- [x] `spawn-radius.ts`: `spawnAlpha(live, now, distance)` and `isDrawn(distance)` as in the contract, pure, with unit tests (fade in, near fade in, fade out, already standing, a press during a fade).
+- [x] Mark each board spawn with whether it started inside the near ring (distance to the player when its cycle started, or at first draw if the chunk was not loaded then). Keep the "already standing" case instant.
+- [x] Draw: multiply the sprite's alpha by `spawnAlpha` in the chunk view. A press on a fading spawn still opens it (the server decides).
+- [x] Reduce motion: with the setting on, fades are skipped or shortened like other motion (`device-settings` skill, `src/components/app/settings.ts`).
 
 ## Acceptance
 
-- [ ] `spawnAlpha` is 0 at the cycle start, reaches 1 after `FADE_IN_MS` (`FADE_IN_NEAR_MS` inside the near ring), starts falling `FADE_OUT_MS` before the end, and is 1 for a spawn already standing, all in `test/game/spawn-radius.test.ts`.
-- [ ] A spawn whose cycle starts beside a walking player is not drawn at full alpha on its first frame (test on the pure function).
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
+- [x] `spawnAlpha` is 0 at the cycle start, reaches 1 after `FADE_IN_MS` (`FADE_IN_NEAR_MS` inside the near ring), starts falling `FADE_OUT_MS` before the end, and is 1 for a spawn already standing, all in `test/game/spawn-radius.test.ts`.
+- [x] A spawn whose cycle starts beside a walking player is not drawn at full alpha on its first frame (test on the pure function).
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
 
 ## Sizing
 

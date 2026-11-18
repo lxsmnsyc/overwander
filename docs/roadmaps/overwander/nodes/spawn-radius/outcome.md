@@ -43,3 +43,8 @@
 ## Size
 
 - Estimated M, actual M.
+
+## Landed
+
+- Commit `ba4a8b35a` on `batch/overwander`. Fresh review clean. Not looked at in a browser.
+- Nits left: the standing test hardcodes `1_000` instead of `STANDING_AFTER_MS`, and its rebuild assertion passes when the seat is gone. `nextSpawnEdge` still counts hidden and off-board slots.

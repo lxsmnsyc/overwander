@@ -1,7 +1,7 @@
 ---
 id: spawn-radius
 title: Spawn radius around the player
-status: todo
+status: active
 priority: should
 type: feature
 outline: false
@@ -60,6 +60,8 @@ The player's side of the spawn rules: what is drawn, how pokemon fade in and out
 M: one pure module and two small edits in shared files; uncertainty low, verifiability low for the logic and manual for the look.
 
 ## Notes for the worker
+
+- From the spawn-lifetimes review: `nextSpawnEdge` in `src/game/overworld/windows.ts` counts edges of hidden lure slots and of spawns homed outside `BOARD_RADIUS`, so the board rebuilds about every 3 to 4 s. Fades add edges of their own, so skip edges nobody draws while you are in there, and measure the rebuild cost.
 
 - Do not change which chunks are loaded or which cells hold a pokemon.
 - `spawn-roaming` runs after this and edits the same draw loops. Keep the alpha hook one small function so it merges cleanly.

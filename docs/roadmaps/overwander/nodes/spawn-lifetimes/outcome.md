@@ -46,3 +46,8 @@
 ## Size
 
 - Estimated L, actual L.
+
+## Landed
+
+- Commit `878f3c853` on `batch/overwander`. Fresh review clean (full suite and `pnpm test:db` pass). The orchestrator passed `live.id` to `startEncounter` and fixed stale window wording, and rewrote the hour paragraph of `docs/mechanics/spawning.md` for contract v2.
+- Left for later: `nextSpawnEdge` counts edges of hidden lure slots and of spawns homed off the board, so the board rebuilds about every 3 to 4 s. Dropping `getSpawns` and `snapshot_spawns` needs a migration.

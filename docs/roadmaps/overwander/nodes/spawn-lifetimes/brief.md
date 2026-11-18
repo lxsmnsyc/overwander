@@ -1,7 +1,8 @@
 ---
 id: spawn-lifetimes
 title: Staggered spawn lifetimes and caps
-status: active
+status: done
+spent: 216237
 priority: should
 type: feature
 outline: false
@@ -62,19 +63,19 @@ Each wild pokemon appears and leaves on its own clock under the chunk's cap, and
 
 ## Steps
 
-- [ ] Board: build spawns from `liveSpawns`, keep the shown-lure memory (`everShown`, keyed by spawn id), keep the fled hide, keep `deriveShiny` per spawn.
-- [ ] Time: rebuild the board at cycle edges.
-- [ ] Server and client: new `meetSpawn` arguments and `checkMeeting`.
-- [ ] Remove `ChunkSnapshot.getSpawns`, `getSpawnAt` and `getSpawnCells` once nothing reads them (the publisher in `snapshots.ts` still needs `getSpawns`, so it stays until the table goes). Say which stayed.
-- [ ] Teaser and tests as above. Docs: the 5 minute row of `docs/mechanics/world-time.md` and the opening of `docs/mechanics/encounters.md` (contract, "Docs the build node updates").
+- [x] Board: build spawns from `liveSpawns`, keep the shown-lure memory (`everShown`, keyed by spawn id), keep the fled hide, keep `deriveShiny` per spawn.
+- [x] Time: rebuild the board at cycle edges.
+- [x] Server and client: new `meetSpawn` arguments and `checkMeeting`.
+- [x] Remove `ChunkSnapshot.getSpawns`, `getSpawnAt` and `getSpawnCells` once nothing reads them (the publisher in `snapshots.ts` still needs `getSpawns`, so it stays until the table goes). Say which stayed.
+- [x] Teaser and tests as above. Docs: the 5 minute row of `docs/mechanics/world-time.md` and the opening of `docs/mechanics/encounters.md` (contract, "Docs the build node updates").
 
 ## Acceptance
 
-- [ ] Two clients at one instant derive the same pokemon on the same cells, and a spawn leaves at its cycle end and a new one arrives after its rest (a board-view test that steps `now` across a cycle edge).
-- [ ] The server refuses a meeting outside the cycle, with a wrong individual value, a wrong slot and a wrong cell, and accepts one inside the 1 s and 1 cell allowance (`pnpm test:db` for the server path, one suite at a time).
-- [ ] A fled or caught pokemon is hidden for that player until its cycle ends, then the slot's next pokemon shows (new key).
-- [ ] `docs/mechanics/world-time.md` and `encounters.md` match the new behaviour.
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then `pnpm exec vitest run test/overworld`, then `pnpm fuzz` for the meetings property.
+- [x] Two clients at one instant derive the same pokemon on the same cells, and a spawn leaves at its cycle end and a new one arrives after its rest (a board-view test that steps `now` across a cycle edge).
+- [x] The server refuses a meeting outside the cycle, with a wrong individual value, a wrong slot and a wrong cell, and accepts one inside the 1 s and 1 cell allowance (`pnpm test:db` for the server path, one suite at a time).
+- [x] A fled or caught pokemon is hidden for that player until its cycle ends, then the slot's next pokemon shows (new key).
+- [x] `docs/mechanics/world-time.md` and `encounters.md` match the new behaviour.
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then `pnpm exec vitest run test/overworld`, then `pnpm fuzz` for the meetings property.
 
 ## Sizing
 

@@ -1,7 +1,7 @@
 ---
 id: boot-learnsets-loader
 title: Learn sets on their own loader
-status: todo
+status: active
 priority: should
 type: refactor
 outline: false

@@ -295,16 +295,25 @@ export function getBossMoves(species: Species): Moves[] {
 export const BANNED_BOSS_SPECIES = new Set<Species>([Species.Ditto]);
 
 /**
+ * Species left with nothing to cast once the boss bans are taken off:
+ * Smeargle levels into Sketch alone, and Sketch is banned.
+ *
+ * Written out rather than worked out, because the world asks who can
+ * be a boss for every chunk it draws, and that is before the browser
+ * has loaded the learn sets or the moves. A test runs `getBossMoves`
+ * over every species and fails if this list falls out of step, so a
+ * later ban cannot strand a species with an empty move list unnoticed
+ */
+export const MOVELESS_BOSS_SPECIES = new Set<Species>([Species.Smeargle, Species.SmeargleZenith]);
+
+/**
  * Whether the species can be a boss at all: not one of the banned
  * ones, and with something left to cast once the banned moves are
- * taken off it.
- *
- * The second half is a rule rather than a list, so a later ban cannot
- * quietly strand a species with an empty move list — it drops out of
- * the draw on its own
+ * taken off it. Reads no learn set or move, so a chunk can ask it
+ * on the first frame
  */
 export function canStageBoss(species: Species): boolean {
-  return !BANNED_BOSS_SPECIES.has(species) && getBossMoves(species).length > 0;
+  return !BANNED_BOSS_SPECIES.has(species) && !MOVELESS_BOSS_SPECIES.has(species);
 }
 
 /**

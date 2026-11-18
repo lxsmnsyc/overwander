@@ -22,17 +22,14 @@ export function countServerCall(serverId: string | null): void {
 
 /**
  * Mark a server function as a read, so calling it does not count as a
- * change. Its reference carries the id in `url`
+ * change. Its reference carries its id in `id`, the same id the call's
+ * path ends in
  */
 export function readOnly<T extends object>(fn: T): T {
-  const url: unknown = Reflect.get(fn, 'url');
+  const id: unknown = Reflect.get(fn, 'id');
 
-  if (typeof url === 'string') {
-    const id = new URL(url, 'http://localhost').searchParams.get('id');
-
-    if (id != null) {
-      reads.add(id);
-    }
+  if (typeof id === 'string') {
+    reads.add(id);
   }
   return fn;
 }

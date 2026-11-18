@@ -1,19 +1,43 @@
-/** The header a tab names its build in, on every server call */
-export const BUILD_HEADER = 'X-Build';
-
-/** The header the server refuses a call from another build with */
-export const STALE_BUILD_HEADER = 'X-Stale-Build';
-
-/** Whether a request path is SolidStart's server function endpoint */
-export function isServerCall(pathname: string): boolean {
-  return pathname.endsWith('/_server');
-}
+/** Where Solid serves its server functions */
+const SERVER_ENDPOINT = '/_server/';
 
 /**
- * Whether a request is a server call from any build but the live one.
- * A call that names no build is one of them: every tab since the guard
- * shipped names its own
+ * The header Solid's runtime answers with when a call names a function
+ * or a build the live server does not have
  */
-export function isStaleCall(pathname: string, sent: string | null, live: string): boolean {
-  return isServerCall(pathname) && sent !== live;
+export const UNKNOWN_FUNCTION_HEADER = 'X-Server-Function-Unknown';
+
+/**
+ * The header Solid names a build in: the tab's on each call, and the
+ * live one on its answer refusing another build
+ */
+export const SOLID_BUILD_HEADER = 'X-Server-Function-Build';
+
+/**
+ * The server function a request path calls, or null when it is not a
+ * server call. Solid addresses one as `/_server/<id>`, with `data/` or
+ * `live/` between for ordinary calls and the live wire
+ */
+export function getServerCallId(pathname: string): string | null {
+  if (!pathname.startsWith(SERVER_ENDPOINT)) {
+    return null;
+  }
+
+  // The id is the one segment left once the kind of call is taken off
+  let segment = pathname.slice(SERVER_ENDPOINT.length);
+
+  for (const kind of ['data/', 'live/']) {
+    if (segment.startsWith(kind)) {
+      segment = segment.slice(kind.length);
+      break;
+    }
+  }
+  if (segment === '' || segment.includes('/')) {
+    return null;
+  }
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return null;
+  }
 }

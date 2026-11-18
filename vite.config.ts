@@ -37,10 +37,9 @@ const ENV_DIR = forTests ? 'test/env' : process.env.OVERWANDER_ENV_DIR;
 
 /**
  * One id per build, shared by the client and server bundles. A tab
- * names it on every server call, and a call from a build that is no
- * longer live is refused: a server function keeps its id while its
- * parameters change, so an old tab's arguments would reach it in the
- * wrong order
+ * names it when it joins the live feed (`/_live`), and the feed sends a
+ * tab from another build to reload. Server functions do not read it:
+ * Solid stamps and checks a build id of its own on every call
  */
 const BUILD_ID =
   process.env.BUILD_ID != null && process.env.BUILD_ID !== ''

@@ -57,8 +57,8 @@ alongside a call is never trusted; only what the token proves is.
 | `usePortal`                                              | The cell has to really be a portal in a live window, the far end is re-derived rather than accepted, and the key is taken only once the crossing is known to be real                                |
 | `savePosition`                                           | A client that could write this row could write anybody else's; the coordinates are clamped to somewhere that exists, and nothing about the walk is checked because nothing trusts a position        |
 
-Every module under `src/server` opens with `import 'server-only'`. SolidStart
-resolves that marker itself: an empty module on the server, and a **build
+Every module under `src/server` opens with `import 'server-only'`. The Solid
+build resolves that marker itself: an empty module on the server, and a **build
 failure** in the client bundle naming the file that reached across. The boundary
 is enforced by the build rather than by remembering where an import came from.
 

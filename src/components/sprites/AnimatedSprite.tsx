@@ -1,4 +1,4 @@
-import { type Accessor, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, Show, createEffect, createMemo, createSignal, onSettled } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/effects/auras';
 import settings from '../app/settings';
@@ -234,7 +234,7 @@ function AuraCanvas(props: {
     return { x: left, y: top, width: right - left, height: bottom - top, feet: [x, y] };
   });
 
-  onCleanup(
+  onSettled(() =>
     ticking((elapsed) => {
       played += elapsed;
 
@@ -335,41 +335,46 @@ function SparkleCanvas(props: { drawn: Accessor<Drawn | null>; seed: number }): 
     };
   });
 
-  const stop = ticking((elapsed) => {
-    age += elapsed;
+  // The step stops itself when the sparkle is over
+  let stop = (): void => undefined;
 
-    const area = reach();
-    const context = canvas?.getContext('2d');
+  onSettled(() => {
+    stop = ticking((elapsed) => {
+      age += elapsed;
 
-    if (canvas == null || context == null || area == null) {
-      return;
-    }
+      const area = reach();
+      const context = canvas?.getContext('2d');
 
-    const width = Math.max(1, Math.round(area.width * AURA_RESOLUTION));
-    const height = Math.max(1, Math.round(area.height * AURA_RESOLUTION));
+      if (canvas == null || context == null || area == null) {
+        return;
+      }
 
-    if (canvas.width !== width) {
-      canvas.width = width;
-    }
-    if (canvas.height !== height) {
-      canvas.height = height;
-    }
-    context.clearRect(0, 0, width, height);
-    if (age > SPARKLE_LIFE) {
-      stop();
-      return;
-    }
-    drawSparkle(
-      context,
-      props.seed,
-      age,
-      (area.feet[0] - area.x) * AURA_RESOLUTION,
-      (area.feet[1] - area.y) * AURA_RESOLUTION,
-      AURA_RESOLUTION,
-    );
+      const width = Math.max(1, Math.round(area.width * AURA_RESOLUTION));
+      const height = Math.max(1, Math.round(area.height * AURA_RESOLUTION));
+
+      if (canvas.width !== width) {
+        canvas.width = width;
+      }
+      if (canvas.height !== height) {
+        canvas.height = height;
+      }
+      context.clearRect(0, 0, width, height);
+      if (age > SPARKLE_LIFE) {
+        stop();
+        return;
+      }
+      drawSparkle(
+        context,
+        props.seed,
+        age,
+        (area.feet[0] - area.x) * AURA_RESOLUTION,
+        (area.feet[1] - area.y) * AURA_RESOLUTION,
+        AURA_RESOLUTION,
+      );
+    });
+
+    return stop;
   });
-
-  onCleanup(stop);
 
   /** Where the box sits, as shares of the element it hangs out of */
   const placed = (): JSX.CSSProperties => {

@@ -47,12 +47,14 @@ setSetting('boxColumns', 8);
 ## The two rules that are easy to get wrong
 
 **Storage is read after hydration, never at import.** `loadSettings()`
-is called from `onMount` in `src/app.tsx`. Reading it while the page is
+runs in `onSettled(loadSettings)` in `src/app.tsx`, which never runs on
+the server. Reading it while the page is
 still being matched against the server's markup is what makes the two
 disagree.
 
 **A setting that CSS acts on is a class on the root element**, put
-there by a `createEffect` in `src/app.tsx`, with the rule itself in
+there by a `createEffect` in `src/app.tsx`, the setting read in its
+compute and the class toggled in its apply, with the rule itself in
 `src/app.css`. That is how `reduce-motion` works and how the theme
 works. Do not reach for inline styles or a `<style>` tag.
 
@@ -60,6 +62,15 @@ works. Do not reach for inline styles or a `<style>` tag.
 `<Show when={import.meta.env.DEV}>` in the settings panel, and its
 reader ANDs the setting with `import.meta.env.DEV`, so a build drops
 the effect whatever a stored value says.
+
+```tsx
+createEffect(
+  () => settings().reduceMotion,
+  (reduceMotion) => {
+    document.documentElement.classList.toggle('reduce-motion', reduceMotion);
+  },
+);
+```
 
 ## The theme is not one of these
 

@@ -31,11 +31,12 @@ one that covers what you are about to do:
   merges separate requests or batches inside a transaction.
 - `server-reads` - the browser reads only through server functions, which check
   their arguments, call `requireReader`, decide who may see each row, and are
-  registered with `readOnly`; a table followed live needs its trigger and a
-  rule in `src/server/live/rules.ts`.
-- `server-function-order` - a `'use server'` function is addressed by its place
-  in its file; the build guard refuses every call from another build, so it
-  must never be weakened and every server call must go through `fetch`.
+  registered with `readOnly` (keyed on the function's `fn.id`); a table
+  followed live needs its trigger and a rule in `src/server/live/rules.ts`.
+- `server-function-order` - a `'use server'` function is addressed by the name
+  it is bound to plus a hash of its file; Solid's build check refuses a call
+  from another build and `src/auth/stale-build.ts` reloads the tab on it, so
+  every server call must go through Solid's client and reads stay POST.
 - `spawn-surfaces` - a biome's pools are mixed into one roster that each cell
   cuts by surface; a species' kind (ground, water or flying) decides where it
   stands, and only an amphibious water species leaves the water.
@@ -53,3 +54,9 @@ one that covers what you are about to do:
   `src/canvas` as plain functions; components read stores through
   `createStoreSignal` and reach the interface's toasts, sounds and forms only
   as callbacks the module is handed.
+- `async-reads` - an async memo is declared in one body and read in a child
+  under `Loading`; a read that must not wait is a `createLoad`, a feed is
+  `watchLive`, a failure is `Errored` or `catchFailure`.
+- `effect-props` - an effect is a compute and an apply written with braces;
+  stateful effects read props through memos, a write is visible only after a
+  microtask, and setup with teardown is `onSettled`.

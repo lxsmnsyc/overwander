@@ -1,7 +1,8 @@
 ---
 id: boot-lazy-abilities
 title: Set abilities up on demand
-status: active
+status: dropped
+spent: 60000
 priority: could
 type: refactor
 outline: false

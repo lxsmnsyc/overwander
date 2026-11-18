@@ -1,7 +1,7 @@
 ---
 id: solid-2-conventions
 title: Rewrite the conventions for Solid 2.0
-status: active
+status: done
 priority: could
 type: docs
 story: solid-2
@@ -13,6 +13,7 @@ spike: false
 verify: 
 gate: false
 added: 2026-11-18
+spent: 256360
 owns:
   - .claude/skills/resource-suspense/**
   - .agents/skills/resource-suspense/**

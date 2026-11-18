@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { createEffect, on, onSettled } from 'solid-js';
+import { createEffect, onSettled } from 'solid-js';
 import { BOARD_CENTER } from '../../overworld/board';
 import { boardIndexOf } from '../../canvas/overworld/board';
 import createChunkView, {
@@ -43,9 +43,15 @@ export default function ChunkCanvas(props: ChunkCanvasProps): JSX.Element {
 
   // Whatever the board is drawn from changing is a picture worth drawing again
   createEffect(
-    on([(): unknown[] => Object.values(props), settings], () => {
+    (): unknown[] => {
+      const read: unknown[] = Object.values(props);
+
+      read.push(settings());
+      return read;
+    },
+    () => {
       view?.invalidate();
-    }),
+    },
   );
 
   /** What the player is facing, said for a screen reader since the board is paint */

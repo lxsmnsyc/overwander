@@ -1,6 +1,6 @@
 import { Genders } from '../../data/ids/species';
 import type { JSX } from '@solidjs/web';
-import { type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, Loading, Show, createMemo, createSignal } from 'solid-js';
 import { challengeGymSeat, leaveGymSeat, takeGymSeat } from '../../auth/gym-seats';
 import {
   type GymSeatStanding,
@@ -70,8 +70,8 @@ interface Holder {
 
 function SeatCounter(
   props: GymSeatDialogProps & {
-    party: Resource<TeamSnapshotRecord | null>;
-    holder: Resource<Holder>;
+    party: Accessor<TeamSnapshotRecord | null>;
+    holder: Accessor<Holder | null>;
   },
 ): JSX.Element {
   const game = useGame();
@@ -106,7 +106,7 @@ function SeatCounter(
   const lineup = (): BoxEntry[] => {
     const squares: BoxEntry[] = [];
 
-    for (const [at, entry] of (props.party.latest?.catches ?? []).entries()) {
+    for (const [at, entry] of (props.party()?.catches ?? []).entries()) {
       squares.push({
         id: `${at}`,
         species: entry.species,
@@ -294,14 +294,25 @@ function SeatCounter(
                     }`}
                 >
                   <div class="flex min-w-0 grow flex-col gap-0.5">
-                    <PlayerPlate
-                      name={
-                        mine()
-                          ? m.gym_seat_yours()
-                          : (props.holder.latest?.name ?? m.gym_seat_a_trainer())
+                    {/* Each read waits on its own, drawing the seat
+                        without it rather than holding the panel */}
+                    <Loading
+                      fallback={
+                        <PlayerPlate
+                          name={mine() ? m.gym_seat_yours() : m.gym_seat_a_trainer()}
+                          sprite={null}
+                        />
                       }
-                      sprite={props.holder.latest?.sprite ?? null}
-                    />
+                    >
+                      <PlayerPlate
+                        name={
+                          mine()
+                            ? m.gym_seat_yours()
+                            : (props.holder()?.name ?? m.gym_seat_a_trainer())
+                        }
+                        sprite={props.holder()?.sprite ?? null}
+                      />
+                    </Loading>
                     <Meta class="text-left">
                       {m.gym_seat_standing({ defenses: seated().defenses })}
                     </Meta>
@@ -318,13 +329,17 @@ function SeatCounter(
                 </div>
 
                 <CounterStep>{mine() ? m.gym_seat_your_lineup() : m.ow_their_lineup()}</CounterStep>
-                <CatchBox
-                  entries={lineup()}
-                  capacity={Math.max(1, lineup().length)}
-                  columns={3}
-                  tone="tide"
-                  cardOnly
-                />
+                <Loading
+                  fallback={<CatchBox entries={[]} capacity={1} columns={3} tone="tide" cardOnly />}
+                >
+                  <CatchBox
+                    entries={lineup()}
+                    capacity={Math.max(1, lineup().length)}
+                    columns={3}
+                    tone="tide"
+                    cardOnly
+                  />
+                </Loading>
 
                 <Show when={!mine()} fallback={<Meta>{m.gym_seat_defends()}</Meta>}>
                   <Meta>{m.gym_seat_carries()}</Meta>
@@ -404,20 +419,29 @@ function SeatCounter(
  * read in the body that shows them, a slow one would take the world
  * down behind the dialog
  */
+/** Who sits in the seat, as the plate draws them */
+async function readHolder(uid: string): Promise<Holder> {
+  const profile = await getProfile(uid);
+
+  return { name: profile?.nickname ?? m.gym_seat_a_trainer(), sprite: profile?.sprite ?? null };
+}
+
 export default function GymSeatDialog(props: GymSeatDialogProps): JSX.Element {
-  const [party] = createResource(
-    () => props.standing?.seat?.snapshot ?? null,
-    async (id) => getTeamSnapshot(id),
-  );
+  // Keyed on the ids, so a standing read again does not ask again
+  const snapshot = createMemo(() => props.standing?.seat?.snapshot ?? null);
+  const holderId = createMemo(() => props.standing?.seat?.holder ?? null);
+  const party = createMemo<TeamSnapshotRecord | null>(
+    (): Promise<TeamSnapshotRecord | null> | null => {
+      const id = snapshot();
 
-  const [holder] = createResource(
-    () => props.standing?.seat?.holder ?? null,
-    async (uid): Promise<Holder> => {
-      const profile = await getProfile(uid);
-
-      return { name: profile?.nickname ?? m.gym_seat_a_trainer(), sprite: profile?.sprite ?? null };
+      return id == null ? null : getTeamSnapshot(id);
     },
   );
+  const holder = createMemo<Holder | null>((): Promise<Holder> | null => {
+    const uid = holderId();
+
+    return uid == null ? null : readHolder(uid);
+  });
 
   return <SeatCounter {...props} party={party} holder={holder} />;
 }

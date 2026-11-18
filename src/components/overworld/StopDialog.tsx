@@ -1,6 +1,6 @@
 import type { PlayerIdentity } from '../../auth/user';
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
 import type { StopRecord } from '../../model/stop-record';
 import { startStopBattle } from '../../auth/stops';
 import Npc from '../../data/overworld/npc';
@@ -65,9 +65,13 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
   /**
    * The six the Factory has on the table, and the places the player
    * has taken off it. Both are read off the stop rather than stored,
-   * so walking away and back deals the same hand
+   * so walking away and back deals the same hand. A refusal belongs
+   * to the grunt that refused: reopened on another stop, the picks
+   * start over rather than greeting the player with the last one's
    */
-  const [taken, setTaken] = createSignal<number[]>([]);
+  const [taken, setTaken] = createSignal<number[]>((was) =>
+    props.challenge == null ? (was ?? []) : [],
+  );
   const rented = (): boolean => props.challenger?.rented === true;
   const unseen = (): boolean => props.challenger?.unseen === true;
   const offer = (): Spawn[] => {
@@ -176,14 +180,6 @@ export default function StopDialog(props: StopDialogProps): JSX.Element {
     }
     return m.stop_grunt_refuses();
   };
-
-  // A refusal belongs to the grunt that refused: reopened on another
-  // stop, the dialog must not greet the player with the last one's
-  createEffect(() => {
-    if (props.challenge != null) {
-      setTaken([]);
-    }
-  });
 
   const accept = (catches: string[]): void => {
     const id = stop();

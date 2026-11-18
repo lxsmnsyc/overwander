@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show } from 'solid-js';
+import { type Accessor, For, Loading, Show } from 'solid-js';
 import { type JSX, Portal } from '@solidjs/web';
 import {
   DialogDescription,
@@ -43,7 +43,7 @@ export interface ResultsScreenProps {
   raiding: boolean;
   sides: SideSummary[];
   /** Who the rows belong to. Read here, under the screen's boundary */
-  names: Resource<Map<string, Profile>>;
+  names: Accessor<Map<string, Profile> | null>;
   /** The reader, who is called "You" rather than by their nickname */
   player: string;
   /**
@@ -151,7 +151,7 @@ function ResultsBody(
           top: landing on the buttons scrolled a phone's column past it.
           Terracotta's first focus skips tabindex -1, so it stays 0 */}
       <DialogTitle
-        tabIndex={0}
+        tabindex={0}
         class="motion-crossfade m-0 outline-none text-center font-display text-5xl font-bold tracking-[0.02em]
           text-white animate-[grow-in_var(--motion-scene)_var(--ease-spring)_backwards] sm:text-[64px]"
       >

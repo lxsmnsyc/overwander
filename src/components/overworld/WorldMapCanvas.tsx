@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal, onCleanup, onSettled, untrack } from 'solid-js';
+import { Show, createEffect, createSignal } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Weather from '../../data/overworld/weather';
 import { WEATHER_COLORS, WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
@@ -146,6 +146,19 @@ export function townsInView(originX: number, originY: number, span: number): Tow
   return marks;
 }
 
+/** What the map marks over its ground, read together so one effect follows them all */
+interface Marks {
+  span: number;
+  originX: number;
+  originY: number;
+  playerX: number;
+  playerY: number;
+  pickedX: number | undefined;
+  pickedY: number | undefined;
+  grid: boolean;
+  focused: boolean;
+}
+
 export interface WorldMapCanvasProps {
   /**
    * How many chunks the view spans on each side
@@ -265,8 +278,8 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
    * Whether a town stands in a chunk: its middle against the town's reach,
    * since a town is a circle and a chunk it barely clips is not where it is
    */
-  const settledAt = (x: number, y: number): boolean => {
-    for (const town of props.towns) {
+  const settledAt = (x: number, y: number, towns = props.towns): boolean => {
+    for (const town of towns) {
       if (Math.hypot(x + 0.5 - town.x, y + 0.5 - town.y) <= town.radius) {
         return true;
       }
@@ -327,84 +340,122 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       : m.world_map_place_sky({ place, weather: WEATHER_NAMES[sky], x, y });
   };
 
-  onSettled(() => {
-    const element = canvas;
-    const context = element?.getContext('2d');
-    // The ground on a page of its own, so a chunk filling in never paints
-    // over the rings drawn on top
+  /**
+   * The pages the map is painted on, made the first time an effect
+   * draws: the canvas itself, and the ground on a page of its own, so a
+   * chunk filling in never paints over the rings drawn on top
+   */
+  let surface: {
+    element: HTMLCanvasElement;
+    context: CanvasRenderingContext2D;
+    ground: HTMLCanvasElement;
+    paint: CanvasRenderingContext2D;
+  } | null = null;
+
+  const getSurface = (): typeof surface => {
+    if (surface != null || canvas == null) {
+      return surface;
+    }
+
+    const context = canvas.getContext('2d');
     const ground = document.createElement('canvas');
     const paint = ground.getContext('2d');
 
-    if (element == null || context == null || paint == null) {
+    if (context == null || paint == null) {
+      return null;
+    }
+    surface = { element: canvas, context, ground, paint };
+    return surface;
+  };
+
+  /** What is marked over the ground, as last read */
+  let marks: Marks | null = null;
+
+  /** The ground, and everything marked over it */
+  const compose = (): void => {
+    const drawn = getSurface();
+
+    if (drawn == null || marks == null) {
       return;
     }
 
-    /** The ground, and everything marked over it */
-    const compose = (): void => {
-      const across = props.span;
+    const { context, ground } = drawn;
+    const across = marks.span;
+    const size = TILE * across;
+
+    context.clearRect(0, 0, size, size);
+    context.drawImage(ground, 0, 0);
+
+    // The chunk grid over the detailed map as well, for a player who
+    // asked for it. The quick map draws its own into the ground
+    if (marks.grid) {
+      context.strokeStyle = COLORS.grid;
+      context.lineWidth = 1;
+      context.beginPath();
+      for (let line = 0; line <= across; line++) {
+        context.moveTo(line * TILE + 0.5, 0);
+        context.lineTo(line * TILE + 0.5, size);
+        context.moveTo(0, line * TILE + 0.5);
+        context.lineTo(size, line * TILE + 0.5);
+      }
+      context.stroke();
+    }
+
+    // Where the player is standing: the same ground, ringed
+    const column = marks.playerX - marks.originX;
+    const row = marks.playerY - marks.originY;
+
+    if (column >= 0 && row >= 0 && column < across && row < across) {
+      context.strokeStyle = COLORS.player;
+      context.lineWidth = 2;
+      context.strokeRect(column * TILE - 1, row * TILE - 1, TILE + 2, TILE + 2);
+      context.lineWidth = 1;
+    }
+
+    // The chosen chunk, ringed in a colour of its own: it is often
+    // the chunk the player is standing in, and two rings the same
+    // colour would say one thing
+    const pickedColumn = (marks.pickedX ?? Number.NaN) - marks.originX;
+    const pickedRow = (marks.pickedY ?? Number.NaN) - marks.originY;
+
+    if (pickedColumn >= 0 && pickedRow >= 0 && pickedColumn < across && pickedRow < across) {
+      context.strokeStyle = COLORS.picked;
+      context.lineWidth = 2;
+      context.strokeRect(pickedColumn * TILE - 1, pickedRow * TILE - 1, TILE + 2, TILE + 2);
+      context.lineWidth = 1;
+    }
+
+    // A border while the keyboard is in here, so it is clear which
+    // thing the arrow keys are moving
+    if (marks.focused) {
+      context.strokeStyle = COLORS.focus;
+      context.lineWidth = 2;
+      context.strokeRect(1, 1, size - 2, size - 2);
+      context.lineWidth = 1;
+    }
+  };
+
+  // The ground, painted again when what it is drawn from changes
+  createEffect(
+    () => ({
+      across: props.span,
+      originX: props.originX,
+      originY: props.originY,
+      biomes: props.biomes,
+      skies: props.skies,
+      towns: props.towns,
+      world: getWorld(),
+      detailed: props.detailed ?? settings().detailedMap,
+    }),
+    ({ across, originX, originY, biomes, skies, towns: standing, world, detailed }) => {
+      const drawn = getSurface();
+
+      if (drawn == null) {
+        return undefined;
+      }
+
+      const { element, ground, paint } = drawn;
       const size = TILE * across;
-
-      context.clearRect(0, 0, size, size);
-      context.drawImage(ground, 0, 0);
-
-      // The chunk grid over the detailed map as well, for a player who
-      // asked for it. The quick map draws its own into the ground
-      if (settings().mapGrid) {
-        context.strokeStyle = COLORS.grid;
-        context.lineWidth = 1;
-        context.beginPath();
-        for (let line = 0; line <= across; line++) {
-          context.moveTo(line * TILE + 0.5, 0);
-          context.lineTo(line * TILE + 0.5, size);
-          context.moveTo(0, line * TILE + 0.5);
-          context.lineTo(size, line * TILE + 0.5);
-        }
-        context.stroke();
-      }
-
-      // Where the player is standing: the same ground, ringed
-      const column = props.playerX - props.originX;
-      const row = props.playerY - props.originY;
-
-      if (column >= 0 && row >= 0 && column < across && row < across) {
-        context.strokeStyle = COLORS.player;
-        context.lineWidth = 2;
-        context.strokeRect(column * TILE - 1, row * TILE - 1, TILE + 2, TILE + 2);
-        context.lineWidth = 1;
-      }
-
-      // The chosen chunk, ringed in a colour of its own: it is often
-      // the chunk the player is standing in, and two rings the same
-      // colour would say one thing
-      const pickedColumn = (props.pickedX ?? Number.NaN) - props.originX;
-      const pickedRow = (props.pickedY ?? Number.NaN) - props.originY;
-
-      if (pickedColumn >= 0 && pickedRow >= 0 && pickedColumn < across && pickedRow < across) {
-        context.strokeStyle = COLORS.picked;
-        context.lineWidth = 2;
-        context.strokeRect(pickedColumn * TILE - 1, pickedRow * TILE - 1, TILE + 2, TILE + 2);
-        context.lineWidth = 1;
-      }
-
-      // A border while the keyboard is in here, so it is clear which
-      // thing the arrow keys are moving
-      if (focused()) {
-        context.strokeStyle = COLORS.focus;
-        context.lineWidth = 2;
-        context.strokeRect(1, 1, size - 2, size - 2);
-        context.lineWidth = 1;
-      }
-    };
-
-    createEffect(() => {
-      const across = props.span;
-      const originX = props.originX;
-      const originY = props.originY;
-      const biomes = props.biomes;
-      const skies = props.skies;
-      const size = TILE * across;
-      const world = getWorld();
-      const detailed = props.detailed ?? settings().detailedMap;
       const missing: number[] = [];
       /** The chunks towns stand in, ringed once the grid is down */
       const towns: number[] = [];
@@ -443,7 +494,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
         paint.fillRect(column * TILE, row * TILE, TILE, TILE);
         if (detailed) {
           missing.push(index);
-        } else if (settledAt(originX + column, originY + row)) {
+        } else if (settledAt(originX + column, originY + row, standing)) {
           towns.push(index);
         }
       }
@@ -507,7 +558,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
           paint.lineWidth = 1;
         }
       }
-      untrack(compose);
+      compose();
 
       // Nearest the middle first, so the ground round the player fills in
       // before the corners do
@@ -542,15 +593,31 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       if (missing.length > 0) {
         frame = requestAnimationFrame(read);
       }
-      onCleanup(() => {
+      return () => {
         cancelAnimationFrame(frame);
-      });
-    });
+      };
+    },
+  );
 
-    // The rings and the focus border follow their own props without the
-    // ground being read again
-    createEffect(compose);
-  });
+  // The rings and the focus border follow their own props without the
+  // ground being read again
+  createEffect(
+    (): Marks => ({
+      span: props.span,
+      originX: props.originX,
+      originY: props.originY,
+      playerX: props.playerX,
+      playerY: props.playerY,
+      pickedX: props.pickedX,
+      pickedY: props.pickedY,
+      grid: settings().mapGrid,
+      focused: focused(),
+    }),
+    (next) => {
+      marks = next;
+      compose();
+    },
+  );
 
   return (
     // The map, with its caption standing over the corner of it rather

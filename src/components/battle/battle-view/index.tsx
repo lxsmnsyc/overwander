@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createMemo, createResource, createSignal, onSettled } from 'solid-js';
+import { Show, createMemo, createSignal, onSettled, untrack } from 'solid-js';
 import type Unit from '../../../battle/unit';
 import type { CandyEarned } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
@@ -63,28 +63,33 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     }
   };
 
-  const watch = createBattleWatch(props.active, () => auth.user()?.uid ?? null, {
-    // Over the count rather than after it: the fanfare is what the
-    // three seconds are for
-    started: () => {
-      playEffect(Effect.BattleStart);
+  // The battle the view was opened on, taken once: the view is rebuilt for the next one
+  const watch = createBattleWatch(
+    untrack(() => props.active),
+    () => auth.user()?.uid ?? null,
+    {
+      // Over the count rather than after it: the fanfare is what the
+      // three seconds are for
+      started: () => {
+        playEffect(Effect.BattleStart);
+      },
+      // Said the moment it settles, rather than when the dialog over it
+      // is read: the fight is what the player is watching
+      settled: (result) => {
+        if (result === 'won') {
+          playEffect(Effect.BattleWon);
+        } else if (result === 'lost') {
+          playEffect(Effect.BattleLost);
+        } else {
+          playEffect(Effect.BattleDraw);
+        }
+      },
+      reward: (reward) => {
+        props.onReward(reward);
+      },
+      candyInPassing: sayCandy,
     },
-    // Said the moment it settles, rather than when the dialog over it
-    // is read: the fight is what the player is watching
-    settled: (result) => {
-      if (result === 'won') {
-        playEffect(Effect.BattleWon);
-      } else if (result === 'lost') {
-        playEffect(Effect.BattleLost);
-      } else {
-        playEffect(Effect.BattleDraw);
-      }
-    },
-    reward: (reward) => {
-      props.onReward(reward);
-    },
-    candyInPassing: sayCandy,
-  });
+  );
 
   onSettled(() => watch.start());
 
@@ -186,8 +191,8 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (built == null || !built.battle.settled) {
       return [];
     }
-    return last.length > 0 ? last : readContributions(built);
-  }, []);
+    return last != null && last.length > 0 ? last : readContributions(built);
+  });
 
   const sides = createMemo<SideSummary[]>((last) => {
     revision();
@@ -196,25 +201,29 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     if (built == null || !built.battle.settled) {
       return [];
     }
-    return last.length > 0 ? last : readSides(built);
-  }, []);
+    return last != null && last.length > 0 ? last : readSides(built);
+  });
 
   /**
    * Who the rows belong to, by nickname. Read once when the verdict
    * lands, keyed on who is in it; the reader is "You"
    */
-  const [names] = createResource(
-    () => {
-      const unique = new Set<string>();
+  const asked = createMemo((): string | null => {
+    const unique = new Set<string>();
 
-      for (const row of contributions()) {
-        if (row.player !== '') {
-          unique.add(row.player);
-        }
+    for (const row of contributions()) {
+      if (row.player !== '') {
+        unique.add(row.player);
       }
-      return unique.size > 0 ? [...unique].sort().join(',') : null;
+    }
+    return unique.size > 0 ? [...unique].sort().join(',') : null;
+  });
+  const names = createMemo<Map<string, Profile> | null>(
+    (): Promise<Map<string, Profile>> | null => {
+      const key = asked();
+
+      return key == null ? null : getProfiles(key.split(','));
     },
-    async (key): Promise<Map<string, Profile>> => getProfiles(key.split(',')),
   );
 
   /** Whether this fight ranks whole teams rather than single pokemon */

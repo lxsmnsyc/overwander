@@ -1,6 +1,6 @@
 import { useNavigate } from '@solidjs/router';
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, Show, createResource } from 'solid-js';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import { type BattleRecord, getBattle } from '../../auth/battles';
 import BattleData from '../app/BattleData';
 import BattleView from './battle-view';
@@ -8,7 +8,7 @@ import { Button, Note } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /** The fight itself, once its record is known to exist */
-function Watched(props: { id: string; record: Resource<BattleRecord | null> }): JSX.Element {
+function Watched(props: { id: string; record: Accessor<BattleRecord | null> }): JSX.Element {
   const navigate = useNavigate();
   const home = (): void => {
     navigate('/');
@@ -41,7 +41,7 @@ function Watched(props: { id: string; record: Resource<BattleRecord | null> }): 
 
 /** Any battle, played from its record for whoever opens the link */
 export default function WatchBattle(props: { id: string }): JSX.Element {
-  const [record] = createResource(() => props.id, getBattle);
+  const record = createMemo(async () => getBattle(props.id));
 
   return (
     <Loading

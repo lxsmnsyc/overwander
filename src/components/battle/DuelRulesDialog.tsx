@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { createEffect, createSignal } from 'solid-js';
+import { createSignal } from 'solid-js';
 import type { DuelRules } from '../../auth/duels';
 import { TEAM_SIZE } from '../../auth/teams';
 import { withLimit } from '../../data/constants/battle-limits';
@@ -66,15 +66,11 @@ const countOptions = (counts: number[]): { value: number; label: string }[] => {
 };
 
 export default function DuelRulesDialog(props: DuelRulesDialogProps): JSX.Element {
-  const [draft, setDraft] = createSignal<DuelRules>(props.rules);
-
   // Reopened on a lobby somebody else changed: the form starts from
   // what the lobby says now rather than from the last thing typed
-  createEffect(() => {
-    if (props.isOpen) {
-      setDraft(props.rules);
-    }
-  });
+  const [draft, setDraft] = createSignal<DuelRules>((was) =>
+    props.isOpen || was == null ? props.rules : was,
+  );
 
   const slotsOf = (kind: Slots): number => getSlots(draft().limits, kind);
 

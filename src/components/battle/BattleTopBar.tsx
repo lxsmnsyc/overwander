@@ -1,11 +1,11 @@
-import { For, Show, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createMemo, createSignal, onCleanup, onSettled } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type Battle from '../../battle/battle';
 import { EventPriority } from '../../core/event-emitter';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
 import type { RaidKind } from '../../model/raid-record';
 import AnimatedSprite from '../sprites/AnimatedSprite';
-import { Button } from '../styled';
+import { Button, spellAria } from '../styled';
 import { GLASS, HealthTrack, StandingCount } from './battle-view/plates';
 import { BOSS_TICKS, describeKind, describeTick } from './battle-view/raid-kind';
 import {
@@ -86,7 +86,7 @@ function SpeedGroup(props: { speed: number; onSpeed: (speed: number) => void }):
         {(speed) => (
           <button
             type="button"
-            aria-pressed={props.speed === speed()}
+            aria-pressed={spellAria(props.speed === speed())}
             class={`h-[30px] rounded-[10px] border-2 px-2.5 text-[13px] font-extrabold tabular-nums
               shadow-rest active:translate-y-0 ${
                 props.speed === speed()
@@ -248,13 +248,19 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
     setBeat((count) => count + 1);
   };
 
-  for (const event of STANDING_EVENTS) {
-    props.battle.on(event, EventPriority.Post, bump);
-  }
-  onCleanup(() => {
+  // The battle held rather than read again at teardown, which may run
+  // after the prop has gone (see BattleParty)
+  onSettled(() => {
+    const battle = props.battle;
+
     for (const event of STANDING_EVENTS) {
-      props.battle.off(event, EventPriority.Post, bump);
+      battle.on(event, EventPriority.Post, bump);
     }
+    return () => {
+      for (const event of STANDING_EVENTS) {
+        battle.off(event, EventPriority.Post, bump);
+      }
+    };
   });
 
   const standing = createMemo((): Standing => {
@@ -275,39 +281,37 @@ export default function BattleTopBar(props: BattleTopBarProps): JSX.Element {
   const [callout, setCallout] = createSignal<{ text: string; at: number } | null>(null);
   let clearing: ReturnType<typeof setTimeout> | undefined;
 
-  createEffect(
-    on(bossHealth, (health) => {
-      if (health == null) {
-        return;
-      }
+  createEffect(bossHealth, (health) => {
+    if (health == null) {
+      return;
+    }
 
-      // Every tick the health is now under, newest last
-      let crossed: number | null = null;
+    // Every tick the health is now under, newest last
+    let crossed: number | null = null;
 
-      for (const tick of BOSS_TICKS) {
-        if (health <= tick && !passed.has(tick)) {
-          passed.add(tick);
-          crossed = tick;
-        }
+    for (const tick of BOSS_TICKS) {
+      if (health <= tick && !passed.has(tick)) {
+        passed.add(tick);
+        crossed = tick;
       }
-      if (first) {
-        first = false;
-        return;
-      }
-      if (crossed == null) {
-        return;
-      }
+    }
+    if (first) {
+      first = false;
+      return;
+    }
+    if (crossed == null) {
+      return;
+    }
 
-      // One callout at a time; a new one replaces the last
-      const text = describeTick(props.kind ?? null, crossed);
+    // One callout at a time; a new one replaces the last
+    const text = describeTick(props.kind ?? null, crossed);
 
-      clearTimeout(clearing);
-      setCallout({ text, at: Date.now() });
-      clearing = setTimeout(() => {
-        setCallout(null);
-      }, CALLOUT_TIME);
-    }),
-  );
+    clearTimeout(clearing);
+    setCallout({ text, at: Date.now() });
+    clearing = setTimeout(() => {
+      setCallout(null);
+    }, CALLOUT_TIME);
+  });
   onCleanup(() => {
     clearTimeout(clearing);
   });

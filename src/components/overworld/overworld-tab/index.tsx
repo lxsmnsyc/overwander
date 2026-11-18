@@ -1,7 +1,8 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, createEffect, createResource, onCleanup } from 'solid-js';
+import { Loading, Show, createEffect, createMemo, onSettled, refresh } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';
+import type { Buddy } from '../../../overworld/core';
 import { onBuddyChange } from '../../../auth/buddy-changes';
 import { useAuth } from '../../../auth/context';
 import syncDevShinyBoost from '../../../auth/dev-shiny';
@@ -25,25 +26,28 @@ import { m } from '../../../i18n/paraglide/messages.js';
 export default function OverworldTab(): JSX.Element {
   const auth = useAuth();
 
-  const [buddy, { refetch: refetchBuddy }] = createResource(
-    () => auth.user()?.uid ?? null,
-    getBuddyEffects,
-  );
+  const uid = createMemo(() => auth.user()?.uid ?? null);
+  const buddy = createMemo<Buddy | null | undefined>((): Promise<Buddy | null> | undefined => {
+    const player = uid();
+
+    return player == null ? undefined : getBuddyEffects(player);
+  });
 
   // A development run's shiny odds, told to the dev server too once
   // somebody is signed in to ask it
-  createEffect(() => {
-    const on = settings().devShinyBoost;
-
-    if (import.meta.env.DEV && auth.user() != null) {
-      syncDevShinyBoost(on).catch(() => undefined);
-    }
-  });
+  createEffect(
+    () => ({ on: settings().devShinyBoost, signed: auth.user() != null }),
+    ({ on, signed }) => {
+      if (import.meta.env.DEV && signed) {
+        syncDevShinyBoost(on).catch(() => undefined);
+      }
+    },
+  );
 
   // Swapped or re-equipped in a dialog over the board, which never unmounts
-  onCleanup(
+  onSettled(() =>
     onBuddyChange(() => {
-      Promise.resolve(refetchBuddy()).catch(() => undefined);
+      refresh(buddy).catch(() => undefined);
     }),
   );
 
@@ -51,20 +55,26 @@ export default function OverworldTab(): JSX.Element {
    * What has run from this player. Re-read when a meeting ends, since
    * the one that just fled is the one that has to stop being drawn
    */
-  const [fled, { refetch: refetchFled }] = createResource(
-    () => auth.user()?.uid ?? null,
-    async (uid) => getRetiredKeys(uid),
-  );
+  const fled = createMemo<Set<string> | undefined>((): Promise<Set<string>> | undefined => {
+    const player = uid();
+
+    return player == null ? undefined : getRetiredKeys(player);
+  });
 
   return (
     <Loading fallback={<Note>{m.board_reading()}</Note>}>
-      <OverworldBoard
-        buddy={buddy}
-        fled={fled}
-        onFled={() => {
-          Promise.resolve(refetchFled()).catch(() => undefined);
-        }}
-      />
+      {/* Mounted once both have landed: the walk and its windows read
+          the board from timers and handlers, where a read with no
+          answer yet throws rather than waits */}
+      <Show when={[buddy(), fled()]}>
+        <OverworldBoard
+          buddy={buddy}
+          fled={fled}
+          onFled={() => {
+            refresh(fled).catch(() => undefined);
+          }}
+        />
+      </Show>
     </Loading>
   );
 }

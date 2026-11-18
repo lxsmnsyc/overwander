@@ -1,4 +1,4 @@
-import { type Accessor, For, type Setter, batch, createSignal, onSettled } from 'solid-js';
+import { type Accessor, For, type Setter, createSignal, onSettled } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type Battle from '../../battle/battle';
 import { BattleEvents } from '../../battle/events';
@@ -139,7 +139,7 @@ function readParty(battle: Battle, player: string, theirs: boolean): Unit[] {
 }
 
 export default function BattleParty(props: BattlePartyProps): JSX.Element {
-  const [party, setParty] = createSignal<Unit[]>(
+  const [party, setParty] = createSignal<Unit[]>(() =>
     readParty(props.battle, props.player, props.theirs === true),
   );
 
@@ -179,11 +179,10 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     const battle = props.battle;
 
     const onCardEvent = (event: BaseEvent): void => {
-      batch(() => {
-        for (const unit of unitsOf(event)) {
-          revisions.get(unit)?.[1]((value) => value + 1);
-        }
-      });
+      // Writes already land together at the next flush
+      for (const unit of unitsOf(event)) {
+        revisions.get(unit)?.[1]((value) => value + 1);
+      }
     };
 
     const onRosterEvent = (): void => {

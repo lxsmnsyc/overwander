@@ -1,11 +1,12 @@
 import {
+  type Accessor,
+  Errored,
   For,
   Loading,
-  type Resource,
   Show,
   createMemo,
-  createResource,
   createSignal,
+  refresh,
 } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { getItemCount } from '../../auth/inventory';
@@ -37,7 +38,6 @@ import Landmark from '../../data/overworld/landmark';
 import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-sprite';
 import describeWhere from '../../overworld/bearing';
 import { CostBadge, CounterTerms, DockNote } from '../forms/terms';
-import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -82,12 +82,15 @@ export interface PortalDialogProps {
  *
  * A resource read in the body that declared it throws past every
  * `Loading` written there and lands on the boundary around the page,
- * so the reading half is its own component under one of its own
+ * so the reading half is its own component under one of its own. A
+ * key count that could not be read is drawn as none, with `failed`
+ * saying why
  */
 function PortalBody(
   props: PortalDialogProps & {
-    keys: Resource<number>;
-    towns: Resource<TownRecord[]>;
+    keys: Accessor<number>;
+    failed: string | null;
+    towns: Accessor<TownRecord[]>;
     onSpent: () => void;
     onDone: () => void;
   },
@@ -101,7 +104,7 @@ function PortalBody(
   const [named, setNamed] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
-  const towns = createMemo(() => props.towns() ?? []);
+  const towns = createMemo(() => props.towns());
   const chosen = createMemo((): TownRecord | null => {
     const name = named();
 
@@ -194,12 +197,12 @@ function PortalBody(
       {/* The cost and its one-a-crossing are on the button, so this is the keys carried */}
       <CounterTerms
         have={{
-          amount: readable(props.keys) ?? 0,
-          short: (readable(props.keys) ?? 0) === 0,
-          unit: m.portal_keys({ count: readable(props.keys) ?? 0 }),
+          amount: props.keys(),
+          short: props.keys() === 0,
+          unit: m.portal_keys({ count: props.keys() }),
         }}
       />
-      <Show when={failed(props.keys)}>{(said) => <Note>{said()}</Note>}</Show>
+      <Show when={props.failed}>{(said) => <Note>{said()}</Note>}</Show>
 
       <Show
         when={towns().length > 0}
@@ -262,7 +265,7 @@ function PortalBody(
       >
         <Button
           tone="primary"
-          disabled={busy() || chosen() == null || (readable(props.keys) ?? 0) === 0}
+          disabled={busy() || chosen() == null || props.keys() === 0}
           label={m.portal_cross_label()}
           onClick={cross}
         >
@@ -287,18 +290,19 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
    * player should be told what the portal wants before they name a
    * town rather than after
    */
-  const [keys, { refetch }] = createResource(
-    () => (props.cell == null ? null : props.player),
-    async (player) => getItemCount(player, Items.PortalKey),
+  const keys = createMemo<number>((): Promise<number> | number =>
+    props.cell == null ? 0 : getItemCount(props.player, Items.PortalKey),
   );
+  const spent = (): void => {
+    refresh(keys).catch(() => undefined);
+  };
   /**
    * Everywhere anybody has been. Read while the portal is open rather
    * than held, since a town found while this player was walking is one
    * they should be able to name
    */
-  const [towns] = createResource(
-    () => props.cell != null,
-    async () => listTowns(),
+  const towns = createMemo<TownRecord[]>((): Promise<TownRecord[]> | TownRecord[] =>
+    props.cell == null ? [] : listTowns(),
   );
 
   return (
@@ -325,15 +329,29 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       description={m.portal_description()}
     >
       <Loading fallback={<Note>{m.portal_reading()}</Note>}>
-        <PortalBody
-          {...props}
-          keys={keys}
-          towns={towns}
-          onSpent={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
-          }}
-          onDone={props.onClose}
-        />
+        {/* A failed key count is drawn as none. A failed town list
+            fails the fallback as well, and goes on up */}
+        <Errored
+          fallback={(error) => (
+            <PortalBody
+              {...props}
+              keys={() => 0}
+              failed={describeFailure(error())}
+              towns={towns}
+              onSpent={spent}
+              onDone={props.onClose}
+            />
+          )}
+        >
+          <PortalBody
+            {...props}
+            keys={keys}
+            failed={null}
+            towns={towns}
+            onSpent={spent}
+            onDone={props.onClose}
+          />
+        </Errored>
       </Loading>
     </Dialog>
   );

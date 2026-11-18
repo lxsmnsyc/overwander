@@ -235,7 +235,7 @@ function InspectorBody(props: {
 export default function Inspector(props: InspectorProps): JSX.Element {
   // The last unit pressed, kept while the dock leaves so it does not
   // empty out on its way off the screen
-  const shown = createMemo<Unit | null>((last) => props.unit ?? last, null);
+  const shown = createMemo<Unit | null>((last) => props.unit ?? last ?? null);
 
   return (
     <Transition

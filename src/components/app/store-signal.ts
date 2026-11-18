@@ -1,4 +1,4 @@
-import { type Accessor, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, createMemo, from } from 'solid-js';
 import type { Store } from '../../game/store';
 
 /**
@@ -6,19 +6,18 @@ import type { Store } from '../../game/store';
  * that asks lives.
  *
  * Belongs in a component body, so the subscription has an owner to be
- * closed with
+ * closed with. A change lands at the next flush, like any other write
  */
 export default function createStoreSignal<T>(store: Store<T>): Accessor<T> {
-  // The store already decides what counts as a change
-  const [value, setValue] = createSignal(store.get(), { equals: false });
-
-  // Wrapped, since a stored value that is itself a function would
-  // otherwise be taken for an updater
-  onCleanup(
-    store.subscribe((next) => {
-      setValue(() => next);
-    }),
+  // The current value is handed over during the subscribe, so the
+  // first read never waits. The store already decides what counts as
+  // a change, so the memo passes on every value it is told about
+  return createMemo(
+    () =>
+      from<T>((next) => {
+        next(store.get());
+        return store.subscribe(next);
+      }),
+    { equals: false },
   );
-
-  return value;
 }

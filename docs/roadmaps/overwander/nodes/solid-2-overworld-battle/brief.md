@@ -43,7 +43,7 @@ Migrate the overworld, the canvas mounts, the battle and move views and `createS
 - [ ] `pnpm typecheck 2>&1 | grep -E 'src/components/(overworld|battle|moves)|store-signal'` prints nothing.
 - [ ] The tests under the matching `test/` folders pass alone with `pnpm exec vitest run <folders>`, or fail only for a reason the outcome hands to `solid-2-tests`.
 - [ ] Every `{ ownedWrite: true }` carries a comment saying why a memo or `onSettled` would not do.
-- [ ] `pnpm exec oxlint <owned paths>` exits 0 and oxfmt is clean.
+- [ ] oxlint on the owned paths adds no error kind that `feat/solid-2` does not already have (it is type-aware and cannot exit 0 while typecheck is red; `solid-2-tests` checks exit 0), and oxfmt is clean.
 - [ ] The outcome lists each pattern you had to invent beyond the Decisions, for `solid-2-conventions`.
 
 ## Sizing

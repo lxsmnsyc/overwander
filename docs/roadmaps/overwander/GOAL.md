@@ -77,7 +77,7 @@ Every eligible pokemon has its Zenith, and the whole UI is redesigned on one des
 - todo: Forms waiting for art -> built for Galarian Zen Darmanitan (b3e73a4f7), Cramorant Gulping and Gorging, Morpeko Hangry, Calyrex Ice and Shadow Rider, Oinkologne's female and Three-Segment Dudunsparce (registered, waiting only for sheets). The rest -> inbox.
 - todo: Ideas (open world gimmicks, seeing other players) -> inbox: not committed to.
 - Added 2026-10-26, spawn radius, caps and roaming (after Minecraft and wAthena) -> spawn-life-design, spawn-lifetimes, spawn-radius, spawn-roaming.
-- Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, waits for Solid 2.0 stable; @solidjs/vite-plugin replaces @solidjs/start and vite-plugin-solid).
+- Added 2026-10-27, updating the dependencies -> deps-update. Migrating to Solid 2.0 -> solid-2 (outline, Solid 2.0 stable since 2026-11-17; @solidjs/vite-plugin replaces @solidjs/start and vite-plugin-solid).
 - Added 2026-10-27, the e2e specs gone stale while they could not load (found by deps-update) -> e2e-specs.
 - Added 2026-10-31, bringing the code written before ts-style was followed in line with it -> ts-style-sweep.
 - Added 2026-11-04, property, oracle and model-based tests from a review of the fix history -> fuzz-battle, fuzz-world, fuzz-server-model (outline).

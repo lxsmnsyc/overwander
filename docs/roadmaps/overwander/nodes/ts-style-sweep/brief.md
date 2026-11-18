@@ -16,7 +16,10 @@ owns:
   - scripts/**
 shared: []
 provides: []
-depends_on: []
+depends_on:
+  - on: solid-2
+    kind: hard
+    why: The migration rewrites the same files; sweeping first means rewriting them twice.
 ---
 
 # Bring the existing code in line with ts-style

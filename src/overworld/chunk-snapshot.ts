@@ -507,7 +507,7 @@ export default class ChunkSnapshot {
   }
 
   /** What a town's streets may roll this window, crowded the same way */
-  private getStreetPool(): SpawnRarityGroups {
+  getStreetPool(): SpawnRarityGroups {
     return this.crowd(getTownPool(getTimeOfDay(this.timestamp)));
   }
 
@@ -542,6 +542,44 @@ export default class ChunkSnapshot {
   }
 
   /**
+   * The cells nothing spawns on: solid rock, a cliff's edge, lava, the
+   * chunk's own furniture, and whatever is going on this hour. The hour
+   * is the slower clock, so it takes its cells first and the pokemon fit
+   * around it; sharing one would put a spawn on top of a dust cloud, and
+   * the spawn would answer the press
+   */
+  getClosedCells(): Set<number> {
+    return new Set([
+      ...this.chunk.getDecorationCells().keys(),
+      ...this.chunk.getLandmarkCells().keys(),
+      ...this.chunk.getRockCells(),
+      ...this.chunk.getFaceCells(),
+      ...this.chunk.getLavaCells(),
+      ...this.getPhenomena().keys(),
+    ]);
+  }
+
+  /**
+   * What a species rolled in this window comes out as: the shore form,
+   * wing pattern and seasonal coat it wears here, then the individual
+   * value and the trait value drawn from the given stream, in tuple
+   * order. The trait is what makes a Maushold the family of three, so
+   * it is drawn before the shape is settled
+   */
+  finishSpawn(rolled: Species, rng: AleaRNG): Spawn {
+    // Which shell a Shellos wears is the world's own longitude, which
+    // coat a Deerling wears is the month, and which wings a Vivillon
+    // wears is the country it came out in
+    const shore = getShoreForm(rolled, this.chunk.x);
+    const winged = getWingPattern(shore, this.chunk.biome);
+    const coat = getSeasonalCoat(winged, getSeason(this.timestamp));
+    const individual = rng.int32();
+    const trait = rng.int32();
+
+    return [getRareShape(coat, trait), individual, trait];
+  }
+
+  /**
    * Roll the window's spawns for this time of day and place each on a
    * free cell: a town's streets from the town pool, the country around
    * them from the biome's.
@@ -556,19 +594,7 @@ export default class ChunkSnapshot {
   getSpawns(count: number): Spawn[] {
     if (this.spawns == null) {
       const spawns: Spawn[] = [];
-      // Nothing spawns inside solid rock, on a cliff's edge or in lava
-      const occupied = new Set([
-        ...this.chunk.getDecorationCells().keys(),
-        ...this.chunk.getLandmarkCells().keys(),
-        ...this.chunk.getRockCells(),
-        ...this.chunk.getFaceCells(),
-        ...this.chunk.getLavaCells(),
-        // Whatever is going on this hour holds its ground too. The
-        // hour is the slower clock, so it takes its cells first and
-        // the pokemon fit around it; sharing one would put a spawn on
-        // top of a dust cloud, and the spawn would answer the press
-        ...this.getPhenomena().keys(),
-      ]);
+      const occupied = this.getClosedCells();
       const streets: number[] = [];
       const free: number[] = [];
 
@@ -614,23 +640,7 @@ export default class ChunkSnapshot {
           continue;
         }
 
-        // Which shell a Shellos wears is the world's own longitude,
-        // so the two seas fall either side of the meridian rather
-        // than either side of a pool. Which coat a Deerling wears is
-        // the month, so it turns for everybody at once
-        // Which shell a Shellos wears is the world's own longitude,
-        // which coat a Deerling wears is the month, and which wings a
-        // Vivillon wears is the country it came out in
-        const shore = getShoreForm(rolled, this.chunk.x);
-        const winged = getWingPattern(shore, this.chunk.biome);
-        const coat = getSeasonalCoat(winged, getSeason(this.timestamp));
-
-        // The draws land in tuple order: individual value, then the
-        // trait value. The trait is what makes a Maushold the family of
-        // three, so it is drawn before the shape is settled
-        const individual = this.rng.int32();
-        const trait = this.rng.int32();
-        const spawn: Spawn = [getRareShape(coat, trait), individual, trait];
+        const spawn = this.finishSpawn(rolled, this.rng);
 
         this.cells[cell] = spawn;
         spawns.push(spawn);

@@ -1032,3 +1032,38 @@ export function pickSpawn(groups: SpawnRarityGroups, random: () => number): Spec
   }
   return pickFromEntries(spawnBand(groups, 'prized'), random);
 }
+
+/**
+ * Roll one spawn from a pool without its fixed bands: the mythicals,
+ * the specials and the prized finds are left to the rare channel, so an
+ * ordinary slot never reaches them. A pool with nothing else stays empty
+ */
+export function commonSpawn(groups: SpawnRarityGroups, random: () => number): Species | null {
+  return pickSpawn({ ...groups, special: [], mythical: [], prized: [] }, random);
+}
+
+/**
+ * Roll the fixed bands alone, each at `scale` times its usual odds, and
+ * answer null when the roll lands in none of them. One draw decides the
+ * band and one picks within it, the way `pickSpawn` deals them
+ */
+export function rareSpawn(
+  groups: SpawnRarityGroups,
+  random: () => number,
+  scale: number,
+): Species | null {
+  const roll = random();
+  let edge = 0;
+
+  for (const [band, odds] of FIXED_BANDS) {
+    const tier = spawnBand(groups, band);
+
+    if (tier.length > 0) {
+      edge += odds * scale;
+      if (roll < edge) {
+        return pickFromEntries(tier, random);
+      }
+    }
+  }
+  return null;
+}

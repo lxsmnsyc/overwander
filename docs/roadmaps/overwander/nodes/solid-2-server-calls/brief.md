@@ -1,7 +1,7 @@
 ---
 id: solid-2-server-calls
 title: Move to Solid 2.0's skew protection and fix server reads
-status: active
+status: done
 priority: could
 type: refactor
 story: solid-2
@@ -13,6 +13,7 @@ spike: false
 verify: pnpm exec vitest run test/model/build.test.ts test/auth
 gate: false
 added: 2026-11-18
+spent: 220000
 owns:
   - src/model/build.ts
   - src/auth/stale-build.ts

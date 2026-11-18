@@ -46,6 +46,7 @@ Choose how the tests run under the new plugin, remove the spike's `test.environm
 - [ ] `pnpm test` passes, apart from the known load timeouts that pass alone (tera-sites, raid-sites); name any other in the outcome.
 - [ ] Then `pnpm test:db` passes (run alone; e2e stays out, it is stale).
 - [ ] The outcome gives the full-suite time before and after the posture choice.
+- [ ] On a built server (`pnpm build`, then `pnpm start` against `pnpm db`'s database through `.env.development` values, never the root `.env`): a page's server calls carry `X-Server-Function-Build`, and a call naming another build gets 409 with `X-Server-Function-Unknown` (left open by `solid-2-server-calls`, since `pnpm dev` neither stamps nor checks).
 
 ## Sizing
 

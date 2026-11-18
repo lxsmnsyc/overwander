@@ -43,6 +43,8 @@ Migrate the app shell, forms, admin, demos, sprite processor, routes, the auth c
 
 - Spike error map, row `shell (and the route files of routes+server)`: 62 files, 16 resources, 16 effect splits, 18 onMount/onCleanup, 13 router.
 - Not `src/components/app/store-signal.ts`: `solid-2-overworld-battle` owns it.
+- `src/components/app/resource-reads.ts` still uses the 1.x `Resource` type and nothing migrated imports it; delete it or rewrite it for async memos (`answered` has no 2.0 equivalent), and fix its test with `solid-2-tests` if it moves.
+- Still owed from `solid-2-overworld-battle` once the shell renders: walk the overworld, open the Honey tree, Portal, Gym seat and Safari dialogs, start and finish a battle.
 - `src/auth/context.tsx` is where the page first throws (`onMount`).
 - `src/auth/sprites.ts` uses router `action` with `useSubmission`: replace with plain calls (Decisions 5).
 - Keep the authored entries (Decisions 8). Replace the spike's `<Errored>` stopgap in the Document with a real error screen, or keep it with a comment saying why.

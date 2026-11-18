@@ -1,7 +1,7 @@
 ---
 id: solid-2-catches
 title: Migrate catches, the dex and items to Solid 2.0
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2

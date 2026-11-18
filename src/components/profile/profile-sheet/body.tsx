@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import BidsList from '../../auctions/BidsList';
 import SellingList from '../../auctions/SellingList';
 import BattleHistory from '../../battle/BattleHistory';

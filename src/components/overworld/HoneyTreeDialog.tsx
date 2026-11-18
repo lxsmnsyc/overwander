@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
 import type { EncounterRecord } from '../../model/encounter-record';
 import { getItemCount } from '../../auth/inventory';
 import { latherHoneyTree } from '../../auth/snapshots';
@@ -149,7 +150,7 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
       }
       description={m.honey_tree_description()}
     >
-      <Suspense fallback={<Note>{m.honey_tree_counting()}</Note>}>
+      <Loading fallback={<Note>{m.honey_tree_counting()}</Note>}>
         <HoneyTreeBody
           {...props}
           jars={jars}
@@ -157,7 +158,7 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
             Promise.resolve(refetch()).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

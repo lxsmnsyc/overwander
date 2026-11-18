@@ -11,7 +11,7 @@ import { describeItem } from '../../../details';
 import ItemSprite from '../../../items/ItemSprite';
 import AnimatedSprite from '../../../sprites/AnimatedSprite';
 
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /**
  * The pokemon itself, stood on the safari's field the way a summary

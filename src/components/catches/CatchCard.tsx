@@ -1,4 +1,5 @@
-import { For, Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../auth/caught';
 import {
   getCatchName,
@@ -291,7 +292,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
           {/* Pictures rather than names, two to a row: a held item is one
               square, and the columns beside it are already two of words */}
           <ul class="m-0 grid list-none grid-cols-[28px_28px] content-start gap-1 p-0">
-            <Index each={slots()}>
+            <For keyed={false} each={slots()}>
               {(_, at) => (
                 <li class="contents">
                   <Show
@@ -352,7 +353,7 @@ export default function CatchCard(props: CatchCardProps): JSX.Element {
                   </Show>
                 </li>
               )}
-            </Index>
+            </For>
           </ul>
         </div>
       </Show>

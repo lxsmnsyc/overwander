@@ -1,4 +1,5 @@
-import { type JSX, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { createEffect, createSignal } from 'solid-js';
 import type { DuelRules } from '../../auth/duels';
 import { TEAM_SIZE } from '../../auth/teams';
 import { withLimit } from '../../data/constants/battle-limits';

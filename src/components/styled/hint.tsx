@@ -1,4 +1,5 @@
-import type { JSX, ParentProps } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
 import { InformationIcon } from '../icons';
 import { m } from '../../i18n/paraglide/messages.js';
 import HoverCard, { type HoverCardPlacement } from './hover-card';

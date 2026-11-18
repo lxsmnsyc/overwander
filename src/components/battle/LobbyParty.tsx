@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, type Resource, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
 import { Genders, Species } from '../../data/ids/species';
@@ -53,11 +54,11 @@ export default function LobbyParty(props: {
   );
 
   return (
-    <Suspense fallback={<Note>{m.lobby_reading_party()}</Note>}>
+    <Loading fallback={<Note>{m.lobby_reading_party()}</Note>}>
       <Show when={props.flat} fallback={<PartyStrip party={party} class={props.class} />} keyed>
         {(size) => <PartyRow party={party} size={size} />}
       </Show>
-    </Suspense>
+    </Loading>
   );
 }
 

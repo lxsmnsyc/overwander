@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show } from 'solid-js';
+import { For, type Resource, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { AchievementSheet } from '../../../auth/achievements';
 import {
   type AchievementStanding,

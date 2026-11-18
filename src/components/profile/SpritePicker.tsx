@@ -1,4 +1,5 @@
-import { For, type JSX, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { listMySprites } from '../../auth/achievements';
 import { getCharsetName } from '../../data/overworld/charsets';
 import TrainerSprite from '../sprites/TrainerSprite';
@@ -77,14 +78,14 @@ export default function SpritePicker(props: SpritePickerProps): JSX.Element {
       <span class="text-[11px] font-extrabold tracking-[0.12em] text-muted uppercase">
         {m.profile_character()}
       </span>
-      <Suspense fallback={<Note>{m.profile_sprite_reading()}</Note>}>
+      <Loading fallback={<Note>{m.profile_sprite_reading()}</Note>}>
         <Shelf
           value={props.value}
           disabled={props.disabled}
           earned={() => earned() ?? []}
           onChange={props.onChange}
         />
-      </Suspense>
+      </Loading>
       <span class="text-xs text-muted">{m.profile_sprite_note()}</span>
     </div>
   );

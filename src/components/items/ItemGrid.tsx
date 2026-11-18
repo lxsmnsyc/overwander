@@ -1,4 +1,5 @@
-import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { For, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Items } from '../../data/ids/items';
 import { describeItem, detailItem } from '../details';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
@@ -418,7 +419,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
             time a purse or a bag moves, and a reference-keyed loop
             would tear every square down mid-hover. Keyed by slot, the
             DOM stays put and only the numbers on it change */}
-        <Index each={shown()}>
+        <For keyed={false} each={shown()}>
           {(cell) => (
             <Show
               when={carded(cell())}
@@ -467,7 +468,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               </HoverCard>
             </Show>
           )}
-        </Index>
+        </For>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>

@@ -1,5 +1,5 @@
 import { Show, createContext, useContext } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { Dynamic } from '@solidjs/web';
 import type { MDXBuiltinComponents } from 'solid-marked';
 
 /**
@@ -154,11 +154,11 @@ const MARKDOWN: MDXBuiltinComponents = {
   ),
 
   TableRow: (props) => (
-    <InHead.Provider value={props.isHead}>
+    <InHead value={props.isHead}>
       <tr class={props.isHead ? 'border-b-2 border-line' : 'border-b-2 border-line-soft'}>
         {props.children}
       </tr>
-    </InHead.Provider>
+    </InHead>
   ),
 
   TableCell: (props) => (

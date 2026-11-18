@@ -1,15 +1,14 @@
 import { useLocation } from '@solidjs/router';
-import { asRecord } from '../model/normalize';
 import {
   type Accessor,
-  type JSX,
   type ParentProps,
   createContext,
   createSignal,
-  onCleanup,
-  onMount,
+  onSettled,
   useContext,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { asRecord } from '../model/normalize';
 import type { PlayerIdentity } from './user';
 
 export interface AuthState {
@@ -53,24 +52,24 @@ const DEMOS_WITH_PLAYER = new Set(['/demo/auction', '/demo/gifts']);
 
 /**
  * Tracks the session for the whole app. The subscription lives in
- * onMount, which never runs during SSR, so the server renders the
+ * onSettled, which never runs during SSR, so the server renders the
  * signed-out shell and the client hydrates the session.
  *
  * The auth client is brought in **on demand**: a page with no player
  * on it should not fetch the auth machinery, and loading it inside
- * `onMount` keeps it in a chunk of its own
+ * `onSettled` keeps it in a chunk of its own
  */
 export default function AuthProvider(props: ParentProps): JSX.Element {
   const [user, setUser] = createSignal<PlayerIdentity | null>(null);
   const [loading, setLoading] = createSignal(true);
   const location = useLocation();
 
-  onMount(() => {
+  onSettled(() => {
     // No session here, and none coming: the shell settles as
     // signed-out rather than sitting on "loading" for ever
     if (location.pathname.startsWith(SESSIONLESS) && !DEMOS_WITH_PLAYER.has(location.pathname)) {
       setLoading(false);
-      return;
+      return undefined;
     }
 
     const session = { unsubscribe: null as (() => void) | null, dropped: false };
@@ -118,11 +117,11 @@ export default function AuthProvider(props: ParentProps): JSX.Element {
         setLoading(false);
       });
 
-    onCleanup(() => {
+    return () => {
       session.dropped = true;
       session.unsubscribe?.();
-    });
+    };
   });
 
-  return <AuthContext.Provider value={{ user, loading }}>{props.children}</AuthContext.Provider>;
+  return <AuthContext value={{ user, loading }}>{props.children}</AuthContext>;
 }

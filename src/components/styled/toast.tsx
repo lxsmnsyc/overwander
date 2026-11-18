@@ -1,16 +1,15 @@
 import {
   type Accessor,
   For,
-  type JSX,
   type ParentProps,
   Show,
   createContext,
   createSignal,
   onCleanup,
-  onMount,
+  onSettled,
   useContext,
 } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
 import { m } from '../../i18n/paraglide/messages.js';
 import { rootPortalHost } from './portal-host';
 
@@ -220,7 +219,7 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
    */
   const [host, setHost] = createSignal<HTMLElement>();
 
-  onMount(() => {
+  onSettled(() => {
     setHost(rootPortalHost());
   });
   /**
@@ -384,7 +383,7 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
   });
 
   return (
-    <ToastContext.Provider value={{ push, dismiss, toasts }}>
+    <ToastContext value={{ push, dismiss, toasts }}>
       {props.children}
       {/* Drawn in the app's own container rather than in whichever
           dialog is open, so a toast is over the top of one rather than
@@ -432,6 +431,6 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
           </Portal>
         )}
       </Show>
-    </ToastContext.Provider>
+    </ToastContext>
   );
 }

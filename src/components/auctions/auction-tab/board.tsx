@@ -42,7 +42,8 @@ import createLotActions, { type LotClaim } from './lot-actions';
 import LotRail, { LotKind, readKind } from './rail';
 import SellPane from './sell';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
-import { For, type JSX, type Resource, Show, createSignal, from } from 'solid-js';
+import { For, type Resource, Show, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
 import { formatNumber } from '../../../i18n/format';
@@ -86,7 +87,7 @@ export interface AuctionTabProps {
 /**
  * The board itself, which is where every one of these is read.
  *
- * A read in the body that declared it throws past every `Suspense`
+ * A read in the body that declared it throws past every `Loading`
  * written there and lands on the boundary around the whole page, so
  * the reading half is a component of its own
  */

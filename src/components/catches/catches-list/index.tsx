@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createMemo, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createResource, createSignal } from 'solid-js';
 import {
   type BoxLayout,
   type BoxRecord,

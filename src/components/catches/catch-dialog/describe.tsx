@@ -22,7 +22,8 @@ import {
 import { describeIVs, describeItem, withArticle } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { HeartIcon } from '../../icons';
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { getMaxHealth } from '../../../model/health';
 import { ItemFlags, Items } from '../../../data/ids/items';
 import { getItemData } from '../../../data/items';

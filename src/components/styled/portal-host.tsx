@@ -1,5 +1,5 @@
-import { type JSX, type ParentProps, createContext, useContext } from 'solid-js';
-import { isServer } from 'solid-js/web';
+import { type JSX, isServer } from '@solidjs/web';
+import { type ParentProps, createContext, useContext } from 'solid-js';
 
 /**
  * Where a floating thing is drawn: the nearest dialog's own container,
@@ -61,9 +61,9 @@ export function PortalHost(props: ParentProps): JSX.Element {
   }
 
   return (
-    <HostContext.Provider value={host}>
+    <HostContext value={host}>
       {props.children}
       {host}
-    </HostContext.Provider>
+    </HostContext>
   );
 }

@@ -1,5 +1,6 @@
 import type { PlayerIdentity } from '../../auth/user';
-import { type JSX, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal } from 'solid-js';
 import type { StopRecord } from '../../model/stop-record';
 import { startStopBattle } from '../../auth/stops';
 import Npc from '../../data/overworld/npc';

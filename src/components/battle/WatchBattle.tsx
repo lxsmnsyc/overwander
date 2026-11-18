@@ -1,5 +1,6 @@
 import { useNavigate } from '@solidjs/router';
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource } from 'solid-js';
 import { type BattleRecord, getBattle } from '../../auth/battles';
 import BattleData from '../app/BattleData';
 import BattleView from './battle-view';
@@ -43,7 +44,7 @@ export default function WatchBattle(props: { id: string }): JSX.Element {
   const [record] = createResource(() => props.id, getBattle);
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <div class="flex h-full items-center justify-center">
           <Note>{m.watch_loading()}</Note>
@@ -51,6 +52,6 @@ export default function WatchBattle(props: { id: string }): JSX.Element {
       }
     >
       <Watched id={props.id} record={record} />
-    </Suspense>
+    </Loading>
   );
 }

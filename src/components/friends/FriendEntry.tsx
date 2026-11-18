@@ -1,4 +1,5 @@
-import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, Show, children, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { Pill, type PillTone, RowActions, RowCard, RowText } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';

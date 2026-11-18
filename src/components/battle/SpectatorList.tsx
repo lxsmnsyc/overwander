@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, type Resource, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type Profile, getProfiles } from '../../auth/profile';
 import PlayerPlate from '../profile/PlayerPlate';
 import { LIST_PAGE, List, Note, type Pager, RowCard, createPager } from '../styled';
@@ -78,9 +79,9 @@ export default function SpectatorList(props: SpectatorListProps): JSX.Element {
 
   return (
     <Show when={props.watching.length > 0} fallback={<Note>{m.spectators_none()}</Note>}>
-      <Suspense fallback={<Note>{m.spectators_reading()}</Note>}>
+      <Loading fallback={<Note>{m.spectators_reading()}</Note>}>
         <Watchers {...props} names={names} page={page} />
-      </Suspense>
+      </Loading>
     </Show>
   );
 }

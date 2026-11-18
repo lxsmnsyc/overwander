@@ -1,13 +1,13 @@
 import {
   For,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Badge, Button, Card, List, ListRow, Meta, Note, Row, TextField } from '../styled';
 import { BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -265,9 +265,9 @@ export default function AdminWorld(): JSX.Element {
               {/* What the chunk actually rolled, once per zone anybody
                   has walked it from. It is the only part of a chunk
                   that is stored rather than derived */}
-              <Suspense fallback={<Note>Reading the windows…</Note>}>
+              <Loading fallback={<Note>Reading the windows…</Note>}>
                 <ChunkWindows windows={windows} />
-              </Suspense>
+              </Loading>
             </Card>
           </>
         )}

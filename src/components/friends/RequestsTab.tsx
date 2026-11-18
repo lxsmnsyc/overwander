@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type FriendLink,
   type FriendRequests,

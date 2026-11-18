@@ -1,22 +1,13 @@
-import {
-  type JSX,
-  type ParentProps,
-  Show,
-  Suspense,
-  children,
-  createEffect,
-  createSignal,
-} from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
+import { Loading, type ParentProps, Show, children, createEffect, createSignal } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
   Dialog as HeadlessDialog,
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import FADE, { GROW, SHEER } from './transition';
 import { PortalHost, usePortalHost } from './portal-host';
 
@@ -483,7 +474,7 @@ export function Dialog(props: DialogProps): JSX.Element {
               one belongs to this one, so it stacks with it and goes
               when it goes */}
           <PortalHost>
-            <Suspense>
+            <Loading>
               <TransitionChild
                 {...(props.origin == null ? FADE : GROW)}
                 ref={(element: HTMLElement) => {
@@ -507,7 +498,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                   </div>
                 </DialogPanel>
               </TransitionChild>
-            </Suspense>
+            </Loading>
           </PortalHost>
         </HeadlessDialog>
       </Transition>

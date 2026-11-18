@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { NATURE_NAMES } from '../../data/ids/text';
 import { isEgg } from '../../model/egg';
@@ -21,7 +22,7 @@ export interface PickBoxProps {
   children?: JSX.Element;
 }
 
-/** The words beside the picture, read one component down under a `Suspense` */
+/** The words beside the picture, read one component down under a `Loading` */
 function PickedWords(props: {
   caught: Resource<CaughtPokemon | null>;
   note?: string;
@@ -59,13 +60,13 @@ function PickedLines(props: { id: string; note?: string }): JSX.Element {
         class="flex size-11 shrink-0 items-center justify-center rounded-[14px] bg-line-soft/60"
         aria-hidden="true"
       >
-        <Suspense>
+        <Loading>
           <CatchFace catchId={props.id} />
-        </Suspense>
+        </Loading>
       </span>
-      <Suspense fallback={<span class="grow text-sm">{m.trade_a_pokemon()}</span>}>
+      <Loading fallback={<span class="grow text-sm">{m.trade_a_pokemon()}</span>}>
         <PickedWords caught={caught} note={props.note} />
-      </Suspense>
+      </Loading>
     </>
   );
 }

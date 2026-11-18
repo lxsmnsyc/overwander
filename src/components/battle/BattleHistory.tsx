@@ -1,15 +1,15 @@
 import {
   For,
-  type JSX,
+  Loading,
   Match,
   type Resource,
   Show,
-  Suspense,
   Switch,
   createResource,
   createSignal,
   from,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import BattleKind, { getBattleKind } from '../../model/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
@@ -213,9 +213,9 @@ function OpponentFace(props: {
         <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
       </Match>
       <Match when={props.kind === BattleKind.Player}>
-        <Suspense fallback={<PlayerFace size={NPC_FACE} />}>
+        <Loading fallback={<PlayerFace size={NPC_FACE} />}>
           <RivalFace fought={props.fought} />
-        </Suspense>
+        </Loading>
       </Match>
     </Switch>
   );
@@ -247,7 +247,7 @@ function OpponentName(props: {
         </span>
       </Match>
       <Match when={props.kind === BattleKind.Player}>
-        <Suspense fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
+        <Loading fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
           <Show when={props.fought()?.rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
             {(rival) => (
               <RowButton
@@ -260,7 +260,7 @@ function OpponentName(props: {
               </RowButton>
             )}
           </Show>
-        </Suspense>
+        </Loading>
       </Match>
     </Switch>
   );
@@ -311,9 +311,9 @@ function HistoryRow(props: {
       {/* The team stands on its own, so a narrow row never squeezes
           it out of sight */}
       <div class="w-full shrink-0 sm:w-72">
-        <Suspense fallback={<Note>{m.history_reading_team()}</Note>}>
+        <Loading fallback={<Note>{m.history_reading_team()}</Note>}>
           <OwnStrip fought={fought} />
-        </Suspense>
+        </Loading>
       </div>
       <Show when={props.owes}>
         <Button
@@ -430,7 +430,7 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
  *
  * It is a component of its own so that the read has a boundary above
  * it: a resource read in the body that declared it throws past every
- * `Suspense` written there, and the next one up is the whole page
+ * `Loading` written there, and the next one up is the whole page
  */
 function BattleList(
   props: BattleHistoryProps & { claimed: Resource<Set<string>>; onClaimed: () => void },
@@ -556,10 +556,10 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
 
   return (
     <div class="flex flex-col gap-3">
-      <Suspense>
+      <Loading>
         <WaitingList waiting={waiting} />
-      </Suspense>
-      <Suspense fallback={<Note>{m.history_loading()}</Note>}>
+      </Loading>
+      <Loading fallback={<Note>{m.history_loading()}</Note>}>
         <BattleList
           player={props.player}
           viewOnly={props.viewOnly}
@@ -568,7 +568,7 @@ export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
             Promise.resolve(refetch()).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </div>
   );
 }

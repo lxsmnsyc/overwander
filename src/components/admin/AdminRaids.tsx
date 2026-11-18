@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Suspense, createResource, createSignal } from 'solid-js';
+import { For, Loading, type Resource, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Listing as ListingPage, RaidRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
 import Listing from './Listing';
@@ -106,7 +107,7 @@ export default function AdminRaids(): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the lobbies…</Note>}>
+    <Loading fallback={<Note>Reading the lobbies…</Note>}>
       <RaidList
         listing={listing}
         search={search()}
@@ -118,6 +119,6 @@ export default function AdminRaids(): JSX.Element {
           setPage(at);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

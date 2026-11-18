@@ -1,10 +1,11 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import {
   CheckboxDescription,
   CheckboxIndicator,
   CheckboxLabel,
   Checkbox as HeadlessCheckbox,
-} from 'terracotta';
+} from 'terracotta/checkbox';
 
 /**
  * One thing that is either on or off, with the sentence that says what

@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, type ParentProps, createContext, useContext } from 'solid-js';
+import { type Accessor, type ParentProps, createContext, useContext } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /**
  * Who is reading the dashboard, and what they are.
@@ -20,11 +21,7 @@ export interface Staff {
 const StaffContext = createContext<Staff>();
 
 export function StaffProvider(props: ParentProps<Staff>): JSX.Element {
-  return (
-    <StaffContext.Provider value={{ uid: props.uid, role: props.role }}>
-      {props.children}
-    </StaffContext.Provider>
-  );
+  return <StaffContext value={{ uid: props.uid, role: props.role }}>{props.children}</StaffContext>;
 }
 
 export default function useStaff(): Staff {

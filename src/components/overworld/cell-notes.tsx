@@ -1,5 +1,5 @@
-import { For, type JSX, Show, createSignal, onCleanup } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { For, Show, createSignal, onCleanup } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
 import type { CellSpot } from './chunk-canvas';
 import { usePortalHost } from '../styled/portal-host';
 

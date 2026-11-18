@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, type Resource, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   CREDITS_PATH,
   type CreditedArtist,
@@ -167,7 +168,7 @@ export default function CreditsCard(): JSX.Element {
   const [credits] = createResource(loadCredits);
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <SettingCard loose title={m.credits_title()}>
           <Note>{m.credits_loading()}</Note>
@@ -175,6 +176,6 @@ export default function CreditsCard(): JSX.Element {
       }
     >
       <CreditsList credits={credits} />
-    </Suspense>
+    </Loading>
   );
 }

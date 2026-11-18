@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Badge, Button, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import Weather, {
   DARK_DAY_LAMP_CELLS,

@@ -1,6 +1,5 @@
 import {
   For,
-  type JSX,
   type Resource,
   Show,
   createEffect,
@@ -8,6 +7,7 @@ import {
   createSignal,
   createUniqueId,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CandyStack } from '../../../auth/candy';
 import { getCaught } from '../../../auth/caught';
 import { capAsksForStat } from '../../../data/items/bottle-caps';
@@ -92,7 +92,7 @@ interface Teaching {
  * The bag itself, which is where the stacks are read.
  *
  * Either read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the whole
+ * `Loading` written there and land on the boundary around the whole
  * page, so the reading half is its own component
  */
 export default function BagBody(

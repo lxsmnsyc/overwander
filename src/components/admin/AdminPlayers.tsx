@@ -1,13 +1,5 @@
-import { A } from '@solidjs/router';
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Listing as ListingPage, PlayerRow } from '../../auth/admin';
 import { Badge, List, ListRow, Meta, Note } from '../styled';
 import { ADMIN_ROLE } from '../../model/staff';
@@ -65,7 +57,7 @@ function PlayerList(props: {
               {/* The whole of the left half opens the account: a row
                   is what somebody is looking for, so it is the row
                   that is pressed rather than a word at the end of it */}
-              <A
+              <a
                 href={`/admin/player/${player.uid}`}
                 class="flex min-w-0 grow flex-col text-ink no-underline hover:text-tide-dark"
               >
@@ -89,7 +81,7 @@ function PlayerList(props: {
                     </Meta>
                   )}
                 </Show>
-              </A>
+              </a>
               <span class="flex flex-wrap items-center gap-2">
                 {/* Staff is the one thing about an account worth
                     seeing at a glance; a player wears no badge for
@@ -115,7 +107,7 @@ export default function AdminPlayers(): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>Reading the accounts…</Note>}>
+    <Loading fallback={<Note>Reading the accounts…</Note>}>
       <PlayerList
         listing={listing}
         search={search()}
@@ -127,6 +119,6 @@ export default function AdminPlayers(): JSX.Element {
           setPage(at);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal } from 'solid-js';
 import AddFriendDialog from '../../friends/AddFriendDialog';
 import ProfileSection from '../../../game/session/profile-section';
 import { UserIcon } from '../../icons';

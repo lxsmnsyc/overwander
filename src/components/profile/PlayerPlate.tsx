@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { DEFAULT_CHARSET } from '../../data/overworld/charsets';
 import TrainerSprite from '../sprites/TrainerSprite';
 import { RowButton } from '../styled';

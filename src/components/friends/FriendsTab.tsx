@@ -1,14 +1,14 @@
 import {
   For,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createMemo,
   createResource,
   createSignal,
   from,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   FRIEND_LIMIT,
   type FriendLink,
@@ -224,7 +224,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
       </div>
 
       <Show when={roll().length > 0} fallback={<Note>{m.friends_empty()}</Note>}>
-        <Suspense fallback={<Note>{m.friends_loading()}</Note>}>
+        <Loading fallback={<Note>{m.friends_loading()}</Note>}>
           <Roster
             uids={roll()}
             made={made()}
@@ -233,7 +233,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
             busy={busy()}
             onAct={act}
           />
-        </Suspense>
+        </Loading>
       </Show>
 
       <Show when={(blocked() ?? []).length > 0}>

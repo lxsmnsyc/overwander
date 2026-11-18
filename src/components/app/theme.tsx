@@ -1,5 +1,11 @@
-import { type JSX, type ParentProps, Show } from 'solid-js';
-import { ColorSchemeProvider, Toggle, useColorScheme, usePreferredColorScheme } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, Show } from 'solid-js';
+import {
+  ColorSchemeProvider,
+  useColorScheme,
+  usePreferredColorScheme,
+} from 'terracotta/color-scheme';
+import { Toggle } from 'terracotta/toggle';
 import { MoonIcon, SunIcon } from '../icons';
 import { m } from '../../i18n/paraglide/messages.js';
 

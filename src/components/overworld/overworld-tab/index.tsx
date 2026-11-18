@@ -1,4 +1,5 @@
-import { type JSX, Suspense, createEffect, createResource, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, createEffect, createResource, onCleanup } from 'solid-js';
 
 import { getBuddyEffects } from '../../../auth/buddy';
 import { onBuddyChange } from '../../../auth/buddy-changes';
@@ -56,7 +57,7 @@ export default function OverworldTab(): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.board_reading()}</Note>}>
+    <Loading fallback={<Note>{m.board_reading()}</Note>}>
       <OverworldBoard
         buddy={buddy}
         fled={fled}
@@ -64,6 +65,6 @@ export default function OverworldTab(): JSX.Element {
           Promise.resolve(refetchFled()).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

@@ -29,7 +29,8 @@ import { WING_EFFORT } from '../../../../data/items/wings';
 import { NATURE_NAMES } from '../../../../data/ids/text';
 import { Badge, Button, Hint, HintList, Meta, TooltipHost } from '../../../styled';
 
-import { For, type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import { For, Show, createEffect, createSignal, on } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { formatList } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';
 

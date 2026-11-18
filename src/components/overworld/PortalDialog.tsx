@@ -1,13 +1,13 @@
 import {
   For,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getItemCount } from '../../auth/inventory';
 import usePortalOnServer from '../../auth/portals';
 import { type TownRecord, listTowns } from '../../auth/towns';
@@ -81,7 +81,7 @@ export interface PortalDialogProps {
  * are read.
  *
  * A resource read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the page,
+ * `Loading` written there and lands on the boundary around the page,
  * so the reading half is its own component under one of its own
  */
 function PortalBody(
@@ -324,7 +324,7 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
       }
       description={m.portal_description()}
     >
-      <Suspense fallback={<Note>{m.portal_reading()}</Note>}>
+      <Loading fallback={<Note>{m.portal_reading()}</Note>}>
         <PortalBody
           {...props}
           keys={keys}
@@ -334,7 +334,7 @@ export default function PortalDialog(props: PortalDialogProps): JSX.Element {
           }}
           onDone={props.onClose}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

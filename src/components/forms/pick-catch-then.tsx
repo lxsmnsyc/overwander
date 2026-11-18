@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { TYPE_NAMES } from '../../data/constants/types';
@@ -280,9 +273,9 @@ export function pickCatchThenForm<T>(): ActionForm<PickCatchThenInput<T>, [Catch
       const [options] = createResource(() => props.input.player, loadCatchOptions);
 
       return (
-        <Suspense fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
+        <Loading fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
           <PickCatchThenBody {...props} options={options} />
-        </Suspense>
+        </Loading>
       );
     },
   });

@@ -1,14 +1,14 @@
 import {
   For,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createMemo,
   createResource,
   createSignal,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import Regions from '../../data/ids/regions';
 import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
@@ -51,7 +51,7 @@ export interface PokedexTabProps {
  * The dex as a box of squares, which is where the record is read.
  *
  * A dex read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
 type DexFilter = 'all' | 'caught' | 'missing';
@@ -477,8 +477,8 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
+    <Loading fallback={<Note>{m.dex_loading()}</Note>}>
       <PokedexBox dex={dex} />
-    </Suspense>
+    </Loading>
   );
 }

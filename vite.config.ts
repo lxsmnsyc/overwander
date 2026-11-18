@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { fileRoutes } from 'filesystem-routing/vite';
 import { nitro } from 'nitro/vite';
 import solidMarked from 'unplugin-solid-marked';
-import { type Plugin, defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import yamlData from './scripts/vite/yaml.ts';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import COMPILE_OPTIONS from './src/i18n/compile-options.ts';
@@ -47,43 +47,6 @@ const BUILD_ID =
     ? process.env.BUILD_ID
     : String(Date.now());
 
-/**
- * terracotta 2 has no root entry, only one per component. Until the
- * codemod child of the solid-2 story points each import at its own
- * entry, a bare `terracotta` import resolves to a module that
- * re-exports the entries the app uses. Delete it with that child
- */
-function terracottaRoot(): Plugin {
-  const id = '\0terracotta-root';
-  const entries = [
-    'button',
-    'color-scheme',
-    'disclosure',
-    'listbox',
-    'popover',
-    'radio-group',
-    'tabs',
-    'toggle',
-    'transition',
-  ];
-  let code = '';
-
-  for (const entry of entries) {
-    code += `export * from 'terracotta/${entry}';\n`;
-  }
-
-  return {
-    name: 'overwander:terracotta-root',
-    enforce: 'pre',
-    resolveId(source) {
-      return source === 'terracotta' ? id : null;
-    },
-    load(source) {
-      return source === id ? code : null;
-    },
-  };
-}
-
 /** The year-long cache the stamped files take, as `public/_headers` gives them */
 const IMMUTABLE = { 'cache-control': 'public, max-age=31536000, immutable' };
 
@@ -119,7 +82,6 @@ export default defineConfig(({ mode }) => ({
   // config file of its own, so the plugin is all the wiring there is
   plugins: [
     yamlData(),
-    terracottaRoot(),
     paraglideVitePlugin(COMPILE_OPTIONS),
     tailwindcss(),
     // The release pages under docs/ are imported as components, and
@@ -159,16 +121,6 @@ export default defineConfig(({ mode }) => ({
           }),
         ]),
   ],
-  resolve: {
-    // Solid 2 moved `solid-js/web` to `@solidjs/web` and folded
-    // `solid-js/store` into `solid-js`. The two aliases let the app boot
-    // while the imports are still the 1.x ones; the codemod child of the
-    // solid-2 story rewrites the imports and deletes them
-    alias: [
-      { find: /^solid-js\/web$/, replacement: '@solidjs/web' },
-      { find: /^solid-js\/store$/, replacement: 'solid-js' },
-    ],
-  },
   server: {
     watch: {
       // The sprite processor writes a credit row into docs/, and

@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource } from 'solid-js';
 import type { PositionRecord } from '../../model/position-record';
 import { Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
@@ -63,8 +64,8 @@ export default function PlayerPlace(props: { player: string }): JSX.Element {
   const [place] = createResource(() => props.player, getPlayerPosition);
 
   return (
-    <Suspense fallback={<Note>{m.profile_looking()}</Note>}>
+    <Loading fallback={<Note>{m.profile_looking()}</Note>}>
       <PlaceLine place={place} />
-    </Suspense>
+    </Loading>
   );
 }

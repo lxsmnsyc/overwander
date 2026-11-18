@@ -11,7 +11,8 @@ import {
 import { describeItem } from '../../details';
 import ItemSprite from '../../items/ItemSprite';
 import { Badge, Button, Meta } from '../../styled';
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**

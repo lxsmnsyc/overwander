@@ -1,4 +1,5 @@
-import { For, type JSX, Show, from } from 'solid-js';
+import { For, Show, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type Notice, NoticeKind } from '../../auth/notifications';
 import { Button, LIST_PAGE, List, Meta, Note, Pill, type PillTone, createPager } from '../styled';
 import { type Profile, watchProfile } from '../../auth/profile';

@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../../auth/caught';
 import type { BoxView, BoxWidth } from '../CatchBox';
 import type { DialogWidth } from '../../styled';

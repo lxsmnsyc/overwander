@@ -1,13 +1,5 @@
-import {
-  type Accessor,
-  For,
-  type JSX,
-  type Setter,
-  batch,
-  createSignal,
-  onCleanup,
-  onMount,
-} from 'solid-js';
+import { type Accessor, For, type Setter, batch, createSignal, onSettled } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Battle from '../../battle/battle';
 import { BattleEvents } from '../../battle/events';
 import Unit from '../../battle/unit';
@@ -167,7 +159,7 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     return entry[0];
   };
 
-  onMount(() => {
+  onSettled(() => {
     /**
      * The battle this row hung its listeners on, held rather than
      * re-read.
@@ -205,14 +197,14 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
       battle.on(event, EventPriority.Post, onRosterEvent);
     }
 
-    onCleanup(() => {
+    return () => {
       for (const event of CARD_EVENTS) {
         battle.off(event, EventPriority.Post, onCardEvent);
       }
       for (const event of ROSTER_EVENTS) {
         battle.off(event, EventPriority.Post, onRosterEvent);
       }
-    });
+    };
   });
 
   return (

@@ -1,13 +1,6 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  createEffect,
-  createSignal,
-  onCleanup,
-} from 'solid-js';
-import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
+import { For, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta/disclosure';
 import {
   DEFAULT_DUEL_RULES,
   DUEL_FIGHTERS,

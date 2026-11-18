@@ -1,4 +1,5 @@
-import { type JSX, Suspense, createEffect, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, createEffect, createResource } from 'solid-js';
 
 import { getQuests } from '../../../auth/quests';
 import { getRotations } from '../../../auth/rotations';
@@ -41,7 +42,7 @@ export default function QuestsTab(props: QuestsTabProps): JSX.Element {
   });
 
   return (
-    <Suspense fallback={<Note class="text-center">{m.ui_looking()}</Note>}>
+    <Loading fallback={<Note class="text-center">{m.ui_looking()}</Note>}>
       <QuestBoard
         standings={standings}
         rotations={rotations}
@@ -51,6 +52,6 @@ export default function QuestsTab(props: QuestsTabProps): JSX.Element {
           Promise.resolve(respin()).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

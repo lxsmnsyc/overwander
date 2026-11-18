@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type SwitchRow, listSwitches, setSwitch } from '../../auth/admin';
 import { Badge, Button, Card, List, ListRow, Note, Status, Switch, TextField } from '../styled';
 import describeFailure from '../../i18n/refusals';
@@ -148,14 +141,14 @@ export default function AdminSwitches(): JSX.Element {
         A switch turned off closes that part at once: new starts are refused, while leaving,
         collecting and settling stay open.
       </Note>
-      <Suspense fallback={<Note>Reading the switches…</Note>}>
+      <Loading fallback={<Note>Reading the switches…</Note>}>
         <SwitchList
           switches={switches}
           onChanged={() => {
             Promise.resolve(refetch()).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </Card>
   );
 }

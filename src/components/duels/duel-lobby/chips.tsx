@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { DuelBan } from '../../../data/constants/duel-bans';
 import { Slots, getSlots } from '../../../data/constants/slots';
 import { CounterTerms } from '../../forms/terms';

@@ -13,8 +13,8 @@ import CatchCard from '../CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
 import { type BoxGap, boxSizeOf } from '../CatchBox';
 import { asBoxEntry, describeCatch } from '../catch-summary';
+import { type JSX, isServer } from '@solidjs/web';
 import {
-  type JSX,
   type Resource,
   Show,
   createEffect,
@@ -23,7 +23,6 @@ import {
   onCleanup,
   untrack,
 } from 'solid-js';
-import { isServer } from 'solid-js/web';
 import type { CatchOption, CatchPickerProps } from './options';
 import { titleCatch } from '../../details';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -45,7 +44,7 @@ function isHoldable(item: Items): boolean {
  * The box itself, which is where the records are read.
  *
  * A list read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the reading half is a component of its own
  */
 export default function PickerBox(
@@ -104,7 +103,7 @@ export default function PickerBox(
    * box twice with the pokemon in different squares.
    *
    * Read through `latest` rather than the resource: reading one that
-   * is loading throws to the nearest Suspense boundary, and the
+   * is loading throws to the nearest Loading boundary, and the
    * nearest one to a picker inside a dialog is the root of the whole
    * app. Nurse Joy re-reads this list every time she hands a party
    * back, so a plain read took the page down for the length of the

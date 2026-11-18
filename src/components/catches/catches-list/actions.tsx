@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getReleaseCandy } from '../../../auth/candy';
 import { isFavorite, isGuarded } from '../../../model/caught-record';
 import { isEgg } from '../../../model/egg';

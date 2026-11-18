@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { CloseIcon } from '../icons';
 import { m } from '../../i18n/paraglide/messages.js';
 

@@ -2,7 +2,8 @@ import { AuctionLot, type AuctionRecord } from '../../../auth/auctions';
 import { type CaughtPokemon, getCaughtBatched } from '../../../auth/caught';
 import { describeCatch } from '../../catches/catch-summary';
 import { describeItem } from '../../details';
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource } from 'solid-js';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
@@ -28,9 +29,9 @@ function CatchLot(props: { catchId: string }): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<span>{m.auction_a_pokemon()}</span>}>
+    <Loading fallback={<span>{m.auction_a_pokemon()}</span>}>
       <CatchLotName caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 

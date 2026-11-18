@@ -1,14 +1,13 @@
-import { type JSX, Show, createEffect, createSignal, createUniqueId, onCleanup } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
+import { Show, createEffect, createSignal, createUniqueId, onCleanup } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
   Dialog as HeadlessDialog,
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import type { QueryCompletion, QuerySuggestion } from '../../../core/query';
 import { usePortalHost } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';

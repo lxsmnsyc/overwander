@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
 import { type FoundPlayer, FriendTie, findPlayerByCode, getMyFriendCode } from '../../auth/friends';
 import {
   Button,
@@ -139,9 +140,9 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
       title={m.friends_add_title()}
       description={m.friends_add_description()}
     >
-      <Suspense fallback={<Note>{m.friends_code_loading()}</Note>}>
+      <Loading fallback={<Note>{m.friends_code_loading()}</Note>}>
         <OwnCode code={code} />
-      </Suspense>
+      </Loading>
 
       <div class="flex items-end gap-2">
         <TextField

@@ -1,4 +1,5 @@
-import { For, Index, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   Button,
   Combobox,
@@ -625,7 +626,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
                     base layer makes every list a column, and `flex`
                     alone only sets the display */}
                 <ul class="m-0 flex w-full list-none flex-row gap-1.5 p-0">
-                  <Index each={held()}>
+                  <For keyed={false} each={held()}>
                     {(carried, at) => (
                       <li class="contents">
                         <button
@@ -649,7 +650,7 @@ export default function GiftForm(props: GiftFormProps): JSX.Element {
                         </button>
                       </li>
                     )}
-                  </Index>
+                  </For>
                 </ul>
               </Field>
 

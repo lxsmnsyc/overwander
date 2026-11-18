@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type OWCharSprite from '../../canvas/overworld/char-sprite';
 import loadOWChar from '../../canvas/overworld/char-sprites';
 

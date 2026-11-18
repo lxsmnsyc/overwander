@@ -1,5 +1,5 @@
-import { A } from '@solidjs/router';
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
 import type { PlayerRow } from '../../auth/admin';
 import {
   ROLES,
@@ -158,7 +158,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
         <Card title="No such account">
           <Note>
             Nothing has ever signed in under {props.uid}.{' '}
-            <A href="/admin/players">Back to the accounts.</A>
+            <a href="/admin/players">Back to the accounts.</a>
           </Note>
         </Card>
       }
@@ -278,8 +278,8 @@ export default function AdminPlayer(props: { uid: string }): JSX.Element {
   const [player] = createResource(() => props.uid, getPlayer);
 
   return (
-    <Suspense fallback={<Note>Reading the account…</Note>}>
+    <Loading fallback={<Note>Reading the account…</Note>}>
       <PlayerCard uid={props.uid} player={player} />
-    </Suspense>
+    </Loading>
   );
 }

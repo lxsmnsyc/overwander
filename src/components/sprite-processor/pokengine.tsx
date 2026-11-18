@@ -2,7 +2,8 @@ import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
 import { packPokengine } from '../../auth/sprites';
 import { Button, FormActions, FormGrid, FormSection, Status, Switch, TextField } from '../styled';
 import { useSubmission } from '@solidjs/router';
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 
 /** The row order a Pokengine sheet arrives in. */
 const POKENGINE_ORDER = 'down up right left';

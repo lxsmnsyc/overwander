@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createEffect, createResource, createSignal } from 'solid-js';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getMovePoints, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
@@ -62,7 +55,7 @@ export interface IncreasePPDialogProps {
  * The choosing itself, which is where the record is read.
  *
  * A record read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the page,
+ * `Loading` written there and lands on the boundary around the page,
  * taking the dialog with it — so the reading half stands on its own
  */
 function BottleBody(
@@ -283,7 +276,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
       title={m.catch_pp_title()}
       description={m.catch_pp_description({ item: bottle() })}
     >
-      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
+      <Loading fallback={<Note>{m.catch_reading_record()}</Note>}>
         <BottleBody
           {...props}
           caught={caught}
@@ -292,7 +285,7 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
           }}
           onDone={props.onClose}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

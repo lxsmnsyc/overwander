@@ -1,4 +1,5 @@
-import { type JSX, Suspense, createResource, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, createResource, createSignal, from } from 'solid-js';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -185,7 +186,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.auction_reading()}</Note>}>
+    <Loading fallback={<Note>{m.auction_reading()}</Note>}>
       <AuctionBoard
         {...props}
         auctions={() => auctions() ?? undefined}
@@ -201,6 +202,6 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
           refresh();
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

@@ -1,5 +1,5 @@
-import { For, type JSX, Show, createSignal, onCleanup, onMount } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { For, Show, createSignal, onSettled } from 'solid-js';
+import { Dynamic, type JSX } from '@solidjs/web';
 import { MDXProvider } from 'solid-marked';
 import {
   Badge,
@@ -36,14 +36,14 @@ const SIDE_BY_SIDE = '(min-width: 48rem)';
 function ReleasePage(props: { release: Release | null }): JSX.Element {
   return (
     <MDXProvider builtins={BUILTINS}>
-      <ReleaseLine.Provider value={props.release?.brought ?? ''}>
+      <ReleaseLine value={props.release?.brought ?? ''}>
         <div class="text-sm">
           {/* Read as a value rather than through `Show`, whose callback
               hands back an accessor that is empty the moment the panel
               starts closing */}
           {props.release == null ? null : <Dynamic component={props.release.page} />}
         </div>
-      </ReleaseLine.Provider>
+      </ReleaseLine>
     </MDXProvider>
   );
 }
@@ -52,7 +52,7 @@ function ReleasePage(props: { release: Release | null }): JSX.Element {
 function createSideBySide(): () => boolean {
   const [side, setSide] = createSignal(false);
 
-  onMount(() => {
+  onSettled(() => {
     const query = window.matchMedia(SIDE_BY_SIDE);
     const follow = (): void => {
       setSide(query.matches);
@@ -60,9 +60,9 @@ function createSideBySide(): () => boolean {
 
     follow();
     query.addEventListener('change', follow);
-    onCleanup(() => {
+    return () => {
       query.removeEventListener('change', follow);
-    });
+    };
   });
   return side;
 }

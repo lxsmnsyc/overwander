@@ -1,14 +1,13 @@
-import { For, type JSX, Show, createEffect, createMemo, createSignal } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { For, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
+import { AutocompleteStateChild, DisclosureStateChild } from 'terracotta/states';
 import {
-  AutocompleteStateChild,
   ComboboxInput,
   ComboboxOption,
   ComboboxOptions,
-  DisclosureStateChild,
   Combobox as HeadlessCombobox,
-  Transition,
-} from 'terracotta';
+} from 'terracotta/combobox';
+import { Transition } from 'terracotta/transition';
 import { m } from '../../i18n/paraglide/messages.js';
 import { DROP, dropOrigin } from './transition';
 import { Badge, BadgeDismiss } from './feedback';

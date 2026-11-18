@@ -14,7 +14,7 @@
  * text would overwrite the server's every-locale records.
  *
  * Both sides of the boundary have to wait for it. In the browser that
- * is a resource read under `Suspense`; on the server it is an `await`
+ * is a resource read under `Loading`; on the server it is an `await`
  * at the top of whichever privileged call reads one of these
  * registries.
  */

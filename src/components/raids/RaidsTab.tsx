@@ -2,16 +2,15 @@ import { isFemaleBoss } from '../../model/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
   For,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createResource,
   createSignal,
   from,
-  onCleanup,
-  onMount,
+  onSettled,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { localNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../model/local-time';
 import {
@@ -175,7 +174,7 @@ function InvitedRow(props: {
  * The lobbies themselves, which is where the window is read.
  *
  * A window read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the read lives one component down
  */
 function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: number }): JSX.Element {
@@ -219,14 +218,14 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
 
   /** The player's clock, re-read each minute for the countdown to the next window */
   const [now, setNow] = createSignal(localNow(props.zone));
-  onMount(() => {
+  onSettled(() => {
     const beat = setInterval(() => {
       setNow(localNow(props.zone));
     }, 60_000);
 
-    onCleanup(() => {
+    return () => {
       clearInterval(beat);
-    });
+    };
   });
 
   const nextWindow = (): string => {
@@ -340,7 +339,7 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   });
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <Panel>
           <Note>{m.raid_loading()}</Note>
@@ -348,6 +347,6 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
       }
     >
       <RaidList user={props.user} onLobby={props.onLobby} window={window} zone={zone} />
-    </Suspense>
+    </Loading>
   );
 }

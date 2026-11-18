@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import readBox from '../../../auth/box';
 import type { CaughtPokemon } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';

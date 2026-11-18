@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 import type { ItemAmount } from '../items/InventoryPicker';
 import { Button, DialogActions, DialogSection, Pill, Segmented } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';

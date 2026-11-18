@@ -1,6 +1,7 @@
 import { Title } from '@solidjs/meta';
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type Battle from '../../battle/battle';
 import BattleField from '../../components/battle/BattleField';
 import BattleParty from '../../components/battle/BattleParty';

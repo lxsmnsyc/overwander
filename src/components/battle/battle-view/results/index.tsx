@@ -1,14 +1,13 @@
-import { For, type JSX, type Resource, Show, Suspense } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { For, Loading, type Resource, Show } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
 import {
   DialogDescription,
   DialogOverlay,
   DialogPanel,
   DialogTitle,
   Dialog as HeadlessDialog,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import type { CandyEarned } from '../../../../auth/battles';
 import type { Profile } from '../../../../auth/profile';
 import { getSpeciesData } from '../../../../data/species';
@@ -267,7 +266,7 @@ export default function ResultsScreen(props: ResultsScreenProps): JSX.Element {
               <TransitionChild {...SHEER} class="fixed inset-0 z-40">
                 <DialogOverlay class="size-full bg-shade/75 backdrop-blur-[2px]" />
               </TransitionChild>
-              <Suspense>
+              <Loading>
                 <TransitionChild {...SHEER} class="fixed inset-0 z-40 overflow-y-auto">
                   <DialogPanel
                     class="flex min-h-full flex-col items-center justify-center-safe gap-3.5 px-4 py-6"
@@ -282,7 +281,7 @@ export default function ResultsScreen(props: ResultsScreenProps): JSX.Element {
                     <ResultsBody {...props} said={said()} />
                   </DialogPanel>
                 </TransitionChild>
-              </Suspense>
+              </Loading>
             </HeadlessDialog>
           </Transition>
         </Portal>

@@ -1,4 +1,5 @@
-import { For, type JSX, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import BattleData from '../../app/BattleData';
 import { getCandyCount } from '../../../auth/candy';
 import { getPokedex, getSpeciesDexEntry } from '../../../auth/pokedex';
@@ -217,13 +218,13 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
         </span>
       </div>
 
-      <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
+      <Loading fallback={<Note>{m.dex_loading()}</Note>}>
         {/* An entry lists what it can learn and what it can hold, so
             it waits for the two registries the walk does not */}
         <BattleData fallback={<Note>{m.dex_loading()}</Note>}>
           <DexEntryBody {...props} dex={dex} candy={candy} female={female} pokedex={pokedex} />
         </BattleData>
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

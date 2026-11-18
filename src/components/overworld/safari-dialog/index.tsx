@@ -1,9 +1,9 @@
 import type { PlayerIdentity } from '../../../auth/user';
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createMemo,
   createResource,
@@ -651,7 +651,7 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   );
 
   return (
-    <Suspense>
+    <Loading>
       <SafariBody
         {...props}
         bag={bag}
@@ -671,6 +671,6 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
           });
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

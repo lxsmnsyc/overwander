@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal, onCleanup } from 'solid-js';
 import Button from './button';
 import { SETTING_ROW } from './card';
 import { m } from '../../i18n/paraglide/messages.js';

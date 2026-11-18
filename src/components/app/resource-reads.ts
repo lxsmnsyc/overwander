@@ -5,7 +5,7 @@ import describeFailure from '../../i18n/refusals';
  * Two ways to read a resource without the loading state being kept by
  * hand, and which one to use is about **where the read is**.
  *
- * A read that finds a promise in the air tells the nearest `Suspense`
+ * A read that finds a promise in the air tells the nearest `Loading`
  * above the component to put its fallback up. That boundary is found
  * through the owner tree, so a component that reads its own resource
  * reaches whatever wraps the component itself. Which is why the

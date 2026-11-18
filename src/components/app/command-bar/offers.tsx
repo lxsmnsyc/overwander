@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createEffect } from 'solid-js';
+import { For, Show, createEffect } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { QuerySuggestion } from '../../../core/query';
 
 /**

@@ -1,5 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { For, Show } from 'solid-js';
+import { Dynamic, type JSX } from '@solidjs/web';
 import settings, { SETTINGS_PANES, type SettingsPane, setSetting } from '../../app/settings';
 import { RailTab, RailTabs, TabGroup, TabPane } from '../../styled';
 import SecurityPane from '../SecurityPane';

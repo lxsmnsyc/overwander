@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 import { useAuth } from '../../auth/context';
 import AuctionDialog from '../auctions/AuctionDialog';
 import AuctionTab from '../auctions/auction-tab';

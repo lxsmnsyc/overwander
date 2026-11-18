@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, createResource } from 'solid-js';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import type { Species } from '../../data/ids/species';
 import { getSpeciesData, getSpeciesForms } from '../../data/species';
@@ -124,11 +125,11 @@ export default function SpeciesFormsDialog(props: SpeciesFormsDialogProps): JSX.
       terse
       description={m.dex_forms_description()}
     >
-      <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
+      <Loading fallback={<Note>{m.dex_loading()}</Note>}>
         {props.species == null ? null : (
           <FormsBox species={props.species} dex={dex} onSpecies={props.onSpecies} />
         )}
-      </Suspense>
+      </Loading>
 
       <DialogActions>
         <Button onClick={props.onClose}>{m.ui_close()}</Button>

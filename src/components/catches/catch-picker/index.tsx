@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createMemo, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createMemo, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../../model/battle-lock';
 import readBox from '../../../auth/box';
 import { readCatchContext, searchCaught } from '../../../auth/caught';
@@ -288,7 +289,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
   const trouble = (): boolean => registries.error != null || owned.error != null;
 
   const box = (): JSX.Element => (
-    <Suspense fallback={<Note>{m.pick_catch_loading()}</Note>}>
+    <Loading fallback={<Note>{m.pick_catch_loading()}</Note>}>
       <Show when={trouble()}>
         <Note>{m.catch_picker_failed()}</Note>
       </Show>
@@ -325,7 +326,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           }}
         />
       </Show>
-    </Suspense>
+    </Loading>
   );
 
   return (

@@ -1,4 +1,5 @@
-import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { createMemo, createSignal, onSettled } from 'solid-js';
 import { atClockHour } from '../../data/day-clock';
 import { Badge, Button, Row, Select } from '../styled';
 import type Biome from '../../data/ids/biome';
@@ -718,7 +719,7 @@ export default function BoardDemo(): JSX.Element {
     walk(step);
   };
 
-  onMount(() => {
+  onSettled(() => {
     goTo(wanted());
 
     const walked = (event: KeyboardEvent): void => {
@@ -735,14 +736,11 @@ export default function BoardDemo(): JSX.Element {
     };
     const pacing = window.setInterval(onward, SLIDE_PACE);
 
-    onCleanup(() => {
-      window.clearInterval(pacing);
-    });
-
     window.addEventListener('keydown', walked);
-    onCleanup(() => {
+    return () => {
+      window.clearInterval(pacing);
       window.removeEventListener('keydown', walked);
-    });
+    };
   });
 
   return (

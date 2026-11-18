@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { MoveTargetType } from '../../battle/events';
 import { type DemoRules, type MoveDemo as Staged, aimFor, createMoveDemo } from './demo-move';
 import BattleField from '../battle/BattleField';

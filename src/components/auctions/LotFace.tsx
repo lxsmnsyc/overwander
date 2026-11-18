@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createResource } from 'solid-js';
 import { AuctionLot, type AuctionRecord } from '../../auth/auctions';
 import { getCaughtBatched } from '../../auth/caught';
 import { Genders, Species } from '../../data/ids/species';
@@ -51,9 +52,9 @@ export default function LotFace(props: { auction: AuctionRecord }): JSX.Element 
             : null
         }
         fallback={
-          <Suspense>
+          <Loading>
             <CatchFace catchId={props.auction.caught} />
-          </Suspense>
+          </Loading>
         }
       >
         {(item) => <ItemSprite item={item()} size={32} label="" />}

@@ -10,7 +10,8 @@ import CandySprite from '../../../sprites/CandySprite';
 import TypeBadge from '../../../sprites/TypeBadge';
 import { Badge, Button } from '../../../styled';
 
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**

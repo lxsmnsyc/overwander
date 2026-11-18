@@ -2,7 +2,8 @@ import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
 import { type SpeciesData, getSpeciesData } from '../../../data/species';
 import { Note } from '../../styled';
-import { type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Resource, Show, createEffect, createSignal, on } from 'solid-js';
 import { answered } from '../../app/resource-reads';
 import Abilities from './sections/Abilities';
 import BaseStats from './sections/BaseStats';
@@ -48,7 +49,7 @@ export interface DexReads {
  * The entry itself, which is where the dex and the candy are read.
  *
  * Either read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the page,
+ * `Loading` written there and land on the boundary around the page,
  * taking the dialog with it, so the reading half stands on its own
  */
 export function DexEntryBody(

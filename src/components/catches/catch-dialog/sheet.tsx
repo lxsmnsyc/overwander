@@ -88,8 +88,8 @@ import IncreasePPDialog from '../IncreasePPDialog';
 import BottleCapDialog from '../BottleCapDialog';
 import { askTeachings } from '../../forms/teach-move';
 
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
   type Resource,
   Show,
   batch,

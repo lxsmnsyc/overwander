@@ -1,5 +1,6 @@
-import { type JSX, Show, createSignal, onCleanup, onMount } from 'solid-js';
-import { Toggle } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal, onSettled } from 'solid-js';
+import { Toggle } from 'terracotta/toggle';
 import { ExpandIcon, ShrinkIcon } from '../icons';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -33,7 +34,7 @@ const [offered, setOffered] = createSignal(false);
 export default function FullscreenToggle(props: { class?: string }): JSX.Element {
   const [filling, setFilling] = createSignal(false);
 
-  onMount(() => {
+  onSettled(() => {
     setOffered(document.fullscreenEnabled);
     setFilling(document.fullscreenElement != null);
 
@@ -45,9 +46,9 @@ export default function FullscreenToggle(props: { class?: string }): JSX.Element
     };
 
     document.addEventListener('fullscreenchange', changed);
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('fullscreenchange', changed);
-    });
+    };
   });
 
   const fill = (wanted: boolean): void => {

@@ -1,5 +1,6 @@
-import type { JSX, ParentProps } from 'solid-js';
-import { Button as HeadlessButton } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
+import { Button as HeadlessButton } from 'terracotta/button';
 
 /**
  * The game's button.

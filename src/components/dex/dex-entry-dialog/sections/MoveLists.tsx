@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { TYPE_COLORS } from '../../../../data/constants/types';
 import type { Moves } from '../../../../data/ids/moves';
 import type { Species } from '../../../../data/ids/species';

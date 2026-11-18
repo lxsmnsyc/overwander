@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Listing, PlayerRow } from '../../auth/admin';
 import { List, ListRow, Meta, Note, RowButton, Search } from '../styled';
 import { listPlayers } from '../../auth/admin';
@@ -69,9 +62,9 @@ export default function PlayerPicker(props: PlayerPickerProps): JSX.Element {
           setSearch(value);
         }}
       />
-      <Suspense fallback={<Note>Looking…</Note>}>
+      <Loading fallback={<Note>Looking…</Note>}>
         <Matches found={found} value={props.value} onChange={props.onChange} />
-      </Suspense>
+      </Loading>
     </div>
   );
 }

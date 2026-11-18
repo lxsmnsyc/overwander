@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  Show,
-  createMemo,
-  createResource,
-  createSignal,
-  onCleanup,
-  onMount,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createMemo, createResource, createSignal, onSettled } from 'solid-js';
 import type Unit from '../../../battle/unit';
 import type { CandyEarned } from '../../../auth/battles';
 import { useAuth } from '../../../auth/context';
@@ -93,9 +86,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     candyInPassing: sayCandy,
   });
 
-  onMount(() => {
-    onCleanup(watch.start());
-  });
+  onSettled(() => watch.start());
 
   const record = createStoreSignal(watch.record);
   const instance = createStoreSignal(watch.instance);
@@ -287,7 +278,7 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
    * the page has the keyboard: a dialog open over the fight answers its
    * own Escape by closing
    */
-  onMount(() => {
+  onSettled(() => {
     const onKey = (event: KeyboardEvent): void => {
       if (event.key !== 'Escape' || !forTheGame(event)) {
         return;
@@ -302,9 +293,9 @@ export default function BattleView(props: BattleViewProps): JSX.Element {
     };
 
     window.addEventListener('keydown', onKey);
-    onCleanup(() => {
+    return () => {
       window.removeEventListener('keydown', onKey);
-    });
+    };
   });
 
   return (

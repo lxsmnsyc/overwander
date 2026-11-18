@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import { type Accessor, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import Button from './button';
 import { Meta } from './list';

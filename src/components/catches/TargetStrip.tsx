@@ -1,4 +1,5 @@
-import { For, type JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../auth/caught';
 import { getCatchName, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';

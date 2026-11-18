@@ -1,15 +1,8 @@
-import {
-  type ComponentProps,
-  For,
-  type JSX,
-  Show,
-  createEffect,
-  createSignal,
-  onCleanup,
-  onMount,
-} from 'solid-js';
-import { Dynamic } from 'solid-js/web';
-import { Popover, PopoverButton, PopoverPanel, TabPanel, Transition } from 'terracotta';
+import { type ComponentProps, Dynamic, type JSX } from '@solidjs/web';
+import { For, Show, createEffect, createSignal, onCleanup, onSettled } from 'solid-js';
+import { Popover, PopoverButton, PopoverPanel } from 'terracotta/popover';
+import { TabPanel } from 'terracotta/tabs';
+import { Transition } from 'terracotta/transition';
 import { useAuth } from '../../auth/context';
 import { localNow, serverNow, syncServerClock } from '../../auth/clock';
 import type { EggWalk } from '../../auth/eggs';
@@ -393,15 +386,15 @@ export default function GameMenu(): JSX.Element {
         setNow(local(serverNow()));
       });
   };
-  onMount(() => {
+  onSettled(() => {
     const beat = setInterval(tick, CLOCK_TICK);
 
     document.addEventListener('visibilitychange', tick);
 
-    onCleanup(() => {
+    return () => {
       clearInterval(beat);
       document.removeEventListener('visibilitychange', tick);
-    });
+    };
   });
 
   syncServerClock()
@@ -437,7 +430,7 @@ export default function GameMenu(): JSX.Element {
    * opening the keypad, so a player who pressed it to see where they
    * were can walk on without a panel over the world
    */
-  onMount(() => {
+  onSettled(() => {
     const onKey = (event: KeyboardEvent): void => {
       if (!forTheGame(event) || actionOf(event, settings().keys) !== 'menu') {
         return;
@@ -447,9 +440,9 @@ export default function GameMenu(): JSX.Element {
     };
 
     window.addEventListener('keydown', onKey);
-    onCleanup(() => {
+    return () => {
       window.removeEventListener('keydown', onKey);
-    });
+    };
   });
 
   return (

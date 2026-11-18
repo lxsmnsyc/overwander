@@ -1,5 +1,6 @@
-import { A, type RouteSectionProps, useLocation } from '@solidjs/router';
-import { type JSX, type ParentProps, Show, from } from 'solid-js';
+import { type RouteSectionProps, useLocation } from '@solidjs/router';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, Show, from } from 'solid-js';
 import { type Profile, watchProfile } from '../auth/profile';
 import AdminDialogs from '../components/admin/AdminDialogs';
 import AdminShell from '../components/admin/AdminShell';
@@ -74,7 +75,7 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
           <Standing title="No account">
             <Note>
               This session is signed in as somebody the store has never heard of.{' '}
-              <A href="/">Sign in again from the game.</A>
+              <a href="/">Sign in again from the game.</a>
             </Note>
           </Standing>
         }
@@ -86,7 +87,7 @@ function Gate(props: ParentProps<{ uid: string }>): JSX.Element {
               <Standing title="Not for this account">
                 <Note>
                   The dashboard is staff only, and this account is{' '}
-                  {loaded().banned ? 'banned' : 'a player'}. <A href="/">Back to the overworld.</A>
+                  {loaded().banned ? 'banned' : 'a player'}. <a href="/">Back to the overworld.</a>
                 </Note>
               </Standing>
             }
@@ -138,7 +139,7 @@ export default function AdminLayout(props: RouteSectionProps): JSX.Element {
           >
             <Standing title="Sign in first">
               <Note>
-                The dashboard needs an account. <A href="/">Sign in from the game</A> and come back.
+                The dashboard needs an account. <a href="/">Sign in from the game</a> and come back.
               </Note>
             </Standing>
           </Show>

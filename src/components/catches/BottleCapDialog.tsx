@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createEffect, createResource, createSignal } from 'solid-js';
 import useBottleCap from '../../auth/bottle-caps';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { isShiny } from '../../model/caught-record';
@@ -181,7 +174,7 @@ export default function BottleCapDialog(props: BottleCapDialogProps): JSX.Elemen
       title={getItemData(Items.BottleCap).name}
       description={m.catch_cap_description({ max: MAX_IV })}
     >
-      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
+      <Loading fallback={<Note>{m.catch_reading_record()}</Note>}>
         <CapBody
           {...props}
           caught={caught}
@@ -189,7 +182,7 @@ export default function BottleCapDialog(props: BottleCapDialogProps): JSX.Elemen
             Promise.resolve(refetch()).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

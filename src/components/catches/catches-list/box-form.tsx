@@ -1,4 +1,5 @@
-import { For, type JSX, createSignal } from 'solid-js';
+import { For, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { BOX_COLOURS, BOX_NAME_LIMIT } from '../../../model/box-record';
 import { Button, TextField } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';

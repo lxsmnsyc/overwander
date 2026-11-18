@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createResource, createSignal, from } from 'solid-js';
+import { For, Show, createMemo, createResource, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { isFavorite } from '../../auth/caught';
 import { getBuddy } from '../../auth/buddy';
 import { isEgg } from '../../model/egg';

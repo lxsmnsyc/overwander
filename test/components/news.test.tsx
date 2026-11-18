@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { Dynamic, renderToString } from 'solid-js/web';
+import { Dynamic, renderToString } from '@solidjs/web';
 import { MDXProvider } from 'solid-marked';
 import BUILTINS from '../../src/components/news/markdown';
 import { RELEASES } from '../../src/components/news/releases';

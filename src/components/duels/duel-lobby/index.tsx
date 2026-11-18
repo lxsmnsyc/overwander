@@ -1,4 +1,5 @@
-import { type JSX, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, createResource } from 'solid-js';
 import { type DuelRecord, watchDuel } from '../../../auth/duels';
 import { type Profile, getProfiles } from '../../../auth/profile';
 import watchLive from '../../app/watch';
@@ -54,8 +55,8 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.duels_loading_lobby()}</Note>}>
+    <Loading fallback={<Note>{m.duels_loading_lobby()}</Note>}>
       <LobbyRows {...props} duel={() => duel() ?? null} names={names} />
-    </Suspense>
+    </Loading>
   );
 }

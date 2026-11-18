@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Button, Card, Note, Row } from '../../components/styled';
 import GiftForm from '../../components/admin/GiftForm';
 import GiftsTab from '../../components/gifts/GiftsTab';

@@ -1,6 +1,5 @@
 import { Title } from '@solidjs/meta';
-import type { JSX } from 'solid-js';
-import { clientOnly } from '@solidjs/start';
+import { type JSX, clientOnly } from '@solidjs/web';
 
 /** The battle view's furniture over staged fights, loaded on the client like the other demos */
 const BattleViewDemo = clientOnly(async () => import('../../components/demo/BattleViewDemo'));

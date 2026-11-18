@@ -1,6 +1,7 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
-import { Portal } from 'solid-js/web';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition } from 'terracotta';
+import { For, Show, createSignal } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from 'terracotta/listbox';
+import { Transition } from 'terracotta/transition';
 import { FieldFrame } from './form';
 import { m } from '../../i18n/paraglide/messages.js';
 import { DROP, dropOrigin } from './transition';

@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal, onCleanup, onMount } from 'solid-js';
+import { For, Show, createSignal, onSettled } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getSpeciesData } from '../../../data/species';
 import type { Types } from '../../../data/constants/types';
 import { RAID_BOSS_LEVEL } from '../../../overworld/raid';
@@ -24,7 +25,7 @@ export default function BossCard(props: {
 }): JSX.Element {
   const [wide, setWide] = createSignal(false);
 
-  onMount(() => {
+  onSettled(() => {
     const query = globalThis.matchMedia('(min-width: 48rem)');
     const read = (): void => {
       setWide(query.matches);
@@ -32,9 +33,9 @@ export default function BossCard(props: {
 
     read();
     query.addEventListener('change', read);
-    onCleanup(() => {
+    return () => {
       query.removeEventListener('change', read);
-    });
+    };
   });
 
   const data = (): ReturnType<typeof getSpeciesData> => getSpeciesData(props.species);

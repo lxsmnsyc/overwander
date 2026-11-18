@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createResource, createSignal, on } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createResource, createSignal, on } from 'solid-js';
 import { getBuddy } from '../../auth/buddy';
 import { countCaught, isFavorite } from '../../auth/caught';
 import { isEgg } from '../../model/egg';

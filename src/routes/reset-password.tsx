@@ -1,5 +1,6 @@
-import { A, useSearchParams } from '@solidjs/router';
-import { type JSX, Show, createSignal } from 'solid-js';
+import { useSearchParams } from '@solidjs/router';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 import { Title } from '@solidjs/meta';
 import { choosePassword } from '../auth/actions';
 import { Button, Card, Note, Status, TextField } from '../components/styled';
@@ -53,7 +54,7 @@ export default function ResetPasswordPage(): JSX.Element {
             fallback={
               <Note>
                 {m.reset_done_before()}
-                <A href="/">{m.reset_done_link()}</A>
+                <a href="/">{m.reset_done_link()}</a>
                 {m.reset_done_after()}
               </Note>
             }

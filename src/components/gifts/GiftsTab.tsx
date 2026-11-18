@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createMemo,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createMemo, createResource, createSignal } from 'solid-js';
 import {
   type CatchGift,
   type EncounterGift,
@@ -217,7 +210,7 @@ function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
  * The shelf itself, which is where the gifts are read.
  *
  * A list read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
 function GiftShelf(props: {
@@ -549,7 +542,7 @@ export default function GiftsTab(props: GiftsTabProps): JSX.Element {
   });
 
   return (
-    <Suspense fallback={looking()}>
+    <Loading fallback={looking()}>
       <GiftShelf
         owed={owed}
         viewOnly={props.viewOnly === true || props.everything === true}
@@ -558,6 +551,6 @@ export default function GiftsTab(props: GiftsTabProps): JSX.Element {
           Promise.resolve(refetch()).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

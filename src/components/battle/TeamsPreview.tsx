@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { For, Loading, type Resource, Show, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../model/catch-snapshot';
 import { type Profile, getProfiles } from '../../auth/profile';
@@ -219,8 +220,8 @@ export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.battle_loading_teams()}</Note>}>
+    <Loading fallback={<Note>{m.battle_loading_teams()}</Note>}>
       <TeamsRows {...props} loaded={loaded} />
-    </Suspense>
+    </Loading>
   );
 }

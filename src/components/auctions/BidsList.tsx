@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -198,13 +191,13 @@ function BidRows(
  *
  * The history is read one component down, under this boundary: read in
  * the body that declared it, a loading history would throw past every
- * `Suspense` written here and blank the page instead of this panel
+ * `Loading` written here and blank the page instead of this panel
  */
 export default function BidsList(props: BidsListProps): JSX.Element {
   const [history, { refetch }] = createResource(() => props.player, listBidHistory);
 
   return (
-    <Suspense fallback={<Note>{m.auction_loading_bids()}</Note>}>
+    <Loading fallback={<Note>{m.auction_loading_bids()}</Note>}>
       <BidRows
         player={props.player}
         history={history}
@@ -212,6 +205,6 @@ export default function BidsList(props: BidsListProps): JSX.Element {
           Promise.resolve(refetch()).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Npc from '../../data/overworld/npc';
 import { npcSheet } from '../../overworld/npcs';
 import TrainerSprite from '../sprites/TrainerSprite';

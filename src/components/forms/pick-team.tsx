@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
+import { For, Show, createMemo, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type CaughtPokemon, getCaughtBatched, isGuarded } from '../../auth/caught';
 import { getCatchName, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';

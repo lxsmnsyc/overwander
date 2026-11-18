@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { renderSVG } from 'uqr';
 import {
   type PasskeyRow,
@@ -235,9 +228,9 @@ function PasskeysCard(): JSX.Element {
   return (
     <SettingCard title={m.security_passkeys_title()}>
       <SettingNote>{m.security_passkeys_note()}</SettingNote>
-      <Suspense fallback={<Note>{m.security_passkeys_loading()}</Note>}>
+      <Loading fallback={<Note>{m.security_passkeys_loading()}</Note>}>
         <PasskeyList passkeys={passkeys} act={act} busy={busy()} onChanged={changed} />
-      </Suspense>
+      </Loading>
       <div class={`flex items-end gap-2 ${SETTING_ROW}`}>
         <TextField
           label={m.security_passkey_name()}
@@ -358,7 +351,7 @@ export default function SecurityPane(): JSX.Element {
         }
       >
         {(typed) => (
-          <Suspense fallback={<Note>{m.security_loading()}</Note>}>
+          <Loading fallback={<Note>{m.security_loading()}</Note>}>
             <Unlocked
               password={typed()}
               security={security}
@@ -366,7 +359,7 @@ export default function SecurityPane(): JSX.Element {
                 Promise.resolve(refetch()).catch(() => undefined);
               }}
             />
-          </Suspense>
+          </Loading>
         )}
       </Show>
     </>

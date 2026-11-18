@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { For, type JSX, createSignal, onMount } from 'solid-js';
+import { For, createSignal, onSettled } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   Badge,
   type BadgeTone,
@@ -62,7 +63,7 @@ export default function KitDemo(): JSX.Element {
   const pager = createPager(() => PAGED, 20);
   const [opener, setOpener] = createSignal<HTMLButtonElement>();
 
-  onMount(() => {
+  onSettled(() => {
     if (search.toast != null) {
       toast.push({
         title: 'Item cache',

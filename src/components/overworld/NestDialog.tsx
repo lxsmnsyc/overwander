@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { Genders, Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';
 import type { Buddy } from '../../overworld/core';

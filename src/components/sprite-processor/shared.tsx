@@ -1,6 +1,7 @@
 import type { Drawing } from '../../auth/sprites';
 import { Field, Note } from '../styled';
-import { For, type JSX, Show, createEffect } from 'solid-js';
+import { For, Show, createEffect } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /** The file picker, dressed like the rest of the forms. */
 export function FilePicker(props: {

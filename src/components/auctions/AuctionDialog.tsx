@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
 import {
   AuctionLot,
   MAX_INCREMENT,
@@ -168,9 +169,9 @@ function ListingBody(
             fallback={
               <Show when={props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null}>
                 {(id) => (
-                  <Suspense>
+                  <Loading>
                     <CatchFace catchId={id()} />
-                  </Suspense>
+                  </Loading>
                 )}
               </Show>
             }

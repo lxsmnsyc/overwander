@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createResource, createSignal } from 'solid-js';
 import { listAchievements } from '../../../auth/achievements';
 import listAwards from '../../../auth/awards';
 import type Awards from '../../../data/ids/awards';
@@ -110,7 +111,7 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
           }}
         />
       </div>
-      <Suspense fallback={<Note>{m.award_reading()}</Note>}>
+      <Loading fallback={<Note>{m.award_reading()}</Note>}>
         <Show when={shelf() === AwardShelf.Badges}>
           <BadgeShelf held={held} />
         </Show>
@@ -123,7 +124,7 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
         <Show when={shelf() === AwardShelf.Trainers}>
           <TrainerShelf sheet={sheet} />
         </Show>
-      </Suspense>
+      </Loading>
     </div>
   );
 }

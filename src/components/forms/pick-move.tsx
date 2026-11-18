@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { TYPE_NAMES } from '../../data/constants/types';

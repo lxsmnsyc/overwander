@@ -1,4 +1,5 @@
-import { type JSX, Match, Switch, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Match, Switch, createSignal } from 'solid-js';
 import { Button, DialogActions, type DialogWidth } from '../styled';
 import { type Choice, type ChoiceInput, choiceForm } from './choice';
 import { type ActionForm, widthOf } from './form';

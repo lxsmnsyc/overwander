@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type ReleaseGrace,
   getCatchName,

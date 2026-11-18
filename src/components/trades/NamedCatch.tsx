@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, createResource } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { describeCatch } from '../catches/catch-summary';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -62,8 +63,8 @@ export default function NamedCatch(props: {
   );
 
   return (
-    <Suspense fallback={<span>{props.say?.(m.trade_a_pokemon()) ?? m.trade_a_pokemon()}</span>}>
+    <Loading fallback={<span>{props.say?.(m.trade_a_pokemon()) ?? m.trade_a_pokemon()}</span>}>
       <Named caught={caught} say={props.say} />
-    </Suspense>
+    </Loading>
   );
 }

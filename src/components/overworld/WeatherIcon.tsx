@@ -1,5 +1,5 @@
-import { type ComponentProps, For, type JSX, Show } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { type ComponentProps, Dynamic, type JSX } from '@solidjs/web';
+import { For, Show } from 'solid-js';
 import type { Types } from '../../data/constants/types';
 import Weather, {
   WEATHER_DESCRIPTIONS,

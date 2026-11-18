@@ -1,4 +1,5 @@
-import { type JSX, type ParentProps, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type ParentProps, createResource } from 'solid-js';
 import ensureBattleData from '../../data/battle-data';
 
 /**
@@ -26,8 +27,8 @@ export default function BattleData(props: ParentProps<{ fallback?: JSX.Element }
   const [ready] = createResource(ensureBattleData);
 
   return (
-    <Suspense fallback={props.fallback}>
+    <Loading fallback={props.fallback}>
       <Loaded ready={ready}>{props.children}</Loaded>
-    </Suspense>
+    </Loading>
   );
 }

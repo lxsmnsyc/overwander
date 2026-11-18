@@ -1,10 +1,11 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   RadioGroup as HeadlessRadioGroup,
   RadioGroupDescription,
   RadioGroupLabel,
   RadioGroupOption,
-} from 'terracotta';
+} from 'terracotta/radio-group';
 
 /**
  * One of a handful of choices, all of them on screen.

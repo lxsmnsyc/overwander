@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal, from } from 'solid-js';
+import { For, Show, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type FriendLink, watchFriends } from '../../auth/friends';
 import LobbyRole from '../../model/lobby-role';
 import { m } from '../../i18n/paraglide/messages.js';

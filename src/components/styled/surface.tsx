@@ -1,4 +1,5 @@
-import { type JSX, type ParentProps, children } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, children } from 'solid-js';
 
 /**
  * The things the game is written on.

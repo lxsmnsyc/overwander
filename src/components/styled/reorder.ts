@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /**
  * A list the player can put in another order by dragging it.

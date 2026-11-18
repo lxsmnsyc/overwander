@@ -1,4 +1,5 @@
-import type { JSX, ParentProps } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
 
 /**
  * A control and the word for it, kept together.

@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, createResource } from 'solid-js';
 import type { RaidRecord } from '../../../auth/raids';
 import { type Profile, getProfiles } from '../../../auth/profile';
 import { settled } from '../../app/resource-reads';
@@ -42,8 +43,8 @@ export default function LobbyTeams(
   );
 
   return (
-    <Suspense fallback={<Note>{m.raid_loading_one()}</Note>}>
+    <Loading fallback={<Note>{m.raid_loading_one()}</Note>}>
       <LobbyRows {...props} names={names} />
-    </Suspense>
+    </Loading>
   );
 }

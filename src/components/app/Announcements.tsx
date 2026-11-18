@@ -1,4 +1,5 @@
-import { For, type JSX, createSignal, onCleanup, onMount } from 'solid-js';
+import { For, createSignal, onSettled } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type Announcement, liveAnnouncements, watchAnnouncements } from '../../auth/announcements';
 import { serverNow } from '../../auth/clock';
 import { CloseIcon } from '../icons';
@@ -48,7 +49,7 @@ export default function Announcements(): JSX.Element {
   const [now, setNow] = createSignal(0);
   const [dismissed, setDismissed] = createSignal<ReadonlySet<number>>(new Set());
 
-  onMount(() => {
+  onSettled(() => {
     setDismissed(readDismissed());
     setNow(serverNow());
 
@@ -56,9 +57,9 @@ export default function Announcements(): JSX.Element {
       setNow(serverNow());
     }, RECHECK_PACE);
 
-    onCleanup(() => {
+    return () => {
       clearInterval(timer);
-    });
+    };
   });
 
   const dismiss = (id: number): void => {

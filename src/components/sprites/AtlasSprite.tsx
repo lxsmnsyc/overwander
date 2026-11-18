@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type BasicSprite from '../../canvas/sprites/basic-sprite';
 import type { BasicSpriteImage } from '../../canvas/sprites/basic-sprite';
 import loadBasicSprite from '../../canvas/sprites/basic-sprites';

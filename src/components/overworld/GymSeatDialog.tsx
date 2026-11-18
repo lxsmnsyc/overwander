@@ -1,5 +1,6 @@
 import { Genders } from '../../data/ids/species';
-import { type JSX, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Resource, Show, createResource, createSignal } from 'solid-js';
 import { challengeGymSeat, leaveGymSeat, takeGymSeat } from '../../auth/gym-seats';
 import {
   type GymSeatStanding,

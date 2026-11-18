@@ -1,9 +1,9 @@
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
+  Loading,
   type ParentProps,
   type Resource,
   Show,
-  Suspense,
   createResource,
   createSignal,
 } from 'solid-js';
@@ -104,7 +104,7 @@ export interface BuddyCardProps {
  * The card itself, which is where the buddy is read.
  *
  * A buddy read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page — and this card re-reads every time a buddy is set
  */
 function BuddyBody(
@@ -315,7 +315,7 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.catch_buddy_loading()}</Note>}>
+    <Loading fallback={<Note>{m.catch_buddy_loading()}</Note>}>
       <BuddyBody
         {...props}
         record={record}
@@ -323,6 +323,6 @@ export default function BuddyCard(props: BuddyCardProps): JSX.Element {
           setRevision((count) => count + 1);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

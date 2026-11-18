@@ -40,7 +40,7 @@ const PRESS: Record<FriendTie, (uid: string) => Promise<FriendTie>> = {
  * that changes it.
  *
  * A signal rather than a resource because the answer is what a button
- * is *labelled*, and a label cannot be read from inside a Suspense the
+ * is *labelled*, and a label cannot be read from inside a Loading the
  * button is not in
  */
 export interface FriendTieState {

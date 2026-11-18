@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { createResource } from 'solid-js';
 import { type CaughtPokemon, asCaughtPokemon } from '../../model/caught-record';
 import type { PokedexView } from '../../auth/pokedex';
 import { Species } from '../../data/ids/species';

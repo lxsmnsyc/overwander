@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import AtlasSprite from './AtlasSprite';
 import { UI_SPRITE_ROOT } from '../../canvas/sprites/basic-sprites';
 import type Families from '../../data/ids/families';

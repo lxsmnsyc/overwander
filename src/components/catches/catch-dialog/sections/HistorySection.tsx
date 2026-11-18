@@ -13,7 +13,8 @@ import ItemSprite from '../../../items/ItemSprite';
 
 import { DialogSection, List, ListRow, Meta, RowButton } from '../../../styled';
 
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { formatNumber } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';
 

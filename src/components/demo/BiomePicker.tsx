@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { BIOME_NAMES } from '../../data/biome';
 import Biome from '../../data/ids/biome';
 import { Select } from '../styled';

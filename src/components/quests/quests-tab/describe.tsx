@@ -36,8 +36,7 @@ import {
 } from '../../icons';
 import ItemSprite from '../../items/ItemSprite';
 import TypeBadge from '../../sprites/TypeBadge';
-import type { ComponentProps, JSX } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { type ComponentProps, Dynamic, type JSX } from '@solidjs/web';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 

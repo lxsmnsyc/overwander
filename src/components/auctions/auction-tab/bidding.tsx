@@ -2,7 +2,8 @@ import { type AuctionRecord, isBidOn, nextBid } from '../../../auth/auctions';
 import { Button, Dialog, DialogActions, List, Meta, Pill, RowCard, RowText } from '../../styled';
 import LotFace from '../LotFace';
 import { describeRemaining, now } from './time';
-import { type JSX, Show, createEffect, createSignal, on } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, on } from 'solid-js';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 

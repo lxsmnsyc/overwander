@@ -76,8 +76,8 @@ import SafariDialog from '../safari-dialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import type { ConversationHandle } from '../../forms/conversation';
 import { visitNpc } from '../visit-npc';
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
   type Resource,
   Show,
   createEffect,
@@ -85,7 +85,7 @@ import {
   createSignal,
   on,
   onCleanup,
-  onMount,
+  onSettled,
 } from 'solid-js';
 import {
   BOARD_CELLS,
@@ -111,7 +111,7 @@ import describeFailure from '../../../i18n/refusals';
  * both read.
  *
  * Either read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the whole
+ * `Loading` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
 /** The fight aura a syndicate stop wears, by who is standing there */
@@ -949,7 +949,7 @@ export default function OverworldBoard(props: {
    * browser's own key repeat is ignored: the game keeps the pace, and
    * the machine's repeat rate is not the game's
    */
-  onMount(() => {
+  onSettled(() => {
     let held: Direction[] = [];
     let pacing: ReturnType<typeof setTimeout> | null = null;
 
@@ -1065,12 +1065,12 @@ export default function OverworldBoard(props: {
     // released, and a player who comes back to a board walking on its
     // own has to press that direction again to stop it
     globalThis.addEventListener('blur', stop);
-    onCleanup(() => {
+    return () => {
       stop();
       globalThis.removeEventListener('keydown', down);
       globalThis.removeEventListener('keyup', up);
       globalThis.removeEventListener('blur', stop);
-    });
+    };
   });
 
   /**

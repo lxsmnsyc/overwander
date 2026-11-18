@@ -1,14 +1,7 @@
 import { isFemaleBoss } from '../../../model/raid-record';
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  createEffect,
-  createSignal,
-  onCleanup,
-} from 'solid-js';
-import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta';
+import { For, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta/disclosure';
 import {
   RAID_PLAYER_LIMIT,
   RaidKind,
@@ -57,7 +50,7 @@ import type { RaidLobbyProps } from './report';
  * player's own standing are all read.
  *
  * Any of them read in the body that declared it would throw past
- * every `Suspense` written there and land on the boundary around the
+ * every `Loading` written there and land on the boundary around the
  * whole page, taking the tab down with it
  */
 export default function LobbyRows(

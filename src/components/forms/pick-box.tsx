@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 import CatchBox, { type BoxEntry } from '../catches/CatchBox';
 import { Button, DialogActions, DialogSection, Meta } from '../styled';
 import { CounterStep } from './terms';

@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
 import { isLockLive } from '../../model/battle-lock';
 import readBox from '../../auth/box';
 import { syncServerClock } from '../../auth/clock';
@@ -145,9 +146,9 @@ function PickCatchView(props: FormProps<PickCatchInput, CatchOption[]>): JSX.Ele
   const [options] = createResource(() => props.input.player, loadCatchOptions);
 
   return (
-    <Suspense fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
+    <Loading fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
       <PickCatchBody {...props} options={options} />
-    </Suspense>
+    </Loading>
   );
 }
 

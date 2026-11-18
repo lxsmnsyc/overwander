@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Resource, Show } from 'solid-js';
 import { AuctionLot, isAuctionableItem } from '../../../auth/auctions';
 import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import InventoryPicker from '../../items/InventoryPicker';

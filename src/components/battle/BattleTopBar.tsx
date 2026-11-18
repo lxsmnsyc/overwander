@@ -1,13 +1,5 @@
-import {
-  Index,
-  type JSX,
-  Show,
-  createEffect,
-  createMemo,
-  createSignal,
-  on,
-  onCleanup,
-} from 'solid-js';
+import { For, Show, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Battle from '../../battle/battle';
 import { EventPriority } from '../../core/event-emitter';
 import { SpriteAnim } from '../../data/ids/sprite-anims';
@@ -90,7 +82,7 @@ function SpeedGroup(props: { speed: number; onSpeed: (speed: number) => void }):
       role="group"
       aria-label={m.battle_replay_speed()}
     >
-      <Index each={SPEEDS}>
+      <For keyed={false} each={SPEEDS}>
         {(speed) => (
           <button
             type="button"
@@ -108,7 +100,7 @@ function SpeedGroup(props: { speed: number; onSpeed: (speed: number) => void }):
             {m.battle_speed({ speed: speed() })}
           </button>
         )}
-      </Index>
+      </For>
     </div>
   );
 }

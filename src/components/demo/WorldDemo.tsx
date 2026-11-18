@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import WeatherMap from './WeatherMap';
 import getWorld, { WORLD_GENERATION, WORLD_SEED } from '../../overworld/current';

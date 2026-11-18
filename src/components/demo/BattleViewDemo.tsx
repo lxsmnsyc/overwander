@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js';
 import type { Profile } from '../../auth/profile';
 import type { TeamSnapshotRecord } from '../../auth/teams';
 import { BattleModes } from '../../battle/battle';

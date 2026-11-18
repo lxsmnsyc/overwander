@@ -1,13 +1,6 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
-import { RadioGroup, RadioGroupOption } from 'terracotta';
+import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { RadioGroup, RadioGroupOption } from 'terracotta/radio-group';
 import { useAbilityPatch } from '../../auth/ability-items';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../model/caught-record';
@@ -262,7 +255,7 @@ export default function AbilityPatchDialog(props: AbilityPatchDialogProps): JSX.
       title={m.catch_patch_title()}
       description={m.catch_patch_description()}
     >
-      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
+      <Loading fallback={<Note>{m.catch_reading_record()}</Note>}>
         <PatchBody
           {...props}
           caught={caught}
@@ -271,7 +264,7 @@ export default function AbilityPatchDialog(props: AbilityPatchDialogProps): JSX.
           }}
           onDone={props.onClose}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

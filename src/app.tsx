@@ -1,8 +1,8 @@
 import { Title } from '@solidjs/meta';
 import { createRouter } from '@solidjs/router';
+import { Errored, Loading, type ParentProps, createEffect, onSettled } from 'solid-js';
+import { HydrationScript, type JSX } from '@solidjs/web';
 import { fileRoutes } from '@solidjs/router/fs';
-import { HydrationScript } from '@solidjs/web';
-import { Errored, type JSX, Loading, type ParentProps, createEffect, onSettled } from 'solid-js';
 import { pageRoutes } from 'virtual:file-routes';
 import AuthProvider from './auth/context';
 import ensureBattleData from './data/battle-data';

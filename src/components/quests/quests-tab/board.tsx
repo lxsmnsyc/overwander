@@ -17,16 +17,8 @@ import {
   useToast,
 } from '../../styled';
 import { DAILY_SLOTS } from '../../../data/quests/rotations';
-import {
-  For,
-  Index,
-  type JSX,
-  type ParentProps,
-  type Resource,
-  Show,
-  createEffect,
-  createSignal,
-} from 'solid-js';
+import { For, type ParentProps, type Resource, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import sayItems from '../../items/say-items';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -375,7 +367,7 @@ export default function QuestBoard(props: {
             {/* By slot rather than by value: today's three keep
                 their places, and a re-read is new numbers in the
                 same three cards */}
-            <Index each={props.rotations.latest?.daily ?? []}>
+            <For keyed={false} each={props.rotations.latest?.daily ?? []}>
               {(standing) => (
                 <RotationCard
                   standing={standing()}
@@ -385,7 +377,7 @@ export default function QuestBoard(props: {
                   }}
                 />
               )}
-            </Index>
+            </For>
           </div>
         </TabPane>
         <TabPane value={Place.Weekly}>

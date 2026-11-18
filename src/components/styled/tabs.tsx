@@ -1,5 +1,6 @@
-import { type JSX, type ParentProps, Suspense, createSignal, onCleanup, onMount } from 'solid-js';
-import { TabGroup as HeadlessTabGroup, Tab, TabList, TabPanel } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import { Loading, type ParentProps, createSignal, onSettled } from 'solid-js';
+import { TabGroup as HeadlessTabGroup, Tab, TabList, TabPanel } from 'terracotta/tabs';
 import { m } from '../../i18n/paraglide/messages.js';
 import { Note } from './feedback';
 
@@ -113,11 +114,11 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
   /** The indicator, whose parent is the bar it measures */
   let indicator: HTMLSpanElement | undefined;
 
-  onMount(() => {
+  onSettled(() => {
     const list = indicator?.parentElement;
 
     if (list == null) {
-      return;
+      return undefined;
     }
 
     // Measure the selected tab against the bar, scroll included
@@ -174,12 +175,12 @@ export function TabBar(props: ParentProps & { class?: string }): JSX.Element {
     // the fallback face. Fonts already loaded need nothing more
     document.fonts.addEventListener('loadingdone', measure);
 
-    onCleanup(() => {
+    return () => {
       document.fonts.removeEventListener('loadingdone', measure);
       cancelAnimationFrame(frame);
       changes.disconnect();
       sizes.disconnect();
-    });
+    };
   });
 
   return (
@@ -232,7 +233,7 @@ export function TabButton(props: ParentProps<{ value: number; class?: string }>)
  *
  * The boundary is the whole point of this existing. A panel that
  * fetches something suspends, and a suspending panel hides everything
- * up to the nearest `Suspense` — which, without this, is the one
+ * up to the nearest `Loading` — which, without this, is the one
  * around the entire page in [`app.tsx`](../../app.tsx). Opening a tab
  * therefore tore the page down and built it again, tab bar included,
  * and a player who was in the middle of a click on that bar had the
@@ -247,7 +248,7 @@ export function TabButton(props: ParentProps<{ value: number; class?: string }>)
 export function TabPane(props: ParentProps<{ value: number; class?: string }>): JSX.Element {
   return (
     <TabPanel value={props.value} class={props.class}>
-      <Suspense fallback={<Note>{m.ui_loading()}</Note>}>{props.children}</Suspense>
+      <Loading fallback={<Note>{m.ui_loading()}</Note>}>{props.children}</Loading>
     </TabPanel>
   );
 }

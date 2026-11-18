@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 
 import { Status, TabBar, TabButton, TabGroup, TabPane } from '../styled';
 import { canProcessSprites } from '../../auth/sprites';

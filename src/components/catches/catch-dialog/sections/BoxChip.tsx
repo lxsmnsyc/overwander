@@ -1,4 +1,5 @@
-import { type JSX, Show, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createResource, createSignal } from 'solid-js';
 import {
   type BoxRecord,
   DEFAULT_BOX_TONE,

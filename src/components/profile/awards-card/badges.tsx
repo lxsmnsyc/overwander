@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource } from 'solid-js';
+import { For, type Resource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { AwardRecord } from '../../../auth/awards';
 import type Awards from '../../../data/ids/awards';
 import { CARD, CARD_TITLE, riseAfter } from '../../styled';

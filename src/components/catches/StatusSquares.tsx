@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getStatusName } from '../../model/health';
 import { unpackStatuses } from '../../data/ids/status';
 import { STATUS_COLORS } from '../battle/UnitCard';

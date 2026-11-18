@@ -1,6 +1,5 @@
 import { Title } from '@solidjs/meta';
-import type { JSX } from 'solid-js';
-import { clientOnly } from '@solidjs/start';
+import { type JSX, clientOnly } from '@solidjs/web';
 
 /**
  * The gifts shelf on its own, for the browser tests: the real shelf for

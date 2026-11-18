@@ -1,15 +1,14 @@
 import {
   type Accessor,
-  Index,
-  type JSX,
+  For,
   Show,
   createEffect,
   createMemo,
   createSignal,
   on,
-  onCleanup,
-  onMount,
+  onSettled,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import createLongPress, { type LongPress } from '../styled/long-press';
 import SquareFace, { type BoxEntry } from './box-square';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -425,7 +424,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   /** Whether the screen is `md` or wider; a wide box draws its `narrow` count below it */
   const [roomy, setRoomy] = createSignal(true);
 
-  onMount(() => {
+  onSettled(() => {
     const query = globalThis.matchMedia('(min-width: 48rem)');
     const read = (): void => {
       setRoomy(query.matches);
@@ -433,9 +432,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
 
     read();
     query.addEventListener('change', read);
-    onCleanup(() => {
+    return () => {
       query.removeEventListener('change', read);
-    });
+    };
   });
 
   const columns = (): 3 | BoxWidth =>
@@ -462,11 +461,11 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   const [wide, setWide] = createSignal(false);
   const [top, setTop] = createSignal(0);
 
-  onMount(() => {
+  onSettled(() => {
     const element = frame();
 
     if (element == null || typeof ResizeObserver === 'undefined') {
-      return;
+      return undefined;
     }
     const observer = new ResizeObserver(() => {
       setAcross(element.clientWidth);
@@ -474,9 +473,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     });
 
     observer.observe(element);
-    onCleanup(() => {
+    return () => {
       observer.disconnect();
-    });
+    };
   });
 
   // Compared by value: a caller rebuilding its props on every pick
@@ -724,7 +723,11 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     >
       <Show
         when={scrolls()}
-        fallback={<Index each={squaresOf(count())}>{(_, index) => square(() => index)}</Index>}
+        fallback={
+          <For keyed={false} each={squaresOf(count())}>
+            {(_, index) => square(() => index)}
+          </For>
+        }
       >
         <div
           class="relative"
@@ -740,7 +743,9 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
           >
             {/* By position, so a square scrolled to is the same button
                 given a new pokemon rather than a new button */}
-            <Index each={windowed()}>{(index) => square(index)}</Index>
+            <For keyed={false} each={windowed()}>
+              {(index) => square(index)}
+            </For>
           </div>
         </div>
       </Show>

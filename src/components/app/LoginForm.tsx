@@ -1,13 +1,13 @@
 import {
   For,
-  type JSX,
+  Loading,
   type ParentProps,
   type Resource,
   Show,
-  Suspense,
   createResource,
   createSignal,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   registerWithEmail,
   signInWithEmail,
@@ -308,9 +308,9 @@ export default function LoginForm(): JSX.Element {
                 setSecondFactor(true);
               }}
             />
-            <Suspense>
+            <Loading>
               <OtherWays run={run} mode={mode()} providers={providers} />
-            </Suspense>
+            </Loading>
           </>
         }
       >

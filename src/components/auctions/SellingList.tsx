@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal, from } from 'solid-js';
+import { For, Show, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type AuctionRecord,
   canReclaim,

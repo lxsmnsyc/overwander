@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
 import { atClockHour } from '../../data/day-clock';
 import { Badge, Meta, Note, Row, Select, Slider, Switch } from '../styled';
 import { CELL, COLORS, SPRITE_STANDS, pictureWidth } from '../../canvas/overworld/metrics';

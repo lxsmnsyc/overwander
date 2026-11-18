@@ -1,12 +1,12 @@
 import {
   type Accessor,
-  type JSX,
   type ParentProps,
   createContext,
   createEffect,
   onCleanup,
   useContext,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { useAuth } from '../../auth/context';
 import type Weather from '../../data/overworld/weather';
 import type { EncounterRecord } from '../../model/encounter-record';
@@ -389,7 +389,7 @@ export default function GameProvider(
   const [dexShiny, setDexShiny] = storeSignal(session.dexShiny);
 
   return (
-    <GameContext.Provider
+    <GameContext
       value={{
         dialog,
         setDialog,
@@ -443,6 +443,6 @@ export default function GameProvider(
       }}
     >
       {props.children}
-    </GameContext.Provider>
+    </GameContext>
   );
 }

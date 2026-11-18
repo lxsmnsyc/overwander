@@ -1,5 +1,5 @@
+import { type JSX, Portal } from '@solidjs/web';
 import {
-  type JSX,
   type ParentProps,
   Show,
   createContext,
@@ -8,7 +8,6 @@ import {
   onCleanup,
   useContext,
 } from 'solid-js';
-import { Portal } from 'solid-js/web';
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
 import { m } from '../../i18n/paraglide/messages.js';
 import closeWhenGone from './gone';
@@ -81,7 +80,7 @@ const DetailRows = createContext(false);
 
 /** Draws every `Detail` inside it as a row */
 export function DetailRowsProvider(props: ParentProps): JSX.Element {
-  return <DetailRows.Provider value>{props.children}</DetailRows.Provider>;
+  return <DetailRows value>{props.children}</DetailRows>;
 }
 
 /**
@@ -155,12 +154,12 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
       </Show>
       <Show when={props.extra}>
         {(extra) => (
-          <DetailRows.Provider value>
+          <DetailRows value>
             {/* Emptied by an extra with nothing to say, so the panel goes with it */}
             <div class="grid gap-1 rounded-lg bg-line-soft px-2 py-1.5 text-xs empty:hidden">
               {extra()()}
             </div>
-          </DetailRows.Provider>
+          </DetailRows>
         )}
       </Show>
       <Show when={props.notch}>

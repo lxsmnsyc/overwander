@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { RaidAction, RaidKind, type RaidView, enterRaid, getRaidTitle } from '../../auth/raids';
 import { isGigantamaxBoss } from '../../overworld/raid';
 import { getTeraRaidType } from '../../data/overworld/tera-raids';

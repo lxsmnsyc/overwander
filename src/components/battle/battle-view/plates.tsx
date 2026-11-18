@@ -1,4 +1,5 @@
-import { Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { BALL_ITEMS } from '../../../data/ids/items';
 import ItemSprite from '../../items/ItemSprite';
@@ -74,7 +75,7 @@ export function HealthTrack(props: HealthTrackProps): JSX.Element {
           duration-(--motion-quick) ease-settle ${FILLS[props.tone]}`}
         style={{ width: width() }}
       />
-      <Index each={props.ticks ?? []}>
+      <For keyed={false} each={props.ticks ?? []}>
         {(tick) => (
           <span
             class={`absolute inset-y-0 -ml-px w-[3px] ${
@@ -83,7 +84,7 @@ export function HealthTrack(props: HealthTrackProps): JSX.Element {
             style={{ left: `${tick() * 100}%` }}
           />
         )}
-      </Index>
+      </For>
     </div>
   );
 }
@@ -114,7 +115,7 @@ export function BallPips(props: {
       role="img"
       aria-label={m.battle_standing({ standing: props.standing, total: props.total })}
     >
-      <Index each={props.balls}>
+      <For keyed={false} each={props.balls}>
         {(pip) => (
           <ItemSprite
             item={BALL_ITEMS[pip().ball]}
@@ -125,7 +126,7 @@ export function BallPips(props: {
             }`}
           />
         )}
-      </Index>
+      </For>
     </span>
   );
 }

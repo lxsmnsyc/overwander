@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Match, type Resource, Show, Suspense, Switch, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Match, type Resource, Show, Switch, createResource } from 'solid-js';
 import { asOffset, getLocalOffset, toLocalTime } from '../../../model/local-time';
 import { atClockHour } from '../../../data/day-clock';
 import ensureBattleData from '../../../data/battle-data';
@@ -142,7 +143,7 @@ export default function TeaserStage(): JSX.Element {
           />
         </Match>
         <Match when={scene !== 'world'}>
-          <Suspense>
+          <Loading>
             <Fielded
               fight={fight}
               onStart={() => {
@@ -152,7 +153,7 @@ export default function TeaserStage(): JSX.Element {
                 handle.foeCasts.push(Date.now() / 1000);
               }}
             />
-          </Suspense>
+          </Loading>
         </Match>
       </Switch>
     </main>

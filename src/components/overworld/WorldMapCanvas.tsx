@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup, onMount, untrack } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, onCleanup, onSettled, untrack } from 'solid-js';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Weather from '../../data/overworld/weather';
 import { WEATHER_COLORS, WEATHER_NAMES, favorsEverything } from '../../data/overworld/weather';
@@ -326,7 +327,7 @@ export default function WorldMapCanvas(props: WorldMapCanvasProps): JSX.Element 
       : m.world_map_place_sky({ place, weather: WEATHER_NAMES[sky], x, y });
   };
 
-  onMount(() => {
+  onSettled(() => {
     const element = canvas;
     const context = element?.getContext('2d');
     // The ground on a page of its own, so a chunk filling in never paints

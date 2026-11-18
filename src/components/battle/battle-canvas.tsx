@@ -1,4 +1,5 @@
-import { type JSX, onCleanup, onMount } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { onSettled } from 'solid-js';
 import createBattleField, { type BattleFieldOptions } from '../../canvas/battle/field';
 import { COLORS } from '../../canvas/battle/field/metrics';
 
@@ -12,11 +13,12 @@ export default function BattleCanvas(props: BattleFieldOptions): JSX.Element {
   let canvas: HTMLCanvasElement | undefined;
   let floorCanvas: HTMLCanvasElement | undefined;
 
-  onMount(() => {
-    if (canvas != null) {
-      // The props themselves, so the field reads them as they change
-      onCleanup(createBattleField(canvas, floorCanvas, props));
+  onSettled(() => {
+    if (canvas == null) {
+      return undefined;
     }
+    // The props themselves, so the field reads them as they change
+    return createBattleField(canvas, floorCanvas, props);
   });
 
   return (

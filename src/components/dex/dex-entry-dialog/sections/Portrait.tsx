@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import type { Species } from '../../../../data/ids/species';
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 import type { SpeciesData } from '../../../../data/species';

@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 import type Battle from '../../battle/battle';
 import type Biome from '../../data/ids/biome';
 import type Unit from '../../battle/unit';

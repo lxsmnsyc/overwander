@@ -1,4 +1,5 @@
-import { For, type JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { STAT_ORDER } from '../../../../data/constants/stats';
 import type { SpeciesData } from '../../../../data/species';
 import { STAT_LABELS } from '../../../catches/catch-dialog/describe';

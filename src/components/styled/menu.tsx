@@ -1,13 +1,8 @@
-import { type ComponentProps, For, type JSX, Show, createSignal } from 'solid-js';
-import { Dynamic, Portal, isServer } from 'solid-js/web';
-import {
-  Menu as HeadlessMenu,
-  MenuItem,
-  Popover,
-  PopoverButton,
-  PopoverPanel,
-  Transition,
-} from 'terracotta';
+import { type ComponentProps, Dynamic, type JSX, Portal, isServer } from '@solidjs/web';
+import { For, Show, createSignal } from 'solid-js';
+import { Menu as HeadlessMenu, MenuItem } from 'terracotta/menu';
+import { Popover, PopoverButton, PopoverPanel } from 'terracotta/popover';
+import { Transition } from 'terracotta/transition';
 import { m } from '../../i18n/paraglide/messages.js';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';

@@ -1,6 +1,6 @@
-import { For, type JSX, Show, createEffect, createSignal } from 'solid-js';
-import { Portal } from 'solid-js/web';
-import { Transition } from 'terracotta';
+import { For, Show, createEffect, createSignal } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
+import { Transition } from 'terracotta/transition';
 import type { QuerySuggestion } from '../../../core/query';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { usePortalHost } from '../portal-host';

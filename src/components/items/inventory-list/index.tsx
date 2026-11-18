@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createEffect, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createEffect, createResource, createSignal } from 'solid-js';
 import { getCandies } from '../../../auth/candy';
 import { getInventory } from '../../../auth/inventory';
 import type { Items } from '../../../data/ids/items';
@@ -50,7 +51,7 @@ export default function BagDialog(props: BagDialogProps): JSX.Element {
       description={props.description}
     >
       <BattleData>
-        <Suspense fallback={<Note>{m.item_bag_loading()}</Note>}>
+        <Loading fallback={<Note>{m.item_bag_loading()}</Note>}>
           <BagBody
             player={props.player}
             items={items}
@@ -63,7 +64,7 @@ export default function BagDialog(props: BagDialogProps): JSX.Element {
               Promise.resolve(refetch()).catch(() => undefined);
             }}
           />
-        </Suspense>
+        </Loading>
       </BattleData>
       <DialogActions
         note={

@@ -1,4 +1,5 @@
-import type { JSX, Resource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import type { Resource } from 'solid-js';
 import { EGG_HATCH_STEPS } from '../../../../model/egg';
 import { type SpeciesData, getFamilyName } from '../../../../data/species';
 import { failed, readable } from '../../../app/resource-reads';

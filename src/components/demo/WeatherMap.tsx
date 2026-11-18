@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Generation, type default as World } from '../../overworld/world';
 import { readMapSky, readMapWindow } from './weather-map-sky';
 import { localNow } from '../../auth/clock';

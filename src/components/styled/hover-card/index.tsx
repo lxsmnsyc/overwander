@@ -1,5 +1,5 @@
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
   type ParentProps,
   Show,
   createContext,
@@ -7,12 +7,12 @@ import {
   createSignal,
   createUniqueId,
   onCleanup,
-  onMount,
+  onSettled,
   useContext,
 } from 'solid-js';
+import { Transition } from 'terracotta/transition';
 
 import { autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
-import { Transition } from 'terracotta';
 import closeWhenGone from '../gone';
 import { DetailRowsProvider, TooltipLayer } from '../tooltip';
 import { RISE } from '../transition';
@@ -392,14 +392,14 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
     setOpen(false);
   };
 
-  onMount(() => {
+  onSettled(() => {
     // Listened for whether or not the card is open: a press on the
     // trigger lands inside the wait before it opens, and a card that
     // arrived after the dialog it opened would be sitting on top of it
     document.addEventListener('pointerdown', away, true);
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('pointerdown', away, true);
-    });
+    };
   });
 
   /**
@@ -612,7 +612,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                     )}
                   </Show>
                 </header>
-                <Holding.Provider value={holding}>
+                <Holding value={holding}>
                   {/* Facts read as rows here, the same as in a tooltip */}
                   <DetailRowsProvider>
                     <div class={BODY}>
@@ -625,7 +625,7 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
                   <Show when={props.footer}>
                     {(foot) => <footer class={FOOT}>{standing(foot())}</footer>}
                   </Show>
-                </Holding.Provider>
+                </Holding>
               </div>
             </Transition>
           </div>

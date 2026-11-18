@@ -1,11 +1,9 @@
 import {
   type Accessor,
   For,
-  Index,
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createMemo,
   createResource,
@@ -13,6 +11,7 @@ import {
   on,
   untrack,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../model/caught-record';
 import { Slots } from '../../data/constants/slots';
@@ -218,7 +217,7 @@ function TeachBody(
       >
         <CounterStep>{m.teach_choose_forget()}</CounterStep>
         <ul class={MOVE_CARDS}>
-          <Index each={known()}>
+          <For keyed={false} each={known()}>
             {(move, at) => (
               <li>
                 <button
@@ -238,7 +237,7 @@ function TeachBody(
                 </button>
               </li>
             )}
-          </Index>
+          </For>
         </ul>
         <Meta>
           {m.teach_forget_note({
@@ -266,9 +265,9 @@ function TeachView(props: FormProps<TeachMoveInput, true>): JSX.Element {
   const [caught] = createResource(() => props.input.catchId, getCaughtBatched);
 
   return (
-    <Suspense fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
+    <Loading fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
       <TeachBody {...props} caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 
@@ -301,9 +300,9 @@ function CatchFace(props: { catchId: string }): JSX.Element {
   const [caught] = createResource(() => props.catchId, getCaughtBatched);
 
   return (
-    <Suspense>
+    <Loading>
       <Face caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 

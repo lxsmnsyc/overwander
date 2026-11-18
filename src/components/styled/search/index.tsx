@@ -1,6 +1,5 @@
 import {
   For,
-  type JSX,
   Show,
   createEffect,
   createSignal,
@@ -8,6 +7,7 @@ import {
   onCleanup,
   untrack,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type QueryCompletion,
   type QuerySuggestion,

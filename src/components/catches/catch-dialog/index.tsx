@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, type Resource, createResource } from 'solid-js';
 import { isLockLive } from '../../../model/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
@@ -336,7 +337,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     // like a trainer's dialog, the sheet arrives once its record and
     // the registries it reads are in, and the page behind it stands
     // still meanwhile
-    <Suspense>
+    <Loading>
       <BattleData>
         <CatchSheet
           {...props}
@@ -360,6 +361,6 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           }}
         />
       </BattleData>
-    </Suspense>
+    </Loading>
   );
 }

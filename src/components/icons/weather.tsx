@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'solid-js';
+import type { ComponentProps, JSX } from '@solidjs/web';
 
 export function CloudRainIcon(props: ComponentProps<'svg'>): JSX.Element {
   return (

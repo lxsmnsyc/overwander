@@ -1,13 +1,6 @@
-import {
-  For,
-  type JSX,
-  type ParentProps,
-  Show,
-  createMemo,
-  createSignal,
-  onCleanup,
-} from 'solid-js';
-import { Popover, PopoverButton, PopoverPanel } from 'terracotta';
+import { For, type ParentProps, Show, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Popover, PopoverButton, PopoverPanel } from 'terracotta/popover';
 import { BIOME_COLORS, BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
 import type Weather from '../../data/overworld/weather';

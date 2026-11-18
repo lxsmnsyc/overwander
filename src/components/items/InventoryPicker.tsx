@@ -1,8 +1,8 @@
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
+  Loading,
   type Resource,
   Show,
-  Suspense,
   createEffect,
   createResource,
   createSignal,
@@ -227,7 +227,7 @@ export type InventoryPickerProps = InventoryPickerCommonProps &
  * The tray itself, which is where the bag is read.
  *
  * A resource read in the body that declared it throws past every
- * `Suspense` written there, so the reading half is a component of its
+ * `Loading` written there, so the reading half is a component of its
  * own with the boundary above it
  */
 function PickerList(
@@ -657,7 +657,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   };
 
   const tray = (docked: boolean): JSX.Element => (
-    <Suspense
+    <Loading
       fallback={
         <>
           <Note>{m.item_bag_loading()}</Note>
@@ -676,7 +676,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
         onDone={close}
         dock={docked ? { close } : undefined}
       />
-    </Suspense>
+    </Loading>
   );
 
   return (

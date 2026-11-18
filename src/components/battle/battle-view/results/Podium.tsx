@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getSpeciesData } from '../../../../data/species';
 import type { SideUnit } from '../summary';
 import { formatNumber } from '../../../../i18n/format';

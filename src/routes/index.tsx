@@ -1,6 +1,6 @@
 import { Title } from '@solidjs/meta';
-import { clientOnly } from '@solidjs/start';
-import { type Accessor, type JSX, Show, createEffect, createSignal, from } from 'solid-js';
+import { type JSX, clientOnly } from '@solidjs/web';
+import { type Accessor, Show, createEffect, createSignal, from } from 'solid-js';
 import { AuctionLot } from '../auth/auctions';
 import { type Profile, watchProfile } from '../auth/profile';
 import { signOut } from '../auth/actions';

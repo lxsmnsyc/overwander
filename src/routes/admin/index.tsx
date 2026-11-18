@@ -1,5 +1,5 @@
-import { A } from '@solidjs/router';
-import { For, type JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type AdminSection, linksFor } from '../../components/admin/sections';
 import useStaff from '../../components/admin/staff-context';
 import { Card, Note } from '../../components/styled';
@@ -35,14 +35,14 @@ export default function AdminOverview(): JSX.Element {
       <div class="grid gap-3 sm:grid-cols-2">
         <For each={sections()}>
           {(entry) => (
-            <A
+            <a
               href={entry.href}
               class="flex flex-col gap-1 rounded-panel border-2 border-line bg-paper p-3 text-ink
                 no-underline shadow-pop transition-colors hover:border-tide hover:text-ink"
             >
               <h3>{entry.title}</h3>
               <p class="text-sm text-muted">{entry.lede}</p>
-            </A>
+            </a>
           )}
         </For>
       </div>

@@ -1,4 +1,5 @@
-import { type JSX, Suspense, createEffect, createResource, from, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, createEffect, createResource, from, onCleanup } from 'solid-js';
 import {
   type RaidRecord,
   canJoinRaids,
@@ -100,7 +101,7 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   );
 
   return (
-    <Suspense fallback={<Note>{m.raid_loading_one()}</Note>}>
+    <Loading fallback={<Note>{m.raid_loading_one()}</Note>}>
       <LobbyTeams
         {...props}
         raid={() => raid() ?? null}
@@ -108,6 +109,6 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
         canJoin={canJoin}
         watching={() => watching() ?? []}
       />
-    </Suspense>
+    </Loading>
   );
 }

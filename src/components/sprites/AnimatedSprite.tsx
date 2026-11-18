@@ -1,12 +1,5 @@
-import {
-  type Accessor,
-  type JSX,
-  Show,
-  createEffect,
-  createMemo,
-  createSignal,
-  onCleanup,
-} from 'solid-js';
+import { type Accessor, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type AuraKind, paintPurifiedAura, paintShadowAura } from '../../canvas/effects/auras';
 import settings from '../app/settings';
 import type SpeciesSpriteAnimation from '../../canvas/sprites/species-sprite-animation';

@@ -11,7 +11,8 @@ import {
   TextField,
 } from '../styled';
 import { useSubmission } from '@solidjs/router';
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 
 /** Loose images into `public/sprites/extras`. */
 export default function ExtrasForm(): JSX.Element {

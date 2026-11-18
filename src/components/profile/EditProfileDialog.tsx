@@ -1,4 +1,5 @@
-import { type JSX, createEffect, createResource, createSignal, on } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { createEffect, createResource, createSignal, on } from 'solid-js';
 import { listMyTitles, saveSprite, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
 import { PLAYER_NAME_LIMIT, asNickname } from '../../model/nickname';

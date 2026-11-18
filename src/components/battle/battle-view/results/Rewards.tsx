@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CandyEarned } from '../../../../auth/battles';
 import { AWARD_NAMES } from '../../../../data/awards';
 import { getItemData } from '../../../../data/items';

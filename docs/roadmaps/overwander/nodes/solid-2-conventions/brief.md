@@ -56,6 +56,7 @@ Rewrite every convention that names a removed 1.x API so it describes the 2.0 pa
 - The area outcomes list patterns they invented beyond the story's Decisions; fold them in.
 - `resource-suspense` becomes the async-memo rule (declare in a parent, read in a child under `Loading`); `effect-props` keeps its memo rule with two-part examples; `app-logic` describes `createStoreSignal` on `from`; `CLAUDE.md` and `README.md` drop "SolidStart 2" and recheck the claim that the transform strips server-only imports (now @solidjs/compiler's directive pass).
 - `AnimatedSprite.tsx` (lines near 237 and 372) starts `ticking(...)` in a component body with `onCleanup`, against the settled "setup with teardown is `onSettled`" pattern; decide whether the skills allow it or convert it.
+- Gotchas to state: a store or signal write becomes visible after a microtask, and `flush()` does not pull a store change through `createStoreSignal`; an effect apply that returns a non-function stops reactivity app-wide, so applies are written with braces (propose a lint rule as a follow-up node if oxlint cannot express it).
 - `device-settings` has no `.agents/skills/` copy today; leave it that way unless the others gained one.
 
 ## Acceptance

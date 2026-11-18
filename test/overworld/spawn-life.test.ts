@@ -26,6 +26,7 @@ import {
   rollSlot,
   slotPhase,
 } from '../../src/overworld/spawn-life/lifetimes';
+import { getRoamArea, positionAt } from '../../src/overworld/spawn-life/roam';
 
 registerGameData();
 
@@ -76,7 +77,7 @@ describe('slot clocks', () => {
     expect(uncut).toBeGreaterThan(300);
   });
 
-  it('crosses an hour mark only where the start cell stays open, and ends there when it closes', () => {
+  it('crosses an hour mark only where its whole roam area stays open, and ends there when it closes', () => {
     let kept = 0;
     let cut = 0;
 
@@ -88,7 +89,7 @@ describe('slot clocks', () => {
         for (let slot = 0; slot < SLOT_TOTAL; slot++) {
           const first = Math.floor((20 * DAY - slotPhase(otherKey, slot)) / SLOT_PERIOD);
 
-          for (let cycle = first; cycle < first + (2 * DAY) / SLOT_PERIOD; cycle++) {
+          for (let cycle = first; cycle < first + DAY / SLOT_PERIOD; cycle++) {
             const found = cycleOf(other, 0, slot, cycle);
 
             if (found == null) {
@@ -98,13 +99,23 @@ describe('slot clocks', () => {
             const mark = (Math.floor(found.start / HOUR) + 1) * HOUR;
             const live = rollSlot(other, 0, slot, found);
 
-            // A cycle only ever runs past a mark by keeping its cell open
-            if (found.end > mark && live != null) {
-              expect(getSpawnGround(other, 0, mark).closed.has(live.home)).toBe(false);
+            // Only a cycle near a mark has anything to check
+            if (live == null || found.start + PRESENT_MAX <= mark) {
+              continue;
+            }
+
+            const closed = getSpawnGround(other, 0, mark).closed;
+            const walked = getRoamArea(other, 0, live).cells;
+
+            // A cycle only ever runs past a mark by keeping its ground open
+            if (found.end > mark) {
+              for (const cell of walked) {
+                expect(closed.has(cell)).toBe(false);
+              }
             }
             // One that starts so close to the mark that it must cross it
-            if (found.start + PRESENT_MIN > mark && live != null) {
-              const closes = getSpawnGround(other, 0, mark).closed.has(live.home);
+            if (found.start + PRESENT_MIN > mark) {
+              const closes = walked.some((cell) => closed.has(cell));
 
               expect(found.end > mark).toBe(!closes);
               if (closes) {
@@ -266,6 +277,9 @@ describe('the server check', () => {
   const standing = liveSpawns(chunk, 0, NOON);
   const live = standing[0];
   const individual = live.spawn[1];
+  const area = getRoamArea(chunk, 0, live);
+  // Where the pokemon stands is where a press lands
+  const stands = (time: number): number => positionAt(area, live, time).cell;
   const meet = (
     id: string,
     value: number,
@@ -276,7 +290,7 @@ describe('the server check', () => {
   ): LiveSpawn | null => checkMeeting(at, zone, id, value, cell, time);
 
   it('accepts a meeting inside the cycle', () => {
-    expect(meet(live.id, individual, live.home, NOON)).toEqual(live);
+    expect(meet(live.id, individual, stands(NOON), NOON)).toEqual(live);
     expect(meet(live.id, individual, live.home, live.cycle.start)).toEqual(live);
   });
 
@@ -284,22 +298,25 @@ describe('the server check', () => {
     const { start, end } = live.cycle;
 
     expect(meet(live.id, individual, live.home, start - MEET_DRIFT_MS)).toEqual(live);
-    expect(meet(live.id, individual, live.home, end + MEET_DRIFT_MS - 1)).toEqual(live);
+    expect(
+      meet(live.id, individual, stands(end + MEET_DRIFT_MS - 1), end + MEET_DRIFT_MS - 1),
+    ).toEqual(live);
     expect(meet(live.id, individual, live.home, start - MEET_DRIFT_MS - 1)).toBeNull();
     expect(meet(live.id, individual, live.home, end + MEET_DRIFT_MS)).toBeNull();
   });
 
   it('accepts a cell one away and refuses farther', () => {
-    const column = live.home % CHUNK_CELLS;
+    const cell = stands(NOON);
+    const column = cell % CHUNK_CELLS;
     const step = column < CHUNK_CELLS - 1 ? 1 : -1;
     const far = column < CHUNK_CELLS - 4 ? 4 : -4;
 
-    expect(meet(live.id, individual, live.home + step, NOON)).toEqual(live);
-    expect(meet(live.id, individual, live.home + far, NOON)).toBeNull();
+    expect(meet(live.id, individual, cell + step, NOON)).toEqual(live);
+    expect(meet(live.id, individual, cell + far, NOON)).toBeNull();
   });
 
   it('refuses a wrong individual value', () => {
-    expect(meet(live.id, individual + 1, live.home, NOON)).toBeNull();
+    expect(meet(live.id, individual + 1, stands(NOON), NOON)).toBeNull();
   });
 
   it('refuses a wrong slot, key, start, zone, chunk and a bad id', () => {

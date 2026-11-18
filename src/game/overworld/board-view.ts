@@ -12,6 +12,8 @@ import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../../overworld/ch
 import { SLOT_COUNT } from '../../overworld/spawn-life';
 import { type SpawnFade, isDrawn, wasStanding } from './spawn-radius';
 import { liveSpawns } from '../../overworld/spawn-life/lifetimes';
+import { getRoamArea } from '../../overworld/spawn-life/roam';
+import { type SpawnWalk, stepSpawn } from '../../canvas/overworld/chunk-view/spawn-walk';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../overworld/board/ground';
 import { blocksWalk } from '../../overworld/terrain/cliff';
@@ -24,7 +26,7 @@ import { spawnKey } from '../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../data/overworld/weather';
 import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
 import { Depth } from '../../overworld/depth';
-import type { BoardEdge } from '../../overworld/board';
+import { BOARD_COUNT, type BoardEdge } from '../../overworld/board';
 import createOverworld from '../../overworld/setup';
 import { isGigantamaxBoss } from '../../overworld/raid';
 import { RaidBeacon } from '../../canvas/overworld/beacon';
@@ -143,6 +145,35 @@ export interface BoardSpawn {
   shiny: boolean;
   female: boolean;
   fade: SpawnFade;
+  /** Where it roams, and where its chunk sits on the board */
+  walk: SpawnWalk;
+}
+
+/** A press lands a moment after the frame it was aimed at, so the last of this long counts too */
+const PRESS_GRACE_MS = 250;
+
+/**
+ * The pokemon standing on a board cell at a local instant, or the one
+ * drawn there a moment ago. Where two stand on one cell the lower slot
+ * is on top, as the draw puts it
+ */
+export function findSpawnAt(view: BoardView, index: number, now: number): BoardSpawn | undefined {
+  for (const at of [now, now - PRESS_GRACE_MS]) {
+    let found: BoardSpawn | undefined;
+
+    for (const spawn of view.spawns.values()) {
+      if (stepSpawn(spawn.walk, at)?.index !== index) {
+        continue;
+      }
+      if (found == null || spawn.walk.live.slot < found.walk.live.slot) {
+        found = spawn;
+      }
+    }
+    if (found != null) {
+      return found;
+    }
+  }
+  return undefined;
 }
 
 /** The window's Max Raids by the colour their pillar burns */
@@ -314,7 +345,7 @@ export function buildBoardView(
   const chunks: BoardChunk[] = [];
   const covering = new Map<string, ChunkSnapshot>();
   /** The chunk's snapshot behind each standing spawn, which is all a meeting needs of it */
-  const spots = new Map<number, ChunkSnapshot>();
+  const spots = new Map<string, ChunkSnapshot>();
 
   /**
    * Stand the chunk's pokemon on the board. Each one is derived from the
@@ -327,6 +358,8 @@ export function buildBoardView(
     chunk: ReturnType<typeof world.getChunk>,
     board: (cell: number) => number | null,
     spot: ChunkSnapshot,
+    shiftX: number,
+    shiftY: number,
   ): void => {
     for (const live of liveSpawns(chunk, offset, instant)) {
       // A lure decides how many slots are drawn, the rare slot is
@@ -363,9 +396,17 @@ export function buildBoardView(
       };
 
       shown.set(live.id, seen);
-      spots.set(seat, spot);
-      spawns.set(seat, {
+      spots.set(`${x},${y}`, spot);
+
+      // Two pokemon may share a start cell, so the second takes a seat past the board
+      let key = seat;
+
+      while (spawns.has(key)) {
+        key += BOARD_COUNT;
+      }
+      spawns.set(key, {
         id: live.id,
+        walk: { live, area: getRoamArea(chunk, offset, live), shiftX, shiftY },
         spawn: live.spawn,
         fade: { cycle: live.cycle, distance: seen.distance, standing: seen.standing },
         // Whether it sparkles for *this* player, worked out the way the
@@ -436,7 +477,7 @@ export function buildBoardView(
       // Pokemon need no window: they come off the clock, so they stand
       // while their chunk's window is still on its way
       if (nearby.has(`${x},${y}`)) {
-        standSpawns(x, y, chunk, board, new ChunkSnapshot(chunk, instant, offset));
+        standSpawns(x, y, chunk, board, new ChunkSnapshot(chunk, instant, offset), shiftX, shiftY);
       }
       // Out past the live circle nothing is read, but the people there
       // are the clock's roll, so they are dressed as they stand rather
@@ -474,7 +515,7 @@ export function buildBoardView(
     standFallenLairs(snapshot);
 
     if (nearby.has(`${x},${y}`)) {
-      standSpawns(x, y, chunk, board, snapshot);
+      standSpawns(x, y, chunk, board, snapshot, shiftX, shiftY);
     }
   }
 
@@ -540,8 +581,8 @@ export function buildBoardView(
     at: (cell) => {
       const worldX = originX + (cell % BOARD_CELLS);
       const worldY = originY + Math.floor(cell / BOARD_CELLS);
-      const snapshot =
-        covering.get(`${chunkOfCell(worldX)},${chunkOfCell(worldY)}`) ?? spots.get(cell);
+      const where = `${chunkOfCell(worldX)},${chunkOfCell(worldY)}`;
+      const snapshot = covering.get(where) ?? spots.get(where);
 
       return snapshot == null
         ? null

@@ -4,7 +4,7 @@ import { spawnId } from '../../model/snapshot-record';
 import { toZoneKey } from '../../model/local-time';
 import type Chunk from '../chunk';
 import { PLACEMENT_AREA, centeredCells } from '../chunk';
-import ChunkSnapshot from '../chunk-snapshot';
+import ChunkSnapshot, { type Spawn } from '../chunk-snapshot';
 import { CHUNK_CELLS } from '../grid';
 import {
   HOUR,
@@ -22,6 +22,7 @@ import {
   type SlotCycle,
   type SlotKind,
 } from './index';
+import { getHourClosed, getRoamArea, positionAt } from './roam';
 
 /** Memos stop growing here and start over, so a long session keeps a bounded few */
 const MEMO_LIMIT = 2048;
@@ -41,6 +42,14 @@ export interface SpawnGround {
 
 const grounds = new Map<string, SpawnGround>();
 const rolls = new Map<string, LiveSpawn | null>();
+const starts = new Map<string, Roll | null>();
+
+/** What a cycle rolls at its start, before its end is known */
+interface Roll {
+  kind: SlotKind;
+  home: number;
+  spawn: Spawn;
+}
 
 function remember<T>(memo: Map<string, T>, key: string, value: T): T {
   if (memo.size >= MEMO_LIMIT) {
@@ -61,43 +70,109 @@ export function slotPhase(chunkKey: string, slot: number): number {
 }
 
 /**
- * Whether a pokemon that starts on `home` may stay past the hour mark
- * the ground `next` begins at: its cell is still open in that hour.
- * `spawn-roaming` widens this from the start cell to every cell of the
- * roam area, and nothing else about the crossing changes
+ * Whether a pokemon whose roam area is `area` may stay past the hour
+ * mark the ground `next` begins at: every cell it may walk is still
+ * open in that hour, so a kept roamer never walks onto a closed cell
  */
-export function staysOpen(next: SpawnGround, home: number): boolean {
-  return !next.closed.has(home);
+export function staysOpen(next: SpawnGround, area: number[]): boolean {
+  for (const cell of area) {
+    if (next.closed.has(cell)) {
+      return false;
+    }
+  }
+  return true;
 }
 
-/**
- * One cycle of a slot: where it ends, and the stream its roll goes on
- * from, with the present length and the start cell already drawn.
- *
- * A cycle that runs past the next hour mark keeps its full length when
- * its ground stays open in that hour, and ends at the mark otherwise
- */
-function openCycle(
+/** The present length and start cell of a cycle, on the stream its roll goes on from */
+function beginCycle(
   chunk: Chunk,
   offset: number,
   slot: number,
   cycle: number,
-): { found: SlotCycle | null; rng: AleaRNG; home: number | null } {
+): { rng: AleaRNG; start: number; present: number; home: number | null } {
   const chunkKey = keyOf(chunk, offset);
   const rng = new AleaRNG(`${chunkKey}slot${slot}cycle${cycle}`);
   const start = slotPhase(chunkKey, slot) + cycle * SLOT_PERIOD;
   const present = PRESENT_MIN + Math.floor(rng.random() * (PRESENT_MAX - PRESENT_MIN));
-  const mark = (Math.floor(start / HOUR) + 1) * HOUR;
   const territory = getSpawnGround(chunk, offset, start).territories[slot];
   // The draw is taken only where there is a cell to start on
   const home =
     territory.length === 0 ? null : territory[Math.floor(rng.random() * territory.length)];
+
+  return { rng, start, present, home };
+}
+
+/**
+ * What a cycle rolls, which depends on its start and not on its end.
+ * Memoised per spawn id, as the roll is read both to place the end of
+ * a cycle that crosses the hour and to stand the pokemon
+ */
+function rollStart(chunk: Chunk, offset: number, slot: number, cycle: number): Roll | null {
+  const chunkKey = keyOf(chunk, offset);
+  const start = slotPhase(chunkKey, slot) + cycle * SLOT_PERIOD;
+  const id = spawnId(chunkKey, start, slot);
+
+  if (starts.has(id)) {
+    return starts.get(id) ?? null;
+  }
+
+  // The draws in order: present length, start cell, species, individual
+  // value, trait value. A later change to this order is a decision
+  const begun = beginCycle(chunk, offset, slot, cycle);
+
+  if (begun.home == null) {
+    return remember(starts, id, null);
+  }
+
+  const { home, rng } = begun;
+  const kind = getSpawnGround(chunk, offset, start).kinds[slot];
+  const snapshot = new ChunkSnapshot(chunk, start, offset);
+  const pool = kind === 'street' ? snapshot.getStreetPool() : snapshot.getCellPool(home);
+  const random = (): number => rng.random();
+  const species =
+    kind === 'rare' ? rareSpawn(pool, random, RARE_ODDS_SCALE) : commonSpawn(pool, random);
+
+  if (species == null) {
+    return remember(starts, id, null);
+  }
+  return remember(starts, id, { kind, home, spawn: snapshot.finishSpawn(species, rng) });
+}
+
+/**
+ * One cycle of a slot, with where it ends.
+ *
+ * A cycle that runs past the next hour mark keeps its full length when
+ * every cell it may roam stays open in that hour, and ends at the mark
+ * otherwise
+ */
+function openCycle(chunk: Chunk, offset: number, slot: number, cycle: number): SlotCycle | null {
+  const { start, present, home } = beginCycle(chunk, offset, slot, cycle);
+  const mark = (Math.floor(start / HOUR) + 1) * HOUR;
   let end = start + present;
 
-  if (end > mark && (home == null || !staysOpen(getSpawnGround(chunk, offset, mark), home))) {
-    end = mark;
+  if (end > mark) {
+    const next = getSpawnGround(chunk, offset, mark);
+    // The roam area needs the species, so the start is rolled first;
+    // where nothing stands, the start cell is all there is
+    const rolled = home == null ? null : rollStart(chunk, offset, slot, cycle);
+    let area: number[] = home == null ? [] : [home];
+
+    if (rolled != null) {
+      area = getRoamArea(chunk, offset, {
+        id: spawnId(keyOf(chunk, offset), start, slot),
+        slot,
+        kind: rolled.kind,
+        cycle: { slot, cycle, start, end },
+        home: rolled.home,
+        spawn: rolled.spawn,
+      }).cells;
+    }
+
+    if (!staysOpen(next, area)) {
+      end = mark;
+    }
   }
-  return { found: end - start < MIN_STAY ? null : { slot, cycle, start, end }, rng, home };
+  return end - start < MIN_STAY ? null : { slot, cycle, start, end };
 }
 
 /** Cycle `cycle` of a slot, or null when the hour cuts it shorter than a stay is worth */
@@ -107,7 +182,7 @@ export function cycleOf(
   slot: number,
   cycle: number,
 ): SlotCycle | null {
-  return openCycle(chunk, offset, slot, cycle).found;
+  return openCycle(chunk, offset, slot, cycle);
 }
 
 /** The cycle of a slot that stands at `time`, or null while it rests */
@@ -154,6 +229,10 @@ function shuffle(cells: number[], rng: AleaRNG): void {
 
 /** Deal a shuffled list round-robin to the slots in order */
 function deal(cells: number[], slots: number[], territories: number[][]): void {
+  // A handful of town cells may earn the streets no slot at all
+  if (slots.length === 0) {
+    return;
+  }
   for (let at = 0; at < cells.length; at++) {
     territories[slots[at % slots.length]].push(cells[at]);
   }
@@ -175,7 +254,7 @@ export function getSpawnGround(chunk: Chunk, offset: number, time: number): Spaw
 
   // The hour's closed cells come off a snapshot of the hour, since the
   // phenomena that hold ground are the hour's own
-  const closed = new ChunkSnapshot(chunk, hour * HOUR, offset).getClosedCells();
+  const closed = getHourClosed(chunk, offset, hour);
   const streets: number[] = [];
   const country: number[] = [];
 
@@ -236,34 +315,12 @@ export function rollSlot(
     return rolls.get(id) ?? null;
   }
 
-  const ground = getSpawnGround(chunk, offset, cycle.start);
+  const rolled = rollStart(chunk, offset, slot, cycle.cycle);
 
-  // The draws in order: present length, start cell, species, individual
-  // value, trait value. A later change to this order is a decision
-  const { rng, home } = openCycle(chunk, offset, slot, cycle.cycle);
-
-  if (home == null) {
+  if (rolled == null) {
     return remember(rolls, id, null);
   }
-
-  const kind = ground.kinds[slot];
-  const snapshot = new ChunkSnapshot(chunk, cycle.start, offset);
-  const pool = kind === 'street' ? snapshot.getStreetPool() : snapshot.getCellPool(home);
-  const random = (): number => rng.random();
-  const species =
-    kind === 'rare' ? rareSpawn(pool, random, RARE_ODDS_SCALE) : commonSpawn(pool, random);
-
-  if (species == null) {
-    return remember(rolls, id, null);
-  }
-  return remember(rolls, id, {
-    id,
-    slot,
-    kind,
-    cycle,
-    home,
-    spawn: snapshot.finishSpawn(species, rng),
-  });
+  return remember(rolls, id, { id, slot, cycle, ...rolled });
 }
 
 /** Every pokemon standing at `time` */
@@ -300,14 +357,6 @@ export function parseSpawnId(id: string): { key: string; start: number; slot: nu
   // One spawn has one id: anything that does not read back as itself
   // (`#07`, `@-0#3`) is refused
   return spawnId(parsed.key, parsed.start, parsed.slot) === id ? parsed : null;
-}
-
-/**
- * Where a pokemon stands at `time`. It stays on its start cell until
- * `spawn-roaming` swaps this for `positionAt`
- */
-function findCellAt(live: LiveSpawn, _time: number): number {
-  return live.home;
 }
 
 /** The cells between two cells of a chunk, the larger of the two axes */
@@ -370,9 +419,10 @@ export function checkMeeting(
   }
 
   // And it must stand where the client pressed
+  const area = getRoamArea(chunk, offset, live);
   const near =
-    cellDistance(cell, findCellAt(live, localNow)) <= MEET_DRIFT_CELLS ||
-    cellDistance(cell, findCellAt(live, localNow - MEET_DRIFT_MS)) <= MEET_DRIFT_CELLS;
+    cellDistance(cell, positionAt(area, live, localNow).cell) <= MEET_DRIFT_CELLS ||
+    cellDistance(cell, positionAt(area, live, localNow - MEET_DRIFT_MS).cell) <= MEET_DRIFT_CELLS;
 
   return near ? live : null;
 }

@@ -1,3 +1,4 @@
+import { getRoamArea, positionAt } from '../../../src/overworld/spawn-life/roam';
 import fc from 'fast-check';
 import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../../src/data';
@@ -80,18 +81,12 @@ describe('spawns on the ground', () => {
         for (const [live, staged] of readStanding(seed, place, clock)) {
           // The server derives the same pokemon on the same cell, and a
           // wrong individual value or a cell far away is refused
-          const met = checkMeeting(
-            staged.chunk,
-            clock.zone,
-            live.id,
-            live.spawn[1],
-            live.home,
-            local,
-          );
+          const stands = positionAt(getRoamArea(staged.chunk, clock.zone, live), live, local).cell;
+          const met = checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1], stands, local);
 
           expect(met?.id).toBe(live.id);
           expect(
-            checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1] ^ 1, live.home, local),
+            checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1] ^ 1, stands, local),
           ).toBeNull();
 
           // A street rolls the town's pool, which the snapshot keeps to itself

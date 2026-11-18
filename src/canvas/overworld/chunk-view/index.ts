@@ -36,6 +36,7 @@ import {
 import type SpeciesSpriteAnimation from '../../../canvas/sprites/species-sprite-animation';
 import { SPRITE_DIRECTIONS, type SpriteDirection } from '../../../canvas/sprites/sheet';
 import drawSparkle, { SPARKLE_LIFE } from '../../../canvas/effects/sparkle';
+import type { SpawnStep } from './spawn-walk';
 import drawHerald, { HERALD_BURST_LIFE } from '../../../canvas/overworld/herald';
 import speciesSize from '../../../canvas/sprites/species-size';
 import {
@@ -1204,11 +1205,24 @@ export default function createChunkView(
     drawn: { square: BoardCell; outline: ProjectedPoint[]; lift: number; depth: number }[];
     lifted: Set<number>;
   } | null = null;
+  /** A pokemon on the board this frame: its coat, the key it is held under, and where it is */
+  interface SpawnStanding {
+    coat: SpawnCoat;
+    key: number;
+    index: number;
+    step: SpawnStep | null;
+  }
+
+  /** What the last frame saw of the roamers, so a walk starting or a cell changing is drawn */
+  let roamSeen = '';
+
   /** The standing pass's cells in paint order, kept while nothing on the board changes */
   let standOrder: {
     yaw: number;
     /** Which cells other players stand on, as a string so a new frame with the same cells matches */
     crowded: string;
+    /** The cells the pokemon stand on, the same way */
+    roamed: string;
     projected: object;
     ground: BoardGround;
     landmarks: Map<number, Landmark>;
@@ -2033,6 +2047,37 @@ export default function createChunkView(
    * light that has barely moved
    */
   const worldTime = (): number => props.time ?? localNow();
+
+  /**
+   * Where every pokemon stands this frame, by the board cell it is
+   * nearest. A roamer is placed by its own walk at the local instant,
+   * one with no walk stands on the cell it is keyed by, and two on one
+   * cell are both kept, the lower slot first
+   */
+  const placeSpawns = (): Map<number, SpawnStanding[]> => {
+    const now = worldTime();
+    const byCell = new Map<number, SpawnStanding[]>();
+
+    for (const [key, coat] of props.spawns) {
+      const step = coat.walk == null ? null : coat.walk(now);
+      const index = step == null ? key : step.index;
+
+      // Off the board, whether it walked off or was keyed past it
+      if ((coat.walk != null && step == null) || index < 0 || index >= BOARD_CELLS ** 2) {
+        continue;
+      }
+
+      const standing = { coat, key, index, step };
+      const here = byCell.get(index);
+
+      if (here == null) {
+        byCell.set(index, [standing]);
+      } else {
+        here.push(standing);
+      }
+    }
+    return byCell;
+  };
 
   /**
    * The pokemon standing about are the only thing here that moves
@@ -3132,17 +3177,22 @@ export default function createChunkView(
       context.globalAlpha = prior;
     };
 
-    for (const [index, standing] of props.spawns) {
-      if (!standing.featured) {
-        continue;
-      }
-      animating = true;
-      // Several rings in the air at once, evenly apart, so the cell
-      // is never without one and never has only a spent one
-      for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
-        const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
+    // Where each pokemon stands this frame: its ring follows it cell to cell
+    const roamers = placeSpawns();
 
-        ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) ** RIPPLE_FADE * RIPPLE_ALPHA);
+    for (const here of roamers.values()) {
+      for (const { coat: standing, index } of here) {
+        if (!standing.featured) {
+          continue;
+        }
+        animating = true;
+        // Several rings in the air at once, evenly apart, so the cell
+        // is never without one and never has only a spent one
+        for (let ring = 0; ring < RIPPLE_RINGS; ring++) {
+          const phase = (clock / RIPPLE_PERIOD + ring / RIPPLE_RINGS) % 1;
+
+          ripple(index, 0.2 + phase * RIPPLE_SPREAD, (1 - phase) ** RIPPLE_FADE * RIPPLE_ALPHA);
+        }
       }
     }
 
@@ -3215,67 +3265,69 @@ export default function createChunkView(
      * flat: anything standing up out of the cell reads as a landmark
      * rather than as the pokemon
      */
-    for (const [index, standing] of props.spawns) {
-      if (standing.rank == null) {
-        continue;
-      }
-      animating = true;
-      const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
-      const turn = (clock / HERALD_TURN) * Math.PI * 2;
-      // Breathing, so a seal that holds its size is still alive
-      const lit = HERALD_ALPHA * (0.75 + 0.25 * Math.sin((clock / HERALD_TURN) * Math.PI * 2));
-
-      for (const band of HERALD_SEAL) {
-        const step = (Math.PI * 2) / band.arcs;
-
-        for (let arc = 0; arc < band.arcs; arc++) {
-          const from = turn * band.way + arc * step;
-
-          sealArc(index, band.radius, from, from + step * band.fill, colour, lit);
-        }
-      }
-
-      const cell = boardCellOf(index);
-      const spot = shifted(cell);
-      const floor = liftOf(cell);
-      const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
-      const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
-      const seed = nameSeed(standing.id);
-
-      marks?.depth(floorOf(cell, floor, RING_SPREAD));
-      for (let mote = 0; mote < HERALD_MOTES; mote++) {
-        // Each on its own clock, so they are never a row of lights
-        // rising together
-        const phase = (clock / HERALD_TURN + ((seed >> mote) & 0xff) / 256) % 1;
-        const angle = ((mote + 0.5) / HERALD_MOTES) * Math.PI * 2 + phase * 1.2;
-        const round = (1.4 / BOARD_SPAN / 2) * (0.5 + phase * 0.5);
-        const point = at(
-          projectAir(
-            { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
-            floor + phase * HERALD_RISE,
-            yaw(),
-          ),
-        );
-        const half = (HERALD_MOTE * point.scale) / 2;
-        const alpha = Math.sin(phase * Math.PI) * HERALD_ALPHA;
-        const speck = [
-          { x: point.x - half, y: point.y - half },
-          { x: point.x + half, y: point.y - half },
-          { x: point.x + half, y: point.y + half },
-          { x: point.x - half, y: point.y + half },
-        ];
-
-        if (batch != null) {
-          batch.solid(colour, speck, alpha);
+    for (const here of roamers.values()) {
+      for (const { coat: standing, index } of here) {
+        if (standing.rank == null) {
           continue;
         }
+        animating = true;
+        const colour = standing.rank === 'mythical' ? COLORS.mythical : COLORS.legendary;
+        const turn = (clock / HERALD_TURN) * Math.PI * 2;
+        // Breathing, so a seal that holds its size is still alive
+        const lit = HERALD_ALPHA * (0.75 + 0.25 * Math.sin((clock / HERALD_TURN) * Math.PI * 2));
 
-        const prior = context.globalAlpha;
+        for (const band of HERALD_SEAL) {
+          const step = (Math.PI * 2) / band.arcs;
 
-        context.globalAlpha = prior * alpha;
-        context.fillStyle = colour;
-        context.fillRect(point.x - half, point.y - half, half * 2, half * 2);
-        context.globalAlpha = prior;
+          for (let arc = 0; arc < band.arcs; arc++) {
+            const from = turn * band.way + arc * step;
+
+            sealArc(index, band.radius, from, from + step * band.fill, colour, lit);
+          }
+        }
+
+        const cell = boardCellOf(index);
+        const spot = shifted(cell);
+        const floor = liftOf(cell);
+        const midU = 0.5 + (spot.x - BOARD_CENTER) / BOARD_SPAN;
+        const midV = 0.5 + (spot.y - BOARD_CENTER) / BOARD_SPAN;
+        const seed = nameSeed(standing.id);
+
+        marks?.depth(floorOf(cell, floor, RING_SPREAD));
+        for (let mote = 0; mote < HERALD_MOTES; mote++) {
+          // Each on its own clock, so they are never a row of lights
+          // rising together
+          const phase = (clock / HERALD_TURN + ((seed >> mote) & 0xff) / 256) % 1;
+          const angle = ((mote + 0.5) / HERALD_MOTES) * Math.PI * 2 + phase * 1.2;
+          const round = (1.4 / BOARD_SPAN / 2) * (0.5 + phase * 0.5);
+          const point = at(
+            projectAir(
+              { u: midU + Math.cos(angle) * round, v: midV + Math.sin(angle) * round },
+              floor + phase * HERALD_RISE,
+              yaw(),
+            ),
+          );
+          const half = (HERALD_MOTE * point.scale) / 2;
+          const alpha = Math.sin(phase * Math.PI) * HERALD_ALPHA;
+          const speck = [
+            { x: point.x - half, y: point.y - half },
+            { x: point.x + half, y: point.y - half },
+            { x: point.x + half, y: point.y + half },
+            { x: point.x - half, y: point.y + half },
+          ];
+
+          if (batch != null) {
+            batch.solid(colour, speck, alpha);
+            continue;
+          }
+
+          const prior = context.globalAlpha;
+
+          context.globalAlpha = prior * alpha;
+          context.fillStyle = colour;
+          context.fillRect(point.x - half, point.y - half, half * 2, half * 2);
+          context.globalAlpha = prior;
+        }
       }
     }
 
@@ -3525,6 +3577,7 @@ export default function createChunkView(
     }
 
     const crowded = [...crowdOn.keys()].sort((a, b) => a - b).join(',');
+    const roamed = [...roamers.keys()].sort((a, b) => a - b).join(',');
 
     /**
      * Everything with something standing on it, from the back of the
@@ -3535,6 +3588,7 @@ export default function createChunkView(
     if (
       standOrder?.yaw !== yaw() ||
       standOrder.crowded !== crowded ||
+      standOrder.roamed !== roamed ||
       standOrder.projected !== kept ||
       standOrder.ground !== ground ||
       standOrder.landmarks !== props.landmarks ||
@@ -3563,7 +3617,7 @@ export default function createChunkView(
         ...props.decorations.keys(),
         ...walled,
         ...blocked,
-        ...props.spawns.keys(),
+        ...roamers.keys(),
         ...props.phenomena.keys(),
         ...crowdOn.keys(),
       ]) {
@@ -3575,6 +3629,7 @@ export default function createChunkView(
       standOrder = {
         yaw: yaw(),
         crowded,
+        roamed,
         projected: kept,
         ground,
         landmarks: props.landmarks,
@@ -3623,8 +3678,7 @@ export default function createChunkView(
       // Nothing standing anywhere while the sheets are still coming:
       // a field that fills in one pokemon at a time reads as a page
       // loading rather than as a place
-      const rolled = props.spawns.get(index);
-      const standing = loading ? undefined : rolled;
+      const standingHere = loading ? [] : (roamers.get(index) ?? []);
 
       // What a dark sky is kept off: the player, and the places worth
       // walking to. A pokemon standing on a cell carries no light of
@@ -3826,24 +3880,39 @@ export default function createChunkView(
         stampBeacon(index, middle, 'air');
       }
 
-      if (standing != null) {
+      for (const { coat: standing, key, step } of standingHere) {
+        // Where it is between two cells, the cell's own middle when it stands
+        const where = step == null ? middle : at(groundBetween(step.x, step.y, cell));
         const sprite = spriteFor(standing);
 
         if (sprite?.ready === true) {
-          // Facing the way it is standing in the world, seen from
+          // The way it faces: toward its last step once it has walked, and
+          // the way it was standing in the world before, seen from
           // wherever the camera has been walked to: turn a quarter
           // and something that was facing you is facing across you
-          sprite.play(SpriteAnim.Idle, {
-            direction:
-              SPRITE_DIRECTIONS[facingFrom(facingOf(seedOf(index), standing.species), yaw())],
-            loop: true,
-          });
+          const faced =
+            step?.facing == null
+              ? facingOf(seedOf(key % BOARD_CELLS ** 2), standing.species)
+              : SPRITE_DIRECTIONS.indexOf(step.facing);
+          const direction = SPRITE_DIRECTIONS[facingFrom(faced, yaw())];
+          // One sheet is shared by every pokemon of its coat, so each
+          // is put at its own moment of the clip it plays: the walk
+          // runs from the start of its own walk, the rest from the clock
+          const stepping = step?.moving === true && sprite.play(SpriteAnim.Walk, { direction });
+
+          if (stepping) {
+            animating = true;
+            sprite.seek(step.walked);
+          } else {
+            sprite.play(SpriteAnim.Idle, { direction, loop: true });
+            sprite.seek(clock + key * 97);
+          }
 
           // Sized the way the scenery is: so many source pixels of
           // the sheet stand on one cell, with the dex height saying
           // how far this one is off ordinary
           const scale =
-            (CELL * speciesSize(standing.species, sprite) * middle.scale * magnify) / SPRITE_STANDS;
+            (CELL * speciesSize(standing.species, sprite) * where.scale * magnify) / SPRITE_STANDS;
           // The sheet's own shadow marker is the point that stands on
           // the ground, so putting it on the middle of the cell is
           // the whole of standing a pokemon there — whatever is drawn
@@ -3874,14 +3943,14 @@ export default function createChunkView(
             ...(fade < 1 ? { alpha: fade } : {}),
           };
 
-          if (!shade(sprite.shadowOf(middle.x, middle.y, thrown))) {
-            sprite.drawShadow(context, middle.x, middle.y, thrown);
+          if (!shade(sprite.shadowOf(where.x, where.y, thrown))) {
+            sprite.drawShadow(context, where.x, where.y, thrown);
           }
           // Upright, and at its own size: the ground is tilted and
           // the pokemon on it are not, which is what a billboard is
           // and what makes them look like they are standing up out
           // of the board
-          const stood = sprite.quadOf(middle.x, middle.y, placement);
+          const stood = sprite.quadOf(where.x, where.y, placement);
           const alpha = veil(index, Standing.Spawn, stood) * fade;
 
           pickOn(index, stood, true);
@@ -3889,8 +3958,8 @@ export default function createChunkView(
           if (!place(stood, alpha)) {
             sprite.draw(
               context,
-              middle.x,
-              middle.y,
+              where.x,
+              where.y,
               alpha === 1 ? placement : { ...placement, alpha },
             );
           }
@@ -3901,7 +3970,7 @@ export default function createChunkView(
               standing.id,
               sparkles,
               SPARKLE_LIFE,
-              middle,
+              where,
               scale,
               (seed, age, density) => paintSparkle(standing.id, seed, age, density),
               (seed, age, spot, sized) => {
@@ -3917,7 +3986,7 @@ export default function createChunkView(
               name,
               heralds,
               HERALD_BURST_LIFE,
-              middle,
+              where,
               scale,
               (seed, age, density) => paintHerald(name, seed, age, colour, density),
               (seed, age, spot, sized) => {
@@ -3930,7 +3999,7 @@ export default function createChunkView(
             }
           }
         } else {
-          dot(middle, CELL * 0.18 * middle.scale * magnify, COLORS.spawn);
+          dot(where, CELL * 0.18 * where.scale * magnify, COLORS.spawn);
         }
       }
 
@@ -4192,6 +4261,18 @@ export default function createChunkView(
       if (sprite.frame !== before) {
         dirty = true;
       }
+    }
+    // A pokemon that starts or stops walking, or crosses to another cell, is a new picture
+    let roaming = '';
+
+    for (const here of placeSpawns().values()) {
+      for (const stand of here) {
+        roaming += `${stand.index}${stand.step?.moving === true ? 'w' : ''},`;
+      }
+    }
+    if (roaming !== roamSeen) {
+      roamSeen = roaming;
+      dirty = true;
     }
     for (const shown of plantsShown) {
       if (shown.plant.frameAt(clock, shown.phase) !== shown.frame) {

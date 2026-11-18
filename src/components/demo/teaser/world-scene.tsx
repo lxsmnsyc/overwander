@@ -12,6 +12,7 @@ import {
   PLAYER_CELL,
   STEP_PACE,
 } from '../../../game/overworld/board-metrics';
+import { BOARD_COUNT } from '../../../overworld/board';
 import ChunkCanvas, { type SpawnCoat } from '../../overworld/chunk-canvas';
 import { CellAura, rankOf } from '../../../canvas/overworld/scenery';
 import { getSkybox, latitudeOf } from '../../../canvas/overworld/daylight';
@@ -149,6 +150,10 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
     const coats = new Map<number, SpawnCoat>();
 
     for (const [index, standing] of loaded.spawns) {
+      // The teaser stands still, so a second pokemon on one start cell is left out
+      if (index >= BOARD_COUNT) {
+        continue;
+      }
       coats.set(index, {
         id: standing.id,
         species: standing.spawn[0],

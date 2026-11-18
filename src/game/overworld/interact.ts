@@ -1,3 +1,4 @@
+import { localNow } from '../../auth/clock';
 import { enterGymSeat } from '../../auth/gym-seats';
 import { RaidAction, type RaidView, canJoinRaids, getRaidKindAt, peekRaid } from '../../auth/raids';
 import { createSafariSession, isEncounterRetired } from '../../auth/safari';
@@ -30,7 +31,7 @@ import type { ActiveBattle } from '../session/types';
 import { GameDialog } from '../session/types';
 import { type Store, type WritableStore, createStore } from '../store';
 import { BOARD_CELLS, BOARD_CENTER, FIGHT_LANDMARKS, HARVEST_LANDMARKS } from './board-metrics';
-import type { BoardView, Placed } from './board-view';
+import { type BoardView, type Placed, findSpawnAt } from './board-view';
 import challengerOf, {
   type StopChallenge,
   championGate,
@@ -234,7 +235,9 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
   const holdsSomething = (loaded: BoardView | null, index: number): boolean =>
     loaded != null &&
     !claiming.get().has(keyOf(index)) &&
-    (loaded.spawns.has(index) || loaded.landmarks.has(index) || showing(loaded, index) != null);
+    (findSpawnAt(loaded, index, localNow()) != null ||
+      loaded.landmarks.has(index) ||
+      showing(loaded, index) != null);
 
   /** Whether pressing the cell spends it on the spot, rather than opening something */
   const paysOnPress = (loaded: BoardView, index: number): boolean => {
@@ -450,7 +453,7 @@ export default function createBoardInteractions(deps: InteractDeps): BoardIntera
       return m.interact_not_loaded();
     }
 
-    const spawn = loaded.spawns.get(at);
+    const spawn = findSpawnAt(loaded, at, localNow());
 
     if (spawn != null) {
       // The server decides what stands there: a turned-over window's spawn is not met

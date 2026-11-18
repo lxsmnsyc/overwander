@@ -567,6 +567,20 @@ export default class SpeciesSpriteAnimation {
   }
 
   /**
+   * Put the playhead at a moment of the clip playing, wrapped to its
+   * length. For a caller that draws several things from one sheet at
+   * moments of their own, such as pokemon of one species walking
+   * out of step
+   */
+  seek(at: number): void {
+    const length = this.clip?.duration ?? 0;
+
+    if (length > 0) {
+      this.elapsed = ((at % length) + length) % length;
+    }
+  }
+
+  /**
    * Hold where it is. The frame stays on screen; nothing advances
    */
   pause(): void {

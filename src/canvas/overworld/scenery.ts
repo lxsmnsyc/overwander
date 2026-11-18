@@ -1,3 +1,4 @@
+import type { SpawnStep } from './chunk-view/spawn-walk';
 import { SPRITE_FACINGS } from './board';
 import { SpawnRarity, getSpawnRarity } from '../../data/biome';
 import type { Species } from '../../data/ids/species';
@@ -55,6 +56,12 @@ export interface SpawnCoat {
    * whole, which is what a still board and a reduced-motion player get
    */
   alpha?: (now: number) => number;
+  /**
+   * Where it stands at a local instant: the cell it is nearest and how
+   * far off its middle, for a pokemon that roams. Left out, it stands
+   * still on the cell it is keyed by
+   */
+  walk?: (now: number) => SpawnStep | null;
 }
 
 /** The two kinds worth an aura of their own */

@@ -1,8 +1,9 @@
-import registerAbilities from './abilities';
+import registerAbilities from './abilities/register';
 import registerBiomeSpawns from './biome';
-import registerItems from './items';
-import { registerMoves } from './moves';
+import registerItems from './items/register';
+import registerMoves from './moves/register';
 import { registerSpecies } from './species';
+import registerLearnSets from './species/learnsets';
 
 /**
  * Fill every runtime registry at once, synchronously.
@@ -23,6 +24,7 @@ export default function registerGameData(): void {
   registerMoves();
   registerAbilities();
   registerSpecies();
+  registerLearnSets();
   registerItems();
   registerBiomeSpawns();
 }

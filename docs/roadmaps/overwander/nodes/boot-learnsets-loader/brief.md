@@ -1,7 +1,8 @@
 ---
 id: boot-learnsets-loader
 title: Learn sets on their own loader
-status: todo
+status: done
+spent: 216363
 priority: should
 type: refactor
 outline: false
@@ -56,21 +57,21 @@ The learn sets (`src/data/species/learnsets/`, 1.4 MB of YAML, most of the `spec
 
 ## Steps
 
-- [ ] Run `pnpm build && pnpm measure-boot` and keep the totals. Check in the manifest which chunk holds the learnset YAML and how big.
-- [ ] Split reading: `readSpecies` stops requiring learnset files. A new reader in `species/yaml.ts` turns the learnset files into `LearnSetData` per species (keep family teachables and the same validation). The glob for them is lazy (`import.meta.glob(..., { import: 'default' })` without `eager`) in the new loader module `learnsets.ts`, which is only ever imported dynamically.
-- [ ] A small static module `learnset-store.ts` holds the map and the accessors (moved out of `__create.ts`, re-exported from `species/index.ts` under the same names, so callers keep their imports). An accessor read before the load throws a clear error naming `ensureLearnSets`.
-- [ ] `learnset-data.ts`: `ensureLearnSets()` and `isLearnSetsReady()`, same shape as `battle-data.ts`. `registerGameData` (`src/data/index.ts`) registers learn sets too so the server and tests keep working with one call.
-- [ ] `LearnSetData.tsx` gate like `BattleData.tsx`. Put it where a browser reader first runs: the dex entry, the catch sheet and its move reminder and tutor lists, the catch search, the TM and breeding views, and any item use that reads a teachable list. Where a gate already sits (`BattleData` around the dex entry and the sheet), nest or combine so the player sees one loading state.
-- [ ] Client code paths that are not a component (trainer and NPC team building at battle start, field moves) await `ensureLearnSets()` before reading. Start the fetch from `app.tsx` after first paint, as `ensureBattleData` is.
-- [ ] Tests that read learn sets keep passing through `registerGameData`. Add `test/data/learnsets-loader.test.ts`: the world registers without learn sets, a read before `ensureLearnSets` throws, a read after returns the same lists as the eager path did (spot check a few species and a form).
-- [ ] Rebuild, run `pnpm measure-boot`, add the row to the "Changes since the baseline" table in `docs/engine/boot.md`.
+- [x] Run `pnpm build && pnpm measure-boot` and keep the totals. Check in the manifest which chunk holds the learnset YAML and how big.
+- [x] Split reading: `readSpecies` stops requiring learnset files. A new reader in `species/yaml.ts` turns the learnset files into `LearnSetData` per species (keep family teachables and the same validation). The glob for them is lazy (`import.meta.glob(..., { import: 'default' })` without `eager`) in the new loader module `learnsets.ts`, which is only ever imported dynamically.
+- [x] A small static module `learnset-store.ts` holds the map and the accessors (moved out of `__create.ts`, re-exported from `species/index.ts` under the same names, so callers keep their imports). An accessor read before the load throws a clear error naming `ensureLearnSets`.
+- [x] `learnset-data.ts`: `ensureLearnSets()` and `isLearnSetsReady()`, same shape as `battle-data.ts`. `registerGameData` (`src/data/index.ts`) registers learn sets too so the server and tests keep working with one call.
+- [x] `LearnSetData.tsx` gate like `BattleData.tsx`. Put it where a browser reader first runs: the dex entry, the catch sheet and its move reminder and tutor lists, the catch search, the TM and breeding views, and any item use that reads a teachable list. Where a gate already sits (`BattleData` around the dex entry and the sheet), nest or combine so the player sees one loading state.
+- [x] Client code paths that are not a component (trainer and NPC team building at battle start, field moves) await `ensureLearnSets()` before reading. Start the fetch from `app.tsx` after first paint, as `ensureBattleData` is.
+- [x] Tests that read learn sets keep passing through `registerGameData`. Add `test/data/learnsets-loader.test.ts`: the world registers without learn sets, a read before `ensureLearnSets` throws, a read after returns the same lists as the eager path did (spot check a few species and a form).
+- [x] Rebuild, run `pnpm measure-boot`, add the row to the "Changes since the baseline" table in `docs/engine/boot.md`.
 
 ## Acceptance
 
-- [ ] After `pnpm build`, the startup set of `pnpm measure-boot` no longer holds the learnset data, and the numbers are in `docs/engine/boot.md` and the PR.
-- [ ] The first frame of the main page reads no learn set. Check by loading the page without the gate (a test that registers world data only and builds a board view, or the browser console while walking).
-- [ ] The dex entry, the catch sheet, the move tutor and reminder, TMs, breeding and the catch search work in `pnpm dev` after the load (one manual pass, no screenshots needed).
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
+- [x] After `pnpm build`, the startup set of `pnpm measure-boot` no longer holds the learnset data, and the numbers are in `docs/engine/boot.md` and the PR.
+- [x] The first frame of the main page reads no learn set. Check by loading the page without the gate (a test that registers world data only and builds a board view, or the browser console while walking).
+- [x] The dex entry, the catch sheet, the move tutor and reminder, TMs, breeding and the catch search work in `pnpm dev` after the load (one manual pass, no screenshots needed).
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
 
 ## Sizing
 

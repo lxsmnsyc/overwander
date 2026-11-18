@@ -1,7 +1,9 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { SpawnRarity, getSpawnRarity } from '../../src/data/biome';
-import registerAbilities, { getSignatureAbility } from '../../src/data/abilities';
+import { getSignatureAbility } from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Abilities from '../../src/data/ids/abilities';
 import {
   TYPE_EFFECTIVENESS,
@@ -13,8 +15,10 @@ import { Items, getMachineMove } from '../../src/data/ids/items';
 import { MoveCategories, Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
 import { getBaseFormSpecies } from '../../src/data/ids/forms';
-import registerItems, { getItemData } from '../../src/data/items';
-import { getMoveData, registerMoves } from '../../src/data/moves';
+import { getItemData } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
+import { getMoveData } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import AleaRNG from '../../src/core/alea';
 import { Stats } from '../../src/data/constants/stats';
 import { getExpertHeldItems } from '../../src/overworld/builds/held-items';
@@ -141,6 +145,7 @@ const ALL_ROLES = [BuildRole.SpecialCore, BuildRole.PhysicalCore, ...SUPPORT_ROL
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

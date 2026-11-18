@@ -1,16 +1,19 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { TYPE_MAX_MOVES } from '../../src/data/moves/max-moves';
 import { GENERIC_Z_MOVES } from '../../src/data/moves/z-moves';
 import { FIXED_G_MAX_MOVES, G_MAX_MOVES } from '../../src/data/moves/gmax-moves';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import { Types } from '../../src/data/constants/types';
 import { MoveAffects, MoveCategories, MoveTargets, Moves } from '../../src/data/ids/moves';
 import { Statuses } from '../../src/data/ids/status';
 import { Species } from '../../src/data/ids/species';
-import registerItems, { getTeachableMoves } from '../../src/data/items';
-import { getMoveData, getRegisteredMoves, registerMoves } from '../../src/data/moves';
+import { getTeachableMoves } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
+import { getMoveData, getRegisteredMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import {
   SPRITE_ANIMS,
   SpriteAnim,
@@ -40,6 +43,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

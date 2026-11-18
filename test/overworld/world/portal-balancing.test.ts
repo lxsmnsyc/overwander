@@ -1,6 +1,7 @@
-import { registerMoves } from '../../../src/data/moves';
+import registerLearnSets from '../../../src/data/species/learnsets';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   getSpawnPool,
@@ -8,7 +9,7 @@ import registerBiomeSpawns, {
 } from '../../../src/data/biome';
 import type Biome from '../../../src/data/ids/biome';
 import { TimeOfDay } from '../../../src/data/ids/biome';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { Species } from '../../../src/data/ids/species';
 import { registerSpecies } from '../../../src/data/species';
 import { townOverChunk } from '../../../src/overworld/town';
@@ -25,6 +26,7 @@ import World from '../../../src/overworld/world';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

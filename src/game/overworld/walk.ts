@@ -1,6 +1,7 @@
 import { type EggWalk, type WalkReport, walk as reportWalk } from '../../auth/eggs';
 import { useDig, useTeleport } from '../../auth/field-moves';
 import openSight, { type Sight } from '../../auth/sight';
+import ensureLearnSets, { isLearnSetsReady } from '../../data/learnset-data';
 import Biome, { isIceBiome } from '../../data/ids/biome';
 import { Moves } from '../../data/ids/moves';
 import type { ItemStack } from '../../data/overworld/item-pool';
@@ -597,7 +598,9 @@ export default function createBoardWalk<View extends WalkGround>(
    * Riding the buddy, Dig and Teleport
    */
 
-  const knows = (field: FieldMove): boolean => canUseFieldMove(deps.buddy()?.species, field);
+  // The learn sets arrive after the first frame, so nothing is offered until they are here
+  const knows = (field: FieldMove): boolean =>
+    isLearnSetsReady() && canUseFieldMove(deps.buddy()?.species, field);
 
   const besideWater = (loaded: View): boolean => {
     for (const [dx, dy] of SIDES) {
@@ -811,6 +814,15 @@ export default function createBoardWalk<View extends WalkGround>(
     }
     refresh();
   });
+
+  // Offer the moves again once the learn sets are loaded
+  ensureLearnSets()
+    .then(() => {
+      refresh();
+    })
+    .catch(() => {
+      // No field move is offered until another load of the sets succeeds and the walk refreshes
+    });
 
   return {
     attach: (attached) => {

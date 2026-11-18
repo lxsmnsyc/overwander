@@ -1,7 +1,9 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { isMythicalSpecies, listSpeciesHabitats } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
-import registerAbilities, { getAbilityData } from '../../src/data/abilities';
+import { getAbilityData } from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Abilities from '../../src/data/ids/abilities';
 import { TYPE_COLORS, TYPE_NAMES, Types } from '../../src/data/constants/types';
 import {
@@ -33,13 +35,14 @@ import {
 } from '../../src/data/ids/status';
 import { EvolutionMethod, Species } from '../../src/data/ids/species';
 import { ARCEUS_FORMS } from '../../src/data/ids/forms';
-import registerItems, {
+import {
   ITEM_TYPE_NAMES,
   ITEM_TYPE_ORDER,
   getItemData,
   getTeachableMoves,
   listItemsByType,
 } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
 import { WING_STATS, isWing } from '../../src/data/items/wings';
 import {
   BAIT_BERRIES,
@@ -59,7 +62,8 @@ import {
   isBerry,
 } from '../../src/data/items/berries';
 import BERRY_POOL from '../../src/data/overworld/berry-pool';
-import { TUTOR_ONLY_MOVES, getMoveData, registerMoves } from '../../src/data/moves';
+import { TUTOR_ONLY_MOVES, getMoveData } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import AleaRNG from '../../src/core/alea';
 import {
   ITEM_BAND_ODDS,
@@ -196,6 +200,7 @@ import { NATURE_NAMES } from '../../src/data/ids/text';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

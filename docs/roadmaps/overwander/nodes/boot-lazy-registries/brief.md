@@ -1,7 +1,8 @@
 ---
 id: boot-lazy-registries
 title: Load moves, abilities and items on demand
-status: todo
+status: done
+spent: 367000
 priority: should
 type: refactor
 outline: false
@@ -57,19 +58,19 @@ The moves, abilities and items, with every locale's text for them, stop being pa
 
 ## Steps
 
-- [ ] `pnpm build && pnpm measure-boot` and keep the totals. Find which static imports hold each registry in the startup set (the manifest's `imports`).
-- [ ] Split each of the three barrels as above. Callers keep their import paths where the getters stay in `index.ts`.
-- [ ] Audit runtime reads before the gate opens. A read of an unregistered move, ability or item throws (`Missing ... data`). Find reads on the first-frame path: grep the startup chunks' importers of `getMoveData`, `getAbilityData`, `getItemData` (`src/overworld/chunk-snapshot.ts` and `encounter/` use items, `src/data/overworld/*` too). For each, either it is on the server only, it runs after a gate, or it awaits `ensureBattleData()`. Fix the ones that do not.
-- [ ] Locale: load only English and the active locale in the browser (see Context).
-- [ ] Add `test/data/lazy-registries.test.ts`: registering the world alone leaves the three registries empty, `ensureBattleData` fills them, a read gives the active locale's text and a second locale stays out of the browser path.
-- [ ] Rebuild, remeasure, add the row to "Changes since the baseline" in `docs/engine/boot.md`.
+- [x] `pnpm build && pnpm measure-boot` and keep the totals. Find which static imports hold each registry in the startup set (the manifest's `imports`).
+- [x] Split each of the three barrels as above. Callers keep their import paths where the getters stay in `index.ts`.
+- [x] Audit runtime reads before the gate opens. A read of an unregistered move, ability or item throws (`Missing ... data`). Find reads on the first-frame path: grep the startup chunks' importers of `getMoveData`, `getAbilityData`, `getItemData` (`src/overworld/chunk-snapshot.ts` and `encounter/` use items, `src/data/overworld/*` too). For each, either it is on the server only, it runs after a gate, or it awaits `ensureBattleData()`. Fix the ones that do not.
+- [x] Locale: load only English and the active locale in the browser (see Context).
+- [x] Add `test/data/lazy-registries.test.ts`: registering the world alone leaves the three registries empty, `ensureBattleData` fills them, a read gives the active locale's text and a second locale stays out of the browser path.
+- [x] Rebuild, remeasure, add the row to "Changes since the baseline" in `docs/engine/boot.md`.
 
 ## Acceptance
 
-- [ ] After `pnpm build`, `pnpm measure-boot` shows the moves, abilities and items chunks (and the other locales' text) out of the startup set. Both totals are in `docs/engine/boot.md` and the PR.
-- [ ] The main page loads, walks, and opens the bag, a catch sheet and a battle with no thrown `Missing ... data` (one manual pass in `pnpm dev`, console open).
-- [ ] The server still registers everything: `pnpm test` stays green, run once at the end.
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
+- [x] After `pnpm build`, `pnpm measure-boot` shows the moves, abilities and items chunks (and the other locales' text) out of the startup set. Both totals are in `docs/engine/boot.md` and the PR.
+- [x] The main page loads, walks, and opens the bag, a catch sheet and a battle with no thrown `Missing ... data` (one manual pass in `pnpm dev`, console open).
+- [x] The server still registers everything: `pnpm test` stays green, run once at the end.
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
 
 ## Sizing
 

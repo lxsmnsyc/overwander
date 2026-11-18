@@ -1,13 +1,14 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, { BIOME_NAMES, isMythicalSpecies } from '../../src/data/biome';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import { TYPE_NAMES, Types } from '../../src/data/constants/types';
 import { isOpenSea } from '../../src/data/ids/biome';
 import type Biome from '../../src/data/ids/biome';
 import { Species } from '../../src/data/ids/species';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import Npc from '../../src/data/overworld/npc';
 import {
   getRegisteredSpecies,
@@ -94,6 +95,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

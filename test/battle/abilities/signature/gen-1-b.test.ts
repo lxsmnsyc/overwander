@@ -1,10 +1,8 @@
 // Gastly through Mew, with the trios that shift a stage on entry.
 
 import { describe, expect, it } from 'vitest';
-import registerAbilities, {
-  getAbilityData,
-  getRegisteredAbilities,
-} from '../../../../src/data/abilities';
+import { getAbilityData, getRegisteredAbilities } from '../../../../src/data/abilities';
+import registerAbilities from '../../../../src/data/abilities/register';
 import { SIGNATURE_ABILITIES } from '../../../../src/battle/abilities/signature';
 import {
   FOSSIL_BLADE_SCALE,

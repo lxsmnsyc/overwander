@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { isUltraBeast } from '../../src/data/species/ultra-beasts';
 import { describe, expect, it } from 'vitest';
 import { MAX_IV, Stats, getIV, getOtherStat, setIV } from '../../src/data/constants/stats';
@@ -35,6 +36,8 @@ import { TRAP_FLEE_FACTOR } from '../../src/overworld/abilities/__create';
 import World from '../../src/overworld/world';
 
 registerSpecies();
+
+registerLearnSets();
 
 const HOUR = 3_600_000;
 

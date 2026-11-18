@@ -179,3 +179,36 @@ export function hasCaughtSpecies(dex: unknown, species: Species): boolean {
 export function hasCaughtShiny(dex: unknown, species: Species): boolean {
   return getDexCount(dex, DEX_CAUGHT, species, true) > 0;
 }
+
+/**
+ * Whether they have ever met a sparkling one. Owning one counts, for
+ * the reason `hasSeenSpecies` counts it: a gift is never met first
+ */
+export function hasSeenShiny(dex: unknown, species: Species): boolean {
+  return getDexCount(dex, DEX_SEEN, species, true) > 0 || hasCaughtShiny(dex, species);
+}
+
+/**
+ * The species a list of tallies holds a sparkling one of, each rolled
+ * up to its base form the way `countDexSpecies` rolls a dex up, or left
+ * as its own form when `forms` is set (the forms grid reads each form)
+ */
+export function listShinySpecies(tallies: DexTally[], forms = false): Set<Species> {
+  const shiny = new Set<Species>();
+
+  for (const tally of tallies) {
+    if (tally.shiny > 0) {
+      shiny.add(forms ? tally.species : getBaseFormSpecies(tally.species));
+    }
+  }
+  return shiny;
+}
+
+/**
+ * How many distinct species the tally holds a sparkling one of: the
+ * figure the shiny dex is counted by. Forms count once, as in
+ * `countDexSpecies`
+ */
+export function countDexShinySpecies(dex: unknown, spec: DexSpec): number {
+  return listShinySpecies(listDexTallies(dex, spec)).size;
+}

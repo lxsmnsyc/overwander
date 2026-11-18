@@ -26,6 +26,8 @@ import {
 import type { Species } from '../ids/species';
 import { speciesDexNumber, speciesFormIndex } from '../ids/forms';
 import { flagsOf, idOf, idsOf, localize, readOverlays, splitLocales } from '../yaml';
+import { getLearnSet } from './learnset-store';
+import { findSpeciesData } from './__create';
 import type {
   EvolutionData,
   LearnSetData,
@@ -336,12 +338,46 @@ function readLearnSet(
   return learnSet;
 }
 
+/**
+ * Every learn set the files describe, by species. They are read apart
+ * from the rest of the record because they are most of its size and
+ * nothing that draws the overworld reads one; `species/learnsets.ts`
+ * hands the files over.
+ *
+ * Each species named has to be one the registry already holds, under
+ * the family its file puts it in, so a name misspelt or filed under
+ * the wrong family fails here rather than being dropped
+ */
+export function readLearnSets(files: Record<string, unknown>): Map<Species, LearnSetData> {
+  const shared = familyTeachables(files);
+  const read = new Map<Species, LearnSetData>();
+
+  for (const [name, placed] of collect(files)) {
+    const species = idOf(SPECIES_IDS, name, placed.where);
+    const registered = findSpeciesData(species);
+
+    if (registered == null) {
+      throw new Error(`${placed.where}: ${name} has a learnset but is not in world/`);
+    }
+    if (registered.family !== idOf(FAMILY_IDS, placed.family, placed.where)) {
+      throw new Error(`${name} is under ${placed.family} in learnset but not in world/`);
+    }
+
+    const moves = v.parse(LEARNSET, placed.part);
+
+    read.set(
+      species,
+      readLearnSet(moves, shared.get(placed.family) ?? [], `${placed.where}: ${name}`),
+    );
+  }
+  return read;
+}
+
 /** Every field file, as the build hands them over */
 export interface SpeciesFiles {
   world: Record<string, unknown>;
   stats: Record<string, unknown>;
   abilities: Record<string, unknown>;
-  learnsets: Record<string, unknown>;
   text: Record<string, unknown>;
 }
 
@@ -353,12 +389,10 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
   const world = collect(files.world);
   const stats = collect(files.stats);
   const abilities = collect(files.abilities);
-  const learnsets = collect(files.learnsets);
   // English text is the record, and any other locale is laid over it
   const byLocale = splitLocales(files.text);
   const text = collect(byLocale.english);
   const translated = readOverlays(byLocale.overlays, readParts);
-  const shared = familyTeachables(files.learnsets);
   const read: [Species, SpeciesData][] = [];
 
   for (const [name, placed] of world) {
@@ -381,7 +415,6 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
     const place = v.parse(WORLD, placed.part);
     const body = v.parse(STATS, need(stats, 'stats').part);
     const pools = v.parse(ABILITIES, need(abilities, 'abilities').part);
-    const moves = v.parse(LEARNSET, need(learnsets, 'learnset').part);
     const words = v.parse(TEXT, need(text, 'name').part);
 
     const data: SpeciesData = {
@@ -400,7 +433,10 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
       biomes: idsOf<Biome>(BIOME_IDS, place.biomes, where),
       activeTimes:
         place.active === 'any' ? AnyTimeOfDay : flagsOf(TIME_OF_DAY_IDS, place.active, where),
-      learnSet: readLearnSet(moves, shared.get(placed.family) ?? [], where),
+      // Read once the learn sets are loaded, which the browser does apart from the rest
+      get learnSet(): LearnSetData {
+        return getLearnSet(species);
+      },
     };
 
     if (place['base-form'] === false) {
@@ -452,7 +488,6 @@ export function readSpecies(files: SpeciesFiles): [Species, SpeciesData][] {
   for (const [field, kind] of [
     [stats, 'stats'],
     [abilities, 'abilities'],
-    [learnsets, 'learnset'],
     [text, 'name'],
   ] as const) {
     for (const [name, placed] of field) {

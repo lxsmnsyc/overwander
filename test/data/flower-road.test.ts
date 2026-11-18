@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import type Biome from '../../src/data/ids/biome';
 import { TimeOfDay } from '../../src/data/ids/biome';
@@ -9,14 +10,15 @@ import registerBiomeSpawns, {
 import { EvolutionMethod, Genders, Species } from '../../src/data/ids/species';
 import { FLABEBE_FORMS, FLOETTE_FORMS, FLORGES_FORMS } from '../../src/data/ids/forms';
 import Abilities from '../../src/data/ids/abilities';
-import registerAbilities from '../../src/data/abilities';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerAbilities from '../../src/data/abilities/register';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { getSpeciesData, registerSpecies } from '../../src/data/species';
 
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

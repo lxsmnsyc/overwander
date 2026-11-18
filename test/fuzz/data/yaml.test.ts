@@ -5,7 +5,10 @@ import registerPools from '../../../src/data/biome/yaml';
 import { ITEM_FAMILIES } from '../../../src/data/items';
 import { readItems } from '../../../src/data/items/yaml';
 import { readMoves } from '../../../src/data/moves/yaml';
-import { readSpecies } from '../../../src/data/species/yaml';
+import { registerSpecies } from '../../../src/data/species';
+import { readLearnSets, readSpecies } from '../../../src/data/species/yaml';
+import { findSpeciesData } from '../../../src/data/species/__create';
+import { Species } from '../../../src/data/ids/species';
 import * as NAME_TABLES from '../../../src/data/ids/names';
 import { readFuzzParameters } from '../arbitraries';
 
@@ -52,10 +55,6 @@ const LOADERS: Loader[] = [
         eager: true,
         import: 'default',
       }),
-      learnsets: import.meta.glob('/src/data/species/learnsets/**/*.yaml', {
-        eager: true,
-        import: 'default',
-      }),
       text: import.meta.glob('/src/data/text/*/species/**/*.yaml', {
         eager: true,
         import: 'default',
@@ -66,9 +65,24 @@ const LOADERS: Loader[] = [
         world: parts.world,
         stats: parts.stats,
         abilities: parts.abilities,
-        learnsets: parts.learnsets,
         text: parts.text,
       }),
+  },
+  {
+    name: 'learn sets',
+    parts: {
+      learnsets: import.meta.glob('/src/data/species/learnsets/**/*.yaml', {
+        eager: true,
+        import: 'default',
+      }),
+    },
+    read: (parts) => {
+      // The sets are checked against the species they belong to
+      if (findSpeciesData(Species.Bulbasaur) == null) {
+        registerSpecies();
+      }
+      return readLearnSets(parts.learnsets);
+    },
   },
   {
     name: 'moves',

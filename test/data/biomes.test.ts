@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -18,7 +19,7 @@ import {
   HONEY_TREE_SPECIES,
   rollHoneyTree,
 } from '../../src/data/overworld/honey-tree';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Biome, {
   AnyTimeOfDay,
   TimeOfDay,
@@ -43,8 +44,9 @@ import { TOWN_REGION } from '../../src/overworld/town';
 import { Items, getMachineItem } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
-import registerItems, { getItemData } from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import { getItemData } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import AleaRNG from '../../src/core/alea';
 import type { ItemPoolEntry } from '../../src/data/overworld/item-pool';
 import { getItemBiomes, getItemPool } from '../../src/data/overworld/biome-items';
@@ -65,6 +67,7 @@ import { everyPool } from './helpers';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

@@ -1,8 +1,9 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MAX_LEVEL } from '../../src/data/constants/levels';
 import { Slots, getSlots } from '../../src/data/constants/slots';
 import { MAX_IV, STAT_ORDER, getIV } from '../../src/data/constants/stats';
-import { registerMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import type { Species } from '../../src/data/ids/species';
 import Weather, { WEATHER_MIN_IV, isWeatherFavored } from '../../src/data/overworld/weather';
 import {
@@ -28,6 +29,7 @@ import World from '../../src/overworld/world';
 beforeAll(() => {
   registerMoves();
   registerSpecies();
+  registerLearnSets();
 });
 
 const world = new World('overworld');

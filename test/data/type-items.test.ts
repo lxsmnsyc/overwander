@@ -1,10 +1,12 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import { Types } from '../../src/data/constants/types';
 import { ItemFlags, ItemTypes, Items } from '../../src/data/ids/items';
-import registerItems, { getItemData } from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import { getItemData } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { ITEM_POOL, getItemBand, isPreciousItem } from '../../src/data/overworld/item-pool';
 import { isMarketable } from '../../src/data/overworld/vendor';
 import { isHeartScale } from '../../src/data/items/heart-scale';
@@ -35,6 +37,7 @@ import { registerSpecies } from '../../src/data/species';
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

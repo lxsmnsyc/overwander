@@ -1,14 +1,15 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { existsSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns from '../../src/data/biome';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Biome, { WILD_BIOMES } from '../../src/data/ids/biome';
 import { Items } from '../../src/data/ids/items';
 import { MAX_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Moves } from '../../src/data/ids/moves';
 import { Species } from '../../src/data/ids/species';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { getExpertHeldItems, isBattleHeldItem } from '../../src/overworld/builds/held-items';
 import Npc, {
   EXECUTIVE_CHARSETS,
@@ -62,6 +63,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

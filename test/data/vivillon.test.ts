@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
 import registerBiomeSpawns, {
@@ -8,14 +9,15 @@ import registerBiomeSpawns, {
 } from '../../src/data/biome';
 import { Species } from '../../src/data/ids/species';
 import { VIVILLON_FORMS } from '../../src/data/ids/forms';
-import registerAbilities from '../../src/data/abilities';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerAbilities from '../../src/data/abilities/register';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { getSpeciesData, getWingPattern, registerSpecies } from '../../src/data/species';
 
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

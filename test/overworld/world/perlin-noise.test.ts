@@ -1,9 +1,10 @@
-import { registerMoves } from '../../../src/data/moves';
+import registerLearnSets from '../../../src/data/species/learnsets';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import PerlinNoise from '../../../src/core/perlin';
 import registerBiomeSpawns from '../../../src/data/biome';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { registerSpecies } from '../../../src/data/species';
 
 // Spawn rolls read the species registry and the biome spawn pools;
@@ -11,6 +12,7 @@ import { registerSpecies } from '../../../src/data/species';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

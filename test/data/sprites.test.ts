@@ -1,12 +1,14 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { APRICORNS, ItemTypes, Items } from '../../src/data/ids/items';
-import registerItems, { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../src/data/items';
+import { ITEM_TYPE_ORDER, getItemData, listItemsByType } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
 import { isMint } from '../../src/data/items/mints';
-import { registerMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import Families from '../../src/data/ids/families';
 import { getRegisteredFamilies, registerSpecies } from '../../src/data/species';
 import familyCandyIcon from '../../src/data/species/family-candy';
@@ -53,6 +55,7 @@ const SPRITE_ROOT = 'public/sprites';
 // Moves first: the withdrawn machines are registered whatever species exist
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 
 /** The outline the candy drawing is drawn in, which no swap repaints. */

@@ -1,9 +1,10 @@
-import { registerMoves } from '../../../src/data/moves';
+import registerLearnSets from '../../../src/data/species/learnsets';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns from '../../../src/data/biome';
 import { isOpenSea, isWaterBiome } from '../../../src/data/ids/biome';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { registerSpecies } from '../../../src/data/species';
 import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';
 import { isRoadAt } from '../../../src/overworld/town';
@@ -25,6 +26,7 @@ import findChunk from './helpers';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

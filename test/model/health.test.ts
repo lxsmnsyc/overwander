@@ -1,4 +1,5 @@
-import { registerMoves } from '../../src/data/moves';
+import registerLearnSets from '../../src/data/species/learnsets';
+import registerMoves from '../../src/data/moves/register';
 import { beforeAll, describe, expect, it } from 'vitest';
 import {
   ACQUISITION_NAMES,
@@ -29,6 +30,7 @@ import { getSpeciesData, registerSpecies } from '../../src/data/species';
 beforeAll(() => {
   registerMoves();
   registerSpecies();
+  registerLearnSets();
 });
 
 /**

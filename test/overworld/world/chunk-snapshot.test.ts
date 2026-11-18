@@ -1,11 +1,12 @@
-import { registerMoves } from '../../../src/data/moves';
+import registerLearnSets from '../../../src/data/species/learnsets';
+import registerMoves from '../../../src/data/moves/register';
 import namePlace from '../../../src/overworld/place';
 import { townAt } from '../../../src/overworld/town';
 import { worldCell } from '../../../src/overworld/grid';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SPAWN_BAND_KEYS,
@@ -20,7 +21,7 @@ import registerBiomeSpawns, {
 import Biome, { SpawnSurface, getTimeOfDay, isOpenSea } from '../../../src/data/ids/biome';
 import Lairs from '../../../src/data/overworld/lair';
 import { Items } from '../../../src/data/ids/items';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { Genders, Species } from '../../../src/data/ids/species';
 import {
   SPECIES_DAY_HIDDEN_ABILITY_BOOST,
@@ -78,6 +79,7 @@ import findChunk from './helpers';
 // the machines that registry generates read the move data
 registerMoves();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerAbilities();
 registerBiomeSpawns();

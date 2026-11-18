@@ -1,3 +1,4 @@
+import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
 import registerBiomeSpawns, {
   BIOME_NAMES,
@@ -12,7 +13,8 @@ import registerBiomeSpawns, {
   isAwaitingBaby,
 } from '../../src/data/biome';
 import Families from '../../src/data/ids/families';
-import registerAbilities, { getAbilityData, getSignatureAbility } from '../../src/data/abilities';
+import { getAbilityData, getSignatureAbility } from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Abilities from '../../src/data/ids/abilities';
 import { Types } from '../../src/data/constants/types';
 import Biome, { TimeOfDay } from '../../src/data/ids/biome';
@@ -29,8 +31,8 @@ import {
   getCatchCandy,
   getReleaseCandy,
 } from '../../src/auth/candy';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { BASE_FRIENDSHIP, EVOLUTION_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Stats } from '../../src/data/constants/stats';
 import {
@@ -65,6 +67,7 @@ import {
 registerMoves();
 registerAbilities();
 registerSpecies();
+registerLearnSets();
 registerItems();
 registerBiomeSpawns();
 

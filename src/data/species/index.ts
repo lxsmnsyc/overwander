@@ -38,6 +38,7 @@ export type {
   SpeciesData,
   SpeciesRank,
 } from './__create';
+export { getLearnSet, isLearnSetsLoaded } from './learnset-store';
 export { DEFAULT_EGG_CYCLES, getEggCycles } from './egg-cycles';
 export {
   SPECIES_DAY_CATCH_BOOST,
@@ -112,7 +113,6 @@ export function registerSpecies(): void {
     world: import.meta.glob('./world/**/*.yaml', { eager: true, import: 'default' }),
     stats: import.meta.glob('./stats/**/*.yaml', { eager: true, import: 'default' }),
     abilities: import.meta.glob('./abilities/**/*.yaml', { eager: true, import: 'default' }),
-    learnsets: import.meta.glob('./learnsets/**/*.yaml', { eager: true, import: 'default' }),
     text: import.meta.glob('../text/*/species/**/*.yaml', { eager: true, import: 'default' }),
   });
 

@@ -82,6 +82,8 @@ export interface DexEntry {
   label?: string;
   /** Whether the species comes in more than one form, marked in its corner */
   forms?: boolean;
+  /** Read through the shiny dex: an owned square is drawn in the shiny coat */
+  shiny?: boolean;
 }
 
 export interface PokedexGridProps {
@@ -241,6 +243,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
                         direction="DownLeft"
                         still
                         fill
+                        shiny={entry().caught && entry().shiny === true}
                         class={entry().caught ? '' : SILHOUETTE}
                       />
                     </span>

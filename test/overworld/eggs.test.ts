@@ -1,4 +1,5 @@
-import { registerMoves } from '../../src/data/moves';
+import registerLearnSets from '../../src/data/species/learnsets';
+import registerMoves from '../../src/data/moves/register';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { EggProgress } from '../../src/model/egg';
 import {
@@ -55,6 +56,7 @@ import { deriveBonusMoves, deriveMoves, fillBonusMoves } from '../../src/overwor
 beforeAll(() => {
   registerMoves();
   registerSpecies();
+  registerLearnSets();
 });
 
 /**

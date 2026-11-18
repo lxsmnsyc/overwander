@@ -47,9 +47,9 @@ Agreed with the maintainer on 2026-11-18. Every child follows them; a child that
 3. Writes from owned scope (a signal set in a component body, memo or effect compute): derive the value with a memo where possible, otherwise move the write to `onSettled`. `{ ownedWrite: true }` only as a last resort, with a comment saying why.
 4. `createStoreSignal` (`src/components/app/store-signal.ts`) is rebuilt on `from(store.subscribe)`.
 5. `useSubmission` (2 files): replaced by plain calls.
-6. Server reads stay POST. `readOnly` keys on `fn.id`, the call counter on the id from the path, and a response with `X-Server-Function-Unknown` reloads the tab.
+6. Server reads stay POST. `readOnly` keys on `fn.id`, the call counter on the id from the path. Skew protection is Solid 2.0's own build check (maintainer, 2026-11-18): the app's `X-Build` guard goes, and a response with `X-Server-Function-Unknown` reloads the tab.
 7. Test setup: `solid-2-tests` measures and chooses, likely a `test.projects` split (component tests in the browser setting, the rest on Node).
-8. Entries: keep the authored client and server entries, so `guardServerCalls()` visibly runs before the app mounts.
+8. Entries: keep the authored client and server entries, so whatever the client entry installs before mount (the call counter, the reload on an unknown build) visibly runs first.
 
 ## Acceptance
 

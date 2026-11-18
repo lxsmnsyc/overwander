@@ -1,7 +1,7 @@
 ---
 id: solid-2-shell-routes
 title: Migrate the shell, admin, demos and routes to Solid 2.0
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2
@@ -44,6 +44,10 @@ Migrate the app shell, forms, admin, demos, sprite processor, routes, the auth c
 - Spike error map, row `shell (and the route files of routes+server)`: 62 files, 16 resources, 16 effect splits, 18 onMount/onCleanup, 13 router.
 - Not `src/components/app/store-signal.ts`: `solid-2-overworld-battle` owns it.
 - Minimal deviation allowed: `src/components/styled/search` and `TooltipHost` log `STRICT_READ_UNTRACKED` in dev; fix them here once the app renders.
+- `src/components/app/watch.ts` is already migrated (`watchLive(key, (key, set) => unsubscribe)`, by `solid-2-social`); do not redo it.
+- A `from` subscribes during the server render in 2.0: guard the `from` calls in `src/routes/index.tsx`, `src/routes/admin.tsx` and any shell screen that renders on the server (`isServer`, or seed and skip as `watchLive` does).
+- A context provider reads its value once: `admin/staff-context.tsx:24` copies `uid: props.uid`; check it, and any shell provider whose value can change must carry an accessor.
+- Still owed from `solid-2-catches` and `solid-2-social` once the shell renders: the catch sheet, boxes, dex and bag; auctions with a bid and a listing, a duel and a raid lobby, a trade offer, the profile sheet and editor, quests with a claim, gifts, settings security.
 - Reads that must not wait use `createLoad` (`src/components/app/create-load.ts`).
 - `src/components/app/resource-reads.ts` still uses the 1.x `Resource` type and nothing migrated imports it; delete it or rewrite it for async memos (`answered` has no 2.0 equivalent), and fix its test with `solid-2-tests` if it moves.
 - Still owed from `solid-2-overworld-battle` once the shell renders: walk the overworld, open the Honey tree, Portal, Gym seat and Safari dialogs, start and finish a battle.

@@ -1,7 +1,7 @@
 ---
 id: solid-2-styled
 title: Migrate the styled primitives, dialogs and floating UI to Solid 2.0
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2

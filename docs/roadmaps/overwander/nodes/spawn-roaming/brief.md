@@ -70,6 +70,8 @@ L: uncertainty medium (path search and per-frame placement are new here), coupli
 
 ## Notes for the worker
 
+- Contract v2 (2026-11-18): a cycle crossing an hour mark keeps its length only while its ground stays open. `staysOpen(nextGround, home)` in `src/overworld/spawn-life/lifetimes.ts` tests the start cell today; widen it to every cell of the roam area, so a kept roamer never walks onto a cell the new hour closes.
+
 - The contract fixes the shape: a position is a pure function of the cycle and the time, with no simulation and no chain of waypoints. Do not add state to replay.
 - A walk takes at most 4 s plus a 1 s delay inside a 5 s epoch, so it always ends in its epoch. Test that bound.
 - The area is clipped to the pokemon's own chunk, so no neighbour chunk is derived to place one.

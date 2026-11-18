@@ -1,7 +1,7 @@
 ---
 id: spawn-lifetimes
 title: Staggered spawn lifetimes and caps
-status: todo
+status: active
 priority: should
 type: feature
 outline: false

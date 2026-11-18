@@ -1,8 +1,8 @@
 import registerLearnSets from '../../../src/data/species/learnsets';
 import { MAX_WING_STATS } from '../../../src/data/items/wings';
-import { registerMoves } from '../../../src/data/moves';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SpawnClass,
@@ -14,7 +14,8 @@ import registerBiomeSpawns, {
 } from '../../../src/data/biome';
 import Biome, { TimeOfDay, getTimeOfDay, growsHoneyTrees } from '../../../src/data/ids/biome';
 import { APRICORNS, ItemTypes, Items } from '../../../src/data/ids/items';
-import registerItems, { getItemData } from '../../../src/data/items';
+import { getItemData } from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { isValuable } from '../../../src/data/items/valuables';
 import {
   ITEM_BAND_ODDS,

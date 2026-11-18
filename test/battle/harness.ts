@@ -1,5 +1,5 @@
 import registerLearnSets from '../../src/data/species/learnsets';
-import { registerMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import setupAbilities from '../../src/battle/abilities';
 import { setupRatingAI } from '../../src/battle/ai/rating';
 import Alliance from '../../src/battle/alliance';
@@ -28,7 +28,7 @@ import Team from '../../src/battle/team';
 import Unit from '../../src/battle/unit';
 import { Stats, StatsKind } from '../../src/data/constants/stats';
 import type { Types } from '../../src/data/constants/types';
-import registerItems from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
 import { registerSpecies } from '../../src/data/species';
 
 let dataRegistered = false;

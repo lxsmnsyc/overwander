@@ -1,14 +1,14 @@
 import registerLearnSets from '../../../src/data/species/learnsets';
-import { registerMoves } from '../../../src/data/moves';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns from '../../../src/data/biome';
 import Biome from '../../../src/data/ids/biome';
 import Natures from '../../../src/data/ids/natures';
 import { Items } from '../../../src/data/ids/items';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { Genders, Species } from '../../../src/data/ids/species';
 import { getSpeciesData, registerSpecies } from '../../../src/data/species';
 import { CHUNK_CELLS, worldCell } from '../../../src/overworld/chunk';

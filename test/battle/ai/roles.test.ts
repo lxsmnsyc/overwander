@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { MoveRole, ROLE_BASE, getMoveRoles, hasMoveRole } from '../../../src/battle/ai/roles';
 import { MoveCategories, Moves } from '../../../src/data/ids/moves';
-import { getMoveData, getRegisteredMoves, registerMoves } from '../../../src/data/moves';
+import { getMoveData, getRegisteredMoves } from '../../../src/data/moves';
+import registerMoves from '../../../src/data/moves/register';
 
 describe('move roles', () => {
   beforeAll(() => {

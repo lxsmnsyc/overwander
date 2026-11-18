@@ -33,7 +33,8 @@ import {
 import { asCaughtPokemon, getMovePoints } from '../../src/model/caught-record';
 import { Balls, ItemFlags, ItemTypes, Items } from '../../src/data/ids/items';
 import { Moves } from '../../src/data/ids/moves';
-import registerItems, { getItemData } from '../../src/data/items';
+import { getItemData } from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
 import {
   MAX_VITAMIN_STATS,
   PP_ITEMS,
@@ -46,7 +47,8 @@ import Phenomenon, {
   getPhenomenonGroups,
   getPhenomenonItems,
 } from '../../src/data/overworld/phenomenon';
-import { PP_UP_LIMIT, getMovePP, registerMoves } from '../../src/data/moves';
+import { PP_UP_LIMIT, getMovePP } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import { getItemBand, isPreciousItem } from '../../src/data/overworld/item-pool';
 import { registerSpecies } from '../../src/data/species';
 import { Species } from '../../src/data/ids/species';

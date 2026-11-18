@@ -1,6 +1,7 @@
 import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
-import registerAbilities, { getSpeciesSignature } from '../../src/data/abilities';
+import { getSpeciesSignature } from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import { BASE_FRIENDSHIP } from '../../src/data/constants/friendship';
 import { Stats } from '../../src/data/constants/stats';
 import Abilities from '../../src/data/ids/abilities';
@@ -10,8 +11,8 @@ import type { Moves } from '../../src/data/ids/moves';
 import Regions from '../../src/data/ids/regions';
 import { Genders, Species } from '../../src/data/ids/species';
 import { ALOLAN_FORMS } from '../../src/data/ids/forms';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import {
   type EvolutionContext,
   getAvailableEvolutions,

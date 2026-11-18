@@ -1,9 +1,10 @@
 import registerLearnSets from '../../../src/data/species/learnsets';
-import { getMoveData, registerMoves } from '../../../src/data/moves';
+import { getMoveData } from '../../../src/data/moves';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
 import { MAX_OFFSET, MIN_OFFSET, asOffset } from '../../../src/model/local-time';
 import Abilities from '../../../src/data/ids/abilities';
-import registerAbilities from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns, {
   BIOME_NAMES,
   SpawnRarity,
@@ -27,7 +28,7 @@ import Lairs, {
   lairStandsOn,
 } from '../../../src/data/overworld/lair';
 import { Items } from '../../../src/data/ids/items';
-import registerItems from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { Genders, Species } from '../../../src/data/ids/species';
 import {
   getLevelUpMoves,

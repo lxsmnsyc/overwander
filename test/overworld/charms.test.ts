@@ -1,13 +1,13 @@
 import registerLearnSets from '../../src/data/species/learnsets';
 import { describe, expect, it } from 'vitest';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import registerBiomeSpawns from '../../src/data/biome';
-import registerItems from '../../src/data/items';
+import registerItems from '../../src/data/items/register';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import Natures from '../../src/data/ids/natures';
 import { Genders, Species } from '../../src/data/ids/species';
-import { registerMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import { getSpeciesData, registerSpecies } from '../../src/data/species';
 import { EGG_HATCH_STEPS } from '../../src/model/egg';
 import type { Buddy } from '../../src/overworld/core';

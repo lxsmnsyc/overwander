@@ -18,7 +18,7 @@ import registerBiomeSpawns, {
   spawnBand,
 } from '../../src/data/biome';
 import { getBiomeLairs, getCaveLairs, getLairResidents } from '../../src/data/overworld/lair';
-import registerAbilities from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import { Types } from '../../src/data/constants/types';
 import Biome, { SpawnSurface, TimeOfDay } from '../../src/data/ids/biome';
 import { Species } from '../../src/data/ids/species';
@@ -28,8 +28,8 @@ import {
   SAWSBUCK_FORMS,
   VIVILLON_FORMS,
 } from '../../src/data/ids/forms';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import {
   getRegisteredSpecies,
   getShoreForm,

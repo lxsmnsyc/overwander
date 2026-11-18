@@ -1,9 +1,10 @@
 import registerLearnSets from '../../../src/data/species/learnsets';
-import { registerMoves } from '../../../src/data/moves';
+import registerMoves from '../../../src/data/moves/register';
 import { describe, expect, it } from 'vitest';
 import AleaRNG from '../../../src/core/alea';
 import Abilities from '../../../src/data/ids/abilities';
-import registerAbilities, { getSignatureAbility } from '../../../src/data/abilities';
+import { getSignatureAbility } from '../../../src/data/abilities';
+import registerAbilities from '../../../src/data/abilities/register';
 import registerBiomeSpawns, {
   SpawnRarity,
   getBiomeRoster,
@@ -22,7 +23,8 @@ import Biome, { getTimeOfDay } from '../../../src/data/ids/biome';
 import { EVERY_LAIR, getBiomeLairs, getLairResidents } from '../../../src/data/overworld/lair';
 import canMeetSpecies from '../../../src/data/overworld/reach';
 import { Items } from '../../../src/data/ids/items';
-import registerItems, { getItemData } from '../../../src/data/items';
+import { getItemData } from '../../../src/data/items';
+import registerItems from '../../../src/data/items/register';
 import { getExpertHeldItems } from '../../../src/overworld/builds/held-items';
 import { Slots, countAbilitySlots, getSlots } from '../../../src/data/constants/slots';
 import type { CatchSnapshot } from '../../../src/model/catch-snapshot';

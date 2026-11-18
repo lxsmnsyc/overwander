@@ -51,15 +51,31 @@ Loaded later, on top of the startup set:
 
 ## Changes since the baseline
 
-| Change | Startup gzip | Difference |
-| --- | --- | --- |
-| Official ja and es names (i18n-official-names) | 1280.2 KiB | +79.4 KiB (+6.6%) |
-| Learn sets on their own loader (boot-learnsets-loader), measured on `2e8cebe27`: 1554.0 KiB before, 1234.2 KiB brotli before and 1124.8 KiB after | 1400.7 KiB | -153.3 KiB (-9.9%) |
-
-Every locale's registry text is bundled with English, so each locale costs every player its download, shown or not. `boot-lazy-registries` should load only the active locale's.
+| Change                                                                                                                                                                                           | Startup gzip | Difference          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------ | ------------------- |
+| Official ja and es names (i18n-official-names)                                                                                                                                                   | 1280.2 KiB   | +79.4 KiB (+6.6%)   |
+| Learn sets on their own loader (boot-learnsets-loader), measured on `2e8cebe27`: 1554.0 KiB before, 1234.2 KiB brotli before and 1124.8 KiB after                                                | 1400.7 KiB   | -153.3 KiB (-9.9%)  |
+| Moves, abilities and items on demand, with only the page's locale of their text (boot-lazy-registries), measured on `a34ff6ddb`: 1400.7 KiB before, 1124.7 KiB brotli before and 936.1 KiB after | 1150.3 KiB   | -250.4 KiB (-17.9%) |
 
 The learn sets (`src/data/species/learnsets/`) now load as their own chunk (`learnsets`, 876.8 KiB raw, 154.4 KiB gzip), fetched after the first frame by `ensureLearnSets` in `src/data/learnset-data.ts`. `ensureBattleData` waits on it too, because the TMs are registered off every species' teachable list. The server and the tests take them at once through `registerGameData`.
 
 ## Recording a change
 
 A change to what loads at boot runs `pnpm build && pnpm measure-boot` before and after, and puts both startup totals in its pull request. When a change moves the baseline for good, update the tables above with the date and commit.
+
+## Moves, abilities and items
+
+The three registries load through `src/data/<registry>/load.ts`, reached from `ensureBattleData` (`src/data/battle-data.ts`) by dynamic import. Each registry's `index.ts` keeps only the getters, so the 150 or so files that import it no longer pull the YAML in. The server, the tests and the scripts take every locale at once through `register.ts` (`registerGameData` does).
+
+In the browser a load reads English (bundled with the registry) and the page's locale, one file per text file (`src/data/locale-text.ts`). Other locales are never fetched. A locale's text no longer costs a player who does not use it.
+
+Before and after on the main page (`a34ff6ddb`, then the same plus this change):
+
+| Chunk         | Startup before (gzip) | Startup after (gzip)                    | Loaded later (gzip)            |
+| ------------- | --------------------- | --------------------------------------- | ------------------------------ |
+| `moves`       | 99.6 KiB              | gone                                    | 48.7 KiB (`moves/load.ts`)     |
+| `abilities`   | 94.2 KiB              | gone                                    | 34.4 KiB (`abilities/load.ts`) |
+| `items`       | 70.0 KiB              | 5.5 KiB (getters, fossils and the like) | 31.7 KiB (`items/load.ts`)     |
+| Startup total | 1400.7 KiB            | 1150.3 KiB                              |                                |
+
+The loaded-later figures are on top of the startup set and hold English plus the files of one locale at most (`ja`, `es` text are not in them). `trainers` (55.7 KiB gzip) stays in the startup set: the overworld imports it directly.

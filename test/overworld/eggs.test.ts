@@ -1,5 +1,5 @@
 import registerLearnSets from '../../src/data/species/learnsets';
-import { registerMoves } from '../../src/data/moves';
+import registerMoves from '../../src/data/moves/register';
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { EggProgress } from '../../src/model/egg';
 import {

@@ -19,7 +19,8 @@ import registerBiomeSpawns, {
 } from '../../src/data/biome';
 import EggGroups from '../../src/data/ids/egg-groups';
 import Families from '../../src/data/ids/families';
-import registerAbilities, { getRegisteredAbilities } from '../../src/data/abilities';
+import { getRegisteredAbilities } from '../../src/data/abilities';
+import registerAbilities from '../../src/data/abilities/register';
 import Abilities from '../../src/data/ids/abilities';
 import { Items } from '../../src/data/ids/items';
 import {
@@ -107,8 +108,8 @@ import {
   speciesFormIndex,
   unownLetter,
 } from '../../src/data/ids/forms';
-import registerItems from '../../src/data/items';
-import { registerMoves } from '../../src/data/moves';
+import registerItems from '../../src/data/items/register';
+import registerMoves from '../../src/data/moves/register';
 import { Stats } from '../../src/data/constants/stats';
 import {
   getBaseForms,

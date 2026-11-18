@@ -1,7 +1,8 @@
 ---
 id: spawn-roaming
 title: Roaming wild pokemon
-status: active
+status: done
+spent: 301110
 priority: should
 type: feature
 outline: false
@@ -51,18 +52,18 @@ Idle wild pokemon walk a deterministic path within a leash of their home cell, o
 
 ## Steps
 
-- [ ] `roam.ts`: `getRoamArea` (flood fill, memoized per chunk key, hour, home and habitat) and `positionAt` as in the contract, pure.
-- [ ] Tests in `test/overworld/spawn-roam.test.ts` from the contract: every position inside the area, every step one cell, a walk ends inside its epoch, no landmark cell occupied, a water species stays on water, a country slot never enters a town, same answer in two runs.
-- [ ] `spawn-walk.ts`: the draw-side walk (cell to pixel, facing, frame) with fades from `spawn-radius`.
-- [ ] Wire `checkMeeting` and the press resolution to `positionAt`.
-- [ ] Update `docs/mechanics/spawning.md` only if a number changed (it already describes roaming).
+- [x] `roam.ts`: `getRoamArea` (flood fill, memoized per chunk key, hour, home and habitat) and `positionAt` as in the contract, pure.
+- [x] Tests in `test/overworld/spawn-roam.test.ts` from the contract: every position inside the area, every step one cell, a walk ends inside its epoch, no landmark cell occupied, a water species stays on water, a country slot never enters a town, same answer in two runs.
+- [x] `spawn-walk.ts`: the draw-side walk (cell to pixel, facing, frame) with fades from `spawn-radius`.
+- [x] Wire `checkMeeting` and the press resolution to `positionAt`.
+- [x] Update `docs/mechanics/spawning.md` only if a number changed (it already describes roaming).
 
 ## Acceptance
 
-- [ ] The roam tests above pass.
-- [ ] `checkMeeting` accepts a press at the roamer's cell at `local`, or within one cell of its position at `local` or `local - 1 s`, and refuses the start cell once the pokemon has walked beyond one cell.
-- [ ] In `pnpm dev`, a wild pokemon walks, stops, turns toward its step, and pressing it while it walks opens the meeting (one manual pass, then stop the dev server).
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above, then `pnpm exec vitest run test/overworld/generation-fingerprint.test.ts`.
+- [x] The roam tests above pass.
+- [x] `checkMeeting` accepts a press at the roamer's cell at `local`, or within one cell of its position at `local` or `local - 1 s`, and refuses the start cell once the pokemon has walked beyond one cell.
+- [x] In `pnpm dev`, a wild pokemon walks, stops, turns toward its step, and pressing it while it walks opens the meeting (one manual pass, then stop the dev server).
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above, then `pnpm exec vitest run test/overworld/generation-fingerprint.test.ts`.
 
 ## Sizing
 

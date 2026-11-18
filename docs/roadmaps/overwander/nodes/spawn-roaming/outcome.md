@@ -47,3 +47,8 @@
 ## Size
 
 - Estimated L, actual L.
+
+## Landed
+
+- Commit `61886ffe0` on `batch/overwander`. Fresh review clean. The orchestrator trimmed the hour-crossing test to one day (it timed out under full load). Not looked at in a browser.
+- Nits left: no regression test for the `deal` fix; `placeSpawns` runs twice a frame and `findHeading` re-derives up to 7 routes; roamers never change terrace level, stricter than contract decision 8.

@@ -59,6 +59,7 @@ import ChunkSnapshot, {
 import {
   BANNED_BOSS_SPECIES,
   BOSS_ALLIANCE,
+  MOVELESS_BOSS_SPECIES,
   PLAYER_ALLIANCE,
   RAID_BOSS_LEVEL,
   canStageBoss,
@@ -819,6 +820,19 @@ describe('world', () => {
         );
       }
     }
+  });
+
+  it('lists every species the boss bans leave with nothing to cast', () => {
+    // canStageBoss reads the list rather than the learn sets, which the
+    // first frame does not have, so the list has to match the rule
+    const moveless = new Set<Species>();
+
+    for (const species of getRegisteredSpecies()) {
+      if (!BANNED_BOSS_SPECIES.has(species) && getBossMoves(species).length === 0) {
+        moveless.add(species);
+      }
+    }
+    expect(moveless).toEqual(MOVELESS_BOSS_SPECIES);
   });
 
   it('stages a boss with as many moves as a pokemon has room for', () => {

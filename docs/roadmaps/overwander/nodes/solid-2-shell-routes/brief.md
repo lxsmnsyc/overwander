@@ -1,7 +1,7 @@
 ---
 id: solid-2-shell-routes
 title: Migrate the shell, admin, demos and routes to Solid 2.0
-status: active
+status: done
 priority: could
 type: refactor
 story: solid-2
@@ -13,6 +13,7 @@ spike: false
 verify: 
 gate: false
 added: 2026-11-18
+spent: 516586
 owns:
   - src/components/app/**
   - src/components/forms/**

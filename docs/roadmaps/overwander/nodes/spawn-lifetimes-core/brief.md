@@ -1,7 +1,8 @@
 ---
 id: spawn-lifetimes-core
 title: Spawn slot clocks and the server check, pure
-status: active
+status: done
+spent: 382110
 priority: should
 type: feature
 outline: false
@@ -43,17 +44,17 @@ Build the pure half of the `spawn-life` contract: the constants, the slot clocks
 
 ## Steps
 
-- [ ] `index.ts`: constants (table in the contract), types `SlotKind`, `SlotCycle`, `LiveSpawn`. No imports of Solid, server or canvas modules.
-- [ ] `commonSpawn` and the rare-channel pick (`RARE_SLOT`, `RARE_ODDS_SCALE`) in the biome registry.
-- [ ] `lifetimes.ts`: `slotPhase`, `cycleOf`, `cycleAt`, `getSpawnGround` (memo per chunk key and hour), `rollSlot` (memo per id), `liveSpawns`, `parseSpawnId`, `checkMeeting`.
-- [ ] The tests listed under "Tests the build adds" in the contract, except the roaming ones: cycles, hour cut, mean live fraction, territories disjoint, same rolls in two processes with a pinned list for one chunk and day, `checkMeeting` accepting and refusing.
+- [x] `index.ts`: constants (table in the contract), types `SlotKind`, `SlotCycle`, `LiveSpawn`. No imports of Solid, server or canvas modules.
+- [x] `commonSpawn` and the rare-channel pick (`RARE_SLOT`, `RARE_ODDS_SCALE`) in the biome registry.
+- [x] `lifetimes.ts`: `slotPhase`, `cycleOf`, `cycleAt`, `getSpawnGround` (memo per chunk key and hour), `rollSlot` (memo per id), `liveSpawns`, `parseSpawnId`, `checkMeeting`.
+- [x] The tests listed under "Tests the build adds" in the contract, except the roaming ones: cycles, hour cut, mean live fraction, territories disjoint, same rolls in two processes with a pinned list for one chunk and day, `checkMeeting` accepting and refusing.
 
 ## Acceptance
 
-- [ ] `test/overworld/spawn-life.test.ts` covers every item above and passes.
-- [ ] `test/overworld/generation-fingerprint.test.ts` passes unchanged (no `world.draws` call added or reordered).
-- [ ] `ChunkSnapshot.getSpawns` returns exactly what it did before (`chunk-snapshot.test.ts` unchanged and green).
-- [ ] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
+- [x] `test/overworld/spawn-life.test.ts` covers every item above and passes.
+- [x] `test/overworld/generation-fingerprint.test.ts` passes unchanged (no `world.draws` call added or reordered).
+- [x] `ChunkSnapshot.getSpawns` returns exactly what it did before (`chunk-snapshot.test.ts` unchanged and green).
+- [x] Fast check passes: `pnpm typecheck && pnpm exec oxlint src test` (read the exit code), then the verify command above.
 
 ## Sizing
 

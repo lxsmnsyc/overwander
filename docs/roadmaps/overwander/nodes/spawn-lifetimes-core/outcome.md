@@ -44,3 +44,8 @@
 ## Size
 
 - Estimated M, actual M.
+
+## Landed
+
+- Commit `cb739c945` on `batch/overwander`, after two fresh review rounds (clean). Contract bumped to v2 (crossing the hour); `cycleOf` and `cycleAt` take the chunk and offset.
+- Nits left: `openCycle` builds the next hour's ground (a snapshot with phenomena) for crossing cycles, memoised per hour; `findCellAt` keeps an unused `_time` for `positionAt`.

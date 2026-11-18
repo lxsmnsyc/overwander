@@ -122,7 +122,17 @@ export default async function breedCatches(
   let egg: string;
 
   try {
-    egg = await grantBredEgg(uid, snapshot, seed, species, [first, second], now, offset, locale);
+    egg = await grantBredEgg(
+      uid,
+      snapshot,
+      cell,
+      seed,
+      species,
+      [first, second],
+      now,
+      offset,
+      locale,
+    );
   } catch (error) {
     // The fee bought an egg that was never written; the player keeps
     // their gold and their visit rather than the breeder keeping both

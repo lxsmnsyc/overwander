@@ -5,8 +5,7 @@ import { asSpawnRolls, spawnId as nameSpawn } from '../../model/snapshot-record'
 import type { Spawn } from '../../overworld/chunk-snapshot';
 import type ChunkSnapshot from '../../overworld/chunk-snapshot';
 import { WORLD_GENERATION } from '../../overworld/current';
-import type { EncounterOptions } from '../../overworld/encounter';
-import stageEncounter from '../../overworld/encounter/stage';
+import stageEncounter, { type StagedOptions } from '../../overworld/encounter/stage';
 import type { Items } from '../../data/ids/items';
 import { encounterKey, encounterWindow } from '../../overworld/safari';
 import createOverworld from '../../overworld/setup';
@@ -32,7 +31,7 @@ export async function startEncounter(
   snapshot: ChunkSnapshot,
   id: string,
   spawn: Spawn,
-  options: EncounterOptions = {},
+  options: StagedOptions,
   /**
    * The buddy the caller has already looked up. Undefined means it has
    * not been asked for and this will ask; null is a player who has
@@ -124,7 +123,11 @@ export async function meetSpawn(
   const rolled = rolls[index];
   const spawn: Spawn = [rolled.species, rolled.individualValue, rolled.traitValue];
 
-  return startEncounter(uid, snapshot, spawnId, spawn, {}, buddy);
+  // The spawn's own cell: `getSpawnCells` rolls in the order the spawns
+  // are published, so the index names it
+  const cell = [...snapshot.getSpawnCells().keys()][index] ?? null;
+
+  return startEncounter(uid, snapshot, spawnId, spawn, { cell }, buddy);
 }
 
 /**

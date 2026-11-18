@@ -158,6 +158,8 @@ interface EggFields {
    * The window the egg belongs to, recorded as its origin
    */
   timestamp: number;
+  /** The cell it was laid or collected at, whose country is its origin */
+  cell: number;
   /** The room it hatches with, where that is more than any catch starts with */
   slots?: number;
 }
@@ -243,7 +245,7 @@ async function writeEgg(
         ${new Date(toLocalTime(now, zone))}, ${zone}, ${asLocale(locale)},
         0, 0, ${fields.shadow ? SHADOW_FRIENDSHIP : BASE_FRIENDSHIP},
         ${fields.timestamp}, ${snapshot.chunk.x}, ${snapshot.chunk.y},
-        ${snapshot.chunk.biome}, null
+        ${snapshot.biomeAt(fields.cell)}, null
       )
     `;
 
@@ -316,6 +318,7 @@ export async function grantNestEgg(
       // come from
       ball: Balls.NestBall,
       timestamp: snapshot.nestTimestamp,
+      cell,
       slots: hatchling.slots,
     },
     now,
@@ -344,6 +347,7 @@ export async function grantNestEgg(
 export async function grantBredEgg(
   uid: string,
   snapshot: ChunkSnapshot,
+  cell: number,
   seed: string,
   line: Species,
   parents: [BreedingParent, BreedingParent],
@@ -360,6 +364,7 @@ export async function grantBredEgg(
   const spawn: Spawn = [species, rng.int32(), rng.int32()];
   const hatchling = deriveEncounter(snapshot, spawn, uid, {
     type: EncounterType.Hatched,
+    cell,
     level: EGG_LEVEL,
     // The egg is collected from the breeder under a sky, so what the
     // sky hands over reaches what is inside it: a move, an ability, or
@@ -413,6 +418,7 @@ export async function grantBredEgg(
       hatchSteps: getEggHatchSteps(species) * (shadow ? SHADOW_HATCH_FACTOR : 1),
       ball: inheritBall(parents[0], parents[1]),
       timestamp: snapshot.npcTimestamp,
+      cell,
     },
     now,
     offset,

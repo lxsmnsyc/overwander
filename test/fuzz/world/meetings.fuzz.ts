@@ -95,38 +95,30 @@ describe('spawns on the ground', () => {
     );
   });
 
-  // Fails today: a meeting records the chunk's middle, not the cell's
-  // country, which 55f99f410 fixed for the pools and not for the row.
-  // The check asks for that mismatch and nothing else, so a throw
-  // fails the test. The `meetings-cell-biome` node fixes it at every
-  // caller and turns this into `fc.assert`
-  it('are met in the country of the cell they stand on (not yet)', () => {
-    const met = fc.property(
-      seedArbitrary,
-      cellArbitrary,
-      clockArbitrary,
-      playerArbitrary,
-      (seed, place, clock, uid) => {
-        const snapshot = readSnapshot(seed, place, clock);
-        const spawns = snapshot.getSpawns(PUBLISHED);
-        const cells = [...snapshot.getSpawnCells().keys()];
+  it('are met in the country of the cell they stand on', () => {
+    fc.assert(
+      fc.property(
+        seedArbitrary,
+        cellArbitrary,
+        clockArbitrary,
+        playerArbitrary,
+        (seed, place, clock, uid) => {
+          const snapshot = readSnapshot(seed, place, clock);
+          const spawns = snapshot.getSpawns(PUBLISHED);
+          const cells = [...snapshot.getSpawnCells().keys()];
 
-        for (const [index, spawn] of spawns.entries()) {
-          const id = spawnId(snapshot.key, snapshot.timestamp, index);
+          for (const [index, spawn] of spawns.entries()) {
+            const id = spawnId(snapshot.key, snapshot.timestamp, index);
+            const cell = cells[index];
 
-          if (
-            stageEncounter(uid, snapshot, id, spawn, null).biome !== snapshot.biomeAt(cells[index])
-          ) {
-            return false;
+            expect(stageEncounter(uid, snapshot, id, spawn, null, { cell }).biome).toBe(
+              snapshot.biomeAt(cell),
+            );
           }
-        }
-        return true;
-      },
+        },
+      ),
+      parameters,
     );
-    const details = fc.check(met, parameters);
-
-    expect(details.failed).toBe(true);
-    expect(String(details.errorInstance)).toContain('returning false');
   });
 
   it('are written down inside the bounds the tables check', () => {
@@ -142,12 +134,17 @@ describe('spawns on the ground', () => {
         (seed, place, clock, uid, buddy) => {
           const snapshot = readSnapshot(seed, place, clock);
           const broken: string[] = [];
+          const cells = [...snapshot.getSpawnCells().keys()];
 
           for (const [index, spawn] of snapshot.getSpawns(PUBLISHED).entries()) {
             const id = spawnId(snapshot.key, snapshot.timestamp, index);
 
             checked += 1;
-            broken.push(...checkEncounterRow(stageEncounter(uid, snapshot, id, spawn, buddy)));
+            const cell = cells[index];
+
+            broken.push(
+              ...checkEncounterRow(stageEncounter(uid, snapshot, id, spawn, buddy, { cell })),
+            );
           }
           expect(broken).toEqual([]);
         },
@@ -202,7 +199,9 @@ describe('wild meetings of any species', () => {
         (kind, individual, trait, place, clock, uid, buddy) => {
           const snapshot = readSnapshot(getWorld().seed, place, clock);
           const id = spawnId(snapshot.key, snapshot.timestamp, 0);
-          const met = stageEncounter(uid, snapshot, id, [kind, individual, trait], buddy);
+          const met = stageEncounter(uid, snapshot, id, [kind, individual, trait], buddy, {
+            cell: null,
+          });
 
           expect(checkEncounterRow(met)).toEqual([]);
         },
@@ -213,8 +212,8 @@ describe('wild meetings of any species', () => {
 });
 
 /** Every kind of lair a chunk can stage, with what each is holding this window */
-function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number][] {
-  const lairs: [RaidKind, number, number][] = [];
+function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number, number][] {
+  const lairs: [RaidKind, number, number, number][] = [];
   const kinds: [RaidKind, () => Map<number, { species: number; traitValue: number }>][] = [
     [RaidKind.Legendary, () => snapshot.getLegendaryLairs()],
     [RaidKind.Shadow, () => snapshot.getShadowLairs()],
@@ -225,8 +224,8 @@ function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number][] {
   ];
 
   for (const [kind, read] of kinds) {
-    for (const roll of read().values()) {
-      lairs.push([kind, roll.species, roll.traitValue]);
+    for (const [cell, roll] of read()) {
+      lairs.push([kind, cell, roll.species, roll.traitValue]);
     }
   }
   return lairs;
@@ -247,12 +246,13 @@ describe('raid prizes', () => {
           const snapshot = readSnapshot(seed, place, clock);
           const broken: string[] = [];
 
-          for (const [kind, species, traitValue] of readLairs(snapshot)) {
+          for (const [kind, cell, species, traitValue] of readLairs(snapshot)) {
             const lobby = `${snapshot.key}:${kind}:${traitValue}`;
             // A prize reads only the boss and its roll off the raid
             const raid = asRaidRecord({ kind, species, traitValue });
             const [id, spawn] = deriveRaidReward(raid, lobby, uid);
             const prize = stageEncounter(uid, snapshot, id, spawn, buddy, {
+              cell,
               type: RAID_ENCOUNTER_TYPES[kind],
               shadow: kind === RaidKind.Shadow,
               level: RAID_REWARD_LEVELS[kind],
@@ -269,6 +269,35 @@ describe('raid prizes', () => {
     );
     // Lairs are rare, but the chunks drawn hold some
     expect(checked).toBeGreaterThan(0);
+  });
+});
+
+describe('raid prizes met at a lair', () => {
+  it('are met in the country of the lair', () => {
+    fc.assert(
+      fc.property(
+        seedArbitrary,
+        cellArbitrary,
+        clockArbitrary,
+        playerArbitrary,
+        (seed, place, clock, uid) => {
+          const snapshot = readSnapshot(seed, place, clock);
+
+          for (const [kind, cell, species, traitValue] of readLairs(snapshot)) {
+            const raid = asRaidRecord({ kind, species, traitValue });
+            const [id, spawn] = deriveRaidReward(
+              raid,
+              `${snapshot.key}:${kind}:${traitValue}`,
+              uid,
+            );
+            const prize = stageEncounter(uid, snapshot, id, spawn, null, { cell });
+
+            expect(prize.biome).toBe(snapshot.biomeAt(cell));
+          }
+        },
+      ),
+      parameters,
+    );
   });
 });
 

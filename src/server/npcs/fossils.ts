@@ -231,6 +231,7 @@ async function openRock(
     `${snapshot.key}${snapshot.npcTimestamp}revive${cell}:${uid}:${fossil}:${now}:${rock}`,
   );
   const encounter = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
+    cell,
     type: EncounterType.Revived,
     level: FOSSIL_REVIVE_LEVEL,
     // The sky over the bench it was opened on: a fogbow reads it for

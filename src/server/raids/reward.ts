@@ -246,6 +246,7 @@ export async function claimRaidReward(uid: string, lobby: string): Promise<RaidR
     // The prize remembers the place it was won in — and a mythical
     // remembers that the place was nowhere on the map
     lair: raid.lair,
+    cell: raid.cell,
     biome: raid.kind === RaidKind.Mythical ? Biome.Beyond : undefined,
     level: RAID_REWARD_LEVELS[raid.kind],
     shinyBoost: RAID_SHINY_BOOST,

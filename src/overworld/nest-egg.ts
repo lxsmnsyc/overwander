@@ -173,6 +173,7 @@ export default function deriveNestEgg(
   const rng = new AleaRNG(`${snapshot.groundKey}${snapshot.nestTimestamp}nest${cell}egg:${uid}`);
   const hatchling = deriveEncounter(snapshot, [species, rng.int32(), rng.int32()], uid, {
     type: EncounterType.Hatched,
+    cell,
     level,
     weather: snapshot.weather,
     hiddenBoost: NEST_HIDDEN_BOOST,

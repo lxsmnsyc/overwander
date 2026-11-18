@@ -90,3 +90,12 @@ Castform:
   Castform:
     name: Castform
     category: Pokémon Clima
+  CastformSunny:
+    name: Castform (Forma Sol)
+    category: Pokémon Clima
+  CastformRainy:
+    name: Castform (Forma Lluvia)
+    category: Pokémon Clima
+  CastformSnowy:
+    name: Castform (Forma Nieve)
+    category: Pokémon Clima

@@ -7,6 +7,12 @@ Zorua:
   Zoroark:
     name: Zoroark
     category: Pokémon Disfrazorro
+  ZoruaHisui:
+    category: Pokémon Zorro Rencor
+    name: Zorua de Hisui
+  ZoroarkHisui:
+    category: Pokémon Maldizorro
+    name: Zoroark de Hisui
 Minccino:
   Minccino:
     name: Minccino
@@ -57,6 +63,24 @@ Deerling:
     category: Pokémon Estacional
   Sawsbuck:
     name: Sawsbuck
+    category: Pokémon Estacional
+  DeerlingSummer:
+    name: Deerling (Forma Verano)
+    category: Pokémon Estacional
+  DeerlingAutumn:
+    name: Deerling (Forma Otoño)
+    category: Pokémon Estacional
+  DeerlingWinter:
+    name: Deerling (Forma Invierno)
+    category: Pokémon Estacional
+  SawsbuckSummer:
+    name: Sawsbuck (Forma Verano)
+    category: Pokémon Estacional
+  SawsbuckAutumn:
+    name: Sawsbuck (Forma Otoño)
+    category: Pokémon Estacional
+  SawsbuckWinter:
+    name: Sawsbuck (Forma Invierno)
     category: Pokémon Estacional
 Emolga:
   Emolga:

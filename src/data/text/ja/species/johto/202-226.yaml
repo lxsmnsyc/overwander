@@ -28,6 +28,9 @@ Dunsparce:
   Dudunsparce:
     name: ノココッチ
     category: つちへびポケモン
+  DudunsparceThree:
+    name: ノココッチ（みつふしフォルム）
+    category: つちへびポケモン
 Gligar:
   Gligar:
     name: グライガー
@@ -49,6 +52,9 @@ Qwilfish:
   Overqwil:
     name: ハリーマン
     category: けんざんポケモン
+  QwilfishHisui:
+    name: ハリーセン（ヒスイのすがた）
+    category: ふうせんポケモン
 Shuckle:
   Shuckle:
     name: ツボツボ
@@ -67,6 +73,9 @@ Sneasel:
   Sneasler:
     name: オオニューラ
     category: クライミングポケモン
+  SneaselHisui:
+    name: ニューラ（ヒスイのすがた）
+    category: かぎづめポケモン
 Teddiursa:
   Teddiursa:
     name: ヒメグマ
@@ -76,6 +85,9 @@ Teddiursa:
     category: とうみんポケモン
   Ursaluna:
     name: ガチグマ
+    category: でいたんポケモン
+  UrsalunaBloodmoon:
+    name: ガチグマ（アカツキ）
     category: でいたんポケモン
 Slugma:
   Slugma:
@@ -100,6 +112,9 @@ Corsola:
     category: さんごポケモン
   Cursola:
     name: サニゴーン
+    category: さんごポケモン
+  CorsolaGalar:
+    name: サニーゴ（ガラルのすがた）
     category: さんごポケモン
 Remoraid:
   Remoraid:

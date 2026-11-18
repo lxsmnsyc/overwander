@@ -14,9 +14,15 @@ Zacian:
   Zacian:
     name: Zacian
     category: Pokémon Guerrero
+  ZacianCrowned:
+    name: Zacian (Espada Suprema)
+    category: Pokémon Guerrero
 Zamazenta:
   Zamazenta:
     name: Zamazenta
+    category: Pokémon Guerrero
+  ZamazentaCrowned:
+    name: Zamazenta (Escudo Supremo)
     category: Pokémon Guerrero
 Eternatus:
   Eternatus:
@@ -28,6 +34,9 @@ Kubfu:
     category: Pokémon Kung-fu
   Urshifu:
     name: Urshifu
+    category: Pokémon Kung-fu
+  UrshifuRapidStrike:
+    name: Urshifu (Estilo Fluido)
     category: Pokémon Kung-fu
 Regieleki:
   Regieleki:
@@ -49,3 +58,9 @@ Calyrex:
   Calyrex:
     name: Calyrex
     category: Pokémon Rey
+  CalyrexIce:
+    name: Calyrex (Jinete Glacial)
+    category: Pokémon Emperador
+  CalyrexShadow:
+    name: Calyrex (Jinete Espectral)
+    category: Pokémon Emperador

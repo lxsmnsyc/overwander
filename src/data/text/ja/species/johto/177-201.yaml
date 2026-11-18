@@ -75,6 +75,9 @@ Wooper:
   Clodsire:
     name: ドオー
     category: とげうおポケモン
+  WooperPaldea:
+    name: ウパー（パルデアのすがた）
+    category: みずうおポケモン
 Murkrow:
   Murkrow:
     name: ヤミカラス
@@ -98,4 +101,79 @@ Unown:
     category: シンボルポケモン
   UnownQuestion:
     name: アンノーン
+    category: シンボルポケモン
+  UnownB:
+    name: アンノーン（Ｂ）
+    category: シンボルポケモン
+  UnownC:
+    name: アンノーン（Ｃ）
+    category: シンボルポケモン
+  UnownD:
+    name: アンノーン（Ｄ）
+    category: シンボルポケモン
+  UnownE:
+    name: アンノーン（Ｅ）
+    category: シンボルポケモン
+  UnownF:
+    name: アンノーン（Ｆ）
+    category: シンボルポケモン
+  UnownG:
+    name: アンノーン（Ｇ）
+    category: シンボルポケモン
+  UnownH:
+    name: アンノーン（Ｈ）
+    category: シンボルポケモン
+  UnownI:
+    name: アンノーン（Ｉ）
+    category: シンボルポケモン
+  UnownJ:
+    name: アンノーン（Ｊ）
+    category: シンボルポケモン
+  UnownK:
+    name: アンノーン（Ｋ）
+    category: シンボルポケモン
+  UnownL:
+    name: アンノーン（Ｌ）
+    category: シンボルポケモン
+  UnownM:
+    name: アンノーン（Ｍ）
+    category: シンボルポケモン
+  UnownN:
+    name: アンノーン（Ｎ）
+    category: シンボルポケモン
+  UnownO:
+    name: アンノーン（Ｏ）
+    category: シンボルポケモン
+  UnownP:
+    name: アンノーン（Ｐ）
+    category: シンボルポケモン
+  UnownQ:
+    name: アンノーン（Ｑ）
+    category: シンボルポケモン
+  UnownR:
+    name: アンノーン（Ｒ）
+    category: シンボルポケモン
+  UnownS:
+    name: アンノーン（Ｓ）
+    category: シンボルポケモン
+  UnownT:
+    name: アンノーン（Ｔ）
+    category: シンボルポケモン
+  UnownU:
+    name: アンノーン（Ｕ）
+    category: シンボルポケモン
+  UnownV:
+    name: アンノーン（Ｖ）
+    category: シンボルポケモン
+  UnownW:
+    name: アンノーン（Ｗ）
+    category: シンボルポケモン
+  UnownX:
+    name: アンノーン（Ｘ）
+    category: シンボルポケモン
+  UnownY:
+    name: アンノーン（Ｙ）
+    category: シンボルポケモン
+  UnownZ:
+    name: アンノーン（Ｚ）
     category: シンボルポケモン

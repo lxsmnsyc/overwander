@@ -47,6 +47,12 @@ Zigzagoon:
   Obstagoon:
     name: Obstagoon
     category: Pokémon Bloqueador
+  LinooneGalar:
+    name: Linoone de Galar
+    category: Pokémon Lanzado
+  ZigzagoonGalar:
+    name: Zigzagoon de Galar
+    category: Pokémon Mapachito
 Wurmple:
   Wurmple:
     name: Wurmple

@@ -3,41 +3,85 @@
 Poltchageist:
   Poltchageist:
     name: Poltchageist
+    category: Pokémon Matcha
   Sinistcha:
     name: Sinistcha
+    category: Pokémon Matcha
+  PoltchageistArtisan:
+    name: Poltchageist (Forma Opulenta)
+    category: Pokémon Matcha
+  SinistchaMasterpiece:
+    name: Sinistcha (Forma Exquisita)
+    category: Pokémon Matcha
 IronValiant:
   IronValiant:
     name: Ferropaladín
+    category: Pokémon Paradoja
 Koraidon:
   Koraidon:
     name: Koraidon
+    category: Pokémon Paradoja
 Miraidon:
   Miraidon:
     name: Miraidon
+    category: Pokémon Paradoja
 WalkingWake:
   WalkingWake:
     name: Ondulagua
+    category: Pokémon Paradoja
 IronLeaves:
   IronLeaves:
     name: Ferroverdor
+    category: Pokémon Paradoja
 GougingFire:
   GougingFire:
     name: Flamariete
+    category: Pokémon Paradoja
 RagingBolt:
   RagingBolt:
     name: Electrofuria
+    category: Pokémon Paradoja
 Munkidori:
   Munkidori:
     name: Munkidori
+    category: Pokémon Esbirro
 Fezandipiti:
   Fezandipiti:
     name: Fezandipiti
+    category: Pokémon Esbirro
 Ogerpon:
   Ogerpon:
     name: Ogerpon
+    category: Pokémon Máscara
+  OgerponTealTera:
+    name: Ogerpon (Máscara Turquesa, forma teracristal)
+    category: Pokémon Máscara
+  OgerponWellspringTera:
+    name: Ogerpon (Máscara Fuente, forma teracristal)
+    category: Pokémon Máscara
+  OgerponHearthflameTera:
+    name: Ogerpon (Máscara Horno, forma teracristal)
+    category: Pokémon Máscara
+  OgerponCornerstoneTera:
+    name: Ogerpon (Máscara Cimiento, forma teracristal)
+    category: Pokémon Máscara
+  OgerponWellspring:
+    name: Ogerpon (Máscara Fuente)
+    category: Pokémon Máscara
+  OgerponHearthflame:
+    name: Ogerpon (Máscara Horno)
+    category: Pokémon Máscara
+  OgerponCornerstone:
+    name: Ogerpon (Máscara Cimiento)
+    category: Pokémon Máscara
 Terapagos:
   Terapagos:
     name: Terapagos
+    category: Pokémon Teracristal
+  TerapagosTerastal:
+    name: Terapagos (Forma teracristal)
+    category: Pokémon Teracristal
 Pecharunt:
   Pecharunt:
     name: Pecharunt
+    category: Pokémon Controlador

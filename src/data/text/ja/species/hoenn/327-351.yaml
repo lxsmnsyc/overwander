@@ -90,3 +90,12 @@ Castform:
   Castform:
     name: ポワルン
     category: てんきポケモン
+  CastformSunny:
+    name: ポワルン（たいようのすがた）
+    category: てんきポケモン
+  CastformRainy:
+    name: ポワルン（あまみずのすがた）
+    category: てんきポケモン
+  CastformSnowy:
+    name: ポワルン（ゆきぐものすがた）
+    category: てんきポケモン

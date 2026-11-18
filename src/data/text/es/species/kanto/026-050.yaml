@@ -7,6 +7,12 @@ Sandshrew:
   Sandslash:
     name: Sandslash
     category: Pokémon Ratón
+  SandshrewAlola:
+    name: Sandshrew de Alola
+    category: Pokémon Ratón
+  SandslashAlola:
+    name: Sandslash de Alola
+    category: Pokémon Ratón
 NidoranF:
   NidoranF:
     name: Nidoran♀
@@ -43,6 +49,12 @@ Vulpix:
     category: Pokémon Zorro
   Ninetales:
     name: Ninetales
+    category: Pokémon Zorro
+  VulpixAlola:
+    name: Vulpix de Alola
+    category: Pokémon Zorro
+  NinetalesAlola:
+    name: Ninetales de Alola
     category: Pokémon Zorro
 Jigglypuff:
   Jigglypuff:
@@ -97,4 +109,10 @@ Diglett:
     category: Pokémon Topo
   Dugtrio:
     name: Dugtrio
+    category: Pokémon Topo
+  DiglettAlola:
+    name: Diglett de Alola
+    category: Pokémon Topo
+  DugtrioAlola:
+    name: Dugtrio de Alola
     category: Pokémon Topo

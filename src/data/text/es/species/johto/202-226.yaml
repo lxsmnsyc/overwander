@@ -13,6 +13,7 @@ Girafarig:
     category: Pokémon Gran Cuello
   Farigiraf:
     name: Farigiraf
+    category: Pokémon Gran Cuello
 Pineco:
   Pineco:
     name: Pineco
@@ -26,6 +27,10 @@ Dunsparce:
     category: Pokémon Serpiente Tierra
   Dudunsparce:
     name: Dudunsparce
+    category: Pokémon Serpiente Tierra
+  DudunsparceThree:
+    name: Dudunsparce (Forma Trinodular)
+    category: Pokémon Serpiente Tierra
 Gligar:
   Gligar:
     name: Gligar
@@ -46,6 +51,10 @@ Qwilfish:
     category: Pokémon Globo
   Overqwil:
     name: Overqwil
+    category: Pokémon Espinoso
+  QwilfishHisui:
+    name: Qwilfish de Hisui
+    category: Pokémon Globo
 Shuckle:
   Shuckle:
     name: Shuckle
@@ -63,6 +72,10 @@ Sneasel:
     category: Pokémon Garra Filo
   Sneasler:
     name: Sneasler
+    category: Pokémon Escalada
+  SneaselHisui:
+    name: Sneasel de Hisui
+    category: Pokémon Garra Filo
 Teddiursa:
   Teddiursa:
     name: Teddiursa
@@ -72,6 +85,10 @@ Teddiursa:
     category: Pokémon Hibernante
   Ursaluna:
     name: Ursaluna
+    category: Pokémon Turba
+  UrsalunaBloodmoon:
+    name: Ursaluna (Luna Carmesí)
+    category: Pokémon Turba
 Slugma:
   Slugma:
     name: Slugma
@@ -95,6 +112,9 @@ Corsola:
     category: Pokémon Coral
   Cursola:
     name: Cursola
+    category: Pokémon Coral
+  CorsolaGalar:
+    name: Corsola de Galar
     category: Pokémon Coral
 Remoraid:
   Remoraid:

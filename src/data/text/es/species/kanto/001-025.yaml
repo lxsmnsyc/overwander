@@ -67,6 +67,12 @@ Rattata:
   Raticate:
     name: Raticate
     category: Pokémon Ratón
+  RattataAlola:
+    name: Rattata de Alola
+    category: Pokémon Ratón
+  RaticateAlola:
+    name: Raticate de Alola
+    category: Pokémon Ratón
 Spearow:
   Spearow:
     name: Spearow
@@ -91,3 +97,9 @@ Pikachu:
   Pichu:
     name: Pichu
     category: Pokémon Ratoncito
+  PichuSpikyEared:
+    name: Pichu Picoreja
+    category: Pokémon Ratoncito
+  RaichuAlola:
+    name: Raichu de Alola
+    category: Pokémon Ratón

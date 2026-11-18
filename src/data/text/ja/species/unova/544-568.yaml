@@ -14,6 +14,9 @@ Petilil:
   Lilligant:
     name: ドレディア
     category: はなかざりポケモン
+  LilligantHisui:
+    category: スピンポケモン
+    name: ドレディア（ヒスイのすがた）
 Basculin:
   Basculin:
     name: バスラオ
@@ -24,6 +27,12 @@ Basculin:
   BasculegionFemale:
     name: イダイトウ
     category: おおうおポケモン
+  BasculinWhite:
+    category: おんこうポケモン
+    name: バスラオ（しろすじのすがた）
+  BasculinBlue:
+    name: バスラオ（あおすじのすがた）
+    category: らんぼうポケモン
 Sandile:
   Sandile:
     name: メグロコ
@@ -41,6 +50,18 @@ Darumaka:
   Darmanitan:
     name: ヒヒダルマ
     category: えんじょうポケモン
+  DarmanitanGalar:
+    category: だるまポケモン
+    name: ヒヒダルマ（ガラルのすがた）
+  DarmanitanGalarZen:
+    name: ヒヒダルマ（ガラルのすがた・ダルマモード）
+    category: だるまポケモン
+  DarmanitanZen:
+    name: ヒヒダルマ（ダルマモード）
+    category: えんじょうポケモン
+  DarumakaGalar:
+    name: ダルマッカ（ガラルのすがた）
+    category: だるまポケモン
 Maractus:
   Maractus:
     name: マラカッチ
@@ -73,6 +94,9 @@ Yamask:
   Runerigus:
     name: デスバーン
     category: おんねんポケモン
+  YamaskGalar:
+    name: デスマス（ガラルのすがた）
+    category: たましいポケモン
 Tirtouga:
   Tirtouga:
     name: プロトーガ

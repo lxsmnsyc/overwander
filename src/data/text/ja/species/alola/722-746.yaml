@@ -10,6 +10,9 @@ Rowlet:
   Decidueye:
     name: ジュナイパー
     category: やばねポケモン
+  DecidueyeHisui:
+    name: ジュナイパー（ヒスイのすがた）
+    category: やばねポケモン
 Litten:
   Litten:
     name: ニャビー
@@ -68,6 +71,15 @@ Oricorio:
   Oricorio:
     name: オドリドリ
     category: ダンスポケモン
+  OricorioPau:
+    name: オドリドリ（ふらふらスタイル）
+    category: ダンスポケモン
+  OricorioSensu:
+    name: オドリドリ（まいまいスタイル）
+    category: ダンスポケモン
+  OricorioPomPom:
+    name: オドリドリ（ぱちぱちスタイル）
+    category: ダンスポケモン
 Cutiefly:
   Cutiefly:
     name: アブリー
@@ -82,7 +94,16 @@ Rockruff:
   Lycanroc:
     name: ルガルガン
     category: オオカミポケモン
+  LycanrocDusk:
+    name: ルガルガン（たそがれのすがた）
+    category: オオカミポケモン
+  LycanrocMidnight:
+    name: ルガルガン（まよなかのすがた）
+    category: オオカミポケモン
 Wishiwashi:
   Wishiwashi:
     name: ヨワシ
+    category: こざかなポケモン
+  WishiwashiSchool:
+    name: ヨワシ（むれたすがた）
     category: こざかなポケモン

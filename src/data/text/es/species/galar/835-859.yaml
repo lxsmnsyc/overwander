@@ -19,8 +19,10 @@ Applin:
     category: Pokémon Manzanéctar
   Dipplin:
     name: Dipplin
+    category: Pokémon Manzamelo
   Hydrapple:
     name: Hydrapple
+    category: Pokémon Manzanhidra
 Silicobra:
   Silicobra:
     name: Silicobra
@@ -31,6 +33,12 @@ Silicobra:
 Cramorant:
   Cramorant:
     name: Cramorant
+    category: Pokémon Tragón
+  CramorantGulping:
+    name: Cramorant (Forma Tragatodo)
+    category: Pokémon Tragón
+  CramorantGorging:
+    name: Cramorant (Forma Engulletodo)
     category: Pokémon Tragón
 Arrokuda:
   Arrokuda:
@@ -45,6 +53,9 @@ Toxel:
     category: Pokémon Retoño
   Toxtricity:
     name: Toxtricity
+    category: Pokémon Punki
+  ToxtricityLowKey:
+    name: Toxtricity (Forma Grave)
     category: Pokémon Punki
 Sizzlipede:
   Sizzlipede:
@@ -66,6 +77,12 @@ Sinistea:
     category: Pokémon Té
   Polteageist:
     name: Polteageist
+    category: Pokémon Té
+  SinisteaAntique:
+    name: Sinistea (Forma Genuina)
+    category: Pokémon Té
+  PolteageistAntique:
+    name: Polteageist (Forma Genuina)
     category: Pokémon Té
 Hatenna:
   Hatenna:

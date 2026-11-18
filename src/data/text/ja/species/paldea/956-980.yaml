@@ -24,6 +24,9 @@ Finizen:
   Palafin:
     name: イルカマン
     category: イルカポケモン
+  PalafinHero:
+    name: イルカマン（マイティフォルム）
+    category: イルカポケモン
 Varoom:
   Varoom:
     name: ブロロン
@@ -71,4 +74,10 @@ Dondozo:
 Tatsugiri:
   Tatsugiri:
     name: シャリタツ
+    category: ぎたいポケモン
+  TatsugiriDroopy:
+    name: シャリタツ（たれたすがた）
+    category: ぎたいポケモン
+  TatsugiriStretchy:
+    name: シャリタツ（のびたすがた）
     category: ぎたいポケモン

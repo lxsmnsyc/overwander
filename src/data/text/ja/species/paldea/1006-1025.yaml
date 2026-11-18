@@ -3,8 +3,16 @@
 Poltchageist:
   Poltchageist:
     name: チャデス
+    category: まっちゃポケモン
   Sinistcha:
     name: ヤバソチャ
+    category: まっちゃポケモン
+  PoltchageistArtisan:
+    name: チャデス（タカイモノのすがた）
+    category: まっちゃポケモン
+  SinistchaMasterpiece:
+    name: ヤバソチャ（ケッサクのすがた）
+    category: まっちゃポケモン
 IronValiant:
   IronValiant:
     name: テツノブジン
@@ -36,15 +44,42 @@ RagingBolt:
 Munkidori:
   Munkidori:
     name: マシマシラ
+    category: けらいポケモン
 Fezandipiti:
   Fezandipiti:
     name: キチキギス
+    category: けらいポケモン
 Ogerpon:
   Ogerpon:
     name: オーガポン
+    category: おめんポケモン
+  OgerponTealTera:
+    name: オーガポン（みどりのめん・テラスタルフォルム）
+    category: おめんポケモン
+  OgerponWellspringTera:
+    name: オーガポン（いどのめん・テラスタルフォルム）
+    category: おめんポケモン
+  OgerponHearthflameTera:
+    name: オーガポン（かまどのめん・テラスタルフォルム）
+    category: おめんポケモン
+  OgerponCornerstoneTera:
+    name: オーガポン（いしずえのめん・テラスタルフォルム）
+    category: おめんポケモン
+  OgerponWellspring:
+    name: オーガポン（いどのめん）
+    category: おめんポケモン
+  OgerponHearthflame:
+    name: オーガポン（かまどのめん）
+    category: おめんポケモン
+  OgerponCornerstone:
+    name: オーガポン（いしずえのめん）
+    category: おめんポケモン
 Terapagos:
   Terapagos:
     name: テラパゴス
+    category: テラスタルポケモン
+  TerapagosTerastal:
+    name: テラパゴス（テラスタルフォルム）
     category: テラスタルポケモン
 Pecharunt:
   Pecharunt:

@@ -3,51 +3,69 @@
 Frigibax:
   Frigibax:
     name: Frigibax
+    category: Pokémon Aleta Hielo
   Arctibax:
     name: Arctibax
+    category: Pokémon Aleta Hielo
   Baxcalibur:
     name: Baxcalibur
+    category: Pokémon Dragón Hielo
 Gimmighoul:
   Gimmighoul:
     name: Gimmighoul
+    category: Pokémon Cofre
   Gholdengo:
     name: Gholdengo
+    category: Pokémon Tesoro
 GreatTusk:
   GreatTusk:
     name: Colmilargo
+    category: Pokémon Paradoja
 ScreamTail:
   ScreamTail:
     name: Colagrito
+    category: Pokémon Paradoja
 FlutterMane:
   FlutterMane:
     name: Melenaleteo
+    category: Pokémon Paradoja
 SlitherWing:
   SlitherWing:
     name: Reptalada
+    category: Pokémon Paradoja
 SandyShocks:
   SandyShocks:
     name: Pelarena
+    category: Pokémon Paradoja
 IronTreads:
   IronTreads:
     name: Ferrodada
+    category: Pokémon Paradoja
 IronBundle:
   IronBundle:
     name: Ferrosaco
+    category: Pokémon Paradoja
 IronHands:
   IronHands:
     name: Ferropalmas
+    category: Pokémon Paradoja
 IronMoth:
   IronMoth:
     name: Ferropolilla
+    category: Pokémon Paradoja
 IronThorns:
   IronThorns:
     name: Ferropúas
+    category: Pokémon Paradoja
 RoaringMoon:
   RoaringMoon:
     name: Bramaluna
+    category: Pokémon Paradoja
 TingLu:
   TingLu:
     name: Ting-Lu
+    category: Pokémon Debacle
 ChiYu:
   ChiYu:
     name: Chi-Yu
+    category: Pokémon Debacle

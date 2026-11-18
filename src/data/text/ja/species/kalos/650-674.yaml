@@ -30,6 +30,9 @@ Froakie:
   Greninja:
     name: ゲッコウガ
     category: しのびポケモン
+  GreninjaAsh:
+    name: サトシゲッコウガ
+    category: しのびポケモン
 Bunnelby:
   Bunnelby:
     name: ホルビー
@@ -57,6 +60,63 @@ Scatterbug:
   Vivillon:
     name: ビビヨン
     category: りんぷんポケモン
+  VivillonSavannah:
+    name: ビビヨン（サバンナのもよう）
+    category: りんぷんポケモン
+  VivillonSun:
+    name: ビビヨン（たいようのもよう）
+    category: りんぷんポケモン
+  VivillonPolar:
+    name: ビビヨン（ゆきぐにのもよう）
+    category: りんぷんポケモン
+  VivillonRiver:
+    name: ビビヨン（たいがのもよう）
+    category: りんぷんポケモン
+  VivillonOcean:
+    name: ビビヨン（オーシャンのもよう）
+    category: りんぷんポケモン
+  VivillonFancy:
+    name: ビビヨン（ファンシーなもよう）
+    category: りんぷんポケモン
+  VivillonTundra:
+    name: ビビヨン（せつげんのもよう）
+    category: りんぷんポケモン
+  VivillonGarden:
+    name: ビビヨン（ていえんのもよう）
+    category: りんぷんポケモン
+  VivillonModern:
+    name: ビビヨン（モダンなもよう）
+    category: りんぷんポケモン
+  VivillonMarine:
+    name: ビビヨン（マリンのもよう）
+    category: りんぷんポケモン
+  VivillonJungle:
+    name: ビビヨン（ジャングルのもよう）
+    category: りんぷんポケモン
+  VivillonIcySnow:
+    name: ビビヨン（ひょうせつのもよう）
+    category: りんぷんポケモン
+  VivillonElegant:
+    name: ビビヨン（みやびなもよう）
+    category: りんぷんポケモン
+  VivillonMonsoon:
+    name: ビビヨン（スコールのもよう）
+    category: りんぷんポケモン
+  VivillonPokeBall:
+    name: ビビヨン（ボールのもよう）
+    category: りんぷんポケモン
+  VivillonSandstorm:
+    name: ビビヨン（さじんのもよう）
+    category: りんぷんポケモン
+  VivillonHighPlains:
+    name: ビビヨン（こうやのもよう）
+    category: りんぷんポケモン
+  VivillonContinental:
+    name: ビビヨン（たいりくのもよう）
+    category: りんぷんポケモン
+  VivillonArchipelago:
+    name: ビビヨン（ぐんとうのもよう）
+    category: りんぷんポケモン
 Litleo:
   Litleo:
     name: シシコ
@@ -74,6 +134,45 @@ Flabebe:
   Florges:
     name: フラージェス
     category: ガーデンポケモン
+  FlabebeBlue:
+    name: フラベベ（あおいはな）
+    category: いちりんポケモン
+  FloetteBlue:
+    name: フラエッテ（あおいはな）
+    category: いちりんポケモン
+  FlorgesBlue:
+    name: フラージェス（あおいはな）
+    category: ガーデンポケモン
+  FlabebeWhite:
+    name: フラベベ（しろいはな）
+    category: いちりんポケモン
+  FloetteWhite:
+    name: フラエッテ（しろいはな）
+    category: いちりんポケモン
+  FlorgesWhite:
+    name: フラージェス（しろいはな）
+    category: ガーデンポケモン
+  FlabebeYellow:
+    name: フラベベ（きいろのはな）
+    category: いちりんポケモン
+  FloetteYellow:
+    name: フラエッテ（きいろのはな）
+    category: いちりんポケモン
+  FlorgesYellow:
+    name: フラージェス（きいろのはな）
+    category: ガーデンポケモン
+  FlabebeOrange:
+    name: フラベベ（オレンジいろのはな）
+    category: いちりんポケモン
+  FloetteOrange:
+    name: フラエッテ（オレンジいろのはな）
+    category: いちりんポケモン
+  FlorgesOrange:
+    name: フラージェス（オレンジいろのはな）
+    category: ガーデンポケモン
+  FloetteEternal:
+    name: フラエッテ（えいえんのはな）
+    category: いちりんポケモン
 Skiddo:
   Skiddo:
     name: メェークル

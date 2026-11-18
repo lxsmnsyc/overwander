@@ -4,6 +4,9 @@ Giratina:
   Giratina:
     name: ギラティナ
     category: はんこつポケモン
+  GiratinaOrigin:
+    name: ギラティナ（オリジンフォルム）
+    category: はんこつポケモン
 Cresselia:
   Cresselia:
     name: クレセリア
@@ -23,7 +26,61 @@ Shaymin:
   Shaymin:
     name: シェイミ
     category: かんしゃポケモン
+  ShayminSky:
+    name: シェイミ（スカイフォルム）
+    category: かんしゃポケモン
 Arceus:
   Arceus:
     name: アルセウス
+    category: そうぞうポケモン
+  ArceusBug:
+    name: アルセウス（むしタイプ）
+    category: そうぞうポケモン
+  ArceusIce:
+    name: アルセウス（こおりタイプ）
+    category: そうぞうポケモン
+  ArceusDark:
+    name: アルセウス（あくタイプ）
+    category: そうぞうポケモン
+  ArceusFire:
+    name: アルセウス（ほのおタイプ）
+    category: そうぞうポケモン
+  ArceusRock:
+    name: アルセウス（いわタイプ）
+    category: そうぞうポケモン
+  ArceusGhost:
+    name: アルセウス（ゴーストタイプ）
+    category: そうぞうポケモン
+  ArceusGrass:
+    name: アルセウス（くさタイプ）
+    category: そうぞうポケモン
+  ArceusSteel:
+    name: アルセウス（はがねタイプ）
+    category: そうぞうポケモン
+  ArceusWater:
+    name: アルセウス（みずタイプ）
+    category: そうぞうポケモン
+  ArceusFairy:
+    name: アルセウス（フェアリータイプ）
+    category: そうぞうポケモン
+  ArceusDragon:
+    name: アルセウス（ドラゴンタイプ）
+    category: そうぞうポケモン
+  ArceusFlying:
+    name: アルセウス（ひこうタイプ）
+    category: そうぞうポケモン
+  ArceusGround:
+    name: アルセウス（じめんタイプ）
+    category: そうぞうポケモン
+  ArceusPoison:
+    name: アルセウス（どくタイプ）
+    category: そうぞうポケモン
+  ArceusPsychic:
+    name: アルセウス（エスパータイプ）
+    category: そうぞうポケモン
+  ArceusElectric:
+    name: アルセウス（でんきタイプ）
+    category: そうぞうポケモン
+  ArceusFighting:
+    name: アルセウス（かくとうタイプ）
     category: そうぞうポケモン

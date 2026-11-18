@@ -3,62 +3,91 @@
 Sprigatito:
   Sprigatito:
     name: Sprigatito
+    category: Pokémon Gato Planta
   Floragato:
     name: Floragato
+    category: Pokémon Gato Planta
   Meowscarada:
     name: Meowscarada
+    category: Pokémon Mago
 Fuecoco:
   Fuecoco:
     name: Fuecoco
+    category: Pokémon Fuegodrilo
   Crocalor:
     name: Crocalor
+    category: Pokémon Fuegodrilo
   Skeledirge:
     name: Skeledirge
+    category: Pokémon Cantante
 Quaxly:
   Quaxly:
     name: Quaxly
+    category: Pokémon Patito
   Quaxwell:
     name: Quaxwell
+    category: Pokémon Disciplinado
   Quaquaval:
     name: Quaquaval
+    category: Pokémon Bailarín
 Lechonk:
   Lechonk:
     name: Lechonk
+    category: Pokémon Gorrino
   Oinkologne:
     name: Oinkologne
+    category: Pokémon Gorrino
   OinkologneFemale:
     name: Oinkologne
+    category: Pokémon Gorrino
 Tarountula:
   Tarountula:
     name: Tarountula
+    category: Pokémon Ovillo
   Spidops:
     name: Spidops
+    category: Pokémon Trampa
 Nymble:
   Nymble:
     name: Nymble
+    category: Pokémon Saltamontes
   Lokix:
     name: Lokix
+    category: Pokémon Saltamontes
 Pawmi:
   Pawmi:
     name: Pawmi
+    category: Pokémon Ratón
   Pawmo:
     name: Pawmo
+    category: Pokémon Ratón
   Pawmot:
     name: Pawmot
+    category: Pokémon Palmada
 Tandemaus:
   Tandemaus:
     name: Tandemaus
+    category: Pokémon Pareja
   Maushold:
     name: Maushold
+    category: Pokémon Familia
+  MausholdThree:
+    name: Maushold (Familia de Tres)
+    category: Pokémon Familia
 Fidough:
   Fidough:
     name: Fidough
+    category: Pokémon Perrito
   Dachsbun:
     name: Dachsbun
+    category: Pokémon Perro
 Smoliv:
   Smoliv:
     name: Smoliv
+    category: Pokémon Aceituna
   Dolliv:
     name: Dolliv
+    category: Pokémon Aceituna
   Arboliva:
     name: Arboliva
+    category: Pokémon Aceituna

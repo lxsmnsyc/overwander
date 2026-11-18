@@ -10,6 +10,9 @@ Rowlet:
   Decidueye:
     name: Decidueye
     category: Pokémon Pluma Flecha
+  DecidueyeHisui:
+    name: Decidueye de Hisui
+    category: Pokémon Pluma Flecha
 Litten:
   Litten:
     name: Litten
@@ -68,6 +71,15 @@ Oricorio:
   Oricorio:
     name: Oricorio
     category: Pokémon Danza
+  OricorioPau:
+    name: Oricorio (Estilo Plácido)
+    category: Pokémon Danza
+  OricorioSensu:
+    name: Oricorio (Estilo Refinado)
+    category: Pokémon Danza
+  OricorioPomPom:
+    name: Oricorio (Estilo Animado)
+    category: Pokémon Danza
 Cutiefly:
   Cutiefly:
     name: Cutiefly
@@ -82,7 +94,16 @@ Rockruff:
   Lycanroc:
     name: Lycanroc
     category: Pokémon Lobo
+  LycanrocDusk:
+    name: Lycanroc (Forma Crepuscular)
+    category: Pokémon Lobo
+  LycanrocMidnight:
+    name: Lycanroc (Forma Nocturna)
+    category: Pokémon Lobo
 Wishiwashi:
   Wishiwashi:
     name: Wishiwashi
+    category: Pokémon Pececillo
+  WishiwashiSchool:
+    name: Wishiwashi (Forma Banco)
     category: Pokémon Pececillo

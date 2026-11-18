@@ -488,6 +488,19 @@ The picker names each language in itself: English, 日本語, Español. 日本�
 - The stats and stages use the games' words, in `text/<locale>/stats.yaml` and `stages.yaml`: Attack, Defense, Sp. Attack, Sp. Defense, Speed read こうげき, ぼうぎょ, とくこう, とくぼう, すばやさ and Ataque, Defensa, Ataque Esp., Defensa Esp., Velocidad. HP is PS in Spanish. Evasion and Accuracy (stages only) read かいひ, めいちゅう and Evasión, Precisión.
 - A Zenith is named from a template in `text/<locale>/zeniths.yaml`, the way the games name a Mega: ゼニス{holder} in Japanese (no gap, as メガ is written) and Cenit-{holder} in Spanish (as Mega-). The holder is the pokemon's name in that locale.
 
+## Forms and categories
+
+The names in `text/<locale>/species/`. `scripts/i18n/official-names.ts` fills a form's name and category from PokeAPI, then from the rules below, and `scripts/i18n/overrides/species.yaml` wins over both.
+
+- A regional form is the species' name and the region: ja `ゾロアーク（ヒスイのすがた）`, es `Zoroark de Hisui`. The regions are アローラ, ガラル, ヒスイ, パルデア and Alola, Galar, Hisui, Paldea.
+- A form PokeAPI knows by a label only is the species' name and the label: ja `ビビヨン（みやびなもよう）`, es `Vivillon (Motivo Oriental)`. The game's own name for a form that is a pokemon of its own (ヒートロトム, Kyurem Negro, ときはなたれしフーパ) is written whole.
+- A form's category is its species' own, unless the games give the form another (Hisuian Zoroark: のろいぎつねポケモン, Pokémon Maldizorro).
+- Spanish categories PokeAPI lacks (Gen 9) are WikiDex's word under `Pokémon`, Spain's wording where WikiDex gives both, each word capitalised like the older ones (Pokémon Gato Planta).
+- Japanese categories and form names PokeAPI lacks come from the official zukan (zukan.pokemon.co.jp).
+- Silvally's types are PokeAPI's form labels, which the overrides carry because PokeAPI gives them no full name: ja `シルヴァディ（タイプ：ファイト）`, es `Silvally (Tipo: Lucha)`.
+- Coined, with no official wording found: the six Alcremie sweets, named after the sweet it holds (ja `マホイップ（ベリーアメざいく）`, es `Alcremie (Confite Fruto)`, as `text/<locale>/items/trade-items.yaml` names the items), and the four Terastal Ogerpon masks (ja `オーガポン（みどりのめん・テラスタルフォルム）`, es `Ogerpon (Máscara Turquesa, forma teracristal)`).
+- The Paldean Tauros breeds are WikiDex's Spain wording: `Tauros de Paldea (Variedad Combatiente)`, `(Variedad Ardiente)`, `(Variedad Acuática)`.
+
 ## Item descriptions
 
 The words item descriptions and templates settled (`text/<locale>/items/`). Names of items, moves, abilities, stats and types come from the registries.

@@ -27,6 +27,7 @@ Pawniard:
     category: Pokémon Filo
   Kingambit:
     name: Kingambit
+    category: Pokémon Gran Espada
 Bouffalant:
   Bouffalant:
     name: Bouffalant
@@ -38,6 +39,9 @@ Rufflet:
   Braviary:
     name: Braviary
     category: Pokémon Aguerrido
+  BraviaryHisui:
+    category: Pokémon Grito Guerra
+    name: Braviary de Hisui
 Vullaby:
   Vullaby:
     name: Vullaby
@@ -86,9 +90,15 @@ Tornadus:
   Tornadus:
     name: Tornadus
     category: Pokémon Torbellino
+  TornadusTherian:
+    name: Tornadus (Forma Tótem)
+    category: Pokémon Torbellino
 Thundurus:
   Thundurus:
     name: Thundurus
+    category: Pokémon Centella
+  ThundurusTherian:
+    name: Thundurus (Forma Tótem)
     category: Pokémon Centella
 Reshiram:
   Reshiram:

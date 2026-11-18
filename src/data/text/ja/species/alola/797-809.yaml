@@ -16,6 +16,15 @@ Necrozma:
   Necrozma:
     name: ネクロズマ
     category: プリズムポケモン
+  NecrozmaUltra:
+    name: ウルトラネクロズマ
+    category: プリズムポケモン
+  NecrozmaDuskMane:
+    name: ネクロズマ（たそがれのたてがみ）
+    category: プリズムポケモン
+  NecrozmaDawnWings:
+    name: ネクロズマ（あかつきのつばさ）
+    category: プリズムポケモン
 Magearna:
   Magearna:
     name: マギアナ

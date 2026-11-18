@@ -18,6 +18,15 @@ Tauros:
   Tauros:
     name: ケンタロス
     category: あばれうしポケモン
+  TaurosPaldeaAqua:
+    name: ケンタロス（パルデアのすがた・ウォーターしゅ）
+    category: あばれうしポケモン
+  TaurosPaldeaBlaze:
+    name: ケンタロス（パルデアのすがた・ブレイズしゅ）
+    category: あばれうしポケモン
+  TaurosPaldeaCombat:
+    name: ケンタロス（パルデアのすがた・コンバットしゅ）
+    category: あばれうしポケモン
 Magikarp:
   Magikarp:
     name: コイキング
@@ -100,14 +109,23 @@ Articuno:
   Articuno:
     name: フリーザー
     category: れいとうポケモン
+  ArticunoGalar:
+    category: れいこくポケモン
+    name: フリーザー（ガラルのすがた）
 Zapdos:
   Zapdos:
     name: サンダー
     category: でんげきポケモン
+  ZapdosGalar:
+    category: けんきゃくポケモン
+    name: サンダー（ガラルのすがた）
 Moltres:
   Moltres:
     name: ファイヤー
     category: かえんポケモン
+  MoltresGalar:
+    category: じゃあくポケモン
+    name: ファイヤー（ガラルのすがた）
 Dratini:
   Dratini:
     name: ミニリュウ

@@ -7,9 +7,81 @@ TypeNull:
   Silvally:
     name: Silvally
     category: Pokémon Multigénico
+  SilvallyBug:
+    name: 'Silvally (Tipo: Bicho)'
+    category: Pokémon Multigénico
+  SilvallyIce:
+    name: 'Silvally (Tipo: Hielo)'
+    category: Pokémon Multigénico
+  SilvallyRock:
+    name: 'Silvally (Tipo: Roca)'
+    category: Pokémon Multigénico
+  SilvallyFire:
+    name: 'Silvally (Tipo: Fuego)'
+    category: Pokémon Multigénico
+  SilvallyDark:
+    name: 'Silvally (Tipo: Siniestro)'
+    category: Pokémon Multigénico
+  SilvallyGhost:
+    name: 'Silvally (Tipo: Fantasma)'
+    category: Pokémon Multigénico
+  SilvallySteel:
+    name: 'Silvally (Tipo: Acero)'
+    category: Pokémon Multigénico
+  SilvallyWater:
+    name: 'Silvally (Tipo: Agua)'
+    category: Pokémon Multigénico
+  SilvallyGrass:
+    name: 'Silvally (Tipo: Planta)'
+    category: Pokémon Multigénico
+  SilvallyFairy:
+    name: 'Silvally (Tipo: Hada)'
+    category: Pokémon Multigénico
+  SilvallyFlying:
+    name: 'Silvally (Tipo: Volador)'
+    category: Pokémon Multigénico
+  SilvallyPoison:
+    name: 'Silvally (Tipo: Veneno)'
+    category: Pokémon Multigénico
+  SilvallyGround:
+    name: 'Silvally (Tipo: Tierra)'
+    category: Pokémon Multigénico
+  SilvallyDragon:
+    name: 'Silvally (Tipo: Dragón)'
+    category: Pokémon Multigénico
+  SilvallyPsychic:
+    name: 'Silvally (Tipo: Psíquico)'
+    category: Pokémon Multigénico
+  SilvallyFighting:
+    name: 'Silvally (Tipo: Lucha)'
+    category: Pokémon Multigénico
+  SilvallyElectric:
+    name: 'Silvally (Tipo: Eléctrico)'
+    category: Pokémon Multigénico
 Minior:
   Minior:
     name: Minior
+    category: Pokémon Meteoro
+  MiniorRed:
+    name: Minior (Núcleo Rojo)
+    category: Pokémon Meteoro
+  MiniorBlue:
+    name: Minior (Núcleo Azul)
+    category: Pokémon Meteoro
+  MiniorGreen:
+    name: Minior (Núcleo Verde)
+    category: Pokémon Meteoro
+  MiniorOrange:
+    name: Minior (Núcleo Naranja)
+    category: Pokémon Meteoro
+  MiniorYellow:
+    name: Minior (Núcleo Amarillo)
+    category: Pokémon Meteoro
+  MiniorIndigo:
+    name: Minior (Núcleo Añil)
+    category: Pokémon Meteoro
+  MiniorViolet:
+    name: Minior (Núcleo Violeta)
     category: Pokémon Meteoro
 Komala:
   Komala:
@@ -26,6 +98,9 @@ Togedemaru:
 Mimikyu:
   Mimikyu:
     name: Mimikyu
+    category: Pokémon Disfraz
+  MimikyuBusted:
+    name: Mimikyu (Forma Descubierta)
     category: Pokémon Disfraz
 Bruxish:
   Bruxish:

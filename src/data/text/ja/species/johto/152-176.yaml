@@ -20,6 +20,9 @@ Cyndaquil:
   Typhlosion:
     name: バクフーン
     category: かざんポケモン
+  TyphlosionHisui:
+    category: おにびポケモン
+    name: バクフーン（ヒスイのすがた）
 Totodile:
   Totodile:
     name: ワニノコ

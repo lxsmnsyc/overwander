@@ -7,6 +7,12 @@ Ponyta:
   Rapidash:
     name: Rapidash
     category: Pokémon Caballo Fuego
+  PonytaGalar:
+    category: Pokémon Unicorne
+    name: Ponyta de Galar
+  RapidashGalar:
+    category: Pokémon Unicorne
+    name: Rapidash de Galar
 Slowpoke:
   Slowpoke:
     name: Slowpoke
@@ -16,6 +22,15 @@ Slowpoke:
     category: Pokémon Ermitaño
   Slowking:
     name: Slowking
+    category: Pokémon Regio
+  SlowbroGalar:
+    name: Slowbro de Galar
+    category: Pokémon Ermitaño
+  SlowpokeGalar:
+    name: Slowpoke de Galar
+    category: Pokémon Atontado
+  SlowkingGalar:
+    name: Slowking de Galar
     category: Pokémon Regio
 Magnemite:
   Magnemite:
@@ -33,6 +48,9 @@ Farfetchd:
     category: Pokémon Pato Salvaje
   Sirfetchd:
     name: Sirfetch’d
+    category: Pokémon Pato Salvaje
+  FarfetchdGalar:
+    name: Farfetch’d de Galar
     category: Pokémon Pato Salvaje
 Doduo:
   Doduo:
@@ -54,6 +72,12 @@ Grimer:
     category: Pokémon Lodo
   Muk:
     name: Muk
+    category: Pokémon Lodo
+  MukAlola:
+    name: Muk de Alola
+    category: Pokémon Lodo
+  GrimerAlola:
+    name: Grimer de Alola
     category: Pokémon Lodo
 Shellder:
   Shellder:
@@ -100,3 +124,9 @@ Voltorb:
   Electrode:
     name: Electrode
     category: Pokémon Bola
+  VoltorbHisui:
+    category: Pokémon Esfera
+    name: Voltorb de Hisui
+  ElectrodeHisui:
+    category: Pokémon Esfera
+    name: Electrode de Hisui

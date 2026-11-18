@@ -10,6 +10,18 @@ Burmy:
   Mothim:
     name: Mothim
     category: Pokémon Polilla
+  BurmySandy:
+    name: Burmy (Tronco Arena)
+    category: Pokémon Larva
+  BurmyTrash:
+    name: Burmy (Tronco Basura)
+    category: Pokémon Larva
+  WormadamSandy:
+    name: Wormadam (Tronco Arena)
+    category: Pokémon Larva
+  WormadamTrash:
+    name: Wormadam (Tronco Basura)
+    category: Pokémon Larva
 Combee:
   Combee:
     name: Combee
@@ -35,12 +47,21 @@ Cherubi:
   Cherrim:
     name: Cherrim
     category: Pokémon Floración
+  CherrimSunshine:
+    name: Cherrim (Forma Soleado)
+    category: Pokémon Floración
 Shellos:
   Shellos:
     name: Shellos
     category: Pokémon Babosa Marina
   Gastrodon:
     name: Gastrodon
+    category: Pokémon Babosa Marina
+  ShellosEast:
+    name: Shellos (Mar Este)
+    category: Pokémon Babosa Marina
+  GastrodonEast:
+    name: Gastrodon (Mar Este)
     category: Pokémon Babosa Marina
 Drifloon:
   Drifloon:

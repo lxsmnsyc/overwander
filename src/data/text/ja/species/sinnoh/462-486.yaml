@@ -4,6 +4,21 @@ Rotom:
   Rotom:
     name: ロトム
     category: プラズマポケモン
+  RotomFan:
+    name: スピンロトム
+    category: プラズマポケモン
+  RotomMow:
+    name: カットロトム
+    category: プラズマポケモン
+  RotomHeat:
+    name: ヒートロトム
+    category: プラズマポケモン
+  RotomWash:
+    name: ウォッシュロトム
+    category: プラズマポケモン
+  RotomFrost:
+    name: フロストロトム
+    category: プラズマポケモン
 Uxie:
   Uxie:
     name: ユクシー
@@ -20,9 +35,15 @@ Dialga:
   Dialga:
     name: ディアルガ
     category: じかんポケモン
+  DialgaOrigin:
+    name: ディアルガ（オリジンフォルム）
+    category: じかんポケモン
 Palkia:
   Palkia:
     name: パルキア
+    category: くうかんポケモン
+  PalkiaOrigin:
+    name: パルキア（オリジンフォルム）
     category: くうかんポケモン
 Heatran:
   Heatran:

@@ -3,52 +3,81 @@
 Tinkatink:
   Tinkatink:
     name: Tinkatink
+    category: Pokémon Forja
   Tinkatuff:
     name: Tinkatuff
+    category: Pokémon Martillo
   Tinkaton:
     name: Tinkaton
+    category: Pokémon Martillo
 Wiglett:
   Wiglett:
     name: Wiglett
+    category: Pokémon Cóngrido
   Wugtrio:
     name: Wugtrio
+    category: Pokémon Cóngrido
 Finizen:
   Finizen:
     name: Finizen
+    category: Pokémon Delfín
   Palafin:
     name: Palafin
+    category: Pokémon Delfín
+  PalafinHero:
+    name: Palafin (Forma Heroica)
+    category: Pokémon Delfín
 Varoom:
   Varoom:
     name: Varoom
+    category: Pokémon Monocilindro
   Revavroom:
     name: Revavroom
+    category: Pokémon Policilindro
 Cyclizar:
   Cyclizar:
     name: Cyclizar
+    category: Pokémon Montura
 Orthworm:
   Orthworm:
     name: Orthworm
+    category: Pokémon Lombriz
 Glimmet:
   Glimmet:
     name: Glimmet
+    category: Pokémon Mineral
   Glimmora:
     name: Glimmora
+    category: Pokémon Mineral
 Greavard:
   Greavard:
     name: Greavard
+    category: Pokémon Can Fantasma
   Houndstone:
     name: Houndstone
+    category: Pokémon Can Fantasma
 Cetoddle:
   Cetoddle:
     name: Cetoddle
+    category: Pokémon Geoballena
   Cetitan:
     name: Cetitan
+    category: Pokémon Geoballena
 Veluza:
   Veluza:
     name: Veluza
+    category: Pokémon Sueltalastre
 Dondozo:
   Dondozo:
     name: Dondozo
+    category: Pokémon Gran Siluro
 Tatsugiri:
   Tatsugiri:
     name: Tatsugiri
+    category: Pokémon Mimetismo
+  TatsugiriDroopy:
+    name: Tatsugiri (Forma Lánguida)
+    category: Pokémon Mimetismo
+  TatsugiriStretchy:
+    name: Tatsugiri (Forma Recta)
+    category: Pokémon Mimetismo

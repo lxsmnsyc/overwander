@@ -3,41 +3,57 @@
 Nacli:
   Nacli:
     name: Nacli
+    category: Pokémon Halita
   Naclstack:
     name: Naclstack
+    category: Pokémon Halita
   Garganacl:
     name: Garganacl
+    category: Pokémon Halita
 Charcadet:
   Charcadet:
     name: Charcadet
+    category: Pokémon Piroescudero
   Armarouge:
     name: Armarouge
+    category: Pokémon Piroguerrero
   Ceruledge:
     name: Ceruledge
+    category: Pokémon Piroespada
 Tadbulb:
   Tadbulb:
     name: Tadbulb
+    category: Pokémon Electrocuajo
   Bellibolt:
     name: Bellibolt
+    category: Pokémon Electrorrana
 Wattrel:
   Wattrel:
     name: Wattrel
+    category: Pokémon Paíño
   Kilowattrel:
     name: Kilowattrel
+    category: Pokémon Fregata
 Bramblin:
   Bramblin:
     name: Bramblin
+    category: Pokémon Estepicursor
 Toedscool:
   Toedscool:
     name: Toedscool
+    category: Pokémon Auricularia
 Capsakid:
   Capsakid:
     name: Capsakid
+    category: Pokémon Habanero
   Scovillain:
     name: Scovillain
+    category: Pokémon Habanero
 Rellor:
   Rellor:
     name: Rellor
+    category: Pokémon Pelotero
 Flittle:
   Flittle:
     name: Flittle
+    category: Pokémon Volantes

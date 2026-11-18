@@ -7,12 +7,18 @@ Exeggcute:
   Exeggutor:
     name: Exeggutor
     category: Pokémon Coco
+  ExeggutorAlola:
+    name: Exeggutor de Alola
+    category: Pokémon Coco
 Cubone:
   Cubone:
     name: Cubone
     category: Pokémon Solitario
   Marowak:
     name: Marowak
+    category: Pokémon Apilahueso
+  MarowakAlola:
+    name: Marowak de Alola
     category: Pokémon Apilahueso
 Tyrogue:
   Hitmonlee:
@@ -40,6 +46,9 @@ Koffing:
     category: Pokémon Gas Venenoso
   Weezing:
     name: Weezing
+    category: Pokémon Gas Venenoso
+  WeezingGalar:
+    name: Weezing de Galar
     category: Pokémon Gas Venenoso
 Rhyhorn:
   Rhyhorn:
@@ -103,6 +112,9 @@ MrMime:
   MimeJr:
     name: Mime Jr.
     category: Pokémon Mimo
+  MrMimeGalar:
+    category: Pokémon Danza
+    name: Mr. Mime de Galar
 Scyther:
   Scyther:
     name: Scyther
@@ -112,6 +124,7 @@ Scyther:
     category: Pokémon Tenaza
   Kleavor:
     name: Kleavor
+    category: Pokémon Hacha
 Jynx:
   Jynx:
     name: Jynx

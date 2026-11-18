@@ -24,9 +24,15 @@ Kyogre:
   Kyogre:
     name: カイオーガ
     category: かいていポケモン
+  KyogrePrimal:
+    name: カイオーガ（ゲンシカイキのすがた）
+    category: かいていポケモン
 Groudon:
   Groudon:
     name: グラードン
+    category: たいりくポケモン
+  GroudonPrimal:
+    name: グラードン（ゲンシカイキのすがた）
     category: たいりくポケモン
 Rayquaza:
   Rayquaza:
@@ -39,4 +45,13 @@ Jirachi:
 Deoxys:
   Deoxys:
     name: デオキシス
+    category: ＤＮＡポケモン
+  DeoxysSpeed:
+    name: デオキシス（スピードフォルム）
+    category: ＤＮＡポケモン
+  DeoxysAttack:
+    name: デオキシス（アタックフォルム）
+    category: ＤＮＡポケモン
+  DeoxysDefense:
+    name: デオキシス（ディフェンスフォルム）
     category: ＤＮＡポケモン

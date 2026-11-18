@@ -61,5 +61,7 @@ Agreed with the maintainer on 2026-11-18. Every child follows them; a child that
 
 ## Notes for the orchestrator
 
+- The story pull request must say: at the first 2.0 deploy, open 1.x tabs get a plain 404 that their old wrapper does not reload on; they recover when the `/_live` socket reconnects after the restart, and a tab without one shows errors until reloaded by hand.
+
 - No other node touching `src/components`, `src/routes`, `src/auth` or the canvas mounts should run while the story is open: a change across 300 files conflicts with everything. Today no such node is active.
 - `ts-style-sweep` waits for this story, or the same files are rewritten twice.

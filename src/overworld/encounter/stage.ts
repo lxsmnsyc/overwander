@@ -17,6 +17,13 @@ import deriveEncounter, { type EncounterOptions } from './index';
 import { deriveTrainedAbilities } from './traits';
 
 /**
+ * What a staged meeting must say: the cell it happened at, or null
+ * for one with no cell (a gift, a raid's mythical), so a caller cannot
+ * leave the country out by forgetting
+ */
+export type StagedOptions = Omit<EncounterOptions, 'cell'> & { cell: number | null };
+
+/**
  * The record a meeting is written down as, worked out in full before
  * anything is stored. The server stages every wild meeting and raid
  * prize through this, so what a test rolls here is what the encounters
@@ -28,7 +35,7 @@ export default function stageEncounter(
   id: string,
   spawn: Spawn,
   buddy: Buddy | null,
-  options: EncounterOptions = {},
+  options: StagedOptions,
 ): EncounterRecord {
   // Snapshot spawns are wild meetings; a raid reward carries its own
   // type (raid encounters never flee) and, from a shadow raid, its
@@ -47,6 +54,7 @@ export default function stageEncounter(
     getWorld().getWeather(snapshot.chunk.x, snapshot.chunk.y, snapshot.weatherWindow);
   const derived = deriveEncounter(snapshot, spawn, uid, {
     ...options,
+    cell: options.cell ?? undefined,
     // After the spread, so a caller that named one keeps it and one
     // that named nothing is not handed an undefined over the top of it
     weather: sky,

@@ -1,12 +1,12 @@
 import 'server-only';
-import { Depth } from '../../overworld/depth';
+import type { Depth } from '../../overworld/depth';
 import { type EncounterRecord, asEncounterRecord } from '../../model/encounter-record';
-import { asSpawnRolls, spawnId as nameSpawn } from '../../model/snapshot-record';
 import type { Spawn } from '../../overworld/chunk-snapshot';
-import type ChunkSnapshot from '../../overworld/chunk-snapshot';
-import { WORLD_GENERATION } from '../../overworld/current';
-import type { EncounterOptions } from '../../overworld/encounter';
-import stageEncounter from '../../overworld/encounter/stage';
+import ChunkSnapshot from '../../overworld/chunk-snapshot';
+import { checkMeeting } from '../../overworld/spawn-life/lifetimes';
+import { asOffset, toLocalTime } from '../../model/local-time';
+import getWorld, { WORLD_GENERATION } from '../../overworld/current';
+import stageEncounter, { type StagedOptions } from '../../overworld/encounter/stage';
 import type { Items } from '../../data/ids/items';
 import { encounterKey, encounterWindow } from '../../overworld/safari';
 import createOverworld from '../../overworld/setup';
@@ -16,8 +16,6 @@ import { getSql, tx } from '../db';
 import { readEncounter, writeEncounter } from '../encounter-io';
 import { grantItem } from '../inventory';
 import { recordSeenSpecies } from '../pokedex';
-import { toZoneKey } from '../../model/local-time';
-import { resolveSnapshot } from './claims';
 
 /** Meeting one wild pokemon, and letting it go */
 
@@ -32,7 +30,7 @@ export async function startEncounter(
   snapshot: ChunkSnapshot,
   id: string,
   spawn: Spawn,
-  options: EncounterOptions = {},
+  options: StagedOptions,
   /**
    * The buddy the caller has already looked up. Undefined means it has
    * not been asked for and this will ask; null is a player who has
@@ -66,9 +64,12 @@ export async function startEncounter(
 }
 
 /**
- * Meet one of the chunk's published spawns. The spawn is read from
- * the shared store rather than taken from the caller, so the rolls
- * behind the meeting are the ones every player of that chunk sees
+ * Meet one of the chunk's pokemon. What stands there is derived from
+ * the chunk, the zone and the server's own clock, never taken from the
+ * caller: the id says which cycle of which slot is meant, and the
+ * individual value and the cell the client names must match the roll
+ * and the pokemon's place within the allowance, or the tab was
+ * deriving something else and the meeting is refused
  */
 export async function meetSpawn(
   uid: string,
@@ -77,75 +78,34 @@ export async function meetSpawn(
   spawnId: string,
   now: number,
   offset: number,
-  depth: Depth = Depth.Surface,
+  depth: Depth,
+  cell: number,
+  individualValue: number,
 ): Promise<EncounterRecord | null> {
-  const snapshot = await resolveSnapshot(x, y, now, offset, depth);
+  const chunk = getWorld(depth).getChunk(x, y);
+  const zone = asOffset(offset);
+  const live = checkMeeting(chunk, zone, spawnId, individualValue, cell, toLocalTime(now, zone));
 
-  if (snapshot == null) {
+  if (live == null) {
     return null;
   }
 
-  // The name says which chunk, which zone and which window the spawn
-  // belongs to, and the window it names has to be the live one: a
-  // spawn from a window that has turned over, or from a chunk away,
-  // is not standing there to be met
-  const index = spawnIndex(spawnId);
+  // The meeting is staged at the start of the slot's cycle, which is
+  // what the board's key for the fled table is built from too
+  const snapshot = new ChunkSnapshot(chunk, live.cycle.start, zone);
 
-  if (spawnId !== nameSpawn(snapshot.key, snapshot.timestamp, index)) {
-    return null;
-  }
-
-  // Both are wanted and neither waits on the other, so they are asked
-  // together: serially they are two round trips of a path that has
-  // too many already. The roll comes off the stored window, which is
-  // the one the whole zone is looking at, addressed by chunk seed and
-  // zone rather than by `snapshot.key`
-  const [buddy, stored] = await Promise.all([
-    resolveBuddy(uid),
-    getSql()`
-      select species, individual_value as "individualValue", trait_value as "traitValue"
-      from snapshot_spawns
-      where generation = ${WORLD_GENERATION} and chunk_seed = ${snapshot.chunk.seed}
-        and zone = ${toZoneKey(snapshot.offset)}
-      order by idx
-    `,
-  ]);
-  // What a lure changes is how many of the window's rolls a player is
-  // **shown**, not which of them are standing there: the window
-  // publishes the whole count for everybody. Judging it again here
-  // took the extras back off anybody who swapped their buddy after
-  // walking in, leaving spawns on their board that they were refused
-  const rolls = asSpawnRolls([...stored]);
-
-  if (index >= rolls.length) {
-    return null;
-  }
-
-  const rolled = rolls[index];
-  const spawn: Spawn = [rolled.species, rolled.individualValue, rolled.traitValue];
-
-  return startEncounter(uid, snapshot, spawnId, spawn, {}, buddy);
-}
-
-/**
- * Which roll of the window a published spawn was: the id carries it
- * after the '#', and the extras a lure adds are the last of them
- */
-function spawnIndex(spawnId: string): number {
-  const index = Number(spawnId.slice(spawnId.lastIndexOf('#') + 1));
-
-  return Number.isFinite(index) ? index : Number.POSITIVE_INFINITY;
+  return startEncounter(uid, snapshot, live.id, live.spawn, { cell });
 }
 
 /**
  * Take a spawn out of what this player is shown, for as long as the
- * window that staged it lasts.
+ * cycle that staged it lasts.
  *
  * Two things retire one, and they look the same from the map's side:
  * a pokemon that **ran off**, and one that was **caught**. Neither is
  * standing there any more for the player it happened to, and both
- * leave it standing for everybody else — the spawn belongs to the
- * shared window, so what changes is only what this player is drawn.
+ * leave it standing for everybody else. The spawn belongs to the
+ * shared slot, so what changes is only what this player is drawn.
  *
  * The key is recomputed from the stored encounter rather than taken
  * from the caller, so a player cannot retire a meeting they never had.

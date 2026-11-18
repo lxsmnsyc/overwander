@@ -205,7 +205,7 @@ export const CATCH_LIST = listOf(ID, BULK_LIMIT);
 export const MAYBE_OFFSET = v.nullable(OFFSET);
 
 /** Any value a Postgres `integer` column holds, such as a packed roll */
-const INT32 = whole(-(2 ** 31), 2 ** 31 - 1);
+export const INT32 = whole(-(2 ** 31), 2 ** 31 - 1);
 
 /** A chunk window's spawn rolls, as a publisher sends them */
 export const SPAWN_ROLLS = listOf(

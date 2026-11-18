@@ -1,14 +1,15 @@
+import { getRoamArea, positionAt } from '../../../src/overworld/spawn-life/roam';
 import fc from 'fast-check';
 import { beforeAll, describe, expect, it } from 'vitest';
 import registerGameData from '../../../src/data';
 import { SPAWN_BAND_KEYS } from '../../../src/data/biome';
 import { getBaseFormSpecies } from '../../../src/data/ids/forms';
-import { LURE_SPAWN_BONUS } from '../../../src/overworld/abilities/__create';
-import ChunkSnapshot, { SPAWN_COUNT } from '../../../src/overworld/chunk-snapshot';
+import ChunkSnapshot from '../../../src/overworld/chunk-snapshot';
+import type { LiveSpawn } from '../../../src/overworld/spawn-life';
+import { checkMeeting, liveSpawns } from '../../../src/overworld/spawn-life/lifetimes';
 import { getSpawnLevels } from '../../../src/overworld/encounter';
 import stageEncounter from '../../../src/overworld/encounter/stage';
 import createOverworld from '../../../src/overworld/setup';
-import { CHUNK_CELLS } from '../../../src/overworld/grid';
 import { spawnId } from '../../../src/model/snapshot-record';
 import { toLocalTime } from '../../../src/model/local-time';
 import { RaidKind, asRaidRecord, deriveRaidReward } from '../../../src/model/raid-record';
@@ -49,38 +50,52 @@ beforeAll(() => {
 
 const parameters = readFuzzParameters();
 
-/** As many spawns as a window publishes, a lure's included */
-const PUBLISHED = SPAWN_COUNT + LURE_SPAWN_BONUS;
-
 function readSnapshot(seed: string, place: CellInput, clock: ClockInput): ChunkSnapshot {
   const chunk = readWorld(seed, place.depth).getChunk(place.chunkX, place.chunkY);
 
   return new ChunkSnapshot(chunk, toLocalTime(clock.now, clock.zone), clock.zone);
 }
 
+/** The pokemon standing in the chunk at the clock, each with the snapshot its meeting is staged in */
+function readStanding(
+  seed: string,
+  place: CellInput,
+  clock: ClockInput,
+): [live: LiveSpawn, staged: ChunkSnapshot][] {
+  const { chunk } = readSnapshot(seed, place, clock);
+  const local = toLocalTime(clock.now, clock.zone);
+  const standing: [LiveSpawn, ChunkSnapshot][] = [];
+
+  for (const live of liveSpawns(chunk, clock.zone, local)) {
+    standing.push([live, new ChunkSnapshot(chunk, live.cycle.start, clock.zone)]);
+  }
+  return standing;
+}
+
 describe('spawns on the ground', () => {
   it('stand on the cell they were placed on, out of that cell’s own pool', () => {
     fc.assert(
       fc.property(seedArbitrary, cellArbitrary, clockArbitrary, (seed, place, clock) => {
-        const snapshot = readSnapshot(seed, place, clock);
-        const spawns = snapshot.getSpawns(PUBLISHED);
-        const cells = snapshot.getSpawnCells();
+        const local = toLocalTime(clock.now, clock.zone);
 
-        // Every spawn is on exactly one cell, in roll order
-        expect([...cells.values()]).toEqual(spawns);
+        for (const [live, staged] of readStanding(seed, place, clock)) {
+          // The server derives the same pokemon on the same cell, and a
+          // wrong individual value or a cell far away is refused
+          const stands = positionAt(getRoamArea(staged.chunk, clock.zone, live), live, local).cell;
+          const met = checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1], stands, local);
 
-        for (const [cell, spawn] of cells) {
-          expect(snapshot.getSpawnAt(cell % CHUNK_CELLS, Math.floor(cell / CHUNK_CELLS))).toBe(
-            spawn,
-          );
+          expect(met?.id).toBe(live.id);
+          expect(
+            checkMeeting(staged.chunk, clock.zone, live.id, live.spawn[1] ^ 1, stands, local),
+          ).toBeNull();
 
           // A street rolls the town's pool, which the snapshot keeps to itself
-          if (snapshot.chunk.isTownCell(cell)) {
+          if (staged.chunk.isTownCell(live.home)) {
             continue;
           }
 
           // The pool names the species before its shore, wings, coat or rare shape
-          const pool = snapshot.getCellPool(cell);
+          const pool = staged.getCellPool(live.home);
           const kinds = new Set<number>();
 
           for (const band of SPAWN_BAND_KEYS) {
@@ -88,45 +103,32 @@ describe('spawns on the ground', () => {
               kinds.add(getBaseFormSpecies(entry.species));
             }
           }
-          expect(kinds, `cell ${cell} of ${snapshot.key}`).toContain(getBaseFormSpecies(spawn[0]));
+          expect(kinds, `cell ${live.home} of ${staged.key}`).toContain(
+            getBaseFormSpecies(live.spawn[0]),
+          );
         }
       }),
       parameters,
     );
   });
 
-  // Fails today: a meeting records the chunk's middle, not the cell's
-  // country, which 55f99f410 fixed for the pools and not for the row.
-  // The check asks for that mismatch and nothing else, so a throw
-  // fails the test. The `meetings-cell-biome` node fixes it at every
-  // caller and turns this into `fc.assert`
-  it('are met in the country of the cell they stand on (not yet)', () => {
-    const met = fc.property(
-      seedArbitrary,
-      cellArbitrary,
-      clockArbitrary,
-      playerArbitrary,
-      (seed, place, clock, uid) => {
-        const snapshot = readSnapshot(seed, place, clock);
-        const spawns = snapshot.getSpawns(PUBLISHED);
-        const cells = [...snapshot.getSpawnCells().keys()];
-
-        for (const [index, spawn] of spawns.entries()) {
-          const id = spawnId(snapshot.key, snapshot.timestamp, index);
-
-          if (
-            stageEncounter(uid, snapshot, id, spawn, null).biome !== snapshot.biomeAt(cells[index])
-          ) {
-            return false;
+  it('are met in the country of the cell they stand on', () => {
+    fc.assert(
+      fc.property(
+        seedArbitrary,
+        cellArbitrary,
+        clockArbitrary,
+        playerArbitrary,
+        (seed, place, clock, uid) => {
+          for (const [live, staged] of readStanding(seed, place, clock)) {
+            expect(
+              stageEncounter(uid, staged, live.id, live.spawn, null, { cell: live.home }).biome,
+            ).toBe(staged.biomeAt(live.home));
           }
-        }
-        return true;
-      },
+        },
+      ),
+      parameters,
     );
-    const details = fc.check(met, parameters);
-
-    expect(details.failed).toBe(true);
-    expect(String(details.errorInstance)).toContain('returning false');
   });
 
   it('are written down inside the bounds the tables check', () => {
@@ -140,14 +142,15 @@ describe('spawns on the ground', () => {
         playerArbitrary,
         buddyArbitrary,
         (seed, place, clock, uid, buddy) => {
-          const snapshot = readSnapshot(seed, place, clock);
           const broken: string[] = [];
 
-          for (const [index, spawn] of snapshot.getSpawns(PUBLISHED).entries()) {
-            const id = spawnId(snapshot.key, snapshot.timestamp, index);
-
+          for (const [live, staged] of readStanding(seed, place, clock)) {
             checked += 1;
-            broken.push(...checkEncounterRow(stageEncounter(uid, snapshot, id, spawn, buddy)));
+            broken.push(
+              ...checkEncounterRow(
+                stageEncounter(uid, staged, live.id, live.spawn, buddy, { cell: live.home }),
+              ),
+            );
           }
           expect(broken).toEqual([]);
         },
@@ -202,7 +205,9 @@ describe('wild meetings of any species', () => {
         (kind, individual, trait, place, clock, uid, buddy) => {
           const snapshot = readSnapshot(getWorld().seed, place, clock);
           const id = spawnId(snapshot.key, snapshot.timestamp, 0);
-          const met = stageEncounter(uid, snapshot, id, [kind, individual, trait], buddy);
+          const met = stageEncounter(uid, snapshot, id, [kind, individual, trait], buddy, {
+            cell: null,
+          });
 
           expect(checkEncounterRow(met)).toEqual([]);
         },
@@ -213,8 +218,8 @@ describe('wild meetings of any species', () => {
 });
 
 /** Every kind of lair a chunk can stage, with what each is holding this window */
-function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number][] {
-  const lairs: [RaidKind, number, number][] = [];
+function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number, number][] {
+  const lairs: [RaidKind, number, number, number][] = [];
   const kinds: [RaidKind, () => Map<number, { species: number; traitValue: number }>][] = [
     [RaidKind.Legendary, () => snapshot.getLegendaryLairs()],
     [RaidKind.Shadow, () => snapshot.getShadowLairs()],
@@ -225,8 +230,8 @@ function readLairs(snapshot: ChunkSnapshot): [RaidKind, number, number][] {
   ];
 
   for (const [kind, read] of kinds) {
-    for (const roll of read().values()) {
-      lairs.push([kind, roll.species, roll.traitValue]);
+    for (const [cell, roll] of read()) {
+      lairs.push([kind, cell, roll.species, roll.traitValue]);
     }
   }
   return lairs;
@@ -247,12 +252,13 @@ describe('raid prizes', () => {
           const snapshot = readSnapshot(seed, place, clock);
           const broken: string[] = [];
 
-          for (const [kind, species, traitValue] of readLairs(snapshot)) {
+          for (const [kind, cell, species, traitValue] of readLairs(snapshot)) {
             const lobby = `${snapshot.key}:${kind}:${traitValue}`;
             // A prize reads only the boss and its roll off the raid
             const raid = asRaidRecord({ kind, species, traitValue });
             const [id, spawn] = deriveRaidReward(raid, lobby, uid);
             const prize = stageEncounter(uid, snapshot, id, spawn, buddy, {
+              cell,
               type: RAID_ENCOUNTER_TYPES[kind],
               shadow: kind === RaidKind.Shadow,
               level: RAID_REWARD_LEVELS[kind],
@@ -269,6 +275,35 @@ describe('raid prizes', () => {
     );
     // Lairs are rare, but the chunks drawn hold some
     expect(checked).toBeGreaterThan(0);
+  });
+});
+
+describe('raid prizes met at a lair', () => {
+  it('are met in the country of the lair', () => {
+    fc.assert(
+      fc.property(
+        seedArbitrary,
+        cellArbitrary,
+        clockArbitrary,
+        playerArbitrary,
+        (seed, place, clock, uid) => {
+          const snapshot = readSnapshot(seed, place, clock);
+
+          for (const [kind, cell, species, traitValue] of readLairs(snapshot)) {
+            const raid = asRaidRecord({ kind, species, traitValue });
+            const [id, spawn] = deriveRaidReward(
+              raid,
+              `${snapshot.key}:${kind}:${traitValue}`,
+              uid,
+            );
+            const prize = stageEncounter(uid, snapshot, id, spawn, null, { cell });
+
+            expect(prize.biome).toBe(snapshot.biomeAt(cell));
+          }
+        },
+      ),
+      parameters,
+    );
   });
 });
 

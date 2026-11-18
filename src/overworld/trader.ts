@@ -46,8 +46,13 @@ export function rollTraderOffer(
 }
 
 /** The pokemon one offer hands over, the same on both sides of the counter */
-export function deriveTraderPokemon(snapshot: ChunkSnapshot, spawn: Spawn, uid: string): Encounter {
-  return deriveEncounter(snapshot, spawn, uid, { type: EncounterType.Wild, shadow: false });
+export function deriveTraderPokemon(
+  snapshot: ChunkSnapshot,
+  cell: number,
+  spawn: Spawn,
+  uid: string,
+): Encounter {
+  return deriveEncounter(snapshot, spawn, uid, { type: EncounterType.Wild, shadow: false, cell });
 }
 
 /** Whether a catch pays for this offer: the same spawn band, whatever the species */

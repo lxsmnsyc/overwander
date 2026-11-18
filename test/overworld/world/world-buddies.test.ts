@@ -25,6 +25,7 @@ import {
   TRAP_FLEE_FACTOR,
 } from '../../../src/overworld/abilities/__create';
 import { PUBLISHED_SPAWNS } from '../../../src/auth/snapshots';
+import { LURE_SLOTS, SLOT_COUNT } from '../../../src/overworld/spawn-life';
 import {
   COMPOUND_EYES_HELD_BOOST,
   FLAME_BODY_FACTOR,
@@ -152,6 +153,16 @@ describe('world', () => {
     // publishes them for everybody and a lure only decides who may
     // reach them. It is one figure, kept beside the publishing
     expect(PUBLISHED_SPAWNS).toBe(SPAWN_COUNT + LURE_SPAWN_BONUS);
+  });
+
+  it('keeps one slot count for the board, the window and the lure', () => {
+    // The board shows the slots below the engine's count, so the slot
+    // constants have to name the same figures the lure raises
+    expect(SLOT_COUNT).toBe(SPAWN_COUNT);
+    expect(LURE_SLOTS).toBe(LURE_SPAWN_BONUS);
+    expect(
+      createOverworld('player-uid', buddyWith([Abilities.Illuminate])).checkSpawnCount(SLOT_COUNT),
+    ).toBe(SLOT_COUNT + LURE_SLOTS);
   });
 
   it('draws two more spawns out for a buddy that lures', () => {

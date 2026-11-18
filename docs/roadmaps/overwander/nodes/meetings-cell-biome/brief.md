@@ -1,7 +1,8 @@
 ---
 id: meetings-cell-biome
 title: Record a meeting under the country of its cell
-status: todo
+status: done
+spent: 147766
 priority: should
 type: fix
 outline: false
@@ -43,10 +44,10 @@ Every meeting a player has at a cell records the country of that cell, the way `
 
 ## Steps
 
-- [ ] Give every caller at a cell the cell's country (`snapshot.biomeAt(cell)`), or give `deriveEncounter` the cell and let it read the country itself. Pick the one that leaves no caller able to forget.
-- [ ] Turn the `(not yet)` check in `meetings.fuzz.ts` into `fc.assert` over the same property, and add a sibling property for each other meeting that has a cell.
+- [x] Give every caller at a cell the cell's country (`snapshot.biomeAt(cell)`), or give `deriveEncounter` the cell and let it read the country itself. Pick the one that leaves no caller able to forget.
+- [x] Turn the `(not yet)` check in `meetings.fuzz.ts` into `fc.assert` over the same property, and add a sibling property for each other meeting that has a cell.
 
 ## Acceptance
 
-- [ ] `pnpm fuzz` passes with the property under `fc.assert`.
-- [ ] Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test`.
+- [x] `pnpm fuzz` passes with the property under `fc.assert`.
+- [x] Checks: `pnpm typecheck`, `rtk proxy pnpm exec oxlint src test` (exit 0), `pnpm test`.

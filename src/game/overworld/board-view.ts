@@ -1,4 +1,4 @@
-import { type SnapshotRecord, spawnId } from '../../model/snapshot-record';
+import type { SnapshotRecord } from '../../model/snapshot-record';
 import { localNow } from '../../auth/clock';
 import type Biome from '../../data/ids/biome';
 import { Genders } from '../../data/ids/species';
@@ -8,11 +8,12 @@ import type { ItemStack } from '../../data/overworld/item-pool';
 import Landmark from '../../data/overworld/landmark';
 import type Npc from '../../data/overworld/npc';
 import type Phenomenon from '../../data/overworld/phenomenon';
-import ChunkSnapshot, {
-  SNAPSHOT_INTERVAL,
-  SPAWN_COUNT,
-  type Spawn,
-} from '../../overworld/chunk-snapshot';
+import ChunkSnapshot, { SNAPSHOT_INTERVAL, type Spawn } from '../../overworld/chunk-snapshot';
+import { SLOT_COUNT } from '../../overworld/spawn-life';
+import { type SpawnFade, isDrawn, wasStanding } from './spawn-radius';
+import { liveSpawns } from '../../overworld/spawn-life/lifetimes';
+import { getRoamArea } from '../../overworld/spawn-life/roam';
+import { type SpawnWalk, stepSpawn } from '../../canvas/overworld/chunk-view/spawn-walk';
 import { CHUNK_CELLS, cellInChunk, chunkOfCell } from '../../overworld/chunk';
 import { type BoardGround, readBoardGround } from '../../overworld/board/ground';
 import { blocksWalk } from '../../overworld/terrain/cliff';
@@ -25,17 +26,11 @@ import { spawnKey } from '../../overworld/safari';
 import { DARK_DAY_LAMP_CELLS } from '../../data/overworld/weather';
 import { CAVE_DARK_CELLS } from '../../data/overworld/cave';
 import { Depth } from '../../overworld/depth';
-import type { BoardEdge } from '../../overworld/board';
+import { BOARD_COUNT, type BoardEdge } from '../../overworld/board';
 import createOverworld from '../../overworld/setup';
 import { isGigantamaxBoss } from '../../overworld/raid';
 import { RaidBeacon } from '../../canvas/overworld/beacon';
-import {
-  BOARD_CELLS,
-  BOARD_CENTER,
-  BOARD_RADIUS,
-  PUBLISHED_SPAWNS,
-  boardMargin,
-} from './board-metrics';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS, boardMargin } from './board-metrics';
 
 /**
  * The board is a window on world cells rather than a chunk, so
@@ -132,7 +127,7 @@ export interface BoardView {
    * under, so an interaction can derive the same encounter every
    * observer sees
    */
-  spawns: Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>;
+  spawns: Map<number, BoardSpawn>;
   caches: Map<number, ItemStack[]>;
   phenomena: Map<number, Phenomenon>;
   /** What every plant on the board is bearing: patches and trees together */
@@ -141,6 +136,44 @@ export interface BoardView {
   coats: Map<number, string>;
   /** How each Max Raid's pillar burns this window: purple over a Gigantamax */
   beacons: Map<number, RaidBeacon>;
+}
+
+/** A pokemon standing on the board, with what its fade reads */
+export interface BoardSpawn {
+  id: string;
+  spawn: Spawn;
+  shiny: boolean;
+  female: boolean;
+  fade: SpawnFade;
+  /** Where it roams, and where its chunk sits on the board */
+  walk: SpawnWalk;
+}
+
+/** A press lands a moment after the frame it was aimed at, so the last of this long counts too */
+const PRESS_GRACE_MS = 250;
+
+/**
+ * The pokemon standing on a board cell at a local instant, or the one
+ * drawn there a moment ago. Where two stand on one cell the lower slot
+ * is on top, as the draw puts it
+ */
+export function findSpawnAt(view: BoardView, index: number, now: number): BoardSpawn | undefined {
+  for (const at of [now, now - PRESS_GRACE_MS]) {
+    let found: BoardSpawn | undefined;
+
+    for (const spawn of view.spawns.values()) {
+      if (stepSpawn(spawn.walk, at)?.index !== index) {
+        continue;
+      }
+      if (found == null || spawn.walk.live.slot < found.walk.live.slot) {
+        found = spawn;
+      }
+    }
+    if (found != null) {
+      return found;
+    }
+  }
+  return undefined;
 }
 
 /** The window's Max Raids by the colour their pillar burns */
@@ -211,13 +244,17 @@ export function viewChunks(originX: number, originY: number): [x: number, y: num
 }
 
 /**
- * The most spawns each chunk's window has already shown this player.
+ * The spawns this player has already been shown, with the local instant
+ * each one's cycle ends and the snapshot the server stages its meeting with.
  *
- * A lure decides how many of a window's rolls are drawn, but what was
- * drawn stays standing for the rest of the window, so putting the lure
- * buddy away never takes spawns back off the board
+ * A lure decides how many slots are drawn, but what was drawn stays
+ * standing for the rest of its cycle, so putting the lure buddy away
+ * never takes a spawn back off the board
  */
-const shown = new Map<string, number>();
+const shown = new Map<
+  string,
+  { end: number; staged: ChunkSnapshot; distance: number; standing: boolean }
+>();
 
 /** The walls the last board carried, so a step only works out the edge it walks into */
 let lastWalls: {
@@ -227,20 +264,14 @@ let lastWalls: {
   walls: Set<number>;
 } | null = null;
 
-/** What this window has shown, never fewer than it showed a moment ago */
-function everShown(key: string, timestamp: number, visible: number): number {
-  // A window that has turned over is not standing any more
+/** Forget the spawns whose cycle is over */
+function forgetShown(now: number): void {
   // Deleting while iterating a Map is safe: visited keys are not revisited
-  for (const held of shown.keys()) {
-    if (timestamp - Number(held.slice(held.lastIndexOf('@') + 1)) > SNAPSHOT_INTERVAL) {
+  for (const [held, { end }] of shown) {
+    if (end <= now) {
       shown.delete(held);
     }
   }
-
-  const most = Math.max(visible, shown.get(key) ?? 0);
-
-  shown.set(key, most);
-  return most;
 }
 
 /**
@@ -294,10 +325,17 @@ export function buildBoardView(
   // The same engine the server stages encounters with: a lure decides
   // how many of a window's rolls are there for this player
   const overworld = createOverworld(player ?? '', player == null ? null : buddy);
-  const visible = overworld.checkSpawnCount(SPAWN_COUNT);
+  const visible = overworld.checkSpawnCount(SLOT_COUNT);
+  const instant = now ?? localNow(offset);
+  const nearby = new Set<string>();
+
+  forgetShown(instant);
+  for (const [x, y] of boardChunks(originX, originY)) {
+    nearby.add(`${x},${y}`);
+  }
   const landmarks = new Map<number, Landmark>();
   const decorations = new Map<number, Decoration>();
-  const spawns = new Map<number, { id: string; spawn: Spawn; shiny: boolean; female: boolean }>();
+  const spawns = new Map<number, BoardSpawn>();
   const caches = new Map<number, ItemStack[]>();
   const phenomena = new Map<number, Phenomenon>();
   const berries = new Map<number, ItemStack>();
@@ -306,6 +344,90 @@ export function buildBoardView(
   const beacons = new Map<number, RaidBeacon>();
   const chunks: BoardChunk[] = [];
   const covering = new Map<string, ChunkSnapshot>();
+  /** The chunk's snapshot behind each standing spawn, which is all a meeting needs of it */
+  const spots = new Map<string, ChunkSnapshot>();
+
+  /**
+   * Stand the chunk's pokemon on the board. Each one is derived from the
+   * chunk, the zone and the clock alone, so two clients at one instant
+   * see the same pokemon on the same cells
+   */
+  const standSpawns = (
+    x: number,
+    y: number,
+    chunk: ReturnType<typeof world.getChunk>,
+    board: (cell: number) => number | null,
+    spot: ChunkSnapshot,
+    shiftX: number,
+    shiftY: number,
+  ): void => {
+    for (const live of liveSpawns(chunk, offset, instant)) {
+      // A lure decides how many slots are drawn, the rare slot is
+      // always drawn, and a spawn already shown stays for its cycle
+      if (live.kind !== 'rare' && live.slot >= visible && !shown.has(live.id)) {
+        continue;
+      }
+
+      const seat = board(live.home);
+
+      // On the board rather than out in the country beyond it: what
+      // is drawn past the board is a view, and nothing is standing in
+      // a view
+      if (seat == null || !isDrawn(reachOf(seat))) {
+        continue;
+      }
+
+      const [species, individualValue, traitValue] = live.spawn;
+      const staged =
+        shown.get(live.id)?.staged ?? new ChunkSnapshot(chunk, live.cycle.start, offset);
+
+      // One that has already run from this player is not standing
+      // there any more, for them. It stays standing for everybody else
+      if (fled.has(spawnKey(x, y, staged.timestamp, individualValue))) {
+        continue;
+      }
+      // How far it was and whether it was already there the first time
+      // the board saw it: the fade reads both and they never change
+      const seen = shown.get(live.id) ?? {
+        end: live.cycle.end,
+        staged,
+        distance: reachOf(seat),
+        standing: wasStanding(live.cycle, instant),
+      };
+
+      shown.set(live.id, seen);
+      spots.set(`${x},${y}`, spot);
+
+      // Two pokemon may share a start cell, so the second takes a seat past the board
+      let key = seat;
+
+      while (spawns.has(key)) {
+        key += BOARD_COUNT;
+      }
+      spawns.set(key, {
+        id: live.id,
+        walk: { live, area: getRoamArea(chunk, offset, live), shiftX, shiftY },
+        spawn: live.spawn,
+        fade: { cycle: live.cycle, distance: seen.distance, standing: seen.standing },
+        // Whether it sparkles for *this* player, worked out the way the
+        // server will work it out when the meeting is staged: the same
+        // roll, the same species-day boost, the same sky, and the same
+        // overworld engine asked what the buddy adds to the odds. A
+        // shiny standing in a field is the one thing in the world worth
+        // crossing it for, so it is drawn in its own coat rather than
+        // left as a surprise sprung after the ball is thrown
+        shiny:
+          player != null &&
+          deriveShiny(species, traitValue, staged.timestamp, player, {
+            weather: staged.weather,
+            shinyBoost: overworld.checkEncounterShiny(live.id),
+          }),
+        // Read off the roll the way the meeting reads it, so a species
+        // drawn again for its females stands in the coat it is met in
+        female: deriveGender(species, traitValue) === Genders.Female,
+      });
+    }
+  };
 
   for (const [x, y] of viewChunks(originX, originY)) {
     const chunk = world.getChunk(x, y);
@@ -352,6 +474,11 @@ export function buildBoardView(
 
     // A window of the other layer at the same coordinates is not this chunk's
     if (record == null || record.record.seed !== chunk.seed) {
+      // Pokemon need no window: they come off the clock, so they stand
+      // while their chunk's window is still on its way
+      if (nearby.has(`${x},${y}`)) {
+        standSpawns(x, y, chunk, board, new ChunkSnapshot(chunk, instant, offset), shiftX, shiftY);
+      }
       // Out past the live circle nothing is read, but the people there
       // are the clock's roll, so they are dressed as they stand rather
       // than as a stand-in grunt or ace trainer
@@ -367,10 +494,6 @@ export function buildBoardView(
     }
 
     const snapshot = new ChunkSnapshot(chunk, record.record.timestamp, offset);
-    // Rolling locally reproduces the published placement — same seed,
-    // same window, same count — and is what pins each spawn to a cell
-    snapshot.getSpawns(PUBLISHED_SPAWNS);
-
     chunks.push({
       x,
       y,
@@ -391,64 +514,8 @@ export function buildBoardView(
     carry(raidBeacons(snapshot), beacons);
     standFallenLairs(snapshot);
 
-    const cells = [...snapshot.getSpawnCells()];
-    const drawn = everShown(
-      `${snapshot.key}:${offset}@${record.record.timestamp}`,
-      record.record.timestamp,
-      visible,
-    );
-
-    for (const [index, [cell]] of cells.entries()) {
-      // Roll order and publication order are the same, so the nth
-      // placed cell carries the nth published spawn
-      if (index >= drawn || index >= record.record.spawns.length) {
-        continue;
-      }
-
-      const seat = board(cell);
-
-      // On the board rather than out in the country beyond it: what
-      // is drawn past the board is a view, and nothing is standing in
-      // a view
-      if (seat == null || reachOf(seat) > BOARD_RADIUS) {
-        continue;
-      }
-
-      const stored = record.record.spawns[index];
-
-      // One that has already run from this player is not standing
-      // there any more — for them. It stays in the window, since the
-      // window is everybody's, and it is left out of what this player
-      // is shown rather than out of what was rolled
-      if (fled.has(spawnKey(x, y, record.record.timestamp, stored.individualValue))) {
-        continue;
-      }
-
-      // The name is derived from the window rather than stored with
-      // the roll, so the two cannot disagree about which spawn it is
-      const id = spawnId(snapshot.key, record.record.timestamp, index);
-      const spawn: Spawn = [stored.species, stored.individualValue, stored.traitValue];
-
-      spawns.set(seat, {
-        id,
-        spawn,
-        // Whether it sparkles for *this* player, worked out the way the
-        // server will work it out when the meeting is staged: the same
-        // roll, the same species-day boost, the same sky, and the same
-        // overworld engine asked what the buddy adds to the odds. A
-        // shiny standing in a field is the one thing in the world worth
-        // crossing it for, so it is drawn in its own coat rather than
-        // left as a surprise sprung after the ball is thrown
-        shiny:
-          player != null &&
-          deriveShiny(stored.species, stored.traitValue, snapshot.timestamp, player, {
-            weather: snapshot.weather,
-            shinyBoost: overworld.checkEncounterShiny(id),
-          }),
-        // Read off the roll the way the meeting reads it, so a species
-        // drawn again for its females stands in the coat it is met in
-        female: deriveGender(stored.species, stored.traitValue) === Genders.Female,
-      });
+    if (nearby.has(`${x},${y}`)) {
+      standSpawns(x, y, chunk, board, snapshot, shiftX, shiftY);
     }
   }
 
@@ -514,7 +581,8 @@ export function buildBoardView(
     at: (cell) => {
       const worldX = originX + (cell % BOARD_CELLS);
       const worldY = originY + Math.floor(cell / BOARD_CELLS);
-      const snapshot = covering.get(`${chunkOfCell(worldX)},${chunkOfCell(worldY)}`);
+      const where = `${chunkOfCell(worldX)},${chunkOfCell(worldY)}`;
+      const snapshot = covering.get(where) ?? spots.get(where);
 
       return snapshot == null
         ? null

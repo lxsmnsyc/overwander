@@ -765,6 +765,7 @@ export async function claimStopReward(uid: string, stop: string): Promise<StopRe
   // changing hands
   const raised = stopOutfit(Landmark.TeamRocket, rank);
   const encounter = await startEncounter(uid, snapshot, spawnId, spawn, {
+    cell: record.cell,
     type: EncounterType.Rocket,
     level: ROCKET_REWARD_LEVEL,
     shadow: true,

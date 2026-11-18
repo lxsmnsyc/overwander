@@ -105,6 +105,13 @@ export interface EncounterOptions {
    */
   biome?: Biome;
   /**
+   * The cell the player stood on. A border runs through a chunk, so
+   * the country of the meeting is the cell's own (`biomeAt`) and not
+   * the chunk's middle. `biome` wins when both are named. Left out
+   * only for a meeting that has no cell to stand on
+   */
+  cell?: number;
+  /**
    * An extra multiplier on the shiny odds, from whatever the player
    * brought along — the Shiny Charm, for one. It stacks with the
    * species day's own boost
@@ -356,7 +363,9 @@ export default function deriveEncounter(
     timestamp: snapshot.timestamp,
     x: snapshot.chunk.x,
     y: snapshot.chunk.y,
-    biome: options.biome ?? snapshot.chunk.biome,
+    biome:
+      options.biome ??
+      (options.cell == null ? snapshot.chunk.biome : snapshot.biomeAt(options.cell)),
     ...(options.phenomenon == null ? {} : { phenomenon: options.phenomenon }),
   };
 }

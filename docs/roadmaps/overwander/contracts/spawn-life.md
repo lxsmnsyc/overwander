@@ -1,6 +1,6 @@
 ---
 name: spawn-life
-version: 1
+version: 2
 status: frozen
 defined_by: spawn-life-design
 ---
@@ -31,7 +31,7 @@ All live in `src/overworld/spawn-life/index.ts`. Times are local milliseconds (t
 | `PRESENT_MIN`, `PRESENT_MAX` | 210 000, 270 000 (3.5 to 4.5 min, mean 4) | A mob lives until it despawns: random 1/800 a tick once 32+ blocks from every player and 30 s old; at once past 128 blocks | A monster lives until killed |
 | Rest (derived: `SLOT_PERIOD - present`) | 60 000 to 120 000 (1 to 2 min, mean 90 s) | None | `RespawnMs` plus `rand(RespawnVarianceMs)`, at least 1000 ms |
 | `MIN_STAY` (shortest cycle worth showing) | 30 000 | | |
-| `HOUR` (cycles never cross a local hour) | 3 600 000 | | |
+| `HOUR` (a cycle crosses a local hour only where its ground stays open) | 3 600 000 | | |
 | `MEET_DRIFT_MS` (server allowance at the edges of a cycle and for position) | 1 000 | | |
 | `MEET_DRIFT_CELLS` | 1 | | |
 | `WAYPOINT_MS` (roaming) | 5 000 | Idle stroll check about 1 in 120 ticks (about 6 s) | `minRandomWalk` 4000 plus `rand(1000)` plus path time |
@@ -63,11 +63,13 @@ Cycle `c` of a slot:
 ```
 start   = phase + c * SLOT_PERIOD
 present = PRESENT_MIN + floor(random() * (PRESENT_MAX - PRESENT_MIN))
-end     = min(start + present, (floor(start / HOUR) + 1) * HOUR)
+end     = start + present, or the next hour mark when the cycle crosses it and does not keep (below)
 ```
 
 - A cycle with `end - start < MIN_STAY` is empty (the slot rests until the next one).
-- The cut at the hour is what lets one occupied-cell set (landmarks, rock, lava, the hour's phenomena) and one weather window cover a whole cycle. About 7 percent of cycles are shortened by it.
+- **Crossing the hour (v2).** A cycle that runs past the next hour mark `H` keeps its full length only when its ground stays open: the start cell, and from `spawn-roaming` on every cell of its roam area, is open in the closed-cell set of hour `H`. Otherwise it ends at `H`. A pokemon's species, values and coat stay as rolled at its start, under the start hour's weather. Without this rule every pokemon on the board left at each hour mark at once and the board refilled over about 5 minutes (change request from `spawn-lifetimes-core`).
+- The start hour's ground is still what the start cell is drawn from. A kept cycle is not part of hour `H`'s territories, so a new cycle of another slot may start on its cell; two pokemon on one cell is allowed (see Roaming, Overlap).
+- Since a kept cycle's whole area is open in both hours, roaming and the server check need no rule of their own across the mark.
 - Cycles of one slot never overlap: `PRESENT_MAX < SLOT_PERIOD`.
 - Slots stagger through their phases only. The rest between two cycles is `SLOT_PERIOD - present`, so it varies with the present length.
 - The rest does not shorten when a player catches the pokemon: the slot is shared, the catch is not.
@@ -137,7 +139,7 @@ export interface SlotCycle {
   slot: number;
   cycle: number;
   start: number; // local ms
-  end: number; // local ms, already cut at the hour
+  end: number; // local ms, already cut at the hour when the cycle does not keep
 }
 export interface LiveSpawn {
   id: string; // spawn id
@@ -150,8 +152,8 @@ export interface LiveSpawn {
 
 // lifetimes.ts (owned by spawn-lifetimes)
 export function slotPhase(chunkKey: string, slot: number): number;
-export function cycleOf(chunkKey: string, slot: number, cycle: number): SlotCycle | null; // null: shorter than MIN_STAY
-export function cycleAt(chunkKey: string, slot: number, time: number): SlotCycle | null; // null in the rest
+export function cycleOf(chunk: Chunk, offset: number, slot: number, cycle: number): SlotCycle | null; // null: shorter than MIN_STAY. Takes the chunk (v2): the end reads the next hour's closed cells
+export function cycleAt(chunk: Chunk, offset: number, slot: number, time: number): SlotCycle | null; // null in the rest
 export function getSpawnGround(chunk: Chunk, offset: number, time: number): SpawnGround; // memo per chunk key and hour
 export function rollSlot(chunk: Chunk, offset: number, slot: number, cycle: SlotCycle): LiveSpawn | null; // memo per id
 export function liveSpawns(chunk: Chunk, offset: number, time: number): LiveSpawn[]; // every slot present at time
@@ -216,7 +218,7 @@ The slot design does not move it, provided it adds no `world.draws` call and reo
 
 ### Tests the build adds
 
-- `cycleAt` and `cycleOf` agree; cycles of a slot never overlap; no cycle crosses an hour; present lengths stay in range; the mean live fraction over a day is within 2 percent of 0.727.
+- `cycleAt` and `cycleOf` agree; cycles of a slot never overlap; a cycle crosses an hour only when its ground is open in the next hour, and one whose cell closes ends at the mark; present lengths stay in range; the mean live fraction over a day is within 2 percent of 0.727.
 - Territories of an hour are disjoint and cover no closed cell; two slots never share a start cell.
 - The same inputs give the same rolls in two processes; a pinned list of (species, cell, start) for one chunk and day, so a change to the draw order is a decision.
 - `checkMeeting` accepts inside the drift and refuses outside it, with a wrong individual value, a wrong slot and a wrong cell.

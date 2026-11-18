@@ -27,6 +27,7 @@ import check, {
   CLAIM_QUERIES,
   DEPTH,
   ID,
+  INT32,
   LOCALE,
   MAYBE_OFFSET,
   OFFSET,
@@ -657,18 +658,21 @@ async function claimPhenomenonOnServer(
 }
 
 /**
- * Interact with one of the chunk's published spawns: it becomes this
- * player's encounter. The per-player derivation (shininess, gender,
- * ability, nature, ...) is stored at encounters/{spawnId}:{playerId}
- * on first interaction and returned as-is afterwards, so a meeting
- * cannot be re-rolled into a better one by re-entering it.
+ * Interact with one of the chunk's pokemon: it becomes this player's
+ * encounter. The per-player derivation (shininess, gender, ability,
+ * nature, ...) is stored at encounters/{spawnId}:{playerId} on first
+ * interaction and returned as-is afterwards, so a meeting cannot be
+ * re-rolled into a better one by re-entering it.
  *
- * Resolves null when the spawn is not standing in that chunk's live
- * window
+ * The cell and the individual value are what this board derived for the
+ * spawn: the server derives it again and refuses a meeting that
+ * disagrees. Resolves null when the pokemon is not standing there now
  */
 export async function startEncounter(
   snapshot: ChunkSnapshot,
   spawn: string,
+  cell: number,
+  individualValue: number,
 ): Promise<EncounterRecord | null> {
   return meetSpawnOnServer(
     await getIdToken(),
@@ -677,6 +681,8 @@ export async function startEncounter(
     spawn,
     snapshot.offset,
     snapshot.depth,
+    cell,
+    individualValue,
   );
 }
 
@@ -687,6 +693,8 @@ async function meetSpawnOnServer(
   spawn: string,
   offset: number,
   depth: Depth,
+  cell: number,
+  individualValue: number,
 ): Promise<EncounterRecord | null> {
   'use server';
   check(TOKEN, token);
@@ -695,7 +703,19 @@ async function meetSpawnOnServer(
   check(ID, spawn);
   check(OFFSET, offset);
   check(DEPTH, depth);
-  return meetSpawn(await requireUid(token), x, y, spawn, await syncServerClock(), offset, depth);
+  check(CELL, cell);
+  check(INT32, individualValue);
+  return meetSpawn(
+    await requireUid(token),
+    x,
+    y,
+    spawn,
+    await syncServerClock(),
+    offset,
+    depth,
+    cell,
+    individualValue,
+  );
 }
 
 function claimKey(query: ClaimQuery): string {

@@ -154,6 +154,7 @@ export async function claimPhenomenon(
   return {
     kind: 'encounter',
     encounter: await startEncounter(uid, snapshot, key, spawn, {
+      cell,
       phenomenon: snapshot.getPhenomena().get(cell),
       minimumIV: PHENOMENON_MIN_IV,
     }),

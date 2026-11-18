@@ -23,7 +23,7 @@ const trader: NpcScript = async (visit) => {
   const entries: BoxEntry[] = [];
 
   for (const spawn of visit.snapshot.getTraderOffer(visit.cell)) {
-    offers.push(deriveTraderPokemon(visit.snapshot, spawn, visit.player));
+    offers.push(deriveTraderPokemon(visit.snapshot, visit.cell, spawn, visit.player));
   }
   for (const [at, one] of offers.entries()) {
     entries.push({

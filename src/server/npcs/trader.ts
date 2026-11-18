@@ -53,7 +53,7 @@ export default async function tradeWithTrader(
     return null;
   }
 
-  const encounter = deriveTraderPokemon(snapshot, spawn, uid);
+  const encounter = deriveTraderPokemon(snapshot, cell, spawn, uid);
   let arrived: string | null;
 
   try {

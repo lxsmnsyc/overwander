@@ -2,6 +2,7 @@ import {
   type BoardView,
   type Placed,
   buildBoardView,
+  findSpawnAt,
   naming,
 } from '../../../game/overworld/board-view';
 import { describeItem } from '../../details';
@@ -9,6 +10,8 @@ import { m } from '../../../i18n/paraglide/messages.js';
 import { useAuth } from '../../../auth/context';
 import createBoardWalk, { type BoardWalk } from '../../../game/overworld/walk';
 import createBoardWindows from '../../../game/overworld/windows';
+import { spawnAlpha } from '../../../game/overworld/spawn-radius';
+import { stepSpawn } from '../../../canvas/overworld/chunk-view/spawn-walk';
 import createBoardInteractions, {
   type Challenge,
   type Opened,
@@ -1088,12 +1091,15 @@ export default function OverworldBoard(props: {
     const loaded = view();
 
     const coats = new Map<number, SpawnCoat>();
+    // With reduced motion a pokemon is there or not, with no fade
+    const still = settings().reduceMotion;
 
     if (loaded == null) {
       return coats;
     }
     for (const [at, standing] of loaded.spawns) {
       coats.set(at, {
+        walk: (now) => stepSpawn(standing.walk, now),
         id: standing.id,
         species: standing.spawn[0],
         shiny: standing.shiny,
@@ -1102,6 +1108,9 @@ export default function OverworldBoard(props: {
         // server weighted the pool by
         featured: isFeaturedSpecies(standing.spawn[0], loaded.snapshot.timestamp),
         rank: rankOf(standing.spawn[0]),
+        alpha: still
+          ? undefined
+          : (now) => spawnAlpha(standing.fade, now, standing.fade.distance, standing.fade.standing),
       });
     }
     return coats;
@@ -1110,7 +1119,7 @@ export default function OverworldBoard(props: {
   const titleOf = (index: number): string => {
     const loaded = view();
     const landmark = loaded?.landmarks.get(index);
-    const spawn = loaded?.spawns.get(index);
+    const spawn = loaded == null ? undefined : findSpawnAt(loaded, index, localNow());
 
     if (spawn != null) {
       return getSpeciesData(spawn.spawn[0]).name;

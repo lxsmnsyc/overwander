@@ -1,16 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import registerGameData from '../../src/data';
-import { PUBLISHED_SPAWNS } from '../../src/auth/snapshots';
 import {
   type WatchedWindow,
   buildBoardView,
   runningWindows,
   viewChunks,
 } from '../../src/game/overworld/board-view';
-import { BOARD_CELLS, BOARD_CENTER } from '../../src/game/overworld/board-metrics';
+import { BOARD_CELLS, BOARD_CENTER, BOARD_RADIUS } from '../../src/game/overworld/board-metrics';
 import AleaRNG from '../../src/core/alea';
 import { chunkOfCell } from '../../src/overworld/chunk';
 import ChunkSnapshot, { SNAPSHOT_INTERVAL } from '../../src/overworld/chunk-snapshot';
+import { SLOT_PERIOD, SLOT_TOTAL } from '../../src/overworld/spawn-life';
+import {
+  cycleAt,
+  cycleOf,
+  liveSpawns,
+  parseSpawnId,
+} from '../../src/overworld/spawn-life/lifetimes';
+import { spawnKey } from '../../src/overworld/safari';
 import getWorld from '../../src/overworld/current';
 import { isLavaAt } from '../../src/overworld/terrain/ground';
 import { pickFreeCell } from '../../src/overworld/start';
@@ -33,15 +40,12 @@ function publish(
 
   for (const [x, y] of viewChunks(originX, originY)) {
     const snapshot = new ChunkSnapshot(getWorld(depth).getChunk(x, y), timestamp, 480);
-    const spawns = [];
 
-    for (const [species, individualValue, traitValue] of snapshot.getSpawns(PUBLISHED_SPAWNS)) {
-      spawns.push({ species, individualValue, traitValue });
-    }
+    // The pokemon are not in a window: the board derives them from the clock
     windows.set(`${x},${y}`, {
       x,
       y,
-      record: { seed: snapshot.chunk.seed, offset: 480, timestamp, spawns },
+      record: { seed: snapshot.chunk.seed, offset: 480, timestamp, spawns: [] },
     });
   }
   return windows;
@@ -84,9 +88,10 @@ describe("a volcano's lava", () => {
     const snapshot = new ChunkSnapshot(chunk, 5_000_000 * SNAPSHOT_INTERVAL, 480);
 
     expect(lava.size).toBeGreaterThan(0);
-    snapshot.getSpawns(PUBLISHED_SPAWNS);
-    for (const [cell] of snapshot.getSpawnCells()) {
-      expect(lava.has(cell), `spawn at ${cell}`).toBe(false);
+    for (let step = 0; step < 40; step++) {
+      for (const live of liveSpawns(chunk, 480, snapshot.timestamp + step * 60_000)) {
+        expect(lava.has(live.home), `spawn at ${live.home}`).toBe(false);
+      }
     }
     for (const cell of chunk.getLandmarkCells().keys()) {
       expect(lava.has(cell), `landmark at ${cell}`).toBe(false);
@@ -103,45 +108,225 @@ describe("a volcano's lava", () => {
 });
 
 describe('the spawns a board draws', () => {
-  it("never draws another layer's window at the same coordinates", () => {
-    const surface = publish(180, -120, Depth.Surface);
-    const build = (depth: Depth): number =>
-      buildBoardView(180, -120, surface, 480, 'player', null, new Set(), depth).spawns.size;
+  const NOON = 5_000_010 * SNAPSHOT_INTERVAL + 60_000;
+  const lure: Buddy = {
+    species: Species.Staryu,
+    shiny: false,
+    abilities: [Abilities.Illuminate],
+    items: [],
+    nature: Natures.Hardy,
+    gender: Genders.Genderless,
+  };
+  const build = (
+    now: number,
+    buddy: Buddy | null = null,
+    fled: Set<string> = new Set(),
+    depth: Depth = Depth.Surface,
+  ): ReturnType<typeof buildBoardView> =>
+    buildBoardView(
+      260,
+      -40,
+      publish(260, -40, depth, Math.floor(now / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL),
+      480,
+      'player',
+      buddy,
+      fled,
+      depth,
+      now,
+    );
 
-    expect(build(Depth.Surface)).toBeGreaterThan(0);
-    expect(build(Depth.Cave)).toBe(0);
+  it('puts the same pokemon on the same cells for two clients at one instant', () => {
+    const first = build(NOON);
+    const second = build(NOON);
+
+    expect(first.spawns.size).toBeGreaterThan(0);
+    expect([...second.spawns]).toEqual([...first.spawns]);
   });
 
-  it("keeps a lure's extras for the rest of their window, and lets them go with it", () => {
-    const lure: Buddy = {
-      species: Species.Staryu,
-      shiny: false,
-      abilities: [Abilities.Illuminate],
-      items: [],
-      nature: Natures.Hardy,
-      gender: Genders.Genderless,
-    };
-    const opened = 5_000_010 * SNAPSHOT_INTERVAL;
-    const windows = publish(260, -40, Depth.Surface, opened);
-    const count = (records: Map<string, WatchedWindow>, buddy: Buddy | null): number =>
-      buildBoardView(260, -40, records, 480, 'player', buddy, new Set()).spawns.size;
+  it('draws them before their window has landed, from the clock alone', () => {
+    const landed = build(NOON);
+    const unread = buildBoardView(
+      260,
+      -40,
+      new Map(),
+      480,
+      'player',
+      null,
+      new Set(),
+      Depth.Surface,
+      NOON,
+    );
 
-    const alone = count(windows, null);
-    const lured = count(windows, lure);
-    // The buddy put away halfway through, with the expiry check in front
-    const swapped = count(runningWindows(windows, opened + SNAPSHOT_INTERVAL / 2), null);
-    const expired = count(runningWindows(windows, opened + SNAPSHOT_INTERVAL), null);
+    expect([...unread.spawns.keys()]).toEqual([...landed.spawns.keys()]);
+    for (const [seat, spawn] of unread.spawns) {
+      expect(unread.at(seat)?.snapshot.chunk).toBeDefined();
+      expect(spawn.id).toBe(landed.spawns.get(seat)?.id);
+    }
+  });
+
+  it('marks one that was already standing and keeps the mark through a rebuild', () => {
+    const view = build(NOON);
+
+    expect(view.spawns.size).toBeGreaterThan(0);
+    for (const [seat, spawn] of view.spawns) {
+      const { cycle, standing } = spawn.fade;
+
+      expect(cycle.start).toBeLessThanOrEqual(NOON);
+      expect(cycle.end).toBeGreaterThan(NOON);
+      expect(standing).toBe(NOON - cycle.start > 1_000);
+      expect(build(NOON + 3_000).spawns.get(seat)?.fade.standing ?? standing).toBe(standing);
+    }
+  });
+
+  it('does not mark one that the board sees as its cycle begins', () => {
+    const view = build(NOON + 7 * SLOT_PERIOD);
+    let checked = 0;
+
+    for (const [seat, spawn] of view.spawns) {
+      const parsed = parseSpawnId(spawn.id);
+      const chunk = view.at(seat)?.snapshot.chunk;
+
+      if (parsed == null || chunk == null) {
+        throw new Error('the spawn names no cycle');
+      }
+
+      // The next cycle of the same slot, seen 20 ms after its start
+      const next = cycleOf(chunk, 480, parsed.slot, spawn.fade.cycle.cycle + 1);
+
+      if (next == null) {
+        continue;
+      }
+
+      const arrived = build(next.start + 20);
+      const found = [...arrived.spawns.values()].find(
+        (held) => held.fade.cycle.start === next.start,
+      );
+
+      if (found == null) {
+        continue;
+      }
+      checked++;
+      expect(found.fade.standing).toBe(false);
+      expect(found.fade.distance).toBeLessThanOrEqual(BOARD_RADIUS);
+      // One is enough: a later build would find the others already seen
+      break;
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
+
+  it("draws the cave's slots in a cave and the ground's on the ground", () => {
+    const surface = build(NOON);
+    const cave = build(NOON, null, new Set(), Depth.Cave);
+
+    expect(surface.spawns.size).toBeGreaterThan(0);
+    for (const { id } of surface.spawns.values()) {
+      expect(id).not.toContain('cave');
+    }
+    for (const { id } of cave.spawns.values()) {
+      expect(id).toContain('cave');
+    }
+  });
+
+  it('lets a spawn leave at its cycle end and fills its place after the rest', () => {
+    const view = build(NOON);
+    const [[seat, spawn]] = [...view.spawns];
+    const parsed = parseSpawnId(spawn.id);
+    const chunk = view.at(seat)?.snapshot.chunk;
+
+    if (parsed == null || chunk == null) {
+      throw new Error('the spawn names no cycle');
+    }
+
+    const cycle = cycleAt(chunk, 480, parsed.slot, NOON);
+
+    if (cycle == null) {
+      throw new Error('the spawn stands outside its cycle');
+    }
+
+    // Standing until the last millisecond, gone at the end
+    expect(build(cycle.end - 1).spawns.get(seat)?.id).toBe(spawn.id);
+    expect(build(cycle.end).spawns.get(seat)?.id).not.toBe(spawn.id);
+    expect([...build(cycle.end).spawns.values()].some((held) => held.id === spawn.id)).toBe(false);
+
+    // The slot rests, then rolls again under a new id (a new cycle start)
+    let arrival: string | null = null;
+
+    for (
+      let time = cycle.end;
+      time < cycle.end + 3 * SLOT_PERIOD && arrival == null;
+      time += 10_000
+    ) {
+      for (const live of liveSpawns(chunk, 480, time)) {
+        if (live.slot === parsed.slot) {
+          arrival = live.id;
+        }
+      }
+    }
+    expect(arrival).not.toBeNull();
+    expect(arrival).not.toBe(spawn.id);
+  });
+
+  it('hides a spawn that has fled until its cycle ends, then shows the next', () => {
+    const view = build(NOON);
+    const [[seat, spawn]] = [...view.spawns];
+    const parsed = parseSpawnId(spawn.id);
+    const snapshot = view.at(seat)?.snapshot;
+
+    if (parsed == null || snapshot == null) {
+      throw new Error('the spawn names no cycle');
+    }
+
+    const cycle = cycleAt(snapshot.chunk, 480, parsed.slot, NOON);
+    const window = Math.floor(parsed.start / SNAPSHOT_INTERVAL) * SNAPSHOT_INTERVAL;
+    const fled = new Set([spawnKey(snapshot.chunk.x, snapshot.chunk.y, window, spawn.spawn[1])]);
+
+    expect(build(NOON, null, fled).spawns.has(seat)).toBe(false);
+    expect(cycle).not.toBeNull();
+
+    // Every other slot is untouched
+    expect(build(NOON, null, fled).spawns.size).toBe(view.spawns.size - 1);
+    expect(parsed.slot).toBeLessThan(SLOT_TOTAL);
+  });
+
+  it("keeps a lure's extras for the rest of their cycle, and lets them go with it", () => {
+    const alone = build(NOON).spawns.size;
+    const lured = build(NOON, lure).spawns.size;
+    // The buddy put away halfway through
+    const swapped = build(NOON + 1_000).spawns.size;
 
     expect(lured).toBeGreaterThan(alone);
-    expect(swapped).toBe(lured);
-    expect(expired).toBe(0);
+    expect(swapped).toBeGreaterThanOrEqual(lured - 2);
+    expect(swapped).toBeGreaterThan(alone);
 
-    // The next window keeps nothing of the last one's: its extras are
-    // the lure's to show again, and walking alone does not see them
-    const next = publish(260, -40, Depth.Surface, opened + SNAPSHOT_INTERVAL);
-    const nextAlone = count(next, null);
+    // A whole period later every cycle shown before has ended
+    const later = NOON + 2 * SLOT_PERIOD;
+    const nextAlone = build(later).spawns.size;
 
-    expect(count(next, lure)).toBeGreaterThan(nextAlone);
+    expect(build(later, lure).spawns.size).toBeGreaterThan(nextAlone);
+  });
+});
+
+describe('the windows a board holds', () => {
+  it('lets one run out without taking the pokemon with it', () => {
+    const opened = 5_000_010 * SNAPSHOT_INTERVAL;
+    const windows = publish(260, -40, Depth.Surface, opened);
+
+    expect(runningWindows(windows, opened + SNAPSHOT_INTERVAL / 2).size).toBe(windows.size);
+    expect(runningWindows(windows, opened + SNAPSHOT_INTERVAL).size).toBe(0);
+
+    const spawns = buildBoardView(
+      260,
+      -40,
+      runningWindows(windows, opened + SNAPSHOT_INTERVAL),
+      480,
+      'player',
+      null,
+      new Set(),
+      Depth.Surface,
+      opened + SNAPSHOT_INTERVAL + 1_000,
+    ).spawns;
+
+    expect(spawns.size).toBeGreaterThan(0);
   });
 });
 

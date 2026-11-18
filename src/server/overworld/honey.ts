@@ -88,6 +88,7 @@ export async function latherHoneyTree(
   return {
     kind: 'encounter',
     encounter: await startEncounter(uid, snapshot, key, spawn, {
+      cell,
       minimumIV: HONEY_TREE_MIN_IV,
     }),
   };

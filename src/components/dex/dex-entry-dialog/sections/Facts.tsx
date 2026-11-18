@@ -1,8 +1,8 @@
 import type { JSX } from '@solidjs/web';
-import type { Resource } from 'solid-js';
+import type { Accessor } from 'solid-js';
 import { EGG_HATCH_STEPS } from '../../../../model/egg';
 import { type SpeciesData, getFamilyName } from '../../../../data/species';
-import { failed, readable } from '../../../app/resource-reads';
+import type { Outcome } from '../../../app/create-load';
 import { formatNumber } from '../../../../i18n/format';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
@@ -41,10 +41,16 @@ function Tile(props: {
 }
 
 /** How big it is, what the reader holds of its candy, and how long its egg walks */
-export default function Facts(props: { data: SpeciesData; candy: Resource<number> }): JSX.Element {
+export default function Facts(props: {
+  data: SpeciesData;
+  candy: Accessor<Outcome<number>>;
+}): JSX.Element {
   /** The candy held, or a question mark where it could not be read */
-  const candy = (): number | '?' =>
-    failed(props.candy) == null ? (readable(props.candy) ?? 0) : '?';
+  const candy = (): number | '?' => {
+    const read = props.candy();
+
+    return read.failure == null ? (read.value ?? 0) : '?';
+  };
 
   /** The candy held as the tile writes it, grouped in the reader's language */
   const writeCandy = (): string => {

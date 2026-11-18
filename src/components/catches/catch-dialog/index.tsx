@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, createResource } from 'solid-js';
+import { Loading, untrack } from 'solid-js';
 import { isLockLive } from '../../../model/battle-lock';
 import { getBuddy } from '../../../auth/buddy';
 import { syncServerClock } from '../../../auth/clock';
@@ -20,7 +20,7 @@ import { getStats } from '../../../model/health';
 import { getSpeciesData } from '../../../data/species';
 
 import { type CatchDialogProps, CatchSheetBody } from './sheet';
-import { answered } from '../../app/resource-reads';
+import { type Load, createLoad } from '../../app/create-load';
 import BattleData from '../../app/BattleData';
 
 export type { CatchDialogProps };
@@ -30,7 +30,7 @@ export type { CatchDialogProps };
  * a single read.
  *
  * What came back is handed over with the id it was asked for. The
- * sheet reads the resource's last value rather than suspending on it,
+ * sheet reads the load's last value rather than waiting on it,
  * and a last value is only worth showing while it is still about the
  * pokemon on screen: without the id, opening a second catch would show
  * the first one for as long as the read took
@@ -48,12 +48,12 @@ async function loadDetail(catchId: string): Promise<{ id: string; caught: Caught
  */
 function CatchSheet(
   props: CatchDialogProps & {
-    detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
-    dex: Resource<PokedexView>;
-    onlyOne: Resource<boolean>;
-    selling: Resource<boolean>;
-    bag: Resource<InventoryEntry[]>;
-    buddy: Resource<string | null>;
+    detail: Load<{ id: string; caught: CaughtPokemon | null }>;
+    dex: Load<PokedexView>;
+    onlyOne: Load<boolean>;
+    selling: Load<boolean>;
+    bag: Load<InventoryEntry[]>;
+    buddy: Load<string | null>;
     onRecordChanged: () => void;
     onBagChanged: () => void;
     onBuddyChanged: () => void;
@@ -71,7 +71,7 @@ function CatchSheet(
   };
 
   const view = (): CaughtPokemon | null => {
-    const held = props.detail.latest;
+    const held = props.detail.latest();
     const loaded = held?.id === props.catchId ? held.caught : null;
 
     if (loaded == null) {
@@ -86,7 +86,7 @@ function CatchSheet(
    * chain is short, so they are read once for the whole of it and
    * looked up by uid as the rows draw
    */
-  const [owners] = createResource(
+  const owners = createLoad(
     () => {
       const uids = new Set<string>();
 
@@ -110,20 +110,17 @@ function CatchSheet(
    * Every one of these is keyed by a **string** rather than by the
    * record or a tuple of it.
    *
-   * A source is compared by identity, and a re-read of the record
-   * hands back a new object every time — so keying on one asks the
+   * A key is compared by identity, and a re-read of the record hands
+   * back a new object every time, so keying on one would ask the
    * server all of this again after every favourite, nickname and
-   * effort point, and, worse, leaves the resource loading. A read of
-   * a loading resource throws, the sheet has no boundary of its own,
-   * and the page's boundary catches it: the whole screen is torn down
-   * and built again. Keyed by what actually decides the answer, an
+   * effort point. Keyed by what actually decides the answer, an
    * unchanged pokemon is not asked about twice
    */
-  const [evolutions, { refetch: refetchEvolutions }] = createResource(
+  const evolutions = createLoad(
     () => {
       const uid = owned();
       const catchId = props.catchId;
-      const carried = answered(props.bag);
+      const carried = props.bag.latest();
 
       // Asked once the record and the bag are both here, and handed
       // both, so the options are not read a second time. What the bag
@@ -142,10 +139,13 @@ function CatchSheet(
       return `${uid}/${catchId}/${held.sort((a, b) => a - b).join(',')}/${evolutionKey(view())}`;
     },
     async () => {
-      const uid = owned();
-      const catchId = props.catchId;
-      const caught = view();
-      const inventory = answered(props.bag);
+      // Read once, as the key above saw them, without following them
+      const { uid, catchId, caught, inventory } = untrack(() => ({
+        uid: owned(),
+        catchId: props.catchId,
+        caught: view(),
+        inventory: props.bag.latest(),
+      }));
 
       if (uid == null || catchId == null) {
         return [];
@@ -164,14 +164,14 @@ function CatchSheet(
    * holds still until the fight ends — the server refuses the writes
    * either way; this is only so the buttons say so first
    */
-  const [fighting] = createResource(
+  const fighting = createLoad(
     () => {
       const loaded = view();
 
       return loaded == null ? null : `${props.catchId ?? ''}/${loaded.lockedAt}`;
     },
     async () => {
-      const loaded = view();
+      const loaded = untrack(view);
 
       return loaded != null && isLockLive(loaded, await syncServerClock());
     },
@@ -181,13 +181,13 @@ function CatchSheet(
    * The candies behind this catch: the stack is keyed by family, so
    * every stage of the line spends the same pile
    */
-  const [candies, { refetch: refetchCandies }] = createResource(
+  const candies = createLoad(
     () => {
       const species = view()?.species;
 
       return species == null ? null : `${props.player}/${getSpeciesData(species).family}`;
     },
-    async (key) => {
+    async (key: string) => {
       const [player, family] = key.split('/');
 
       return getCandyCount(player, Number(family));
@@ -202,10 +202,10 @@ function CatchSheet(
       fighting={fighting}
       candies={candies}
       onCandiesChanged={() => {
-        Promise.resolve(refetchCandies()).catch(() => undefined);
+        candies.refresh();
       }}
       onEvolutionsChanged={() => {
-        Promise.resolve(refetchEvolutions()).catch(() => undefined);
+        evolutions.refresh();
       }}
     />
   );
@@ -258,7 +258,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
     return user != null && user.uid === props.player ? user.uid : null;
   };
 
-  const [detail, { refetch }] = createResource(() => props.catchId, loadDetail);
+  const detail = createLoad(() => props.catchId, loadDetail);
 
   /**
    * What the reader's dex says.
@@ -274,7 +274,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * who registers a Dragonite and then opens their Dragonair was
    * being shown the silhouette of a pokemon standing in their own box
    */
-  const [dex, { refetch: refetchDex }] = createResource(
+  const dex = createLoad(
     () => (props.catchId == null ? null : (auth.user()?.uid ?? null)),
     getPokedex,
   );
@@ -284,10 +284,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * release it either way; this is so the button says so before it is
    * pressed twice
    */
-  const [onlyOne] = createResource(
-    () => owned(),
-    async (uid) => (await countCaught(uid)) <= 1,
-  );
+  const onlyOne = createLoad(owned, async (uid) => (await countCaught(uid)) <= 1);
 
   /**
    * What the player is carrying. The bag is read once and split
@@ -302,16 +299,13 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * landed before the starter gift did, and Use item stayed empty for
    * good
    */
-  const [bag, { refetch: refetchBag }] = createResource(
-    () => (props.catchId == null ? null : owned()),
-    async (uid) => getInventory(uid),
-  );
+  const bag = createLoad(() => (props.catchId == null ? null : owned()), getInventory);
 
   /**
    * Which catch is currently walking with the player, so the button
    * can say whether this is the one
    */
-  const [buddy, { refetch: refetchBuddy }] = createResource(() => owned(), getBuddy);
+  const buddy = createLoad(owned, getBuddy);
 
   /**
    * Whether the player's one auction a day is still taking bids. The
@@ -320,7 +314,7 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
    * refused is worse than a dead entry. Keyed on the sheet so a
    * listing made moments ago is seen the next time one opens
    */
-  const [selling] = createResource(
+  const selling = createLoad(
     () => (props.catchId == null ? null : owned()),
     async (uid) => {
       const standing = await getSellerStanding(uid);
@@ -334,9 +328,9 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
 
   return (
     // The sheet's own boundary, with nothing to show while it waits:
-    // like a trainer's dialog, the sheet arrives once its record and
-    // the registries it reads are in, and the page behind it stands
-    // still meanwhile
+    // the registries it reads hold it here. The record is a load the
+    // sheet holds itself shut for, so the page behind it stands still
+    // meanwhile
     <Loading>
       <BattleData>
         <CatchSheet
@@ -348,16 +342,16 @@ export default function CatchDialog(props: CatchDialogProps): JSX.Element {
           bag={bag}
           buddy={buddy}
           onRecordChanged={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            detail.refresh();
             // Evolving one registers what it became, so the line under it
             // stops being a silhouette without the sheet being reopened
-            Promise.resolve(refetchDex()).catch(() => undefined);
+            dex.refresh();
           }}
           onBagChanged={() => {
-            Promise.resolve(refetchBag()).catch(() => undefined);
+            bag.refresh();
           }}
           onBuddyChanged={() => {
-            Promise.resolve(refetchBuddy()).catch(() => undefined);
+            buddy.refresh();
           }}
         />
       </BattleData>

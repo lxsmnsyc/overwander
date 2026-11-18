@@ -1,9 +1,10 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, Show, createEffect, createResource, createSignal } from 'solid-js';
+import { Loading, Show, createEffect, createMemo, createSignal, refresh } from 'solid-js';
 import { getCandies } from '../../../auth/candy';
 import { getInventory } from '../../../auth/inventory';
 import type { Items } from '../../../data/ids/items';
 import BattleData from '../../app/BattleData';
+import { catchFailure } from '../../app/create-load';
 import { Button, Dialog, DialogActions, Meta, Note } from '../../styled';
 import BagBody from './body';
 import BagHint from './BagHint';
@@ -28,17 +29,21 @@ export interface BagDialogProps {
  * drawn in
  */
 export default function BagDialog(props: BagDialogProps): JSX.Element {
-  const [items, { refetch }] = createResource(() => props.player, getInventory);
-  const [candies] = createResource(() => props.player, getCandies);
+  // A failed read is an answer the bag says in place of the tray
+  const items = createMemo(async () => catchFailure(getInventory(props.player)));
+  const candies = createMemo(async () => catchFailure(getCandies(props.player)));
   /** The item whose details are docked, which also decides the sheet's width */
   const [chosen, setChosen] = createSignal<Items | null>(null);
 
   // A bag opened again starts with nothing docked
-  createEffect(() => {
-    if (!props.isOpen) {
-      setChosen(null);
-    }
-  });
+  createEffect(
+    () => props.isOpen,
+    (open) => {
+      if (!open) {
+        setChosen(null);
+      }
+    },
+  );
 
   return (
     <Dialog
@@ -61,7 +66,7 @@ export default function BagDialog(props: BagDialogProps): JSX.Element {
               setChosen(item);
             }}
             onSpent={() => {
-              Promise.resolve(refetch()).catch(() => undefined);
+              refresh(items).catch(() => undefined);
             }}
           />
         </Loading>

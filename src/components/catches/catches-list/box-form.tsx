@@ -1,7 +1,7 @@
 import { For, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { BOX_COLOURS, BOX_NAME_LIMIT } from '../../../model/box-record';
-import { Button, TextField } from '../../styled';
+import { Button, TextField, spellAria } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
@@ -70,7 +70,7 @@ export default function BoxForm(props: BoxFormProps): JSX.Element {
             <button
               type="button"
               role="radio"
-              aria-checked={colour() === at()}
+              aria-checked={spellAria(colour() === at())}
               aria-label={BOX_COLOUR_NAMES[at()]?.() ?? swatch.name}
               class={`size-7 cursor-pointer rounded-lg border-[3px] ${
                 colour() === at() ? 'border-ink' : 'border-paper'

@@ -5,11 +5,11 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  on,
   onSettled,
 } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import createLongPress, { type LongPress } from '../styled/long-press';
+import spellAria from '../styled/aria';
 import SquareFace, { type BoxEntry } from './box-square';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -248,7 +248,8 @@ interface DropHandlers {
 
 /** What a pokemon's square needs to be picked up */
 interface DragHandlers {
-  draggable?: boolean;
+  /** Spelled out: `draggable` is a yes-or-no attribute, not a present-or-gone one */
+  draggable?: 'true';
   onDragStart?: (event: DragEvent) => void;
   onDragEnd?: () => void;
 }
@@ -386,7 +387,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
       return {};
     }
     return {
-      draggable: true,
+      draggable: 'true',
       onDragStart: (event: DragEvent) => {
         event.dataTransfer?.setData('text/plain', entry().id);
         onDragStart(entry().id, event);
@@ -483,18 +484,16 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
   const rewound = createMemo(() => props.rewind ?? '');
 
   createEffect(
-    on(
-      rewound,
-      () => {
-        const element = frame();
+    rewound,
+    () => {
+      const element = frame();
 
-        if (element != null) {
-          element.scrollTop = 0;
-        }
-        setTop(0);
-      },
-      { defer: true },
-    ),
+      if (element != null) {
+        element.scrollTop = 0;
+      }
+      setTop(0);
+    },
+    { defer: true },
   );
 
   /** How tall one row is with the gap under it, or 0 before the box is laid out */
@@ -527,21 +526,29 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
     return drawn;
   });
 
-  createEffect(() => {
-    const start = Math.min(rows() - 1, Math.round(top() / Math.max(1, stride())));
-    const from = scrolls() ? Math.max(0, start) * columns() : 0;
+  createEffect(
+    () => {
+      const start = Math.min(rows() - 1, Math.round(top() / Math.max(1, stride())));
+      const from = scrolls() ? Math.max(0, start) * columns() : 0;
 
-    // Counted against what was given, so the empty row a box ends on
-    // is not counted as pokemon
-    const total = props.entries.length;
+      // Counted against what was given, so the empty row a box ends on
+      // is not counted as pokemon
+      const total = props.entries.length;
 
-    props.onView?.({
-      from: Math.min(total, from + 1),
-      to: Math.min(total, from + boxSizeOf(width())),
-      total,
-      scrolls: scrolls(),
-    });
-  });
+      return {
+        report: props.onView,
+        view: {
+          from: Math.min(total, from + 1),
+          to: Math.min(total, from + boxSizeOf(width())),
+          total,
+          scrolls: scrolls(),
+        },
+      };
+    },
+    ({ report, view }) => {
+      report?.(view);
+    },
+  );
 
   /**
    * A drag held near the top or bottom scrolls the box, so a pokemon
@@ -650,7 +657,7 @@ export default function CatchBox(props: CatchBoxProps): JSX.Element {
           <button
             type="button"
             aria-label={entry().label}
-            aria-pressed={entry().mark === 'picked'}
+            aria-pressed={spellAria(entry().mark === 'picked')}
             class={`${SQUARE} ${aspect()} ${PRESSABLE} ${pickSquareTone(entry())} ${lit(index())}`}
             {...dragProps(entry)}
             {...dropProps(index)}

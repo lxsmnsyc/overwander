@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, createResource } from 'solid-js';
+import { type Accessor, Loading, createMemo } from 'solid-js';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import type { Species } from '../../data/ids/species';
 import { getSpeciesData, getSpeciesForms } from '../../data/species';
@@ -40,7 +40,7 @@ export interface SpeciesFormsDialogProps {
  */
 function FormsBox(props: {
   species: Species;
-  dex: Resource<PokedexView>;
+  dex: Accessor<PokedexView>;
   onSpecies: (species: Species) => void;
 }): JSX.Element {
   const game = useGame();
@@ -99,10 +99,10 @@ export default function SpeciesFormsDialog(props: SpeciesFormsDialogProps): JSX.
   // mounted for the life of the page, so a dex read once at start-up
   // would still be the start-up one the day a letter is finally
   // caught
-  const [dex] = createResource(
-    () => [props.player, game.records()] as const,
-    async ([player]) => getPokedex(player),
-  );
+  const dex = createMemo(async () => {
+    game.records();
+    return getPokedex(props.player);
+  });
 
   /**
    * The number rather than the name. It is what the row this was

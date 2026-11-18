@@ -171,7 +171,7 @@ export default function BoxRail(props: BoxRailProps): JSX.Element {
               aria-current={props.current === box.id ? 'page' : undefined}
               class={look(box)}
               // Only the player's own boxes move: Default is always first
-              draggable={box.id != null}
+              draggable={box.id == null ? 'false' : 'true'}
               onDragStart={(event) => {
                 if (box.id == null) {
                   return;

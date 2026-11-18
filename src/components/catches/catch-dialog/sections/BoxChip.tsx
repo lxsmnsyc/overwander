@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createResource, createSignal } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
 import {
   type BoxRecord,
   DEFAULT_BOX_TONE,
@@ -8,11 +8,10 @@ import {
   listBoxes,
   makeBox,
 } from '../../../../auth/boxes';
-import createClientSignal from '../../../app/client-signal';
-import { answered } from '../../../app/resource-reads';
 import { BoxIcon } from '../../../icons';
 import { Dialog, Menu, type MenuAction } from '../../../styled';
 import BoxForm from '../../catches-list/box-form';
+import { createLoad } from '../../../app/create-load';
 import describeFailure from '../../../../i18n/refusals';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
@@ -34,18 +33,18 @@ export interface BoxChipProps {
 }
 
 export default function BoxChip(props: BoxChipProps): JSX.Element {
-  const client = createClientSignal();
   const [made, setMade] = createSignal(0);
-  const [boxes] = createResource(
-    () => client() && ([props.player, props.revision, made()] as const),
+  // A load runs in the browser only, so the server render draws Default
+  const boxes = createLoad(
+    () => [props.player, props.revision, made()] as const,
     async ([player]): Promise<[string, BoxRecord][]> => listBoxes(player),
   );
   /** Whether the name and colour of a new box are being asked for */
   const [making, setMaking] = createSignal(false);
   const [busy, setBusy] = createSignal(false);
 
-  /** The declaring body, so this never waits: Default until they are read */
-  const listed = (): [string, BoxRecord][] => answered(boxes) ?? [];
+  /** Never waits: Default until they are read */
+  const listed = (): [string, BoxRecord][] => boxes.latest() ?? [];
 
   const here = (): { name: string; tone: string } => {
     for (const [id, box] of listed()) {

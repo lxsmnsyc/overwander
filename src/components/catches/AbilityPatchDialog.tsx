@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { RadioGroup, RadioGroupOption } from 'terracotta/radio-group';
 import { useAbilityPatch } from '../../auth/ability-items';
@@ -67,7 +67,7 @@ function AbilityLine(props: { ability: Abilities }): JSX.Element {
  */
 function PatchBody(
   props: AbilityPatchDialogProps & {
-    caught: Resource<CaughtPokemon | null>;
+    caught: Accessor<CaughtPokemon | null>;
     onRefused: () => void;
     onDone: () => void;
   },
@@ -246,7 +246,11 @@ function PatchBody(
  * than the page the panel stands on
  */
 export default function AbilityPatchDialog(props: AbilityPatchDialogProps): JSX.Element {
-  const [caught, { refetch }] = createResource(() => props.catchId, getCaught);
+  const caught = createMemo<CaughtPokemon | null>((): Promise<CaughtPokemon | null> | null => {
+    const catchId = props.catchId;
+
+    return catchId == null ? null : getCaught(catchId);
+  });
 
   return (
     <Dialog
@@ -260,7 +264,7 @@ export default function AbilityPatchDialog(props: AbilityPatchDialogProps): JSX.
           {...props}
           caught={caught}
           onRefused={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(caught).catch(() => undefined);
           }}
           onDone={props.onClose}
         />

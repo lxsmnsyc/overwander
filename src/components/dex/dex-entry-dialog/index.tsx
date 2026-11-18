@@ -1,4 +1,4 @@
-import { For, Loading, Show, createResource } from 'solid-js';
+import { For, Loading, Show, createMemo } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import BattleData from '../../app/BattleData';
 import { getCandyCount } from '../../../auth/candy';
@@ -11,9 +11,9 @@ import { ArrowLeftIcon, ArrowRightIcon } from '../../icons';
 import { TYPE_COLORS, TYPE_NAMES } from '../../../data/constants/types';
 import TypeBadge from '../../sprites/TypeBadge';
 import { dexLabel } from '../PokedexGrid';
-import { answered } from '../../app/resource-reads';
 import { DexEntryBody, type DexEntryDialogProps, type DexReads } from './body';
 import { dexOrder } from './species-facts';
+import { catchFailure, createLoad } from '../../app/create-load';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 export type { DexEntryDialogProps, DexReads };
@@ -64,19 +64,29 @@ function Step(props: {
  */
 export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element {
   // What the reader has met. It decides which sprites are drawn in
-  // full and nothing else on the page
-  const [dex] = createResource(
+  // full and nothing else on the page, so it never holds the panel up:
+  // an unarrived entry draws the silhouette and fills in
+  const dex = createLoad(
     () => (props.species == null ? null : ([props.player, props.species] as const)),
     async ([player, species]) => (props.reads?.entry ?? getSpeciesDexEntry)(player, species),
   );
 
-  const [candy] = createResource(
-    () => (props.species == null ? null : ([props.player, props.species] as const)),
-    async ([player, species]) =>
-      props.reads == null
-        ? getCandyCount(player, getSpeciesData(species).family)
-        : props.reads.candy(player, species),
-  );
+  // A failed read is an answer the tile says as a question mark
+  const candy = createMemo(async () => {
+    const species = props.species;
+    const player = props.player;
+
+    if (species == null) {
+      return { value: 0, failure: null };
+    }
+    return catchFailure(
+      Promise.resolve(
+        props.reads == null
+          ? getCandyCount(player, getSpeciesData(species).family)
+          : props.reads.candy(player, species),
+      ),
+    );
+  });
 
   /**
    * Whether there is a second drawing to show. Asked here and read in
@@ -84,7 +94,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
    * rather than growing a column halfway through being looked at
    */
   // The whole dex, for the stages of the line other than this one
-  const [pokedex] = createResource(
+  const pokedex = createLoad(
     () => (props.species == null ? null : props.player),
     async (player) => (props.reads?.pokedex ?? getPokedex)(player),
   );
@@ -94,7 +104,7 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
    * top row never holds the panel up
    */
   const tally = (): { met: boolean; seen: number; caught: number } => {
-    const entry = answered(dex);
+    const entry = dex.latest();
 
     if (entry == null || entry.species !== props.species) {
       return { met: false, seen: 0, caught: 0 };
@@ -103,10 +113,11 @@ export default function DexEntryDialog(props: DexEntryDialogProps): JSX.Element 
   };
   const met = (): boolean => tally().met;
 
-  const [female] = createResource(
-    () => props.species ?? null,
-    async (species) => hasFemaleSheet(species),
-  );
+  const female = createMemo(async () => {
+    const species = props.species;
+
+    return species == null ? false : hasFemaleSheet(species);
+  });
 
   /**
    * The entry either side of this one. The ends are ends rather than a

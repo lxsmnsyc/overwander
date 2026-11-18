@@ -1,6 +1,6 @@
 import {
+  type Accessor,
   For,
-  type Resource,
   Show,
   createEffect,
   createMemo,
@@ -36,7 +36,7 @@ import { GameDialog, useGame } from '../../app/game-context';
 import { Note, RailCount, RailTab, RailTabs, TabGroup, TabPane, useToast } from '../../styled';
 import DetailPanel from './DetailPanel';
 import settings, { setSetting } from '../../app/settings';
-import { failed, readable } from '../../app/resource-reads';
+import type { Outcome } from '../../app/create-load';
 import describeFailure from '../../../i18n/refusals';
 import {
   ALL_ITEMS,
@@ -97,8 +97,8 @@ interface Teaching {
  */
 export default function BagBody(
   props: InventoryListProps & {
-    items: Resource<InventoryEntry[]>;
-    candies: Resource<CandyStack[]>;
+    items: Accessor<Outcome<InventoryEntry[]>>;
+    candies: Accessor<Outcome<CandyStack[]>>;
     onSpent: () => void;
   },
 ): JSX.Element {
@@ -152,20 +152,27 @@ export default function BagBody(
   const repeatable = (item: Items): boolean => !isMachineItem(item) && !isPPItem(item);
 
   // Nothing left to spend is nothing to keep the picker open for
-  createEffect(() => {
-    const item = using();
-    const carried = readable(props.items);
+  createEffect(
+    () => {
+      const item = using();
+      const carried = props.items().value;
 
-    if (item == null || carried == null) {
-      return;
-    }
-    for (const entry of carried) {
-      if (entry.item === item) {
-        return;
+      if (item == null || carried == null) {
+        return false;
       }
-    }
-    setUsing(null);
-  });
+      for (const entry of carried) {
+        if (entry.item === item) {
+          return false;
+        }
+      }
+      return true;
+    },
+    (gone) => {
+      if (gone) {
+        setUsing(null);
+      }
+    },
+  );
 
   /**
    * Open the lobby a relic calls, from the bag, standing wherever the
@@ -225,7 +232,7 @@ export default function BagBody(
   const tray = (type: ItemTypes | null): ItemCell[] => {
     const cells: ItemCell[] = [];
 
-    for (const entry of readable(props.items) ?? []) {
+    for (const entry of props.items().value ?? []) {
       if (type != null && getItemType(entry.item) !== type) {
         continue;
       }
@@ -250,7 +257,7 @@ export default function BagBody(
   const types = createMemo((): ItemTypes[] => {
     const held = new Set<ItemTypes | null>();
 
-    for (const entry of readable(props.items) ?? []) {
+    for (const entry of props.items().value ?? []) {
       held.add(getItemType(entry.item));
     }
     const order: ItemTypes[] = [];
@@ -290,7 +297,7 @@ export default function BagBody(
   const piles = (): CandyPile[] => {
     const stacks: CandyPile[] = [];
 
-    for (const stack of readable(props.candies) ?? []) {
+    for (const stack of props.candies().value ?? []) {
       stacks.push({ family: stack.family, count: stack.count });
     }
     return stacks;
@@ -391,7 +398,7 @@ export default function BagBody(
 
   /** The stack whose details are docked, while it is still carried */
   const docked = (): InventoryEntry | undefined => {
-    for (const entry of readable(props.items) ?? []) {
+    for (const entry of props.items().value ?? []) {
       if (entry.item === props.chosen) {
         return entry;
       }
@@ -400,11 +407,15 @@ export default function BagBody(
   };
 
   // A stack spent to nothing takes its details with it
-  createEffect(() => {
-    if (props.chosen != null && readable(props.items) != null && docked() == null) {
-      props.onChoose(null);
-    }
-  });
+  createEffect(
+    () =>
+      props.chosen != null && props.items().value != null && docked() == null
+        ? props.onChoose
+        : null,
+    (letGo) => {
+      letGo?.(null);
+    },
+  );
 
   /** What the panel's button does, or nothing for an item with no use from the bag */
   const verbFor = (item: Items): string | null => {
@@ -435,7 +446,7 @@ export default function BagBody(
       return m.item_pocket_piles({ count: piles().length });
     }
     return m.item_pocket_stacks({
-      count: at === ALL_ITEMS ? (readable(props.items)?.length ?? 0) : tray(at).length,
+      count: at === ALL_ITEMS ? (props.items().value?.length ?? 0) : tray(at).length,
     });
   };
 
@@ -457,7 +468,7 @@ export default function BagBody(
           <RailTab value={ALL_ITEMS} class={POCKET_ROW}>
             <PocketDot tone={ALL_TONE} />
             <span class="truncate">{m.item_pocket_all()}</span>
-            <RailCount>{readable(props.items)?.length ?? 0}</RailCount>
+            <RailCount>{props.items().value?.length ?? 0}</RailCount>
           </RailTab>
           <For each={types()}>
             {(type) => (
@@ -486,8 +497,8 @@ export default function BagBody(
           </div>
           <TabPane value={ALL_ITEMS}>
             <Show
-              when={readable(props.items)?.length}
-              fallback={<Note>{failed(props.items) ?? m.item_bag_empty()}</Note>}
+              when={props.items().value?.length}
+              fallback={<Note>{props.items().failure ?? m.item_bag_empty()}</Note>}
             >
               <ItemGrid entries={tray(null)} onPress={choose} fill />
             </Show>
@@ -500,7 +511,7 @@ export default function BagBody(
             )}
           </For>
           <TabPane value={CANDIES}>
-            <Show when={failed(props.candies)} fallback={<CandyGrid piles={piles()} fill />}>
+            <Show when={props.candies().failure} fallback={<CandyGrid piles={piles()} fill />}>
               {(refused) => <Note>{refused()}</Note>}
             </Show>
           </TabPane>

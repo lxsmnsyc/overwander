@@ -1,7 +1,6 @@
 import matchesCatch, { type CatchContext, orderCatches } from '../../../model/search/catch';
 import { type BoxRecord, DEFAULT_BOX_TONE, boxTone } from '../../../model/box-record';
 import { parseControls } from '../../../core/query';
-import { answered } from '../../app/resource-reads';
 import settings from '../../app/settings';
 import { type CaughtPokemon, findDuplicates, giveItem, takeItem } from '../../../auth/caught';
 import { useAuth } from '../../../auth/context';
@@ -13,16 +12,9 @@ import CatchCard from '../CatchCard';
 import CatchGrid, { type CatchGridEntry } from '../CatchGrid';
 import { type BoxGap, boxSizeOf } from '../CatchBox';
 import { asBoxEntry, describeCatch } from '../catch-summary';
+import type { Load } from '../../app/create-load';
 import { type JSX, isServer } from '@solidjs/web';
-import {
-  type Resource,
-  Show,
-  createEffect,
-  createMemo,
-  createSignal,
-  onCleanup,
-  untrack,
-} from 'solid-js';
+import { Show, createEffect, createMemo, createSignal, onCleanup, untrack } from 'solid-js';
 import type { CatchOption, CatchPickerProps } from './options';
 import { titleCatch } from '../../details';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -49,15 +41,15 @@ function isHoldable(item: Items): boolean {
  */
 export default function PickerBox(
   props: CatchPickerProps & {
-    owned: Resource<CatchOption[]>;
+    owned: Load<CatchOption[]>;
     /**
      * The handful of facts a record does not carry — the buddy, the
      * lots on the block, the drafted party — which `is:buddy` and its
      * two neighbours are answered from
      */
-    around: Resource<CatchContext>;
+    around: Load<CatchContext>;
     /** The player's boxes, to say which one each square lives in */
-    boxes: Resource<[string, BoxRecord][]>;
+    boxes: Load<[string, BoxRecord][]>;
     showing: boolean;
     /**
      * What is being searched for. It belongs to whoever owns the
@@ -102,17 +94,16 @@ export default function PickerBox(
    * that showed the same collection in a different order was the same
    * box twice with the pokemon in different squares.
    *
-   * Read through `latest` rather than the resource: reading one that
-   * is loading throws to the nearest Loading boundary, and the
-   * nearest one to a picker inside a dialog is the root of the whole
-   * app. Nurse Joy re-reads this list every time she hands a party
-   * back, so a plain read took the page down for the length of the
-   * round trip
+   * A load that never waits: a read that waits holds the nearest
+   * Loading boundary, and the nearest one to a picker inside a dialog
+   * is the root of the whole app. Nurse Joy re-reads this list every
+   * time she hands a party back, so a waiting read took the page down
+   * for the length of the round trip
    */
   const offered = createMemo<CatchOption[]>(() => {
     const kept: CatchOption[] = [];
 
-    for (const option of props.options ?? props.owned.latest ?? []) {
+    for (const option of props.options ?? props.owned.latest() ?? []) {
       if (props.filter?.(option) ?? true) {
         kept.push(option);
       }
@@ -136,7 +127,7 @@ export default function PickerBox(
    * so thirty times
    */
   const places = createMemo(() => {
-    const made = answered(props.boxes) ?? [];
+    const made = props.boxes.latest() ?? [];
     const named = new Map<string, { name: string; tone: string }>();
 
     // Only where the squares are wide enough to read a name on: the
@@ -252,7 +243,7 @@ export default function PickerBox(
     for (const option of arranged()) {
       if (
         matchesCatch(option.caught, query(), {
-          ...props.around.latest,
+          ...props.around.latest(),
           id: option.id,
           duplicates: duplicates(),
         })
@@ -282,14 +273,20 @@ export default function PickerBox(
   // What is on offer, handed up to a caller that holds its own picks.
   // It is the filtered list rather than the searched one: a pokemon
   // picked before the search narrowed is still picked
-  createEffect(() => {
-    props.onOptions?.(offered());
-  });
+  createEffect(
+    () => ({ report: props.onOptions, offered: offered() }),
+    ({ report, offered: shown }) => {
+      report?.(shown);
+    },
+  );
 
   // And what is showing of it, which a caller counts by box
-  createEffect(() => {
-    props.onShown?.(options());
-  });
+  createEffect(
+    () => ({ report: props.onShown, shown: options() }),
+    ({ report, shown }) => {
+      report?.(shown);
+    },
+  );
 
   const limit = (): number =>
     props.multiple === true ? (props.max ?? Number.POSITIVE_INFINITY) : 1;
@@ -307,58 +304,66 @@ export default function PickerBox(
     return true;
   };
 
-  createEffect(() => {
-    if (!showing()) {
-      return;
-    }
-    // A live picker has no picks of its own: it reports every press
-    // and the caller decides what they are worth, so what the caller
-    // holds is what the squares show. Nurse Joy handing a party back
-    // hands back an empty list, and the box has to let go of them —
-    // otherwise the six she just returned are still lit, under a
-    // button still offering to hand them over.
-    //
-    // Every other picker keeps its draft to itself until it is
-    // confirmed, so the caller's value is read once and untracked
-    const wanted = props.multiple === true && props.live === true ? chosen() : untrack(chosen);
-
-    // A live caller hands back the run it was just given. Setting it
-    // again is a second redraw of the whole box saying nothing new
-    if (!sameRun(untrack(draft), wanted)) {
-      setDraft(wanted);
-    }
-  });
+  createEffect(
+    () => {
+      if (!showing()) {
+        return null;
+      }
+      // A live picker has no picks of its own: it reports every press
+      // and the caller decides what they are worth, so what the caller
+      // holds is what the squares show. Nurse Joy handing a party back
+      // hands back an empty list, and the box has to let go of them:
+      // otherwise the six she just returned are still lit, under a
+      // button still offering to hand them over.
+      //
+      // Every other picker keeps its draft to itself until it is
+      // confirmed, so the caller's value is read once and untracked
+      return props.multiple === true && props.live === true ? chosen() : untrack(chosen);
+    },
+    (wanted) => {
+      // A live caller hands back the run it was just given. Setting it
+      // again is a second redraw of the whole box saying nothing new
+      if (wanted != null && !sameRun(draft(), wanted)) {
+        setDraft(wanted);
+      }
+    },
+  );
 
   // A whole team loaded at once: everything it names that is on offer
   // and not refused, in the order it was saved. The draft stays the
   // player's afterwards, so a loaded team can be topped up or trimmed
-  createEffect(() => {
-    const wanted = props.multiple === true ? props.load : undefined;
+  createEffect(
+    () => {
+      const wanted = props.multiple === true ? props.load : undefined;
 
-    if (wanted == null || !showing()) {
-      return;
-    }
-
-    // Every box rather than the one showing: a saved team is filed wherever it is filed
-    const byId = new Map<string, CatchOption>();
-
-    for (const option of offered()) {
-      byId.set(option.id, option);
-    }
-
-    const taken: string[] = [];
-
-    for (const id of wanted) {
-      const option = byId.get(id);
-
-      if (option != null && props.reason?.(option) == null && taken.length < limit()) {
-        taken.push(id);
+      if (wanted == null || !showing()) {
+        return null;
       }
-    }
-    if (!sameRun(untrack(draft), taken)) {
-      setDraft(taken);
-    }
-  });
+
+      // Every box rather than the one showing: a saved team is filed wherever it is filed
+      const byId = new Map<string, CatchOption>();
+
+      for (const option of offered()) {
+        byId.set(option.id, option);
+      }
+
+      const taken: string[] = [];
+
+      for (const id of wanted) {
+        const option = byId.get(id);
+
+        if (option != null && props.reason?.(option) == null && taken.length < limit()) {
+          taken.push(id);
+        }
+      }
+      return taken;
+    },
+    (taken) => {
+      if (taken != null && !sameRun(draft(), taken)) {
+        setDraft(taken);
+      }
+    },
+  );
 
   /**
    * What is drafted, as a set. Built once rather than per square: the
@@ -493,20 +498,21 @@ export default function PickerBox(
 
   // A caller that draws the question in its dock is told what is asked
   // and how to answer it, and told again with nothing when it is cleared
-  createEffect(() => {
-    const asked = pendingOption();
-
-    props.onAsk?.(
-      asked == null
-        ? null
-        : {
-            name: describeCatch(asked.caught),
-            answer: () => {
-              pickOne(asked.id);
+  createEffect(
+    () => ({ report: props.onAsk, asked: pendingOption() }),
+    ({ report, asked }) => {
+      report?.(
+        asked == null
+          ? null
+          : {
+              name: describeCatch(asked.caught),
+              answer: () => {
+                pickOne(asked.id);
+              },
             },
-          },
-    );
-  });
+      );
+    },
+  );
 
   onCleanup(() => {
     props.onAsk?.(null);

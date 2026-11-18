@@ -1,7 +1,7 @@
 ---
 id: solid-2-spike
 title: Upgrade to Solid 2.0 and map what breaks
-status: active
+status: done
 priority: could
 type: spike
 story: solid-2
@@ -12,6 +12,7 @@ size: M
 spike: true
 gate: true
 added: 2026-11-18
+spent: 371000
 owns:
   - package.json
   - pnpm-lock.yaml

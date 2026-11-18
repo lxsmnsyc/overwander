@@ -51,3 +51,8 @@
 ## Size
 
 - Estimated L, actual L. The items dependency and the 36 test edits were the extra work.
+
+## Landed
+
+- Commit `e8aca71fa` on `batch/overwander`. Fresh review clean: full suite passes, startup gzip remeasured at 1400.7 KiB. The orchestrator fixed two comment nits. Not checked in a browser (dex, sheet, tutor, TMs, breeding, search).
+- Left: if the first learn set load fails, field moves stay hidden until another load succeeds and the walk refreshes.

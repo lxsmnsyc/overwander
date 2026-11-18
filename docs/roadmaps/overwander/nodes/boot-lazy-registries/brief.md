@@ -1,7 +1,7 @@
 ---
 id: boot-lazy-registries
 title: Load moves, abilities and items on demand
-status: todo
+status: active
 priority: should
 type: refactor
 outline: false

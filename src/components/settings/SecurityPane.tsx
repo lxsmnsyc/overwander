@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { renderSVG } from 'uqr';
 import {
@@ -17,7 +17,6 @@ import {
 } from '../../auth/security';
 import { Badge, Button, Meta, Note, Row, SETTING_ROW, Status, TextField } from '../styled';
 import { SettingCard, SettingNote, SettingState } from './setting-card';
-import createClientSignal from '../app/client-signal';
 import { formatDate } from '../../i18n/format';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -181,16 +180,13 @@ function TwoFactorCard(props: {
 }
 
 function PasskeyList(props: {
-  passkeys: Resource<PasskeyRow[]>;
+  passkeys: Accessor<PasskeyRow[]>;
   act: Act;
   busy: boolean;
   onChanged: () => void;
 }): JSX.Element {
   return (
-    <Show
-      when={(props.passkeys() ?? []).length > 0}
-      fallback={<Note>{m.security_no_passkeys()}</Note>}
-    >
+    <Show when={props.passkeys().length > 0} fallback={<Note>{m.security_no_passkeys()}</Note>}>
       <For each={props.passkeys()}>
         {(one) => (
           <SettingState
@@ -218,11 +214,11 @@ function PasskeyList(props: {
 
 function PasskeysCard(): JSX.Element {
   const { busy, wrong, act } = createAct();
-  const [passkeys, { refetch }] = createResource(listPasskeys);
+  const passkeys = createMemo(async () => listPasskeys());
   const [name, setName] = createSignal('');
 
   const changed = (): void => {
-    Promise.resolve(refetch()).catch(() => undefined);
+    refresh(passkeys).catch(() => undefined);
   };
 
   return (
@@ -263,7 +259,7 @@ function PasskeysCard(): JSX.Element {
 
 function Unlocked(props: {
   password: string;
-  security: Resource<SecurityState>;
+  security: Accessor<SecurityState | null>;
   onChanged: () => void;
 }): JSX.Element {
   return (
@@ -330,12 +326,12 @@ function Unlock(props: { onUnlocked: (password: string) => void }): JSX.Element 
 }
 
 export default function SecurityPane(): JSX.Element {
-  const client = createClientSignal();
   // Kept only while the pane is open, since the two-factor routes ask for it again
   const [password, setPassword] = createSignal<string | null>(null);
-  const [security, { refetch }] = createResource(
-    () => client() && password() != null,
-    async () => getSecurity(),
+  // Asked once the password is in, which only a player in the browser can type
+  const unlocked = createMemo(() => password() != null);
+  const security = createMemo((): Promise<SecurityState> | null =>
+    unlocked() ? getSecurity() : null,
   );
 
   return (
@@ -356,7 +352,7 @@ export default function SecurityPane(): JSX.Element {
               password={typed()}
               security={security}
               onChanged={() => {
-                Promise.resolve(refetch()).catch(() => undefined);
+                refresh(security).catch(() => undefined);
               }}
             />
           </Loading>

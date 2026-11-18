@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, createEffect, createResource, from, onCleanup } from 'solid-js';
+import { Loading, createEffect, createMemo, from } from 'solid-js';
 import {
   type RaidRecord,
   canJoinRaids,
@@ -26,10 +26,14 @@ export type { RaidLobbyProps, RaidLobbyReport };
  */
 export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   // The lobby is shared: parties join and leave it while the player
-  // is looking at it, and the host's start lands here too
-  const raid = from<RaidRecord | null>((set) =>
-    watchRaid(props.raidId, (record) => {
-      set(record);
+  // is looking at it, and the host's start lands here too. Seeded with
+  // nothing, so the rows tell "not here yet" from "gone" themselves
+  const raid = createMemo(() =>
+    from<RaidRecord | null | undefined>((set) => {
+      set(undefined);
+      return watchRaid(props.raidId, (record) => {
+        set(record);
+      });
     }),
   );
 
@@ -47,57 +51,59 @@ export default function RaidLobby(props: RaidLobbyProps): JSX.Element {
   };
 
   // Keyed on the ids, since every lobby ping hands over a fresh array of
-  // the same ones
-  const [teams] = createResource(
-    () => raid()?.teams.join(',') ?? null,
-    async (key): Promise<TeamRecord[]> => {
-      const reads: Promise<TeamRecord | null>[] = [];
+  // the same ones. No lobby yet asks for nothing
+  const teamKey = createMemo(() => raid()?.teams.join(',') ?? null);
+  const readTeams = async (key: string): Promise<TeamRecord[]> => {
+    const reads: Promise<TeamRecord | null>[] = [];
 
-      // One read for every team not held yet, rather than one per team
-      for (const id of splitKey(key)) {
-        reads.push(readTeam(id));
+    // One read for every team not held yet, rather than one per team
+    for (const id of splitKey(key)) {
+      reads.push(readTeam(id));
+    }
+
+    const found: TeamRecord[] = [];
+
+    for (const team of await Promise.all(reads)) {
+      if (team != null) {
+        found.push(team);
       }
+    }
+    return found;
+  };
+  const teams = createMemo((): Promise<TeamRecord[]> | null => {
+    const key = teamKey();
 
-      const found: TeamRecord[] = [];
-
-      for (const team of await Promise.all(reads)) {
-        if (team != null) {
-          found.push(team);
-        }
-      }
-      return found;
-    },
-  );
+    return key == null ? null : readTeams(key);
+  });
 
   // A player with no pokemon of their own can stand in the lobby and
   // watch, but has nothing to field
-  const [canJoin] = createResource(
-    () => props.user.uid,
-    async (uid) => canJoinRaids(uid),
-  );
+  const canJoin = createMemo(async () => canJoinRaids(props.user.uid));
 
   // Standing here is written down, so the lobby can say who is in the
   // room. It is dropped again on the way out, and the way out is not
   // only the Cancel button: shutting the panel unmounts this, and a
   // row left behind would show them watching a raid they walked away
   // from until the window turned over
-  createEffect(() => {
-    const lobby = props.raidId;
+  createEffect(
+    () => props.raidId,
+    (lobby) => {
+      watchRaidLobby(lobby).catch(() => {
+        // A presence that did not land is a name missing from a list;
+        // nothing about the raid turns on it
+      });
+      return () => {
+        unwatchRaidLobby(lobby).catch(() => undefined);
+      };
+    },
+  );
 
-    watchRaidLobby(lobby).catch(() => {
-      // A presence that did not land is a name missing from a list;
-      // nothing about the raid turns on it
-    });
-
-    onCleanup(() => {
-      unwatchRaidLobby(lobby).catch(() => undefined);
-    });
-  });
-
-  const watching = watchLive<string[]>((set) =>
-    watchRaidWatchers(props.raidId, (players) => {
-      set(players);
-    }),
+  const watching = watchLive<string, string[]>(
+    () => props.raidId,
+    (lobby, set) =>
+      watchRaidWatchers(lobby, (players) => {
+        set(players);
+      }),
   );
 
   return (

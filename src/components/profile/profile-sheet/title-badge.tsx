@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, Show, createResource } from 'solid-js';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../../auth/achievements';
 import { AchievementTier, TIER_COLORS } from '../../../data/achievements';
 import { titleLine, titleType } from '../../../data/ids/titles';
@@ -45,7 +45,7 @@ const PILL =
   ' leading-[18px] font-extrabold';
 
 function TierPill(props: {
-  sheet: Resource<AchievementSheet>;
+  sheet: Accessor<AchievementSheet>;
   title: number;
   name: string;
 }): JSX.Element {
@@ -80,7 +80,7 @@ export default function TitleBadge(props: {
     return <span class={`${PILL} border-gold-dark text-gold-dark`}>{props.name}</span>;
   }
 
-  const [sheet] = createResource(() => props.player, listAchievements);
+  const sheet = createMemo(async () => listAchievements(props.player));
 
   return (
     <Loading fallback={<span class={`${PILL} border-line text-muted`}>{props.name}</span>}>

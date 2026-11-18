@@ -36,7 +36,7 @@ import {
 } from '../../icons';
 import ItemSprite from '../../items/ItemSprite';
 import TypeBadge from '../../sprites/TypeBadge';
-import { type ComponentProps, Dynamic, type JSX } from '@solidjs/web';
+import type { ComponentProps, JSX } from '@solidjs/web';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -248,7 +248,9 @@ function requirementGlyph(requirement: QuestRequirement): JSX.Element {
   if (requirement.kind === RequirementKind.TurnIn || requirement.item != null) {
     return <ItemSprite item={requirement.item ?? Items.PokeBall} size={24} label="" />;
   }
-  return <Dynamic component={METRIC_ICONS[requirement.metric]} class="size-5 text-muted" />;
+  const Glyph = METRIC_ICONS[requirement.metric];
+
+  return <Glyph class="size-5 text-muted" />;
 }
 
 export function requirementIcon(requirement: QuestRequirement): JSX.Element {

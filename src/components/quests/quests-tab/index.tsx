@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, createEffect, createResource } from 'solid-js';
+import { Loading, createEffect, createMemo, refresh } from 'solid-js';
 
 import { getQuests } from '../../../auth/quests';
 import { getRotations } from '../../../auth/rotations';
@@ -22,24 +22,31 @@ export interface QuestsTabProps {
 }
 
 export default function QuestsTab(props: QuestsTabProps): JSX.Element {
-  const [standings, { refetch }] = createResource(getQuests);
-  const [rotations, { refetch: respin }] = createResource(getRotations);
+  const standings = createMemo(async () => getQuests());
+  const rotations = createMemo(async () => getRotations());
+
+  const reread = (): void => {
+    refresh(standings).catch(() => undefined);
+    refresh(rotations).catch(() => undefined);
+  };
 
   // The dialog stays mounted once it has been opened, so a reopen
   // re-reads the board here; the mount's own fetch covers the first
   let opened = false;
 
-  createEffect(() => {
-    if (!props.isOpen) {
-      return;
-    }
-    if (!opened) {
-      opened = true;
-      return;
-    }
-    Promise.resolve(refetch()).catch(() => undefined);
-    Promise.resolve(respin()).catch(() => undefined);
-  });
+  createEffect(
+    () => props.isOpen,
+    (isOpen) => {
+      if (!isOpen) {
+        return;
+      }
+      if (!opened) {
+        opened = true;
+        return;
+      }
+      reread();
+    },
+  );
 
   return (
     <Loading fallback={<Note class="text-center">{m.ui_looking()}</Note>}>
@@ -47,10 +54,7 @@ export default function QuestsTab(props: QuestsTabProps): JSX.Element {
         standings={standings}
         rotations={rotations}
         onClose={props.onClose}
-        onChanged={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
-          Promise.resolve(respin()).catch(() => undefined);
-        }}
+        onChanged={reread}
       />
     </Loading>
   );

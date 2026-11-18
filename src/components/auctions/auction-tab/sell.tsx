@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { type Resource, Show } from 'solid-js';
+import { type Accessor, Show } from 'solid-js';
 import { AuctionLot, isAuctionableItem } from '../../../auth/auctions';
 import CatchPicker, { type CatchOption } from '../../catches/catch-picker';
 import InventoryPicker from '../../items/InventoryPicker';
@@ -37,7 +37,7 @@ export default function SellPane(props: {
   /** When the player's running auction closes, or null when none is running */
   running: number | null;
   revision: number;
-  sellable: Resource<CatchOption[]>;
+  sellable: Accessor<CatchOption[]>;
   /** Whether a pokemon may go on the block at all */
   mayGoUp: (option: CatchOption) => boolean;
   onPick: (subject: AuctionSubject) => void;

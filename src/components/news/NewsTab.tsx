@@ -1,5 +1,5 @@
 import { For, Show, createSignal, onSettled } from 'solid-js';
-import { Dynamic, type JSX } from '@solidjs/web';
+import { type JSX, dynamic } from '@solidjs/web';
 import { MDXProvider } from 'solid-marked';
 import {
   Badge,
@@ -34,14 +34,16 @@ const SIDE_BY_SIDE = '(min-width: 48rem)';
 
 /** The page being read, drawn through the game's own markup. */
 function ReleasePage(props: { release: Release | null }): JSX.Element {
+  // Read as a value rather than through `Show`, whose callback hands
+  // back an accessor that is empty the moment the panel starts closing.
+  // No release draws nothing
+  const Page = dynamic(() => props.release?.page);
+
   return (
     <MDXProvider builtins={BUILTINS}>
-      <ReleaseLine value={props.release?.brought ?? ''}>
+      <ReleaseLine value={() => props.release?.brought ?? ''}>
         <div class="text-sm">
-          {/* Read as a value rather than through `Show`, whose callback
-              hands back an accessor that is empty the moment the panel
-              starts closing */}
-          {props.release == null ? null : <Dynamic component={props.release.page} />}
+          <Page />
         </div>
       </ReleaseLine>
     </MDXProvider>

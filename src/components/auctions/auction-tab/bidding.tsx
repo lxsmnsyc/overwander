@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, List, Meta, Pill, RowCard, RowText } fro
 import LotFace from '../LotFace';
 import { describeRemaining, now } from './time';
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal, on } from 'solid-js';
+import { Show, createEffect, createSignal, untrack } from 'solid-js';
 import { formatNumber } from '../../../i18n/format';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -78,14 +78,12 @@ export function BidDialog(props: {
   // since a raise landing while somebody is typing should move the floor
   // under them rather than retype their bid
   createEffect(
-    on(
-      () => props.lot != null,
-      (open) => {
-        if (open) {
-          setNamed(floor());
-        }
-      },
-    ),
+    () => props.lot != null,
+    (open) => {
+      if (open) {
+        setNamed(untrack(floor));
+      }
+    },
   );
 
   return (

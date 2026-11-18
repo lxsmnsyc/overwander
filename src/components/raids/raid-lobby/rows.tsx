@@ -1,5 +1,5 @@
 import { isFemaleBoss } from '../../../model/raid-record';
-import { For, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta/disclosure';
 import {
@@ -13,7 +13,6 @@ import {
   startRaid,
 } from '../../../auth/raids';
 import type { Profile } from '../../../auth/profile';
-import { settled } from '../../app/resource-reads';
 import PlayerPlate from '../../profile/PlayerPlate';
 import type { TeamRecord } from '../../../auth/teams';
 import { ChevronRightIcon } from '../../icons';
@@ -56,9 +55,9 @@ import type { RaidLobbyProps } from './report';
 export default function LobbyRows(
   props: RaidLobbyProps & {
     raid: () => RaidRecord | null;
-    teams: Resource<TeamRecord[]>;
-    names: Resource<Map<string, Profile>>;
-    canJoin: Resource<boolean>;
+    teams: Accessor<TeamRecord[] | null>;
+    names: Accessor<Map<string, Profile>>;
+    canJoin: Accessor<boolean>;
     watching: () => string[];
   },
 ): JSX.Element {
@@ -68,25 +67,33 @@ export default function LobbyRows(
 
   const raid = (): RaidRecord | null => props.raid();
 
-  // Settled rather than read: a team joining re-reads all three, and a
-  // plain read put the whole lobby back to "Loading raid…" meanwhile
-  const teams = (): TeamRecord[] | undefined => settled(props.teams);
+  // A team joining re-reads all three, and the boundary above keeps the
+  // lobby on screen meanwhile rather than going back to "Loading raid…"
+  const teams = (): TeamRecord[] | null => props.teams();
 
-  const canJoin = (): boolean | undefined => settled(props.canJoin);
+  const canJoin = (): boolean => props.canJoin();
 
-  const named = (uid: string): string => settled(props.names)?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => settled(props.names)?.get(uid)?.sprite ?? null;
+  const named = (uid: string): string => props.names().get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => props.names().get(uid)?.sprite ?? null;
 
   const isHost = (): boolean => raid()?.host === props.user.uid;
 
   // The lair names the panel it is in, and whether it is theirs decides
   // whether the overlay may close it. Cleared on the way out so the
   // list of lobbies gets its own name back
-  createEffect(() => {
-    const record = raid();
+  createEffect(
+    () => {
+      const record = raid();
 
-    props.onLobby?.(record == null ? null : { title: getRaidTitle(record), hosting: isHost() });
-  });
+      return {
+        report: props.onLobby,
+        lobby: record == null ? null : { title: getRaidTitle(record), hosting: isHost() },
+      };
+    },
+    ({ report, lobby }) => {
+      report?.(lobby);
+    },
+  );
   onCleanup(() => {
     props.onLobby?.(null);
   });
@@ -103,17 +110,18 @@ export default function LobbyRows(
   // for a host who has just left). What is left to look at is nothing,
   // so the panel goes back to the list of lobbies rather than sitting
   // on "Loading raid…" for a raid that no longer exists
-  createEffect(() => {
-    const record = raid();
-
-    if (record != null) {
-      arrived = true;
-      return;
-    }
-    if (arrived) {
-      game.setRaid(null);
-    }
-  });
+  createEffect(
+    () => raid() != null,
+    (here) => {
+      if (here) {
+        arrived = true;
+        return;
+      }
+      if (arrived) {
+        game.setRaid(null);
+      }
+    },
+  );
 
   /**
    * Who is being looked for. A player is searched by the name the row
@@ -232,13 +240,18 @@ export default function LobbyRows(
 
   // Once the host starts, the battle takes over the whole page for
   // everyone still in the lobby
-  createEffect(() => {
-    const battle = raid()?.battle;
+  createEffect(
+    () => {
+      const battle = raid()?.battle;
 
-    if (battle != null) {
-      game.setBattle({ id: battle, replay: false, raid: props.raidId });
-    }
-  });
+      return battle == null ? null : { id: battle, raid: props.raidId };
+    },
+    (started) => {
+      if (started != null) {
+        game.setBattle({ id: started.id, replay: false, raid: started.raid });
+      }
+    },
+  );
 
   const back = (): void => {
     // Leaving takes the player's teams out of the lobby, so a raid
@@ -252,7 +265,7 @@ export default function LobbyRows(
 
   /** The one line of advice under the lobby, most pressing first */
   const notice = (): string | null => {
-    if (canJoin() === false) {
+    if (!canJoin()) {
       return m.raid_notice_watch_only();
     }
     if (full()) {
@@ -401,7 +414,7 @@ export default function LobbyRows(
                   {m.lobby_invite()}
                 </Button>
               </Show>
-              <Show when={canJoin() !== false && !full()}>
+              <Show when={canJoin() && !full()}>
                 <Button
                   onClick={() => {
                     openForm(PickTeamForm, { player: props.user.uid })

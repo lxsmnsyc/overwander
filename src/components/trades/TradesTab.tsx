@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createResource, createSignal, from } from 'solid-js';
+import { For, Show, createMemo, createSignal, from } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { isFavorite } from '../../auth/caught';
 import { getBuddy } from '../../auth/buddy';
@@ -14,6 +14,7 @@ import {
 } from '../../auth/trades';
 import { useGame } from '../app/game-context';
 import playEffect, { Effect } from '../app/sound';
+import { createLoad } from '../app/create-load';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import { PlayerFace } from '../profile/PlayerPlate';
 import NamedCatch, { fillSentence } from './NamedCatch';
@@ -75,9 +76,14 @@ const SETTLED_TONES: Partial<Record<TradeStatus, PillTone>> = {
  */
 function OtherParty(props: { uid: string; line: JSX.Element }): JSX.Element {
   const game = useGame();
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.uid, (record) => {
-      set(record);
+  // Seeded with nothing, so the row draws a stand-in name until the
+  // profile lands instead of holding the list
+  const profile = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(props.uid, (record) => {
+        set(record);
+      });
     }),
   );
   const called = (): string => {
@@ -140,9 +146,14 @@ function DealLine(props: { trade: TradeRecord; mine: boolean }): JSX.Element {
 export default function TradesTab(props: TradesTabProps): JSX.Element {
   const game = useGame();
   const toast = useToast();
-  const trades = from<[string, TradeRecord][]>((set) =>
-    watchTrades(props.player, (rows) => {
-      set(rows);
+  // Seeded with nothing: the tab has no boundary of its own, and draws
+  // its empty lists until the first answer rather than waiting
+  const trades = createMemo(() =>
+    from<[string, TradeRecord][] | undefined>((set) => {
+      set(undefined);
+      return watchTrades(props.player, (rows) => {
+        set(rows);
+      });
     }),
   );
   const held = createMemo(() => new Map(trades() ?? []));
@@ -187,7 +198,8 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
     return ids;
   }, LIST_PAGE);
 
-  const [buddy] = createResource(
+  // Read without waiting: a row is offered until it says otherwise
+  const buddy = createLoad(
     () => (answering() == null ? null : props.player),
     async (uid) => getBuddy(uid),
   );
@@ -203,7 +215,7 @@ export default function TradesTab(props: TradesTabProps): JSX.Element {
     if (isFavorite(option.caught)) {
       return m.trade_reason_favorite();
     }
-    return buddy.latest === option.id ? m.trade_reason_buddy() : null;
+    return buddy.latest() === option.id ? m.trade_reason_buddy() : null;
   };
 
   const settle = (id: string, done: Promise<boolean>, said: string, gained = false): void => {

@@ -1,13 +1,4 @@
-import {
-  For,
-  Loading,
-  type Resource,
-  Show,
-  createMemo,
-  createResource,
-  createSignal,
-  from,
-} from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, from } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import {
   FRIEND_LIMIT,
@@ -82,13 +73,13 @@ function uidsOf(rows: FriendLink[]): string[] {
 function Roster(props: {
   uids: string[];
   made: Map<string, number>;
-  names: Resource<Map<string, Profile>>;
+  names: Accessor<Map<string, Profile>>;
   query: string;
   busy: string;
   onAct: (uid: string, done: Promise<unknown>) => void;
 }): JSX.Element {
   const game = useGame();
-  const called = (uid: string): string => props.names()?.get(uid)?.nickname ?? '';
+  const called = (uid: string): string => props.names().get(uid)?.nickname ?? '';
 
   const asked = (): string[] => {
     const rows: FriendRow[] = [];
@@ -147,14 +138,22 @@ function Roster(props: {
 }
 
 export default function FriendsTab(props: FriendsTabProps): JSX.Element {
-  const friends = from<FriendLink[]>((set) =>
-    watchFriends(props.player, (rows) => {
-      set(rows);
+  // Both seeded with nothing: the tab draws its empty lists until the
+  // first answer rather than waiting on a boundary above it
+  const friends = createMemo(() =>
+    from<FriendLink[] | undefined>((set) => {
+      set(undefined);
+      return watchFriends(props.player, (rows) => {
+        set(rows);
+      });
     }),
   );
-  const blocked = from<FriendLink[]>((set) =>
-    watchBlocked(props.player, (rows) => {
-      set(rows);
+  const blocked = createMemo(() =>
+    from<FriendLink[] | undefined>((set) => {
+      set(undefined);
+      return watchBlocked(props.player, (rows) => {
+        set(rows);
+      });
     }),
   );
   const [busy, setBusy] = createSignal('');
@@ -180,7 +179,7 @@ export default function FriendsTab(props: FriendsTabProps): JSX.Element {
   // What everybody is called, in one read rather than a row at a time:
   // the list is searched by name, and a name a row has not fetched yet
   // is a row the search would drop
-  const [names] = createResource(roll, getProfiles);
+  const names = createMemo(async () => getProfiles(roll()));
   const shunned = createPager(() => uidsOf(blocked() ?? []), LIST_PAGE);
 
   const act = (uid: string, done: Promise<unknown>): void => {

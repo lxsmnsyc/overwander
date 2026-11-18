@@ -1,7 +1,7 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, Show, createResource } from 'solid-js';
+import { Loading, Show, createMemo } from 'solid-js';
 import { AuctionLot, type AuctionRecord } from '../../auth/auctions';
-import { getCaughtBatched } from '../../auth/caught';
+import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { Genders, Species } from '../../data/ids/species';
 import { isEgg } from '../../model/egg';
 import { isShiny } from '../../model/caught-record';
@@ -17,9 +17,9 @@ import AnimatedSprite from '../sprites/AnimatedSprite';
  * uses, so a page of rows is one read
  */
 export function CatchFace(props: { catchId: string }): JSX.Element {
-  const [caught] = createResource(
-    () => props.catchId || false,
-    async (id) => getCaughtBatched(id),
+  // An item lot carries no catch id, and asks nothing
+  const caught = createMemo((): Promise<CaughtPokemon | null> | null =>
+    props.catchId === '' ? null : getCaughtBatched(props.catchId),
   );
 
   return (

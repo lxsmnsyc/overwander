@@ -1,4 +1,4 @@
-import { For, type Resource, Show } from 'solid-js';
+import { type Accessor, For, Show } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { AchievementSheet } from '../../../auth/achievements';
 import {
@@ -151,10 +151,10 @@ function Tray(props: { count: number; children: JSX.Element }): JSX.Element {
   );
 }
 
-export function LineShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+export function LineShelf(props: { sheet: Accessor<AchievementSheet> }): JSX.Element {
   return (
-    <Tray count={(props.sheet()?.lines ?? []).length}>
-      <For each={props.sheet()?.lines ?? []}>
+    <Tray count={props.sheet().lines.length}>
+      <For each={props.sheet().lines}>
         {([line, standing]) => (
           <LineSlot name={LINE_NAMES[line]} deed={LINE_DEEDS[line]} standing={standing} />
         )}
@@ -163,10 +163,10 @@ export function LineShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Ele
   );
 }
 
-export function TypeShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+export function TypeShelf(props: { sheet: Accessor<AchievementSheet> }): JSX.Element {
   return (
-    <Tray count={(props.sheet()?.types ?? []).length}>
-      <For each={props.sheet()?.types ?? []}>
+    <Tray count={props.sheet().types.length}>
+      <For each={props.sheet().types}>
         {([type, standing]) => (
           <LineSlot
             name={TYPE_NAMES[type]}
@@ -180,10 +180,10 @@ export function TypeShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Ele
   );
 }
 
-export function TrainerShelf(props: { sheet: Resource<AchievementSheet> }): JSX.Element {
+export function TrainerShelf(props: { sheet: Accessor<AchievementSheet> }): JSX.Element {
   return (
-    <Tray count={(props.sheet()?.trainers ?? []).length}>
-      <For each={props.sheet()?.trainers ?? []}>
+    <Tray count={props.sheet().trainers.length}>
+      <For each={props.sheet().trainers}>
         {([trainer, standing]) => (
           <LineSlot
             name={TRAINER_BASE_NAMES[trainer]}

@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, createResource } from 'solid-js';
+import { Loading, createMemo } from 'solid-js';
 import { type DuelRecord, watchDuel } from '../../../auth/duels';
 import { type Profile, getProfiles } from '../../../auth/profile';
 import watchLive from '../../app/watch';
@@ -22,10 +22,12 @@ export type { DuelLobbyProps, DuelLobbyReport };
 export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
   // Followed rather than read once: the second player arriving, a
   // party assembled and the host's start all land here
-  const duel = watchLive<DuelRecord | null>((set) =>
-    watchDuel(props.duelId, (record) => {
-      set(record);
-    }),
+  const duel = watchLive<string, DuelRecord | null>(
+    () => props.duelId,
+    (id, set) =>
+      watchDuel(id, (record) => {
+        set(record);
+      }),
   );
 
   /**
@@ -33,30 +35,28 @@ export default function DuelLobby(props: DuelLobbyProps): JSX.Element {
    * a uid is not a person: the row is the way into their profile, so
    * it wears the name and the face that profile opens under
    */
-  const [names] = createResource(
-    () => {
-      const uids: string[] = [];
+  const nameKey = createMemo(() => {
+    const uids: string[] = [];
 
-      for (const member of duel()?.members ?? []) {
-        uids.push(member.player);
-      }
-      return uids.sort().join(',');
-    },
-    async (key): Promise<Map<string, Profile>> => {
-      const uids: string[] = [];
+    for (const member of duel()?.members ?? []) {
+      uids.push(member.player);
+    }
+    return uids.sort().join(',');
+  });
+  const names = createMemo(async (): Promise<Map<string, Profile>> => {
+    const uids: string[] = [];
 
-      for (const uid of key.split(',')) {
-        if (uid !== '') {
-          uids.push(uid);
-        }
+    for (const uid of nameKey().split(',')) {
+      if (uid !== '') {
+        uids.push(uid);
       }
-      return getProfiles(uids);
-    },
-  );
+    }
+    return getProfiles(uids);
+  });
 
   return (
     <Loading fallback={<Note>{m.duels_loading_lobby()}</Note>}>
-      <LobbyRows {...props} duel={() => duel() ?? null} names={names} />
+      <LobbyRows {...props} duel={duel} names={names} />
     </Loading>
   );
 }

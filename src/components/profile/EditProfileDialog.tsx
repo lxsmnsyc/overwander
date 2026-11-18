@@ -1,11 +1,12 @@
 import type { JSX } from '@solidjs/web';
-import { createEffect, createResource, createSignal, on } from 'solid-js';
+import { createEffect, createSignal, untrack } from 'solid-js';
 import { listMyTitles, saveSprite, saveTitle } from '../../auth/achievements';
 import { type Profile, saveProfile } from '../../auth/profile';
 import { PLAYER_NAME_LIMIT, asNickname } from '../../model/nickname';
 import { type Title, getTitleName } from '../../data/ids/titles';
 import { Button, Combobox, Dialog, DialogActions, Status, TextField } from '../styled';
 import SpritePicker from './SpritePicker';
+import { createLoad } from '../app/create-load';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -40,7 +41,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
   // What may be worn, read when the dialog opens: the earned list is
   // the server's answer, so the picker never offers a title the save
   // would refuse
-  const [earned] = createResource(
+  const earned = createLoad(
     () => (props.isOpen ? props.player : null),
     async () => listMyTitles(),
   );
@@ -50,7 +51,7 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
       { value: NO_TITLE, label: m.profile_no_title() },
     ];
 
-    for (const option of earned.latest ?? []) {
+    for (const option of earned.latest() ?? []) {
       const label = getTitleName(option);
 
       if (label != null) {
@@ -61,20 +62,22 @@ export default function EditProfileDialog(props: EditProfileDialogProps): JSX.El
   };
 
   // Opened on what is stored rather than on what was last typed: a
-  // dialog closed without saving should not remember the refusal
+  // dialog closed without saving should not remember the refusal. On
+  // opening alone, so a profile written while it is open does not
+  // retype the boxes under the player
   createEffect(
-    on(
-      () => props.isOpen,
-      (open) => {
-        if (!open) {
-          return;
-        }
-        setName(props.profile.nickname);
-        setSprite(props.profile.sprite);
-        setTitle(props.profile.title ?? NO_TITLE);
-        setError(null);
-      },
-    ),
+    () => props.isOpen,
+    (open) => {
+      if (!open) {
+        return;
+      }
+      const stored = untrack(() => props.profile);
+
+      setName(stored.nickname);
+      setSprite(stored.sprite);
+      setTitle(stored.title ?? NO_TITLE);
+      setError(null);
+    },
   );
 
   /**

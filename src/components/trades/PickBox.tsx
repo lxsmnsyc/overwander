@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, Show, createResource } from 'solid-js';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { NATURE_NAMES } from '../../data/ids/text';
 import { isEgg } from '../../model/egg';
@@ -24,7 +24,7 @@ export interface PickBoxProps {
 
 /** The words beside the picture, read one component down under a `Loading` */
 function PickedWords(props: {
-  caught: Resource<CaughtPokemon | null>;
+  caught: Accessor<CaughtPokemon | null>;
   note?: string;
 }): JSX.Element {
   return (
@@ -49,10 +49,7 @@ function PickedWords(props: {
 }
 
 function PickedLines(props: { id: string; note?: string }): JSX.Element {
-  const [caught] = createResource(
-    () => props.id,
-    async (id) => getCaughtBatched(id),
-  );
+  const caught = createMemo(async () => getCaughtBatched(props.id));
 
   return (
     <>

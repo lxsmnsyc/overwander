@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createResource, createSignal, on } from 'solid-js';
+import { Show, createEffect, createSignal } from 'solid-js';
 import { getBuddy } from '../../auth/buddy';
 import { countCaught, isFavorite } from '../../auth/caught';
 import { isEgg } from '../../model/egg';
@@ -7,6 +7,7 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { TRADE_GOLD_LIMIT, offerTrade } from '../../auth/trades';
 import { useGame } from '../app/game-context';
 import watchLive from '../app/watch';
+import { createLoad } from '../app/create-load';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import { Button, Dialog, DialogActions, Meta, Pill, Segmented, useToast } from '../styled';
 import PickBox from './PickBox';
@@ -57,49 +58,48 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
   // A fresh offer every time it opens: what was half-built for one
   // friend says nothing about the next
   createEffect(
-    on(
-      () => [props.friend, props.isOpen] as const,
-      ([, open]) => {
-        if (!open) {
-          return;
-        }
-        setOffered(null);
-        setAsked(null);
-        setGoldMode('none');
-        setAmount(0);
-        setPicking(null);
-        setSending(false);
-      },
-    ),
+    () => ({ friend: props.friend, open: props.isOpen }),
+    ({ open }) => {
+      if (!open) {
+        return;
+      }
+      setOffered(null);
+      setAsked(null);
+      setGoldMode('none');
+      setAmount(0);
+      setPicking(null);
+      setSending(false);
+    },
   );
 
   // Watched rather than `from`: this dialog is mounted for the whole
   // session and nobody is being offered to when it is created
-  const theirs = watchLive<Profile | null>((set) => {
-    const friend = props.friend;
-
-    if (friend == null) {
-      return null;
-    }
-    return watchProfile(friend, (record) => {
-      set(record);
-    });
-  });
-  const mine = watchLive<Profile | null>((set) =>
-    watchProfile(props.player, (record) => {
-      set(record);
-    }),
+  const theirs = watchLive<string, Profile | null>(
+    () => props.friend,
+    (friend, set) =>
+      watchProfile(friend, (record) => {
+        set(record);
+      }),
+  );
+  const mine = watchLive<string, Profile | null>(
+    () => props.player,
+    (player, set) =>
+      watchProfile(player, (record) => {
+        set(record);
+      }),
   );
 
   const named = (): string => theirs()?.nickname ?? m.trade_this_trainer();
 
   const gold = (): number => mine()?.gold ?? 0;
 
-  const [buddy] = createResource(
+  // Read without waiting: the reasons below are asked of every row,
+  // and a row is offered until they say otherwise
+  const buddy = createLoad(
     () => (props.isOpen ? props.player : null),
     async (uid) => getBuddy(uid),
   );
-  const [onlyOne] = createResource(
+  const onlyOne = createLoad(
     () => (props.isOpen ? props.player : null),
     async (uid) => (await countCaught(uid)) <= 1,
   );
@@ -109,7 +109,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
    * auction reads, since both take the pokemon out of their hands
    */
   const offeringReason = (option: CatchOption): string | null => {
-    if (onlyOne.latest === true) {
+    if (onlyOne.latest() === true) {
       return m.trade_reason_only();
     }
     if (option.fighting) {
@@ -121,7 +121,7 @@ export default function TradeOfferDialog(props: TradeOfferDialogProps): JSX.Elem
     if (isFavorite(option.caught)) {
       return m.trade_reason_favorite();
     }
-    return buddy.latest === option.id ? m.trade_reason_buddy() : null;
+    return buddy.latest() === option.id ? m.trade_reason_buddy() : null;
   };
 
   /** How much may ride, held to the purse when it is the player's */

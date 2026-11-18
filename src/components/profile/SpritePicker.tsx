@@ -1,9 +1,9 @@
-import { For, Loading, Show, createResource } from 'solid-js';
+import { For, Loading, Show, createMemo } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { listMySprites } from '../../auth/achievements';
 import { getCharsetName } from '../../data/overworld/charsets';
 import TrainerSprite from '../sprites/TrainerSprite';
-import { Note, createPager } from '../styled';
+import { Note, createPager, spellAria } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -46,7 +46,7 @@ function Shelf(props: SpritePickerProps & { earned: () => string[] }): JSX.Eleme
               <button
                 type="button"
                 disabled={props.disabled}
-                aria-pressed={sheet === props.value}
+                aria-pressed={spellAria(sheet === props.value)}
                 title={getCharsetName(sheet)}
                 class={`flex h-[54px] items-end justify-center rounded-button border-2 p-1
                   transition-[translate,border-color] duration-(--motion-quick) ease-spring
@@ -71,7 +71,7 @@ function Shelf(props: SpritePickerProps & { earned: () => string[] }): JSX.Eleme
 }
 
 export default function SpritePicker(props: SpritePickerProps): JSX.Element {
-  const [earned] = createResource(async () => listMySprites());
+  const earned = createMemo(async () => listMySprites());
 
   return (
     <div class="flex flex-col gap-1">
@@ -82,7 +82,7 @@ export default function SpritePicker(props: SpritePickerProps): JSX.Element {
         <Shelf
           value={props.value}
           disabled={props.disabled}
-          earned={() => earned() ?? []}
+          earned={earned}
           onChange={props.onChange}
         />
       </Loading>

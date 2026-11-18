@@ -1,4 +1,4 @@
-import { For, Loading, type Resource, Show, createResource } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import {
   CREDITS_PATH,
@@ -81,8 +81,8 @@ function Artists(props: {
  * The cards themselves. Its own component because a resource read in
  * the body that declared it throws past every boundary written there
  */
-function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
-  const held = (): Credits => props.credits() ?? asCredits(null);
+function CreditsList(props: { credits: Accessor<Credits> }): JSX.Element {
+  const held = (): Credits => props.credits();
 
   const packages = (kind: 'runtime' | 'build'): Credits['packages'] => {
     const kept: Credits['packages'] = [];
@@ -165,7 +165,7 @@ function CreditsList(props: { credits: Resource<Credits> }): JSX.Element {
 }
 
 export default function CreditsCard(): JSX.Element {
-  const [credits] = createResource(loadCredits);
+  const credits = createMemo(loadCredits);
 
   return (
     <Loading

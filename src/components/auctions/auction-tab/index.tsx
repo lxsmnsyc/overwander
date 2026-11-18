@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, createResource, createSignal, from } from 'solid-js';
+import { Loading, createMemo, createSignal, from, refresh } from 'solid-js';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -36,14 +36,16 @@ export type { AuctionTabProps };
 export default function AuctionTab(props: AuctionTabProps): JSX.Element {
   // Everything nobody has collected yet: a bid raises a listing under
   // whoever is looking at it, so the board is followed rather than
-  // read once
-  const auctions = from<[string, AuctionRecord][]>((set) =>
-    watchOpenAuctions((open) => {
-      // Newest first. Every lot runs exactly a day, so when it closes
-      // is when it was listed — the most recently put up is the one
-      // nobody has seen yet, and the one worth opening the board for
-      set(open.sort(([, one], [, other]) => other.endsAt - one.endsAt));
-    }),
+  // read once. The first listing holds the boundary below
+  const auctions = createMemo(() =>
+    from<[string, AuctionRecord][]>((set) =>
+      watchOpenAuctions((open) => {
+        // Newest first. Every lot runs exactly a day, so when it closes
+        // is when it was listed: the most recently put up is the one
+        // nobody has seen yet, and the one worth opening the board for
+        set(open.sort(([, one], [, other]) => other.endsAt - one.endsAt));
+      }),
+    ),
   );
 
   /**
@@ -54,83 +56,79 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * rewrites a listing every time — does not send the board back to
    * read every pokemon on it again
    */
-  const [lots] = createResource(
-    () => {
-      const caught = new Set<string>();
+  const lotKey = createMemo(() => {
+    const caught = new Set<string>();
 
-      for (const [, auction] of auctions() ?? []) {
-        if (auction.lot === AuctionLot.Catch) {
-          caught.add(auction.caught);
-        }
+    for (const [, auction] of auctions()) {
+      if (auction.lot === AuctionLot.Catch) {
+        caught.add(auction.caught);
       }
-      return [...caught].sort().join(',');
-    },
-    async (key): Promise<Map<string, CaughtPokemon>> => {
-      const found = new Map<string, CaughtPokemon>();
-      const reads: Promise<void>[] = [];
+    }
+    return [...caught].sort().join(',');
+  });
+  const lots = createMemo(async (): Promise<Map<string, CaughtPokemon>> => {
+    const key = lotKey();
 
-      for (const id of key.split(',')) {
-        if (id === '') {
-          continue;
-        }
-        reads.push(
-          (async (): Promise<void> => {
-            // Every lot on the board in the same moment, so one read
-            const caught = await getCaughtBatched(id);
+    const found = new Map<string, CaughtPokemon>();
+    const reads: Promise<void>[] = [];
 
-            if (caught != null) {
-              found.set(id, caught);
-            }
-          })(),
-        );
+    for (const id of key.split(',')) {
+      if (id === '') {
+        continue;
       }
-      await Promise.all(reads);
-      return found;
-    },
-  );
+      reads.push(
+        (async (): Promise<void> => {
+          // Every lot on the board in the same moment, so one read
+          const caught = await getCaughtBatched(id);
+
+          if (caught != null) {
+            found.set(id, caught);
+          }
+        })(),
+      );
+    }
+    await Promise.all(reads);
+    return found;
+  });
 
   /**
    * Everyone who has a lot on the board, by what they are called.
    * Profiles are readable by every signed-in player, and a board of
    * lots with no sellers on it is a shop with the labels torn off
    */
-  const [sellers] = createResource(
-    () => {
-      const selling = new Set<string>();
+  const sellerKey = createMemo(() => {
+    const selling = new Set<string>();
 
-      for (const [, auction] of auctions() ?? []) {
-        selling.add(auction.seller);
-      }
-      return [...selling].sort().join(',');
-    },
-    async (key): Promise<Map<string, string>> => {
-      const named = new Map<string, string>();
+    for (const [, auction] of auctions()) {
+      selling.add(auction.seller);
+    }
+    return [...selling].sort().join(',');
+  });
+  const sellers = createMemo(async (): Promise<Map<string, string>> => {
+    const key = sellerKey();
+    const named = new Map<string, string>();
 
-      // Every seller on the board in one read
-      for (const [uid, seller] of await getProfiles(key.split(','))) {
-        named.set(uid, seller.nickname);
-      }
-      return named;
-    },
-  );
+    // Every seller on the board in one read
+    for (const [uid, seller] of await getProfiles(key.split(','))) {
+      named.set(uid, seller.nickname);
+    }
+    return named;
+  });
 
   // Bumped whenever something leaves the player's hands or lands in
-  // them, so the two pickers below re-read what there is to sell
+  // them, so the item picker re-reads what there is to sell
   const [revision, setRevision] = createSignal(0);
 
-  const refresh = (): void => {
-    setRevision(revision() + 1);
+  const bump = (): void => {
+    setRevision((count) => count + 1);
   };
 
   /**
    * The pokemon at the player's side, which is not for sale. It is
-   * re-read on the same revision the pickers are, since sending the
-   * buddy home is how a player makes that one sellable
+   * re-read whenever the pickers are, since sending the buddy home is
+   * how a player makes that one sellable
    */
-  const [buddy] = createResource(
-    () => [props.player, revision()] as const,
-    async ([player]) => getBuddy(player),
-  );
+  const buddy = createMemo(async () => getBuddy(props.player));
 
   /**
    * Why a pokemon in the list cannot be put up. The server decides all
@@ -141,10 +139,7 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * Whether this is the only pokemon they have, which is the one that
    * may not be sold
    */
-  const [onlyOne] = createResource(
-    () => props.player,
-    async (uid) => (await countCaught(uid)) <= 1,
-  );
+  const onlyOne = createMemo(async () => (await countCaught(props.player)) <= 1);
 
   /**
    * The pokemon that could go on the block, asked of the **database**
@@ -159,37 +154,31 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
    * is caught here rather than shown as sellable and refused by the
    * server
    */
-  const [sellable] = createResource(
-    () => [props.player, revision()] as const,
-    async ([player]): Promise<CatchOption[]> => {
-      const [records, clock] = await Promise.all([
-        listCaughtMarked(player, 'auctionable'),
-        syncServerClock(),
-      ]);
+  const sellable = createMemo(async (): Promise<CatchOption[]> => {
+    const [records, clock] = await Promise.all([
+      listCaughtMarked(props.player, 'auctionable'),
+      syncServerClock(),
+    ]);
 
-      const options: CatchOption[] = [];
+    const options: CatchOption[] = [];
 
-      for (const [id, caught] of records) {
-        options.push({ id, caught, fighting: isLockLive(caught, clock) });
-      }
-      return options;
-    },
-  );
+    for (const [id, caught] of records) {
+      options.push({ id, caught, fighting: isLockLive(caught, clock) });
+    }
+    return options;
+  });
 
   /**
    * The auction the player has running, if any. A seller runs one at a
    * time, so this is what the sell form asks before it offers anything
    */
-  const [standing, { refetch: refetchStanding }] = createResource(
-    () => props.player,
-    getSellerStanding,
-  );
+  const standing = createMemo(async () => getSellerStanding(props.player));
 
   return (
     <Loading fallback={<Note>{m.auction_reading()}</Note>}>
       <AuctionBoard
         {...props}
-        auctions={() => auctions() ?? undefined}
+        auctions={auctions}
         lots={lots}
         sellers={sellers}
         buddy={buddy}
@@ -198,8 +187,10 @@ export default function AuctionTab(props: AuctionTabProps): JSX.Element {
         standing={standing}
         revision={revision()}
         onChanged={() => {
-          Promise.resolve(refetchStanding()).catch(() => undefined);
-          refresh();
+          refresh(standing).catch(() => undefined);
+          refresh(buddy).catch(() => undefined);
+          refresh(sellable).catch(() => undefined);
+          bump();
         }}
       />
     </Loading>

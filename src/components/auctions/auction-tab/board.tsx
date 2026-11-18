@@ -42,7 +42,7 @@ import createLotActions, { type LotClaim } from './lot-actions';
 import LotRail, { LotKind, readKind } from './rail';
 import SellPane from './sell';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
-import { For, type Resource, Show, createSignal, from } from 'solid-js';
+import { type Accessor, For, Show, createMemo, createSignal, from } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
@@ -93,13 +93,13 @@ export interface AuctionTabProps {
  */
 export function AuctionBoard(
   props: AuctionTabProps & {
-    auctions: () => [string, AuctionRecord][] | undefined;
-    lots: Resource<Map<string, CaughtPokemon>>;
-    sellers: Resource<Map<string, string>>;
-    buddy: Resource<string | null>;
-    onlyOne: Resource<boolean>;
-    sellable: Resource<CatchOption[]>;
-    standing: Resource<{ auction: string; endsAt: number } | null>;
+    auctions: Accessor<[string, AuctionRecord][]>;
+    lots: Accessor<Map<string, CaughtPokemon>>;
+    sellers: Accessor<Map<string, string>>;
+    buddy: Accessor<string | null>;
+    onlyOne: Accessor<boolean>;
+    sellable: Accessor<CatchOption[]>;
+    standing: Accessor<{ auction: string; endsAt: number } | null>;
     revision: number;
     onChanged: () => void;
   },
@@ -124,11 +124,14 @@ export function AuctionBoard(
   };
 
   // The balance moves with every bid placed and every one handed back,
-  // so it is followed rather than read once
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.player, (record) => {
-      set(record);
-    }),
+  // so it is followed rather than read once. The first answer joins
+  // the wait the boundary above already holds for the board
+  const profile = createMemo(() =>
+    from<Profile | null>((set) =>
+      watchProfile(props.player, (record) => {
+        set(record);
+      }),
+    ),
   );
 
   const gold = (): number => profile()?.gold ?? 0;

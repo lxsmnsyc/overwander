@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createEffect, createSignal } from 'solid-js';
+import { Show, createSignal } from 'solid-js';
 import AddFriendDialog from '../../friends/AddFriendDialog';
 import ProfileSection from '../../../game/session/profile-section';
 import { UserIcon } from '../../icons';
@@ -125,13 +125,11 @@ function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }
  * only while somebody is looking
  */
 export default function ProfileSheet(props: ProfileSheetProps): JSX.Element {
-  const [last, setLast] = createSignal<string | null>(null);
-
-  createEffect(() => {
-    if (props.isOpen && props.player != null) {
-      setLast(props.player);
-    }
-  });
+  // Latched on opening and kept through the fade, until the sheet
+  // says it is gone
+  const [last, setLast] = createSignal<string | null>((was) =>
+    props.isOpen && props.player != null ? props.player : (was ?? null),
+  );
 
   return (
     <Show when={last()} keyed>

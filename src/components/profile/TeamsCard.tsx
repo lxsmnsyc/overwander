@@ -1,4 +1,4 @@
-import { For, Show, createResource, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../auth/caught';
 import { getCaughtBatched, isGuarded } from '../../auth/caught';
@@ -13,6 +13,7 @@ import {
 import { NICKNAME_LIMIT, asNickname } from '../../model/nickname';
 import { TEAM_SIZE } from '../../auth/teams';
 import BattleData from '../app/BattleData';
+import { createLoad } from '../app/create-load';
 import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamStrip from '../catches/TeamStrip';
 import {
@@ -58,7 +59,8 @@ function PresetRow(props: {
 }): JSX.Element {
   // Read here rather than with the list: a preset holds ids, and the
   // batched read turns the six of them into one request
-  const [party] = createResource(
+  // The strip is drawn empty until it lands rather than waiting
+  const party = createLoad(
     () => props.preset.catches.join(','),
     async (key): Promise<[string, CaughtPokemon][]> => {
       const pending: Promise<[string, CaughtPokemon | null]>[] = [];
@@ -85,7 +87,7 @@ function PresetRow(props: {
   );
 
   /** What a preset lost since it was saved: released, traded, hatched into somebody else's box */
-  const gone = (): number => props.preset.catches.length - (party.latest?.length ?? 0);
+  const gone = (): number => props.preset.catches.length - (party.latest()?.length ?? 0);
 
   return (
     // A white row: the name over its pokemon on the left, the buttons at the end
@@ -102,7 +104,7 @@ function PresetRow(props: {
           </Show>
         </span>
         <div class="w-full max-w-80">
-          <TeamStrip catches={party.latest ?? []} />
+          <TeamStrip catches={party.latest() ?? []} />
         </div>
       </div>
       <Button class="h-[34px]" onClick={props.onEdit}>
@@ -120,7 +122,7 @@ export interface TeamsCardProps {
 }
 
 export default function TeamsCard(props: TeamsCardProps): JSX.Element {
-  const [presets, { refetch }] = createResource(
+  const presets = createLoad(
     () => props.player,
     async (player): Promise<[string, TeamPresetRecord][]> => listTeamPresets(player),
   );
@@ -130,7 +132,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
   const [party, setParty] = createSignal<string[]>([]);
   const [status, setStatus] = createSignal<string | null>(null);
 
-  const held = (): [string, TeamPresetRecord][] => presets.latest ?? [];
+  const held = (): [string, TeamPresetRecord][] => presets.latest() ?? [];
   const full = (): boolean => held().length >= TEAM_PRESET_LIMIT;
 
   const start = (id: string | null, preset?: TeamPresetRecord): void => {
@@ -157,7 +159,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
           return;
         }
         close();
-        Promise.resolve(refetch()).catch(() => undefined);
+        presets.refresh();
       })
       .catch((caught: unknown) => {
         setStatus(describeFailure(caught));
@@ -167,7 +169,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
   const drop = (id: string): void => {
     deleteTeamPreset(id)
       .then(() => {
-        Promise.resolve(refetch()).catch(() => undefined);
+        presets.refresh();
       })
       .catch((caught: unknown) => {
         setStatus(describeFailure(caught));
@@ -237,7 +239,7 @@ export default function TeamsCard(props: TeamsCardProps): JSX.Element {
                 <input
                   type="text"
                   value={written().name}
-                  maxLength={NICKNAME_LIMIT}
+                  maxlength={NICKNAME_LIMIT}
                   onInput={(event) => {
                     setWriting({ id: written().id, name: event.currentTarget.value });
                   }}

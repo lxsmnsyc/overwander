@@ -107,7 +107,13 @@ export interface GameSettings {
  */
 function defaults(): GameSettings {
   return {
-    reduceMotion: !isServer && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    // Asked of the machine only where it can answer: a test built for
+    // the browser runs on Node, where `isServer` is false and there is
+    // no `matchMedia`
+    reduceMotion:
+      !isServer &&
+      typeof globalThis.matchMedia === 'function' &&
+      globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
     clock: '24h',
     boxColumns: 6,
     keepBall: true,

@@ -1,6 +1,6 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { Dynamic, renderToString } from '@solidjs/web';
+import { renderToString } from '@solidjs/web';
 import { MDXProvider } from 'solid-marked';
 import BUILTINS from '../../src/components/news/markdown';
 import { RELEASES } from '../../src/components/news/releases';
@@ -40,10 +40,10 @@ describe('the news feed', () => {
 
 describe('a page of a release', () => {
   /** What the feed would draw for one of them. */
-  function drawn(page: (typeof RELEASES)[number]['page']): string {
+  function drawn(Page: (typeof RELEASES)[number]['page']): string {
     return renderToString(() => (
       <MDXProvider builtins={BUILTINS}>
-        <Dynamic component={page} />
+        <Page />
       </MDXProvider>
     ));
   }

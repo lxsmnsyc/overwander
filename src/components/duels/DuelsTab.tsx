@@ -1,4 +1,4 @@
-import { For, Show, createSignal, from } from 'solid-js';
+import { For, Show, createMemo, createSignal, from } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import type { PlayerIdentity } from '../../auth/user';
 import {
@@ -34,9 +34,14 @@ function InvitedRow(props: {
   onAccept: () => void;
   onDecline: () => void;
 }): JSX.Element {
-  const caller = from<Profile | null>((set) =>
-    watchProfile(props.invite.sender, (record) => {
-      set(record);
+  // Seeded with nothing, so the row names "a trainer" until the
+  // profile lands rather than holding the tab
+  const caller = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(props.invite.sender, (record) => {
+        set(record);
+      });
     }),
   );
   const named = (): string => {
@@ -90,14 +95,22 @@ export default function DuelsTab(props: DuelsTabProps): JSX.Element {
   const game = useGame();
   const [busy, setBusy] = createSignal(false);
 
-  const invites = from<DuelInvite[]>((set) =>
-    watchDuelInvites(props.user.uid, (waiting) => {
-      set(waiting);
+  // Both seeded with nothing: the tab has no boundary of its own, and
+  // draws an empty list until the first answer rather than waiting
+  const invites = createMemo(() =>
+    from<DuelInvite[] | undefined>((set) => {
+      set(undefined);
+      return watchDuelInvites(props.user.uid, (waiting) => {
+        set(waiting);
+      });
     }),
   );
-  const mine = from<[string, DuelRecord][]>((set) =>
-    watchMyDuels(props.user.uid, (lobbies) => {
-      set(lobbies);
+  const mine = createMemo(() =>
+    from<[string, DuelRecord][] | undefined>((set) => {
+      set(undefined);
+      return watchMyDuels(props.user.uid, (lobbies) => {
+        set(lobbies);
+      });
     }),
   );
 

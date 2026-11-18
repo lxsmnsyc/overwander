@@ -1,4 +1,4 @@
-import { For, type Resource, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import type { JSX } from '@solidjs/web';
 import { Disclosure, DisclosureButton, DisclosurePanel } from 'terracotta/disclosure';
 import {
@@ -33,7 +33,7 @@ import { FilledSeat, OpenSeat, STAMP, STAMP_AT_REST, STAMP_READY } from './seat'
 import SpectatorList from '../../battle/SpectatorList';
 import { openForm } from '../../forms/stack';
 import { PickTeamForm } from '../../forms/pick-team';
-import { Button, DialogActions, Meta, Note, Status } from '../../styled';
+import { Button, DialogActions, Meta, Note, Status, spellAria } from '../../styled';
 import { useGame } from '../../app/game-context';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -52,7 +52,7 @@ const BLOCKER_MESSAGES: Record<DuelBlocker, () => string> = {
 export default function LobbyRows(
   props: DuelLobbyProps & {
     duel: () => DuelRecord | null;
-    names: Resource<Map<string, Profile>>;
+    names: Accessor<Map<string, Profile>>;
   },
 ): JSX.Element {
   const game = useGame();
@@ -62,8 +62,8 @@ export default function LobbyRows(
   const [busy, setBusy] = createSignal(false);
 
   const duel = (): DuelRecord | null => props.duel();
-  const named = (uid: string): string => props.names()?.get(uid)?.nickname ?? uid;
-  const faceOf = (uid: string): string | null => props.names()?.get(uid)?.sprite ?? null;
+  const named = (uid: string): string => props.names().get(uid)?.nickname ?? uid;
+  const faceOf = (uid: string): string | null => props.names().get(uid)?.sprite ?? null;
 
   const mine = (): DuelMember | undefined => {
     for (const member of duel()?.members ?? []) {
@@ -111,18 +111,27 @@ export default function LobbyRows(
   // Named for whoever hosts it, so the plate says whose lobby this is.
   // A seated player leaves by Leave alone: shutting the panel any other
   // way would leave their party standing in a lobby they walked out of
-  createEffect(() => {
-    const record = duel();
+  createEffect(
+    () => {
+      const record = duel();
 
-    if (record == null) {
-      props.onLobby?.(null);
-      return;
-    }
-    props.onLobby?.({
-      title: isHost() ? m.duels_your_lobby() : m.duels_their_lobby({ name: named(record.host) }),
-      seated: fighting(),
-    });
-  });
+      return {
+        report: props.onLobby,
+        lobby:
+          record == null
+            ? null
+            : {
+                title: isHost()
+                  ? m.duels_your_lobby()
+                  : m.duels_their_lobby({ name: named(record.host) }),
+                seated: fighting(),
+              },
+      };
+    },
+    ({ report, lobby }) => {
+      report?.(lobby);
+    },
+  );
 
   onCleanup(() => {
     props.onLobby?.(null);
@@ -133,15 +142,16 @@ export default function LobbyRows(
   // than looking in through a call the start is about to clear
   let answered = false;
 
-  createEffect(() => {
-    const record = duel();
-
-    if (record == null || answered || present().includes(props.user.uid)) {
-      return;
-    }
-    answered = true;
-    joinDuel(props.duelId).catch(() => undefined);
-  });
+  createEffect(
+    () => (duel() != null && !present().includes(props.user.uid) ? props.duelId : null),
+    (outside) => {
+      if (outside == null || answered) {
+        return;
+      }
+      answered = true;
+      joinDuel(outside).catch(() => undefined);
+    },
+  );
 
   /**
    * Whether the lobby has ever been seen. A lobby the host took down
@@ -151,25 +161,29 @@ export default function LobbyRows(
    */
   let arrived = false;
 
-  createEffect(() => {
-    if (duel() != null) {
-      arrived = true;
-      return;
-    }
-    if (arrived) {
-      game.setDuel(null);
-    }
-  });
+  createEffect(
+    () => duel() != null,
+    (here) => {
+      if (here) {
+        arrived = true;
+        return;
+      }
+      if (arrived) {
+        game.setDuel(null);
+      }
+    },
+  );
 
   // The host's start takes the page for everybody in the room, the
   // two fighting and everybody watching
-  createEffect(() => {
-    const battle = duel()?.battle;
-
-    if (battle != null) {
-      game.setBattle({ id: battle, replay: false });
-    }
-  });
+  createEffect(
+    () => duel()?.battle,
+    (battle) => {
+      if (battle != null) {
+        game.setBattle({ id: battle, replay: false });
+      }
+    },
+  );
 
   const act = (action: () => Promise<unknown>, failure: string): void => {
     setStatus(null);
@@ -253,7 +267,7 @@ export default function LobbyRows(
     >
       <button
         type="button"
-        aria-pressed={member.ready}
+        aria-pressed={spellAria(member.ready)}
         disabled={busy() || member.catches.length === 0}
         class={`${STAMP} cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 ${
           member.ready ? STAMP_READY : 'border-tide bg-tide-soft text-tide-dark'

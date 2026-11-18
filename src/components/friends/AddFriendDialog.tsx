@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Loading, type Resource, Show, createResource, createSignal } from 'solid-js';
+import { type Accessor, Loading, Show, createMemo, createSignal } from 'solid-js';
 import { type FoundPlayer, FriendTie, findPlayerByCode, getMyFriendCode } from '../../auth/friends';
 import {
   Button,
@@ -68,7 +68,7 @@ function Found(props: { player: FoundPlayer }): JSX.Element {
  * The player's own code, which is where the read lands: a resource
  * read in the component that made it would suspend past the dialog
  */
-function OwnCode(props: { code: Resource<string> }): JSX.Element {
+function OwnCode(props: { code: Accessor<string | null> }): JSX.Element {
   const [copied, setCopied] = createSignal(false);
 
   return (
@@ -81,7 +81,7 @@ function OwnCode(props: { code: Resource<string> }): JSX.Element {
         <Button
           onClick={() => {
             navigator.clipboard
-              .writeText(props.code.latest ?? '')
+              .writeText(props.code() ?? '')
               .then(() => {
                 setCopied(true);
               })
@@ -106,11 +106,10 @@ export default function AddFriendDialog(props: AddFriendDialogProps): JSX.Elemen
   const [error, setError] = createSignal<string | null>(null);
 
   // Minted on the first open rather than at sign-in: a code is only
-  // needed once somebody means to share it
-  const [code] = createResource(
-    () => (props.isOpen ? true : null),
-    async () => getMyFriendCode(),
-  );
+  // needed once somebody means to share it. Asked once: the code does
+  // not change, and a dialog closing keeps it on screen through the fade
+  const opened = createMemo((was: boolean | undefined) => was === true || props.isOpen);
+  const code = createMemo((): Promise<string> | null => (opened() ? getMyFriendCode() : null));
 
   const look = (): void => {
     setError(null);

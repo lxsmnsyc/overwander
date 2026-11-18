@@ -1,8 +1,15 @@
-// @refresh reload
-import { StartClient, mount } from '@solidjs/start/client';
+import { hydrate } from '@solidjs/web';
+import App, { Document } from './app';
 import guardServerCalls from './auth/stale-build';
 
 // Before anything can call the server
 guardServerCalls();
 
-mount(() => <StartClient />, document.getElementById('app')!);
+hydrate(
+  () => (
+    <Document>
+      <App />
+    </Document>
+  ),
+  document,
+);

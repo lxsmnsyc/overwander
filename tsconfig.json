@@ -7,7 +7,7 @@
   "compilerOptions": {
     "module": "ESNext",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["@solidjs/start/env", "@types/node"],
+    "types": ["vite/client", "@types/node"],
     "importHelpers": true,
     "declaration": false,
     "noEmit": true,
@@ -21,7 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "bundler",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "@solidjs/web",
     "skipLibCheck": true,
     "paths": {
       "~/*": ["./src/*"]

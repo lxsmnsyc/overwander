@@ -1,5 +1,5 @@
 import type { JSX } from '@solidjs/web';
-import { Show, createSignal } from 'solid-js';
+import { Show, createSignal, untrack } from 'solid-js';
 import AddFriendDialog from '../../friends/AddFriendDialog';
 import ProfileSection from '../../../game/session/profile-section';
 import { UserIcon } from '../../icons';
@@ -43,10 +43,12 @@ function ownTitle(): string {
 }
 
 function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }): JSX.Element {
+  // What the sheet opens on is read once: the sheet is built per opening,
+  // so a later change to these props does not move an open one
   const state = createProfileState({
     player: props.player,
-    viewOnly: props.viewOnly === true,
-    section: props.section,
+    viewOnly: untrack(() => props.viewOnly === true),
+    section: untrack(() => props.section),
   });
 
   // Named by the nickname where it is somebody else's, which is what a

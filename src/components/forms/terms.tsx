@@ -88,11 +88,11 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
           </Pill>
         )}
       </Show>
-      <For each={props.rows ?? []}>
+      <For each={props.rows ?? []} keyed={(row) => row.label}>
         {(row) => (
-          <Pill size="medium" tone={row.tone ?? 'plain'} class="gap-1.5">
-            <span class="font-bold text-muted">{row.label}</span>
-            {row.value}
+          <Pill size="medium" tone={row().tone ?? 'plain'} class="gap-1.5">
+            <span class="font-bold text-muted">{row().label}</span>
+            {row().value}
           </Pill>
         )}
       </For>

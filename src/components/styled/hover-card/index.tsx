@@ -8,6 +8,7 @@ import {
   createUniqueId,
   onCleanup,
   onSettled,
+  untrack,
   useContext,
 } from 'solid-js';
 import { Transition } from 'terracotta/transition';
@@ -483,7 +484,11 @@ export default function HoverCard(props: HoverCardProps): JSX.Element {
       <span
         ref={(element) => {
           trigger = element;
-          floating.refs.setReference(element);
+          // Floating UI reads its own options as it takes the element,
+          // which in a ref callback is an untracked read on purpose
+          untrack(() => {
+            floating.refs.setReference(element);
+          });
         }}
         // Focusable, so the card is reachable without a pointer, and
         // described rather than labelled: the trigger already says

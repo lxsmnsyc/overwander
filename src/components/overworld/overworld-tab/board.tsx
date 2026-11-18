@@ -165,8 +165,8 @@ export default function OverworldBoard(props: {
   const game = useGame();
   const toast = useToast();
   const walk: BoardWalk<BoardView> = createBoardWalk<BoardView>({
-    uid: () => auth.user()?.uid ?? null,
-    elsewhere: () => game.elsewhere(),
+    uid: () => untrack(() => auth.user()?.uid ?? null),
+    elsewhere: () => untrack(game.elsewhere),
     takeWalk: game.takeWalk,
     standHere: game.standHere,
     setPosition: game.setPosition,
@@ -355,7 +355,7 @@ export default function OverworldBoard(props: {
   const boardWindows = createBoardWindows({
     walk: walk,
     zone,
-    uid: () => auth.user()?.uid ?? null,
+    uid: () => untrack(() => auth.user()?.uid ?? null),
     failed: (message) => {
       remark(message, 'ember');
     },
@@ -366,7 +366,7 @@ export default function OverworldBoard(props: {
   });
 
   const acts = createBoardInteractions({
-    user: () => auth.user(),
+    user: () => untrack(auth.user),
     walk,
     windows: boardWindows,
     setEncounter: game.setEncounter,
@@ -476,7 +476,7 @@ export default function OverworldBoard(props: {
       : null,
   );
 
-  boardWindows.attach(() => view()?.chunks ?? null);
+  boardWindows.attach(() => untrack(view)?.chunks ?? null);
 
   const spent = createStoreSignal(boardWindows.spent);
   const picked = createStoreSignal(boardWindows.picked);
@@ -941,9 +941,11 @@ export default function OverworldBoard(props: {
     reach(target);
   };
 
+  // The walk reads these from its own frame loop and from effect applies,
+  // where a tracked read warns, so they are handed over untracked
   walk.attach({
-    buddy,
-    view,
+    buddy: () => untrack(buddy),
+    view: () => untrack(view),
     engaged,
     holdsSomething,
     withinReach,

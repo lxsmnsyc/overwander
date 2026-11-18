@@ -323,7 +323,7 @@ export default function PickerBox(
     (wanted) => {
       // A live caller hands back the run it was just given. Setting it
       // again is a second redraw of the whole box saying nothing new
-      if (wanted != null && !sameRun(draft(), wanted)) {
+      if (wanted != null && !sameRun(untrack(draft), wanted)) {
         setDraft(wanted);
       }
     },
@@ -359,7 +359,7 @@ export default function PickerBox(
       return taken;
     },
     (taken) => {
-      if (taken != null && !sameRun(draft(), taken)) {
+      if (taken != null && !sameRun(untrack(draft), taken)) {
         setDraft(taken);
       }
     },

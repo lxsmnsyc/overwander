@@ -157,14 +157,6 @@ export default defineConfig(({ mode }) => ({
     // The world tests generate thousands of chunks and sit near 5 seconds alone,
     // so the default timeout fails them whenever the machine is busy
     testTimeout: 20_000,
-    // Temporary, until the solid-2-tests child settles how the tests
-    // run (possibly per group through `test.projects`).
-    //
-    // Said outright, since the Solid plugin reads it: an explicit `node`
-    // gives the tests the server build of Solid, as SolidStart did. Left
-    // unset, the plugin compiles them for the browser, where `isServer`
-    // is false and the modules that touch `window` at import fail
-    environment: 'node',
     /**
      * `test/db` needs the development database and clears it between cases,
      * so it runs on its own as `pnpm test:db` (see `vitest.db.ts`).
@@ -173,5 +165,38 @@ export default defineConfig(({ mode }) => ({
      * Playwright refuses to have its `test` called by another runner
      */
     exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/db/**', 'e2e/**'],
+    /**
+     * The Solid plugin compiles a project for the posture its
+     * `environment` names. `test/components` runs the way the browser
+     * does (no `environment` set): `isServer` is false and a signal
+     * write applies after a microtask, so those tests call `flush()`.
+     * Everything else runs the server build (`environment: 'node'`),
+     * which is where the engine, the data and the server modules run
+     * outside a tab. A component test that calls `renderToString` is
+     * named `*.ssr.test.tsx`: the browser build refuses it, so it runs
+     * in the server project.
+     *
+     * `vitest.fuzz.ts` and `vitest.sim.ts` drop `projects` from what
+     * they merge, since they pick their own files
+     */
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'client',
+          include: ['test/components/**/*.test.{ts,tsx}'],
+          exclude: ['test/components/**/*.ssr.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'server',
+          environment: 'node',
+          include: ['test/**/*.test.{ts,tsx}'],
+          exclude: ['test/db/**', 'test/components/**/!(*.ssr).test.{ts,tsx}'],
+        },
+      },
+    ],
   },
 }));

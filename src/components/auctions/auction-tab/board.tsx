@@ -344,9 +344,15 @@ export function AuctionBoard(
     return lot == null ? undefined : nameOf(lot);
   };
 
+  // Getters, so the props are read where a lot is drawn and not here,
+  // in the body, where a read does not track
   const { lotDetails, lotActions, lotChoices } = createLotActions({
-    player: props.player,
-    viewOnly: props.viewOnly,
+    get player() {
+      return props.player;
+    },
+    get viewOnly() {
+      return props.viewOnly;
+    },
     gold,
     describeSeller,
     claimOf,

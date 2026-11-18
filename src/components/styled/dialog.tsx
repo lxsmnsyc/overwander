@@ -470,10 +470,6 @@ export function Dialog(props: DialogProps): JSX.Element {
           <TransitionChild {...SHEER} class="fixed inset-0">
             <DialogOverlay class="size-full bg-shade/70 backdrop-blur-[1px]" />
           </TransitionChild>
-          {/* This element is to trick the browser into centering the modal contents. */}
-          <span class="inline-block h-screen align-middle" aria-hidden="true">
-            &#8203;
-          </span>
           {/* The wrapper is the panel: it is what is placed and what
               grows, and `DialogPanel` inside it is boxless, so the
               scale has nothing of its own to fight over.

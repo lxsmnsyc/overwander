@@ -1,7 +1,7 @@
 ---
 id: solid-2-codemod
 title: Rewrite the one-to-one Solid 2.0 imports and renames
-status: todo
+status: active
 priority: could
 type: refactor
 story: solid-2

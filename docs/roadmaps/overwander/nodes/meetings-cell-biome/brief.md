@@ -1,7 +1,7 @@
 ---
 id: meetings-cell-biome
 title: Record a meeting under the country of its cell
-status: todo
+status: active
 priority: should
 type: fix
 outline: false

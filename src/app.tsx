@@ -1,7 +1,7 @@
 import { Title } from '@solidjs/meta';
 import { createRouter } from '@solidjs/router';
 import { Errored, Loading, type ParentProps, createEffect, onSettled } from 'solid-js';
-import { HydrationScript, type JSX } from '@solidjs/web';
+import { HydrationScript, type JSX, httpStatus } from '@solidjs/web';
 import { fileRoutes } from '@solidjs/router/fs';
 import { pageRoutes } from 'virtual:file-routes';
 import AuthProvider from './auth/context';
@@ -17,6 +17,7 @@ import { ROOT_HOST } from './components/styled/portal-host';
 import './app.css';
 // The browser reads the locale the server rendered the page in
 import { currentLocale } from './i18n/locale';
+import { m } from './i18n/paraglide/messages.js';
 
 // The world is inert until it is registered, and both the server
 // render and the client hydration need it before anything can be
@@ -76,11 +77,32 @@ export function Document(props: ParentProps): JSX.Element {
         <script type="module" src="/src/entry-client.tsx" async />
       </head>
       <body>
-        {/* A render that throws still sends the page, with what went
-            wrong on it, rather than a bare 500 */}
-        <Errored fallback={(error) => <pre>{String(error())}</pre>}>{props.children}</Errored>
+        {/* A render that throws still sends a page rather than a bare
+            500: what went wrong in development, a way back for players */}
+        <Errored fallback={(error) => <RenderFailed error={error} />}>{props.children}</Errored>
       </body>
     </html>
+  );
+}
+
+/**
+ * What a player sees when a render throws. The error itself is shown
+ * only in development: its text is written for the code, not for a player
+ */
+function RenderFailed(props: { error: () => unknown }): JSX.Element {
+  httpStatus(500);
+
+  return (
+    <main class="mx-auto flex w-full max-w-md flex-col gap-3 px-4 py-16 text-center">
+      <h1>{m.render_failed_title()}</h1>
+      <p class="text-sm text-muted">
+        {m.render_failed_note()}{' '}
+        <a href="" target="_self">
+          {m.render_failed_reload()}
+        </a>
+      </p>
+      {import.meta.env.DEV ? <pre class="text-left text-xs">{String(props.error())}</pre> : null}
+    </main>
   );
 }
 

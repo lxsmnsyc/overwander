@@ -5,6 +5,7 @@ import { getSpeciesData, getSpeciesForms } from '../../data/species';
 import { Button, Dialog, DialogActions, Meta, Note } from '../styled';
 import { useGame } from '../app/game-context';
 import PokedexGrid, { type DexEntry, dexLabel, formLabel } from './PokedexGrid';
+import { readDexFlags } from './dex-entries';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -41,17 +42,12 @@ function FormsBox(props: {
   dex: Resource<PokedexView>;
   onSpecies: (species: Species) => void;
 }): JSX.Element {
-  const entries = (): DexEntry[] => {
-    const view = props.dex();
-    const seen = new Set<Species>();
-    const caught = new Set<Species>();
+  const game = useGame();
 
-    for (const tally of view?.seen ?? []) {
-      seen.add(tally.species);
-    }
-    for (const tally of view?.caught ?? []) {
-      caught.add(tally.species);
-    }
+  const entries = (): DexEntry[] => {
+    // Each form is read by its own tally: the mode picks which coat counts
+    const mode = game.dexShiny() ? 'shiny' : 'regular';
+    const { seen, caught } = readDexFlags(props.dex(), mode, true);
 
     const forms: DexEntry[] = [];
 
@@ -64,6 +60,7 @@ function FormsBox(props: {
         name: data.name,
         seen: seen.has(species),
         caught: caught.has(species),
+        shiny: mode === 'shiny',
         label: formLabel(species),
       });
     }

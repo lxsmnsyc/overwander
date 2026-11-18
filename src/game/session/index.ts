@@ -49,6 +49,8 @@ export interface Session extends Walk, Rewards {
   trading: WritableStore<string | null>;
   dexEntry: WritableStore<Species | null>;
   dexForms: WritableStore<Species | null>;
+  /** Whether the dex is read by shiny coats, shared so the forms grid follows it */
+  dexShiny: WritableStore<boolean>;
   /** Which part of the player's own profile to open at, or null for where it always opens */
   profileAt: WritableStore<ProfileSection | null>;
   /**
@@ -115,6 +117,7 @@ export default function createSession(events: SessionEvents): Session {
     trading: createStore<string | null>(null),
     dexEntry: createStore<Species | null>(null),
     dexForms: createStore<Species | null>(null),
+    dexShiny: createStore<boolean>(false),
     profileAt: createStore<ProfileSection | null>(null),
     records,
     touchRecords: () => {

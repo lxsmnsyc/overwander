@@ -241,6 +241,9 @@ export interface GameState {
    */
   dexForms: Accessor<Species | null>;
   setDexForms: (value: Species | null) => void;
+  /** Whether the dex and its forms grid are read by shiny coats; kept for the session */
+  dexShiny: Accessor<boolean>;
+  setDexShiny: (value: boolean) => void;
   /**
    * Bumped whenever a record changes under a list that is showing:
    * an evolution renames a row, a release takes one away, a listing
@@ -383,6 +386,7 @@ export default function GameProvider(
   const [trading, setTrading] = storeSignal(session.trading);
   const [dexEntry, setDexEntry] = storeSignal(session.dexEntry);
   const [dexForms, setDexForms] = storeSignal(session.dexForms);
+  const [dexShiny, setDexShiny] = storeSignal(session.dexShiny);
 
   return (
     <GameContext.Provider
@@ -431,6 +435,8 @@ export default function GameProvider(
         setDexEntry,
         dexForms,
         setDexForms,
+        dexShiny,
+        setDexShiny,
         records: createStoreSignal(session.records),
         touchRecords: session.touchRecords,
         notices: createStoreSignal(session.notices),

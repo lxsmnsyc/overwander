@@ -14,8 +14,8 @@ import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../data/species/reg
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
 import { ArrowLeftIcon, ArrowRightIcon, SearchIcon, StarIcon } from '../icons';
 import { Species } from '../../data/ids/species';
-import { getBaseFormSpecies } from '../../data/ids/forms';
-import { getBaseForms, getSpeciesData, getSpeciesForms } from '../../data/species';
+import { getSpeciesForms } from '../../data/species';
+import { type DexMode, buildDexEntries } from './dex-entries';
 import PokedexGrid, {
   DEX_PAGE,
   type DexEntry,
@@ -75,6 +75,14 @@ function listFilters(): SegmentedOption<DexFilter>[] {
   return options;
 }
 
+/** The two lenses as the segmented control lists them */
+function listModes(): SegmentedOption<DexMode>[] {
+  return [
+    { value: 'regular', label: m.dex_mode_regular() },
+    { value: 'shiny', label: m.dex_mode_shiny() },
+  ];
+}
+
 /** One of the two counts at the top of the rail: a number over its word */
 function CountTile(props: { count: number; label: string; tone: 'tide' | 'leaf' }): JSX.Element {
   return (
@@ -90,7 +98,7 @@ function CountTile(props: { count: number; label: string; tone: 'tide' | 'leaf' 
       >
         {formatNumber(props.count)}
       </b>
-      <span class="text-[10px] font-extrabold tracking-[0.12em] text-muted uppercase">
+      <span class="md:min-h-[2lh] text-[10px] font-extrabold tracking-[0.12em] text-muted uppercase">
         {props.label}
       </span>
     </div>
@@ -159,35 +167,23 @@ function regionName(region: Regions): string {
 function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
   const game = useGame();
 
-  const entries = (): DexEntry[] => {
-    const view = props.dex();
-    // Rolled up to the form's own entry: the dex prints one Unown, and
-    // an Unown B in the record is that row filled in
-    const seen = new Set<Species>();
-    const caught = new Set<Species>();
+  const mode = (): DexMode => (game.dexShiny() ? 'shiny' : 'regular');
 
-    for (const tally of view?.seen ?? []) {
-      seen.add(getBaseFormSpecies(tally.species));
+  const entries = createMemo((): DexEntry[] => buildDexEntries(props.dex(), mode()));
+
+  /** What the two tiles read: the dex's own counts, or the shiny rows lit */
+  const counted = (kind: 'seen' | 'caught'): number => {
+    if (mode() === 'regular') {
+      return (kind === 'seen' ? props.dex()?.seenSpecies : props.dex()?.caughtSpecies) ?? 0;
     }
-    for (const tally of view?.caught ?? []) {
-      caught.add(getBaseFormSpecies(tally.species));
+    let count = 0;
+
+    for (const entry of entries()) {
+      if (kind === 'seen' ? entry.seen || entry.caught : entry.caught) {
+        count += 1;
+      }
     }
-
-    const rows: DexEntry[] = [];
-
-    for (const species of getBaseForms()) {
-      const data = getSpeciesData(species);
-
-      rows.push({
-        species,
-        dexNumber: data.dexNumber,
-        name: data.name,
-        seen: seen.has(species),
-        caught: caught.has(species),
-        forms: getSpeciesForms(species).length > 1,
-      });
-    }
-    return rows.sort((one, other) => one.dexNumber - other.dexNumber);
+    return count;
   };
 
   /**
@@ -335,11 +331,23 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
           way into the dex with how much of it is caught. A row of chips
           on a phone */}
       <div class="flex shrink-0 flex-col gap-2.5 md:w-[13.75rem]">
+        <Segmented
+          label={m.dex_mode()}
+          value={mode()}
+          options={listModes()}
+          onChange={(value) => {
+            game.setDexShiny(value === 'shiny');
+          }}
+        />
         <div class="flex gap-1.5">
-          <CountTile count={props.dex()?.seenSpecies ?? 0} label={m.dex_tile_seen()} tone="tide" />
           <CountTile
-            count={props.dex()?.caughtSpecies ?? 0}
-            label={m.dex_tile_caught()}
+            count={counted('seen')}
+            label={mode() === 'shiny' ? m.dex_tile_seen_shiny() : m.dex_tile_seen()}
+            tone="tide"
+          />
+          <CountTile
+            count={counted('caught')}
+            label={mode() === 'shiny' ? m.dex_tile_caught_shiny() : m.dex_tile_caught()}
             tone="leaf"
           />
         </div>

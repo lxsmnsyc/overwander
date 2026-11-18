@@ -1,13 +1,18 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
+import type { DexEntry } from '../../src/components/dex/PokedexGrid';
+import registerGameData from '../../src/data';
+import { type DexMode, buildDexEntries } from '../../src/components/dex/dex-entries';
 import { Species } from '../../src/data/ids/species';
 import {
   DEX_CAUGHT,
   DEX_SEEN,
+  countDexShinySpecies,
   countDexSpecies,
   getDexCount,
   getDexTally,
   hasCaughtShiny,
   hasCaughtSpecies,
+  hasSeenShiny,
   hasSeenSpecies,
   listDexTallies,
   pokedexId,
@@ -126,5 +131,59 @@ describe('pokedex record', () => {
 
     expect(listDexTallies(odd, DEX_SEEN)).toEqual([]);
     expect(getDexCount(odd, DEX_SEEN, Species.Rattata)).toBe(0);
+  });
+});
+
+describe('shiny dex', () => {
+  beforeAll(() => {
+    registerGameData();
+  });
+
+  /** A shiny Gyarados caught, a shiny Pidgey seen only, an ordinary Rattata caught */
+  const SHINY = {
+    seen: {},
+    seenShiny: { [Species.Pidgey]: 1 },
+    caught: { [Species.Rattata]: 4 },
+    caughtShiny: { [Species.Gyarados]: 1 },
+  };
+
+  function rowFor(mode: DexMode, species: Species): DexEntry | undefined {
+    const view = {
+      seen: listDexTallies(SHINY, DEX_SEEN),
+      caught: listDexTallies(SHINY, DEX_CAUGHT),
+    };
+
+    return buildDexEntries(view, mode).find((entry) => entry.species === species);
+  }
+
+  it('counts shiny species from the shiny tally alone', () => {
+    expect(countDexShinySpecies(SHINY, DEX_CAUGHT)).toBe(1);
+    expect(countDexShinySpecies(SHINY, DEX_SEEN)).toBe(1);
+    expect(countDexShinySpecies({}, DEX_CAUGHT)).toBe(0);
+  });
+
+  it('counts a shiny owned but never seen as seen', () => {
+    expect(hasSeenShiny(SHINY, Species.Gyarados)).toBe(true);
+    expect(hasSeenShiny(SHINY, Species.Pidgey)).toBe(true);
+    expect(hasSeenShiny(SHINY, Species.Rattata)).toBe(false);
+  });
+
+  it('rolls forms up to one row', () => {
+    const forms = {
+      seen: {},
+      seenShiny: {},
+      caught: {},
+      caughtShiny: { [Species.Unown]: 1, [Species.UnownB]: 1 },
+    };
+
+    expect(countDexShinySpecies(forms, DEX_CAUGHT)).toBe(1);
+  });
+
+  it('draws a caught shiny, silhouettes a seen-only shiny, and leaves the rest unmet', () => {
+    expect(rowFor('shiny', Species.Gyarados)).toMatchObject({ seen: true, caught: true });
+    expect(rowFor('shiny', Species.Pidgey)).toMatchObject({ seen: true, caught: false });
+    // An ordinary Rattata caught is nothing in the shiny dex
+    expect(rowFor('shiny', Species.Rattata)).toMatchObject({ seen: false, caught: false });
+    expect(rowFor('regular', Species.Rattata)).toMatchObject({ caught: true });
   });
 });

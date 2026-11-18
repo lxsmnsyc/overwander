@@ -41,3 +41,8 @@
 ## Size
 
 - Estimated L, actual M: the split was mechanical and the first-frame audit found nothing to fix.
+
+## Landed
+
+- Commit `149e4fe94` on `batch/overwander`, after two fresh review rounds. Round one found that SSR re-registered the registries with one locale (fixed: the loader is skipped when they are filled) and that a failed load stuck (fixed). The orchestrator updated the figures and the loader comment.
+- Left: the skip relies on `db.ts`, which runs `registerGameData`, being statically imported by the SSR entry. Not checked in a browser.

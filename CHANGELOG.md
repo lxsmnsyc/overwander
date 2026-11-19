@@ -1,5 +1,15 @@
 # overwander
 
+## 4.55.0
+
+### Minor Changes
+
+- 2acaad2: Starting a battle now closes a shutter over the world: the two halves meet, hold a beat on the button, and open on the field. With reduce motion on, it is a short fade instead.
+
+### Patch Changes
+
+- 06cd437: The countdown before a battle now starts as soon as the field is drawn, instead of after a loading screen. Each pokemon appears as its sprite arrives, and the fight still waits for all of them before it starts.
+
 ## 4.54.0
 
 ### Minor Changes

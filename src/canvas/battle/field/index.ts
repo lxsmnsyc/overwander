@@ -87,7 +87,6 @@ import {
   TURN_DEAD_ZONE,
   TURN_SLOP,
   WIDTH,
-  readLoadingLabel,
 } from './metrics';
 import {
   CUE_GAP,
@@ -466,9 +465,9 @@ export default function createBattleField(
   /**
    * Whether the sheets for everybody on the field are still coming.
    *
-   * The field is drawn either way — the ground, the slots, the health
-   * bars — but nothing is fought over it until the pokemon are on it,
-   * and the caller holds the battle back while this is true
+   * The field is drawn either way, and each pokemon appears as its own
+   * sheet lands, but nothing is fought over it until all of them are
+   * on it: the caller holds the battle back while this is true
    */
   let loading = true;
 
@@ -694,19 +693,6 @@ export default function createBattleField(
   const draw = (): void => {
     ground();
 
-    // Nothing but the field while the sheets are still coming. The
-    // caller holds the battle back until they land, so there is
-    // nothing happening to draw — and a row of circles standing in
-    // for pokemon reads as a fight that has already gone wrong
-    if (loading) {
-      context.fillStyle = COLORS.text;
-      context.font = 'bold 18px monospace';
-      context.textAlign = 'center';
-      context.textBaseline = 'middle';
-      context.fillText(readLoadingLabel(), WIDTH / 2, HEIGHT / 2);
-      return;
-    }
-
     // A heavy landing shakes the scene. Only there: the painted
     // fallback keeps the look it had
     if (scene != null) {
@@ -882,7 +868,12 @@ export default function createBattleField(
 
       slot.glow = morph.glow;
       slot.swell = morph.swell;
-      drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit), onto);
+      // A pokemon whose sheet is still coming is left off rather than
+      // stood in for by a disc, which reads as a fight already gone
+      // wrong. Its bar stays, and the body appears when the sheet lands
+      const coming = loading && slot.sprite?.ready !== true;
+
+      drawSlot(context, slot, striking, clock, labels, gone.has(slot.unit) || coming, onto);
     }
 
     // The sky, over the pokemon and under whatever is going off:

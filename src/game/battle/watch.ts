@@ -46,10 +46,10 @@ const enum WatchPhase {
   Waiting = 0,
   /** The first record is in and the teams are being read */
   Building = 1,
-  /** The engine is set up, waiting on the canvas to have every sheet */
-  Built = 2,
-  /** The field is drawn and the count is running */
-  Counting = 3,
+  /** The engine is set up and the field is drawn, and the count is running */
+  Counting = 2,
+  /** The count is over, and the canvas is still waiting on a sheet */
+  Held = 3,
   Running = 4,
   /** The engine settled the fight, and the result has been sent off once */
   Settled = 5,
@@ -67,7 +67,7 @@ const OUTCOME_STAMPS: Record<Outcome, BattleOutcome> = {
 };
 
 export interface BattleWatchEvents {
-  /** The field is drawn and the count has begun */
+  /** The engine is built and the count has begun */
   started: () => void;
   /** The engine has settled the fight, once */
   settled: (outcome: Outcome) => void;
@@ -103,7 +103,10 @@ export interface BattleWatch {
   fought: () => boolean;
   /** The other side where it belonged to nobody, kept on the record for replays */
   opponent: () => { name: string; sprite: string } | null;
-  /** The canvas has every sheet in hand; the first call starts the count */
+  /**
+   * The canvas has every sheet in hand. The fight starts once this has
+   * been called and the count is over, whichever comes last
+   */
   ready: () => void;
   /** Only a replay may be hurried: a fight that counts is played in real time */
   setSpeed: (speed: number) => void;
@@ -127,6 +130,8 @@ export default function createBattleWatch(
   const status = createStore<string | null>(null);
   const candy = createStore<CandyEarned[]>([]);
   let phase = WatchPhase.Waiting;
+  /** Whether the canvas has every sheet, which the fight waits on as well as the count */
+  let drawn = false;
 
   const say = (caught: unknown): void => {
     status.set(describeFailure(caught));
@@ -187,6 +192,40 @@ export default function createBattleWatch(
       : { name: loaded.opponent, sprite: loaded.opponentSprite };
   };
 
+  let countdown: ReturnType<typeof setTimeout> | null = null;
+
+  const run = (): void => {
+    phase = WatchPhase.Running;
+    instance.get()?.battle.start();
+  };
+
+  const count = (left: number): void => {
+    counting.set(left);
+    countdown = setTimeout(() => {
+      if (left > 1) {
+        count(left - 1);
+        return;
+      }
+      // The last step starts the battle rather than counting to zero,
+      // unless a sheet is still coming, when the canvas starts it
+      countdown = null;
+      counting.set(null);
+      if (drawn) {
+        run();
+      } else {
+        phase = WatchPhase.Held;
+      }
+    }, COUNTDOWN_TICK);
+  };
+
+  const stopCounting = (): void => {
+    if (countdown != null) {
+      clearTimeout(countdown);
+      countdown = null;
+    }
+    counting.set(null);
+  };
+
   const build = (loaded: BattleRecord): void => {
     listBattleTeams(loaded)
       .then((teams) => {
@@ -211,11 +250,14 @@ export default function createBattleWatch(
                 loaded.rules,
               );
 
-        // Set up but not running: the count starts once the canvas has
-        // every sheet, so it is not spent over an empty field
+        // Set up but not running. The count starts with the field, and
+        // the sheets come in over it: the fight itself still waits for
+        // them, so nobody is hit before they are drawn
         built.battle.initialize();
         instance.set(built);
-        phase = WatchPhase.Built;
+        phase = WatchPhase.Counting;
+        count(COUNTDOWN);
+        events.started();
       })
       .catch((caught: unknown) => {
         // The next record that arrives tries again
@@ -341,31 +383,6 @@ export default function createBattleWatch(
     });
   };
 
-  let countdown: ReturnType<typeof setTimeout> | null = null;
-
-  const count = (left: number): void => {
-    counting.set(left);
-    countdown = setTimeout(() => {
-      if (left > 1) {
-        count(left - 1);
-        return;
-      }
-      // The last step starts the battle rather than counting to zero
-      countdown = null;
-      counting.set(null);
-      phase = WatchPhase.Running;
-      instance.get()?.battle.start();
-    }, COUNTDOWN_TICK);
-  };
-
-  const stopCounting = (): void => {
-    if (countdown != null) {
-      clearTimeout(countdown);
-      countdown = null;
-    }
-    counting.set(null);
-  };
-
   const start = (): (() => void) => {
     const unwatch = watchBattle(active.id, (loaded) => {
       record.set(loaded);
@@ -416,13 +433,12 @@ export default function createBattleWatch(
     fought,
     opponent,
     ready: () => {
-      // Once: a canvas that reported twice would start the count over itself
-      if (phase !== WatchPhase.Built) {
-        return;
+      drawn = true;
+      // Only a count already over is waiting on this: a canvas that
+      // reported twice must not start the fight twice
+      if (phase === WatchPhase.Held) {
+        run();
       }
-      phase = WatchPhase.Counting;
-      count(COUNTDOWN);
-      events.started();
     },
     setSpeed: (speed) => {
       const built = instance.get();

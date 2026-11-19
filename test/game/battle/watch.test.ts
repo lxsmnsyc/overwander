@@ -86,15 +86,33 @@ describe('createBattleWatch', () => {
     await vi.waitFor(() => {
       expect(watch.instance.get()).not.toBeNull();
     });
+    // The count starts with the field, before the sheets are in
+    expect(started).toEqual([1]);
+    expect(watch.counting.get()).toBe(COUNTDOWN);
     watch.ready();
     watch.ready();
     expect(started).toEqual([1]);
-    expect(watch.counting.get()).toBe(COUNTDOWN);
     vi.advanceTimersByTime(1000 * COUNTDOWN);
     expect(watch.counting.get()).toBeNull();
     expect(engine.started).toBe(1);
     stop();
     expect(engine.ended).toBe(1);
+  });
+
+  it('holds the fight past the count until the sheets are in', async () => {
+    const { watch } = watchOne(false);
+
+    watch.start();
+    feed(RECORD);
+    await vi.waitFor(() => {
+      expect(watch.instance.get()).not.toBeNull();
+    });
+    vi.advanceTimersByTime(1000 * COUNTDOWN);
+    expect(watch.counting.get()).toBeNull();
+    expect(engine.started).toBe(0);
+    watch.ready();
+    watch.ready();
+    expect(engine.started).toBe(1);
   });
 
   it('asks before a fighter walks out of a live fight, and not before a replay', async () => {

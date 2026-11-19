@@ -503,6 +503,109 @@
 }
 
 /**
+ * The battle shutter (`src/components/battle/BattleShutter.tsx`): two
+ * halves close over the world, a band and a button land where they
+ * meet, and all of it leaves to open on the field. Under reduce motion
+ * nothing travels or grows (`--shutter-travel` and `--shutter-scale`)
+ * and each part fades instead (`--shutter-fade`)
+ */
+@keyframes shutter-top-in {
+  from {
+    opacity: var(--shutter-fade, 1);
+    transform: translateY(calc(-1 * var(--shutter-travel, 100%)));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shutter-top-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: var(--shutter-fade, 1);
+    transform: translateY(calc(-1 * var(--shutter-travel, 100%)));
+  }
+}
+
+@keyframes shutter-bottom-in {
+  from {
+    opacity: var(--shutter-fade, 1);
+    transform: translateY(var(--shutter-travel, 100%));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shutter-bottom-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: var(--shutter-fade, 1);
+    transform: translateY(var(--shutter-travel, 100%));
+  }
+}
+
+@keyframes shutter-band-in {
+  from {
+    opacity: var(--shutter-fade, 1);
+    transform: scaleX(var(--shutter-scale, 0));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shutter-band-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: var(--shutter-fade, 1);
+    transform: scaleX(var(--shutter-scale, 0));
+  }
+}
+
+@keyframes shutter-knob-in {
+  from {
+    opacity: var(--shutter-fade, 1);
+    transform: scale(var(--shutter-scale, 0));
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes shutter-knob-out {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  to {
+    opacity: var(--shutter-fade, 1);
+    transform: scale(var(--shutter-scale, 0));
+  }
+}
+
+/**
  * The reduce-motion setting, as far as CSS goes: a class on the root
  * element, put there from `src/components/app/settings.ts`.
  *
@@ -535,6 +638,9 @@
   --motion-slide: 0px;
   --motion-squash-x: 1;
   --motion-squash-y: 1;
+  --shutter-travel: 0%;
+  --shutter-scale: 1;
+  --shutter-fade: 0;
 }
 
 .reduce-motion *,

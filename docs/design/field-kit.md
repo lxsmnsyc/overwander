@@ -84,6 +84,7 @@ All colours are in `src/app.css`. The token names did not change, so every compo
 - Write a duration as `duration-(--motion-base)`.
 - An exit takes 70% of its entrance: `--motion-quick-exit` (98), `--motion-base-exit` (168), `--motion-move-exit` (252), `--motion-scene-exit` (392).
 - Lists stagger `--motion-stagger` (30ms) a row, for six rows at most.
+- A battle opens behind the battle shutter (`src/components/battle/BattleShutter.tsx`): the halves close in `--motion-scene` on the exit curve, the band and button land as they meet, it holds `--motion-move`, and the halves spring open in `--motion-scene`. Under reduce motion each part fades. Try it with the Battle button on `/demo/kit`.
 - The hover card opens after 300ms (`OPEN_DELAY` in `src/components/styled/hover-delay.ts`). A tooltip still opens at once and rises into place in 140ms.
 
 ### The presets

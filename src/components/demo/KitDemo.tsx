@@ -1,6 +1,7 @@
 import { useSearchParams } from '@solidjs/router';
-import { For, createSignal, onSettled } from 'solid-js';
+import { For, Show, createSignal, onSettled } from 'solid-js';
 import type { JSX } from '@solidjs/web';
+import BattleShutter, { createBattleShutter } from '../battle/BattleShutter';
 import {
   Badge,
   type BadgeTone,
@@ -32,7 +33,8 @@ import {
  * Every styled primitive on one page, with nothing read from an
  * account, so the design system can be captured and compared with the
  * Field Kit board. `?dialog` opens the dialog and `?toast` pushes a
- * toast that stays.
+ * toast that stays. The Battle button plays the battle shutter, and
+ * Leave goes back.
  */
 
 const TONES: ButtonTone[] = ['primary', 'ghost', 'danger', 'accent', 'caution', 'quiet', 'pressed'];
@@ -62,6 +64,8 @@ export default function KitDemo(): JSX.Element {
   const [ball, setBall] = createSignal<string | null>('great');
   const pager = createPager(() => PAGED, 20);
   const [opener, setOpener] = createSignal<HTMLButtonElement>();
+  const [battle, setBattle] = createSignal<string | null>(null);
+  const shutter = createBattleShutter(battle);
 
   onSettled(() => {
     if (search.toast != null) {
@@ -202,6 +206,14 @@ export default function KitDemo(): JSX.Element {
           >
             Open dialog
           </button>
+          <Button
+            tone="danger"
+            onClick={() => {
+              setBattle('wild');
+            }}
+          >
+            Battle
+          </Button>
         </Row>
         <Tooltip
           name="Overgrow"
@@ -241,6 +253,20 @@ export default function KitDemo(): JSX.Element {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* The field the shutter opens on */}
+      <Show when={shutter.shown()}>
+        <div class="fixed inset-0 z-40 grid place-items-center bg-linear-to-b from-tide-soft from-45% to-leaf-soft to-45%">
+          <Button
+            onClick={() => {
+              setBattle(null);
+            }}
+          >
+            Leave
+          </Button>
+        </div>
+      </Show>
+      <BattleShutter phase={shutter.phase()} onClosed={shutter.close} onOpened={shutter.open} />
     </main>
   );
 }

@@ -13,6 +13,7 @@ import AuctionDialog from '../components/auctions/AuctionDialog';
 import AuctionTab from '../components/auctions/auction-tab';
 import { SellHint } from '../components/auctions/auction-tab/sell';
 import BattleData from '../components/app/BattleData';
+import BattleShutter, { createBattleShutter } from '../components/battle/BattleShutter';
 import CatchDialog from '../components/catches/catch-dialog';
 import CatchesList from '../components/catches/catches-list';
 import GameMenu from '../components/app/GameMenu';
@@ -166,385 +167,397 @@ function GameView(props: { user: PlayerIdentity }): JSX.Element {
   };
   const showing = (which: GameDialog): boolean => game.dialog() === which;
 
-  return (
-    <Show
-      when={game.battle()}
-      // Keyed, so the battle is handed over as itself rather than as a
-      // reader of a signal that is about to be empty.
-      //
-      // Leaving is the one press that unsets the thing the view is
-      // built from, and an unkeyed `Show` hands its child an accessor
-      // that throws the moment the condition goes false. The button's
-      // own handler read `props.active` to work out whether there was
-      // a prize to collect, so pressing Leave threw before it had done
-      // anything — which is why Leave appeared to do nothing at all
-      keyed
-      fallback={
-        <div class="relative h-full">
-          <OverworldTab />
-          <GameMenu />
+  // A battle starting closes the shutter over the world first, and the
+  // field goes in behind it
+  const shutter = createBattleShutter(game.battle);
 
-          {/* The two that came out of the profile. Each is one list and
+  return (
+    <>
+      <Show
+        when={shutter.shown()}
+        // Keyed, so the battle is handed over as itself rather than as a
+        // reader of a signal that is about to be empty.
+        //
+        // Leaving is the one press that unsets the thing the view is
+        // built from, and an unkeyed `Show` hands its child an accessor
+        // that throws the moment the condition goes false. The button's
+        // own handler read `props.active` to work out whether there was
+        // a prize to collect, so pressing Leave threw before it had done
+        // anything — which is why Leave appeared to do nothing at all
+        keyed
+        fallback={
+          <div class="relative h-full">
+            <OverworldTab />
+            <GameMenu />
+
+            {/* The two that came out of the profile. Each is one list and
               nothing else, so each is its own panel rather than a tab
               of a page about somebody */}
-          {/* Its own dialog: what stands in its header changes as it is used */}
-          <CatchesList
-            isOpen={showing(GameDialog.Catches)}
-            player={props.user.uid}
-            onClose={close}
-          />
-
-          {/* The dex: what there is, beside the box of what they have */}
-          <PokedexDialog
-            isOpen={showing(GameDialog.Pokedex)}
-            onClose={close}
-            player={props.user.uid}
-            title={TITLES[GameDialog.Pokedex]()}
-            description={DESCRIPTIONS[GameDialog.Pokedex]()}
-          />
-
-          <BagDialog
-            isOpen={showing(GameDialog.Inventory)}
-            onClose={close}
-            player={props.user.uid}
-            title={TITLES[GameDialog.Inventory]()}
-            description={DESCRIPTIONS[GameDialog.Inventory]()}
-          />
-
-          {/* What the game owes them, which is a shelf rather than an
-              announcement: nothing is theirs until they take it */}
-          <Dialog
-            isOpen={showing(GameDialog.Gifts)}
-            onClose={close}
-            width="rail"
-            terse
-            lead={<GiftIcon class="size-4" aria-hidden="true" />}
-            title={TITLES[GameDialog.Gifts]()}
-            description={DESCRIPTIONS[GameDialog.Gifts]()}
-          >
-            <BattleData>
-              <GiftsTab />
-            </BattleData>
-            <DialogActions note={<Meta class="hidden md:block">{m.gifts_dock_note()}</Meta>} stack>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* The quest board: chained asks and their pay, read beside
-              the gifts it pays through */}
-          <Dialog
-            isOpen={showing(GameDialog.Quests)}
-            onClose={close}
-            width="rail"
-            terse
-            lead={<BookmarkIcon class="size-4" aria-hidden="true" />}
-            aside={<QuestHint />}
-            title={TITLES[GameDialog.Quests]()}
-            description={DESCRIPTIONS[GameDialog.Quests]()}
-          >
-            <BattleData>
-              <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
-            </BattleData>
-            <DialogActions note={<Meta class="hidden md:block">{m.quest_hint_claim()}</Meta>}>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* What has been offered to the player, from every corner of
-              the game at once. It notices; the panels behind it are
-              where each is answered */}
-          <Dialog
-            isOpen={showing(GameDialog.Notifications)}
-            onClose={close}
-            width="wider"
-            terse
-            lead={<BellIcon class="size-4" aria-hidden="true" />}
-            title={TITLES[GameDialog.Notifications]()}
-            description={DESCRIPTIONS[GameDialog.Notifications]()}
-          >
-            <NotificationsTab notices={game.notices()} />
-            <DialogActions
-              note={<Meta class="hidden md:block">{m.notices_dock_note()}</Meta>}
-              stack
-            >
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* Nothing in here is earned or spent, so it is the one
-              panel that never waits on the server */}
-          <Dialog
-            isOpen={showing(GameDialog.Settings)}
-            onClose={close}
-            width="rail"
-            terse
-            lead={<SettingsIcon class="size-4" aria-hidden="true" />}
-            title={TITLES[GameDialog.Settings]()}
-            description={DESCRIPTIONS[GameDialog.Settings]()}
-          >
-            <SettingsTab />
-            <DialogActions note={<Meta class="hidden md:block">{m.settings_dock_note()}</Meta>}>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
-
-          {/* The release pages, read as a feed. Like the settings, it
-              is written into the build rather than fetched */}
-          <Dialog
-            isOpen={showing(GameDialog.News)}
-            onClose={close}
-            width="rail"
-            layout="sheet"
-            terse
-            lead={<PageIcon class="size-4" aria-hidden="true" />}
-            title={TITLES[GameDialog.News]()}
-            description={DESCRIPTIONS[GameDialog.News]()}
-          >
-            <NewsTab />
-            <DialogActions note={<Meta class="hidden md:block">{m.news_dock_note()}</Meta>}>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
-
-          <ProfileSheet
-            player={props.user.uid}
-            section={game.profileAt() ?? undefined}
-            isOpen={showing(GameDialog.Profile)}
-            onClose={close}
-          />
-
-          <Dialog
-            isOpen={showing(GameDialog.Raids)}
-            onClose={close}
-            insistent={raidLobby()?.hosting === true}
-            // Broad: lair cards two across in the list, and in a lobby
-            // the boss beside the trainer list
-            width="broad"
-            // Named for the lair while the player is standing in one,
-            // and "Raids" while they are only looking at the list.
-            //
-            // It used to draw no heading at all for the list, on the
-            // grounds that the button they pressed already said the
-            // word — but a panel that opens with a row of lobbies and
-            // no title reads as something half-loaded, and a lobby
-            // opened from the *world* rather than from that button
-            // arrives with no word about where it came from
-            terse
-            lead={raidLobby() == null ? <FireIcon class="size-4" aria-hidden="true" /> : undefined}
-            title={raidLobby()?.title ?? TITLES[GameDialog.Raids]()}
-            description={DESCRIPTIONS[GameDialog.Raids]()}
-          >
-            <RaidsTab
-              user={props.user}
-              onLobby={(standing) => {
-                setRaidLobby(standing);
-              }}
+            {/* Its own dialog: what stands in its header changes as it is used */}
+            <CatchesList
+              isOpen={showing(GameDialog.Catches)}
+              player={props.user.uid}
+              onClose={close}
             />
-            <Show when={raidLobby() == null}>
-              <DialogActions note={<Meta class="hidden md:block">{m.raid_dock_note()}</Meta>}>
+
+            {/* The dex: what there is, beside the box of what they have */}
+            <PokedexDialog
+              isOpen={showing(GameDialog.Pokedex)}
+              onClose={close}
+              player={props.user.uid}
+              title={TITLES[GameDialog.Pokedex]()}
+              description={DESCRIPTIONS[GameDialog.Pokedex]()}
+            />
+
+            <BagDialog
+              isOpen={showing(GameDialog.Inventory)}
+              onClose={close}
+              player={props.user.uid}
+              title={TITLES[GameDialog.Inventory]()}
+              description={DESCRIPTIONS[GameDialog.Inventory]()}
+            />
+
+            {/* What the game owes them, which is a shelf rather than an
+              announcement: nothing is theirs until they take it */}
+            <Dialog
+              isOpen={showing(GameDialog.Gifts)}
+              onClose={close}
+              width="rail"
+              terse
+              lead={<GiftIcon class="size-4" aria-hidden="true" />}
+              title={TITLES[GameDialog.Gifts]()}
+              description={DESCRIPTIONS[GameDialog.Gifts]()}
+            >
+              <BattleData>
+                <GiftsTab />
+              </BattleData>
+              <DialogActions
+                note={<Meta class="hidden md:block">{m.gifts_dock_note()}</Meta>}
+                stack
+              >
                 <Button onClick={close}>{m.ui_close()}</Button>
               </DialogActions>
-            </Show>
-          </Dialog>
+            </Dialog>
 
-          {/* Battle lobbies. A duel is private, so there is no board
-              of them to browse: what is here is what somebody offered
-              this player, and the one they staged themselves */}
-          <Dialog
-            isOpen={showing(GameDialog.Battles)}
-            onClose={close}
-            // A seated player leaves by Leave, which takes their party out
-            insistent={duelLobby()?.seated === true}
-            // The list is a narrower sheet; a lobby needs the field's width
-            width={duelLobby() == null ? 'wider' : 'rail'}
-            terse
-            lead={
-              duelLobby() == null ? <SwordsIcon class="size-4" aria-hidden="true" /> : undefined
-            }
-            title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
-            description={DESCRIPTIONS[GameDialog.Battles]()}
-          >
-            <DuelsTab
-              user={props.user}
+            {/* The quest board: chained asks and their pay, read beside
+              the gifts it pays through */}
+            <Dialog
+              isOpen={showing(GameDialog.Quests)}
               onClose={close}
-              onLobby={(standing) => {
-                setDuelLobby(standing);
-              }}
-            />
-          </Dialog>
+              width="rail"
+              terse
+              lead={<BookmarkIcon class="size-4" aria-hidden="true" />}
+              aside={<QuestHint />}
+              title={TITLES[GameDialog.Quests]()}
+              description={DESCRIPTIONS[GameDialog.Quests]()}
+            >
+              <BattleData>
+                <QuestsTab isOpen={showing(GameDialog.Quests)} onClose={close} />
+              </BattleData>
+              <DialogActions note={<Meta class="hidden md:block">{m.quest_hint_claim()}</Meta>}>
+                <Button onClick={close}>{m.ui_close()}</Button>
+              </DialogActions>
+            </Dialog>
 
-          <Dialog
-            isOpen={showing(GameDialog.Auctions)}
-            onClose={close}
-            width="rail"
-            terse
-            aside={selling() ? <SellHint /> : undefined}
-            lead={<AuctionIcon class="size-4" aria-hidden="true" />}
-            title={TITLES[GameDialog.Auctions]()}
-            description={DESCRIPTIONS[GameDialog.Auctions]()}
-          >
-            {/* The board draws pokemon as squares and searches them
-                by move and by held item, which are names out of the
-                registries loaded behind the first frame */}
-            <BattleData>
-              <AuctionTab
-                player={props.user.uid}
-                adding={selling()}
-                onAdding={(open) => {
-                  setSelling(open);
+            {/* What has been offered to the player, from every corner of
+              the game at once. It notices; the panels behind it are
+              where each is answered */}
+            <Dialog
+              isOpen={showing(GameDialog.Notifications)}
+              onClose={close}
+              width="wider"
+              terse
+              lead={<BellIcon class="size-4" aria-hidden="true" />}
+              title={TITLES[GameDialog.Notifications]()}
+              description={DESCRIPTIONS[GameDialog.Notifications]()}
+            >
+              <NotificationsTab notices={game.notices()} />
+              <DialogActions
+                note={<Meta class="hidden md:block">{m.notices_dock_note()}</Meta>}
+                stack
+              >
+                <Button onClick={close}>{m.ui_close()}</Button>
+              </DialogActions>
+            </Dialog>
+
+            {/* Nothing in here is earned or spent, so it is the one
+              panel that never waits on the server */}
+            <Dialog
+              isOpen={showing(GameDialog.Settings)}
+              onClose={close}
+              width="rail"
+              terse
+              lead={<SettingsIcon class="size-4" aria-hidden="true" />}
+              title={TITLES[GameDialog.Settings]()}
+              description={DESCRIPTIONS[GameDialog.Settings]()}
+            >
+              <SettingsTab />
+              <DialogActions note={<Meta class="hidden md:block">{m.settings_dock_note()}</Meta>}>
+                <Button onClick={close}>{m.ui_close()}</Button>
+              </DialogActions>
+            </Dialog>
+
+            {/* The release pages, read as a feed. Like the settings, it
+              is written into the build rather than fetched */}
+            <Dialog
+              isOpen={showing(GameDialog.News)}
+              onClose={close}
+              width="rail"
+              layout="sheet"
+              terse
+              lead={<PageIcon class="size-4" aria-hidden="true" />}
+              title={TITLES[GameDialog.News]()}
+              description={DESCRIPTIONS[GameDialog.News]()}
+            >
+              <NewsTab />
+              <DialogActions note={<Meta class="hidden md:block">{m.news_dock_note()}</Meta>}>
+                <Button onClick={close}>{m.ui_close()}</Button>
+              </DialogActions>
+            </Dialog>
+
+            <ProfileSheet
+              player={props.user.uid}
+              section={game.profileAt() ?? undefined}
+              isOpen={showing(GameDialog.Profile)}
+              onClose={close}
+            />
+
+            <Dialog
+              isOpen={showing(GameDialog.Raids)}
+              onClose={close}
+              insistent={raidLobby()?.hosting === true}
+              // Broad: lair cards two across in the list, and in a lobby
+              // the boss beside the trainer list
+              width="broad"
+              // Named for the lair while the player is standing in one,
+              // and "Raids" while they are only looking at the list.
+              //
+              // It used to draw no heading at all for the list, on the
+              // grounds that the button they pressed already said the
+              // word — but a panel that opens with a row of lobbies and
+              // no title reads as something half-loaded, and a lobby
+              // opened from the *world* rather than from that button
+              // arrives with no word about where it came from
+              terse
+              lead={
+                raidLobby() == null ? <FireIcon class="size-4" aria-hidden="true" /> : undefined
+              }
+              title={raidLobby()?.title ?? TITLES[GameDialog.Raids]()}
+              description={DESCRIPTIONS[GameDialog.Raids]()}
+            >
+              <RaidsTab
+                user={props.user}
+                onLobby={(standing) => {
+                  setRaidLobby(standing);
                 }}
               />
-            </BattleData>
-            <DialogActions
-              stack
-              note={
-                <Show when={!selling()}>
-                  <Meta class="hidden md:block">{m.auction_dock_note()}</Meta>
-                </Show>
+              <Show when={raidLobby() == null}>
+                <DialogActions note={<Meta class="hidden md:block">{m.raid_dock_note()}</Meta>}>
+                  <Button onClick={close}>{m.ui_close()}</Button>
+                </DialogActions>
+              </Show>
+            </Dialog>
+
+            {/* Battle lobbies. A duel is private, so there is no board
+              of them to browse: what is here is what somebody offered
+              this player, and the one they staged themselves */}
+            <Dialog
+              isOpen={showing(GameDialog.Battles)}
+              onClose={close}
+              // A seated player leaves by Leave, which takes their party out
+              insistent={duelLobby()?.seated === true}
+              // The list is a narrower sheet; a lobby needs the field's width
+              width={duelLobby() == null ? 'wider' : 'rail'}
+              terse
+              lead={
+                duelLobby() == null ? <SwordsIcon class="size-4" aria-hidden="true" /> : undefined
               }
+              title={duelLobby()?.title ?? TITLES[GameDialog.Battles]()}
+              description={DESCRIPTIONS[GameDialog.Battles]()}
             >
-              {/* The one thing the board is for that is not looking
+              <DuelsTab
+                user={props.user}
+                onClose={close}
+                onLobby={(standing) => {
+                  setDuelLobby(standing);
+                }}
+              />
+            </Dialog>
+
+            <Dialog
+              isOpen={showing(GameDialog.Auctions)}
+              onClose={close}
+              width="rail"
+              terse
+              aside={selling() ? <SellHint /> : undefined}
+              lead={<AuctionIcon class="size-4" aria-hidden="true" />}
+              title={TITLES[GameDialog.Auctions]()}
+              description={DESCRIPTIONS[GameDialog.Auctions]()}
+            >
+              {/* The board draws pokemon as squares and searches them
+                by move and by held item, which are names out of the
+                registries loaded behind the first frame */}
+              <BattleData>
+                <AuctionTab
+                  player={props.user.uid}
+                  adding={selling()}
+                  onAdding={(open) => {
+                    setSelling(open);
+                  }}
+                />
+              </BattleData>
+              <DialogActions
+                stack
+                note={
+                  <Show when={!selling()}>
+                    <Meta class="hidden md:block">{m.auction_dock_note()}</Meta>
+                  </Show>
+                }
+              >
+                {/* The one thing the board is for that is not looking
                   at it. Selling takes the whole panel rather than a
                   card on top of the lots, so the key that opened it
                   is also the way back out */}
-              <Button
-                tone={selling() ? 'ghost' : 'primary'}
-                onClick={() => {
-                  setSelling(!selling());
-                }}
-              >
-                {selling() ? m.auctions_board() : m.auctions_add()}
-              </Button>
-              <Button onClick={close}>{m.ui_close()}</Button>
-            </DialogActions>
-          </Dialog>
+                <Button
+                  tone={selling() ? 'ghost' : 'primary'}
+                  onClick={() => {
+                    setSelling(!selling());
+                  }}
+                >
+                  {selling() ? m.auctions_board() : m.auctions_add()}
+                </Button>
+                <Button onClick={close}>{m.ui_close()}</Button>
+              </DialogActions>
+            </Dialog>
 
-          {/* The map is a dialog of its own rather than one of the
+            {/* The map is a dialog of its own rather than one of the
               three above: it is a picture, and it says so itself */}
-          <WorldMapDialog isOpen={showing(GameDialog.Map)} onClose={close} />
+            <WorldMapDialog isOpen={showing(GameDialog.Map)} onClose={close} />
 
-          {/* One pokemon in full, over everything rather than inside
+            {/* One pokemon in full, over everything rather than inside
               whichever list it was opened from — a record is a screen,
               not a panel on a panel */}
-          <CatchDialog
-            player={props.user.uid}
-            catchId={game.sheet()?.catchId ?? null}
-            readOnly={game.sheet()?.readOnly === true}
-            onClose={() => {
-              game.setSheet(null);
-            }}
-            onChange={game.touchRecords}
-            onAuction={(catchId) => {
-              game.setListing({ lot: AuctionLot.Catch, catchId });
-            }}
-            // Whoever had it before them, opened from the history the
-            // record carries: the profile goes over the sheet, the way
-            // it goes over the board and the lobby
-            onTrainer={(uid) => {
-              game.setVisiting(uid);
-            }}
-            // The entry opens over the sheet, the way a profile does
-            onDex={(species) => {
-              game.setDexEntry(species);
-            }}
-          />
+            <CatchDialog
+              player={props.user.uid}
+              catchId={game.sheet()?.catchId ?? null}
+              readOnly={game.sheet()?.readOnly === true}
+              onClose={() => {
+                game.setSheet(null);
+              }}
+              onChange={game.touchRecords}
+              onAuction={(catchId) => {
+                game.setListing({ lot: AuctionLot.Catch, catchId });
+              }}
+              // Whoever had it before them, opened from the history the
+              // record carries: the profile goes over the sheet, the way
+              // it goes over the board and the lobby
+              onTrainer={(uid) => {
+                game.setVisiting(uid);
+              }}
+              // The entry opens over the sheet, the way a profile does
+              onDex={(species) => {
+                game.setDexEntry(species);
+              }}
+            />
 
-          {/* Which form was meant, for a row that stands for several.
+            {/* Which form was meant, for a row that stands for several.
               It hands over to the entry rather than opening beside it:
               the two are one road, not two screens */}
-          <SpeciesFormsDialog
-            player={props.user.uid}
-            species={game.dexForms()}
-            onClose={() => {
-              game.setDexForms(null);
-            }}
-            onSpecies={(species) => {
-              game.setDexForms(null);
-              game.setDexEntry(species);
-            }}
-          />
+            <SpeciesFormsDialog
+              player={props.user.uid}
+              species={game.dexForms()}
+              onClose={() => {
+                game.setDexForms(null);
+              }}
+              onSpecies={(species) => {
+                game.setDexForms(null);
+                game.setDexEntry(species);
+              }}
+            />
 
-          {/* One species in full, opened out of the dex and over it:
+            {/* One species in full, opened out of the dex and over it:
               an entry is a screen rather than a panel on a panel */}
-          <DexEntryDialog
-            player={props.user.uid}
-            species={game.dexEntry()}
-            onClose={() => {
-              game.setDexEntry(null);
-            }}
-            onSpecies={(species) => {
-              game.setDexEntry(species);
-            }}
-          />
+            <DexEntryDialog
+              player={props.user.uid}
+              species={game.dexEntry()}
+              onClose={() => {
+                game.setDexEntry(null);
+              }}
+              onSpecies={(species) => {
+                game.setDexEntry(species);
+              }}
+            />
 
-          {/* Somebody else met on the board or in a lobby, opened over
+            {/* Somebody else met on the board or in a lobby, opened over
               the panel that named them: the same profile, with nothing
               on it that writes */}
-          <ProfileDialog
-            player={game.visiting()}
-            onClose={() => {
-              game.setVisiting(null);
-            }}
-          />
+            <ProfileDialog
+              player={game.visiting()}
+              onClose={() => {
+                game.setVisiting(null);
+              }}
+            />
 
-          {/* An offer to a friend, opened over wherever they were
+            {/* An offer to a friend, opened over wherever they were
               found: their row in the list, or their profile */}
-          {/* Made when the offer starts rather than with the page: dialogs stack in
+            {/* Made when the offer starts rather than with the page: dialogs stack in
               the order they were made, and the profile it is opened from is made when
               it first opens, so an offer made with the page sat behind it */}
-          <Show when={lastTrading()}>
-            {(friend) => (
-              <TradeOfferDialog
-                player={props.user.uid}
-                friend={friend()}
-                isOpen={game.trading() != null}
-                onClose={() => {
-                  game.setTrading(null);
-                }}
-                onGone={() => {
-                  if (game.trading() == null) {
-                    setLastTrading(null);
-                  }
-                }}
-              />
-            )}
-          </Show>
+            <Show when={lastTrading()}>
+              {(friend) => (
+                <TradeOfferDialog
+                  player={props.user.uid}
+                  friend={friend()}
+                  isOpen={game.trading() != null}
+                  onClose={() => {
+                    game.setTrading(null);
+                  }}
+                  onGone={() => {
+                    if (game.trading() == null) {
+                      setLastTrading(null);
+                    }
+                  }}
+                />
+              )}
+            </Show>
 
-          {/* Listing is its own dialog, opened as the sheet closes:
+            {/* Listing is its own dialog, opened as the sheet closes:
               the pokemon is about to leave the records it was read from */}
-          <AuctionDialog
-            subject={game.listing()}
-            onClose={() => {
-              game.setListing(null);
-            }}
-            onListed={game.touchRecords}
-          />
-        </div>
-      }
-    >
-      {/* A battle is the whole page while it is running, the same way
+            <AuctionDialog
+              subject={game.listing()}
+              onClose={() => {
+                game.setListing(null);
+              }}
+              onListed={game.touchRecords}
+            />
+          </div>
+        }
+      >
+        {/* A battle is the whole page while it is running, the same way
           the world is when one is not */}
-      {(active) => (
-        <BattleData>
-          <BattleView
-            active={active}
-            onLeave={() => {
-              // The lobby goes too, since one watching its own record
-              // reopens the fight, and so does the panel Start was
-              // pressed in: leaving means standing in the overworld
-              game.setRaid(null);
-              game.setDuel(null);
-              game.setDialog(GameDialog.None);
-              game.setBattle(null);
-            }}
-            onReward={(reward) => {
-              game.setReward(reward);
-            }}
-            spoils={game.spoils}
-          />
-        </BattleData>
-      )}
-    </Show>
+        {(active) => (
+          <BattleData>
+            <BattleView
+              active={active}
+              onLeave={() => {
+                // The lobby goes too, since one watching its own record
+                // reopens the fight, and so does the panel Start was
+                // pressed in: leaving means standing in the overworld
+                game.setRaid(null);
+                game.setDuel(null);
+                game.setDialog(GameDialog.None);
+                game.setBattle(null);
+              }}
+              onReward={(reward) => {
+                game.setReward(reward);
+              }}
+              spoils={game.spoils}
+            />
+          </BattleData>
+        )}
+      </Show>
+      <BattleShutter phase={shutter.phase()} onClosed={shutter.close} onOpened={shutter.open} />
+    </>
   );
 }
 

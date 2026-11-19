@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { BALL_ITEMS, Balls } from '../../../data/ids/items';
 import { getSpeciesData } from '../../../data/species';
 import { isShadow, isShiny } from '../../../model/caught-record';

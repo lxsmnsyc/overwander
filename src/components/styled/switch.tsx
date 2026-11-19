@@ -1,5 +1,6 @@
-import { type JSX, Show } from 'solid-js';
-import { Toggle } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
+import { Toggle } from 'terracotta/toggle';
 import { SETTING_ROW } from './card';
 
 /**

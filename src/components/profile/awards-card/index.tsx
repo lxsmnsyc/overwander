@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createMemo, createSignal } from 'solid-js';
 import { listAchievements } from '../../../auth/achievements';
 import listAwards from '../../../auth/awards';
 import type Awards from '../../../data/ids/awards';
@@ -64,8 +65,8 @@ function Tile(props: { label: string; value: number; gold?: boolean }): JSX.Elem
 }
 
 export default function AwardsCard(props: AwardsCardProps): JSX.Element {
-  const [held] = createResource(() => props.player, listAwards);
-  const [sheet] = createResource(() => props.player, listAchievements);
+  const held = createMemo(async () => listAwards(props.player));
+  const sheet = createMemo(async () => listAchievements(props.player));
   const [shelf, setShelf] = createSignal(AwardShelf.Badges);
 
   const wins = (): Map<Awards, number> => readWins(held());
@@ -92,9 +93,13 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
     <div class="flex flex-col gap-2.5">
       {/* What has been won, and which shelf to look at */}
       <div class="flex flex-wrap items-center gap-2">
-        <Tile gold label={m.award_tab_badges()} value={countWon(wins(), ALL_BADGES)} />
-        <Tile label={m.award_tile_elite()} value={elite()} />
-        <Tile label={m.award_tile_champion()} value={champions()} />
+        {/* The counts wait under a boundary of their own, so the
+            shelves' switch stands while the awards are read */}
+        <Loading>
+          <Tile gold label={m.award_tab_badges()} value={countWon(wins(), ALL_BADGES)} />
+          <Tile label={m.award_tile_elite()} value={elite()} />
+          <Tile label={m.award_tile_champion()} value={champions()} />
+        </Loading>
         <span class="grow" />
         <Segmented
           label={m.profile_section_awards()}
@@ -110,7 +115,7 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
           }}
         />
       </div>
-      <Suspense fallback={<Note>{m.award_reading()}</Note>}>
+      <Loading fallback={<Note>{m.award_reading()}</Note>}>
         <Show when={shelf() === AwardShelf.Badges}>
           <BadgeShelf held={held} />
         </Show>
@@ -123,7 +128,7 @@ export default function AwardsCard(props: AwardsCardProps): JSX.Element {
         <Show when={shelf() === AwardShelf.Trainers}>
           <TrainerShelf sheet={sheet} />
         </Show>
-      </Suspense>
+      </Loading>
     </div>
   );
 }

@@ -8,18 +8,27 @@ import viteConfig from './vite.config.ts';
  * FUZZ_RUNS sets how many inputs a property tries and FUZZ_SEED
  * replays a failure
  */
-export default defineConfig((env) =>
-  mergeConfig(typeof viteConfig === 'function' ? viteConfig(env) : viteConfig, {
-    // The `server-only` marker throws when Node imports it for real.
-    // The fuzz suite reads the server's constants and pure builders,
-    // never its database
-    resolve: {
-      alias: { 'server-only': new URL('test/db/__server-only.ts', import.meta.url).pathname },
+export default defineConfig((env) => {
+  // The root's `projects` list the unit suite, which these do not run
+  const root = typeof viteConfig === 'function' ? viteConfig(env) : viteConfig;
+  const { projects: _projects, ...rootTest } = root.test ?? {};
+
+  return mergeConfig(
+    { ...root, test: rootTest },
+    {
+      // The `server-only` marker throws when Node imports it for real.
+      // The fuzz suite reads the server's constants and pure builders,
+      // never its database
+      resolve: {
+        alias: { 'server-only': new URL('test/db/__server-only.ts', import.meta.url).pathname },
+      },
+      test: {
+        // The server build of Solid, as the engine runs outside a tab
+        environment: 'node',
+        include: ['test/fuzz/**/*.fuzz.ts'],
+        testTimeout: 6 * 60 * 60 * 1000,
+        hookTimeout: 5 * 60 * 1000,
+      },
     },
-    test: {
-      include: ['test/fuzz/**/*.fuzz.ts'],
-      testTimeout: 6 * 60 * 60 * 1000,
-      hookTimeout: 5 * 60 * 1000,
-    },
-  }),
-);
+  );
+});

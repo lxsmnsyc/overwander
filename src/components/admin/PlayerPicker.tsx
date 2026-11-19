@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Listing, PlayerRow } from '../../auth/admin';
 import { List, ListRow, Meta, Note, RowButton, Search } from '../styled';
 import { listPlayers } from '../../auth/admin';
@@ -25,7 +18,7 @@ export interface PlayerPickerProps {
 }
 
 function Matches(props: {
-  found: Resource<Listing<PlayerRow>>;
+  found: Accessor<Listing<PlayerRow> | null>;
   value: string;
   onChange: (uid: string, nickname: string) => void;
 }): JSX.Element {
@@ -58,7 +51,10 @@ function Matches(props: {
 
 export default function PlayerPicker(props: PlayerPickerProps): JSX.Element {
   const [search, setSearch] = createSignal('');
-  const [found] = createResource(search, async (wanted) => listPlayers(wanted, 0));
+  // Nothing is asked until something is typed
+  const found = createMemo((): Promise<Listing<PlayerRow>> | null =>
+    search() === '' ? null : listPlayers(search(), 0),
+  );
 
   return (
     <div class="flex flex-col gap-2">
@@ -69,9 +65,9 @@ export default function PlayerPicker(props: PlayerPickerProps): JSX.Element {
           setSearch(value);
         }}
       />
-      <Suspense fallback={<Note>Looking…</Note>}>
+      <Loading fallback={<Note>Looking…</Note>}>
         <Matches found={found} value={props.value} onChange={props.onChange} />
-      </Suspense>
+      </Loading>
     </div>
   );
 }

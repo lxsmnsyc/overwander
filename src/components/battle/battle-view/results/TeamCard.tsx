@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getSpeciesData } from '../../../../data/species';
 import PlayerPlate from '../../../profile/PlayerPlate';
 import type { SideSummary } from '../summary';

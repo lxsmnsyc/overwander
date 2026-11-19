@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { SpriteDirection } from '../../canvas/sprites/sheet';
 import { Species } from '../../data/ids/species';
 import { getSpeciesData } from '../../data/species';

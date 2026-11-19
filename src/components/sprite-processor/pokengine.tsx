@@ -1,8 +1,8 @@
-import { FilePicker, Written, clearedOnSuccess, refusalOf } from './shared';
+import { FilePicker, Written, createSubmission, refusalOf } from './shared';
 import { packPokengine } from '../../auth/sprites';
 import { Button, FormActions, FormGrid, FormSection, Status, Switch, TextField } from '../styled';
-import { useSubmission } from '@solidjs/router';
-import { type JSX, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal } from 'solid-js';
 
 /** The row order a Pokengine sheet arrives in. */
 const POKENGINE_ORDER = 'down up right left';
@@ -20,32 +20,19 @@ export default function PokengineForm(): JSX.Element {
   const [order, setOrder] = createSignal(POKENGINE_ORDER);
   const [credit, setCredit] = createSignal('');
   const [compact, setCompact] = createSignal(true);
-  const packing = useSubmission(packPokengine);
-  const [form, setForm] = createSignal<HTMLFormElement>();
+
+  const packing = createSubmission(packPokengine, () => {
+    setPicked(false);
+    setName('');
+    setOrder(POKENGINE_ORDER);
+    setCredit('');
+  });
 
   const ready = (): boolean =>
-    picked() && name().trim().length > 0 && credit().trim().length > 0 && !packing.pending;
-
-  clearedOnSuccess(
-    form,
-    () => packing.result,
-    () => {
-      setPicked(false);
-      setName('');
-      setOrder(POKENGINE_ORDER);
-      setCredit('');
-    },
-  );
+    picked() && name().trim().length > 0 && credit().trim().length > 0 && !packing.pending();
 
   return (
-    <form
-      ref={(element) => {
-        setForm(element);
-      }}
-      action={packPokengine}
-      method="post"
-      enctype="multipart/form-data"
-    >
+    <form method="post" enctype="multipart/form-data" onSubmit={packing.submit}>
       <input type="hidden" name="name" value={name()} />
       <input type="hidden" name="order" value={order()} />
       <input type="hidden" name="credit" value={credit()} />
@@ -106,11 +93,11 @@ export default function PokengineForm(): JSX.Element {
         </FormGrid>
         <FormActions note="Writes the grid, the description beside it, and the credit row.">
           <Button type="submit" tone="primary" disabled={!ready()}>
-            {packing.pending ? 'Packing…' : 'Pack'}
+            {packing.pending() ? 'Packing…' : 'Pack'}
           </Button>
         </FormActions>
-        <Status message={refusalOf(packing.error)} tone="alert" />
-        <Show when={packing.result}>
+        <Status message={refusalOf(packing.error())} tone="alert" />
+        <Show when={packing.result()}>
           {(done) => (
             <Written
               paths={done().written}

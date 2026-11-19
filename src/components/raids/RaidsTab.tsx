@@ -1,17 +1,16 @@
 import { isFemaleBoss } from '../../model/raid-record';
 import type { PlayerIdentity } from '../../auth/user';
 import {
+  type Accessor,
   For,
-  type JSX,
-  type Resource,
+  Loading,
   Show,
-  Suspense,
-  createResource,
+  createMemo,
   createSignal,
   from,
-  onCleanup,
-  onMount,
+  onSettled,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { localNow, syncServerClock } from '../../auth/clock';
 import { getLocalOffset, toLocalTime } from '../../model/local-time';
 import {
@@ -28,6 +27,7 @@ import { type Profile, watchProfile } from '../../auth/profile';
 import { RAID_INTERVAL } from '../../overworld/chunk-snapshot';
 import RaidLobby, { type RaidLobbyReport } from './raid-lobby';
 import watchLive from '../app/watch';
+import { createLoad } from '../app/create-load';
 import {
   Button,
   GroupLabel,
@@ -130,15 +130,21 @@ function InvitedRow(props: {
   known: RaidRecord | undefined;
   onOpen: () => void;
 }): JSX.Element {
-  // One per invite row, so the rows on screen share a read
-  const [fetched] = createResource(
+  // One per invite row, so the rows on screen share a read. The row
+  // draws without its lair until it lands
+  const fetched = createLoad(
     () => (props.known == null ? props.invite.raid : null),
     async (id) => getRaidBatched(id),
   );
-  const raid = (): RaidRecord | null => props.known ?? fetched.latest ?? null;
-  const caller = from<Profile | null>((set) =>
-    watchProfile(props.invite.sender, (record) => {
-      set(record);
+  const raid = (): RaidRecord | null => props.known ?? fetched.latest() ?? null;
+  // Seeded with nothing, so the row names "a friend" until the profile
+  // lands rather than holding the list
+  const caller = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(props.invite.sender, (record) => {
+        set(record);
+      });
     }),
   );
   const named = (): string => {
@@ -175,28 +181,30 @@ function InvitedRow(props: {
  * The lobbies themselves, which is where the window is read.
  *
  * A window read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the read lives one component down
  */
-function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: number }): JSX.Element {
+function RaidList(props: RaidsTabProps & { window: Accessor<number>; zone: number }): JSX.Element {
   const game = useGame();
   // The listing follows every lobby that opens, fills, starts or
-  // clears in the window the tab was opened for
-  const raids = watchLive<[string, RaidRecord][]>((set) => {
-    const raidWindow = props.window();
-
-    if (raidWindow == null) {
-      return null;
-    }
-    return watchLiveRaids(raidWindow, props.zone, (live) => {
-      set(live);
-    });
-  });
+  // clears in the window the tab was opened for. It waits with the
+  // window, under the boundary above
+  const raids = watchLive<number, [string, RaidRecord][]>(
+    () => props.window(),
+    (raidWindow, set) =>
+      watchLiveRaids(raidWindow, props.zone, (live) => {
+        set(live);
+      }),
+  );
   // What friends have called the player into, shown above the list
-  // and only while something is waiting
-  const invites = from<RaidInvite[]>((set) =>
-    watchRaidInvites(props.user.uid, (waiting) => {
-      set(waiting);
+  // and only while something is waiting. Seeded with nothing, so the
+  // list draws without them until they land
+  const invites = createMemo(() =>
+    from<RaidInvite[] | undefined>((set) => {
+      set(undefined);
+      return watchRaidInvites(props.user.uid, (waiting) => {
+        set(waiting);
+      });
     }),
   );
   const knownRaid = (id: string): RaidRecord | undefined => {
@@ -219,14 +227,14 @@ function RaidList(props: RaidsTabProps & { window: Resource<number>; zone: numbe
 
   /** The player's clock, re-read each minute for the countdown to the next window */
   const [now, setNow] = createSignal(localNow(props.zone));
-  onMount(() => {
+  onSettled(() => {
     const beat = setInterval(() => {
       setNow(localNow(props.zone));
     }, 60_000);
 
-    onCleanup(() => {
+    return () => {
       clearInterval(beat);
-    });
+    };
   });
 
   const nextWindow = (): string => {
@@ -333,14 +341,14 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
   // read in their zone, so a lobby they see is one staged where they
   // are standing in the day
   const zone = getLocalOffset();
-  const [window] = createResource(async () => {
+  const window = createMemo(async () => {
     const now = toLocalTime(await syncServerClock(), zone);
 
     return Math.floor(now / RAID_INTERVAL) * RAID_INTERVAL;
   });
 
   return (
-    <Suspense
+    <Loading
       fallback={
         <Panel>
           <Note>{m.raid_loading()}</Note>
@@ -348,6 +356,6 @@ export default function RaidsTab(props: RaidsTabProps): JSX.Element {
       }
     >
       <RaidList user={props.user} onLobby={props.onLobby} window={window} zone={zone} />
-    </Suspense>
+    </Loading>
   );
 }

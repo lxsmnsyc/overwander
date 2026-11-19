@@ -1,16 +1,15 @@
 import {
   type Accessor,
   For,
-  type JSX,
   type ParentProps,
   Show,
   createContext,
   createSignal,
   onCleanup,
-  onMount,
+  onSettled,
   useContext,
 } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
 import { m } from '../../i18n/paraglide/messages.js';
 import { rootPortalHost } from './portal-host';
 
@@ -128,12 +127,8 @@ export interface ToastState {
 const ToastContext = createContext<ToastState>();
 
 export function useToast(): ToastState {
-  const state = useContext(ToastContext);
-
-  if (state == null) {
-    throw new Error('useToast must be used inside ToastProvider');
-  }
-  return state;
+  // A context with no default throws on its own outside the provider
+  return useContext(ToastContext);
 }
 
 interface ToastCardProps {
@@ -214,13 +209,24 @@ function ToastCard(props: ToastCardProps): JSX.Element {
 export default function ToastProvider(props: ParentProps): JSX.Element {
   const [toasts, setToasts] = createSignal<Toast[]>([]);
   /**
+   * The list as the handlers last wrote it. A signal's read lags its
+   * write until the next flush, so two toasts pushed in one go, or a
+   * push that counts the stack straight after adding to it, read this
+   * instead of `toasts()`
+   */
+  let written: Toast[] = [];
+  const writeToasts = (next: Toast[]): void => {
+    written = next;
+    setToasts(next);
+  };
+  /**
    * The container the toasts are drawn in, once the app has drawn it.
    * It is the last thing in the app and this is among the first, so
    * there is nothing to portal into while this is rendering
    */
   const [host, setHost] = createSignal<HTMLElement>();
 
-  onMount(() => {
+  onSettled(() => {
     setHost(rootPortalHost());
   });
   /**
@@ -255,16 +261,14 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
       kept.delete(id);
       return kept;
     });
-    setToasts((shown) => {
-      const kept: typeof shown = [];
+    const kept: Toast[] = [];
 
-      for (const toast of shown) {
-        if (toast.id !== id) {
-          kept.push(toast);
-        }
+    for (const toast of written) {
+      if (toast.id !== id) {
+        kept.push(toast);
       }
-      return kept;
-    });
+    }
+    writeToasts(kept);
   };
 
   /**
@@ -273,9 +277,9 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
    * already going
    */
   const dismiss = (id: number): void => {
-    let going: ReturnType<typeof toasts>[number] | undefined;
+    let going: Toast | undefined;
 
-    for (const toast of toasts()) {
+    for (const toast of written) {
       if (toast.id === id) {
         going = toast;
         break;
@@ -295,14 +299,12 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
     // A paused toast pressed shut has no clock to stop, only its pause
     due.delete(id);
     left.delete(id);
-    setToasts((shown) => {
-      const marked: typeof shown = [];
+    const marked: Toast[] = [];
 
-      for (const toast of shown) {
-        marked.push(toast.id === id ? { ...toast, leaving: true } : toast);
-      }
-      return marked;
-    });
+    for (const toast of written) {
+      marked.push(toast.id === id ? { ...toast, leaving: true } : toast);
+    }
+    writeToasts(marked);
     timers.set(
       id,
       setTimeout(() => {
@@ -359,12 +361,12 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
 
     const id = next;
 
-    setToasts((shown) => [...shown, { ...toast, id }]);
+    writeToasts([...written, { ...toast, id }]);
     // Anything past the stack is sent on its way rather than cut, so
     // the oldest leaves the way everything else does
-    const staying: ReturnType<typeof toasts> = [];
+    const staying: Toast[] = [];
 
-    for (const one of toasts()) {
+    for (const one of written) {
       if (one.leaving !== true) {
         staying.push(one);
       }
@@ -384,7 +386,7 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
   });
 
   return (
-    <ToastContext.Provider value={{ push, dismiss, toasts }}>
+    <ToastContext value={{ push, dismiss, toasts }}>
       {props.children}
       {/* Drawn in the app's own container rather than in whichever
           dialog is open, so a toast is over the top of one rather than
@@ -432,6 +434,6 @@ export default function ToastProvider(props: ParentProps): JSX.Element {
           </Portal>
         )}
       </Show>
-    </ToastContext.Provider>
+    </ToastContext>
   );
 }

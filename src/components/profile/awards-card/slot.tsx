@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import type Awards from '../../../data/ids/awards';
 import Npc from '../../../data/overworld/npc';
 import { AWARD_COLORS, AWARD_NAMES, AWARD_SPRITES } from '../../../data/awards';

@@ -1,4 +1,5 @@
-import { type JSX, Show, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal, onCleanup } from 'solid-js';
 import Button from './button';
 import { SETTING_ROW } from './card';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -36,9 +37,16 @@ const REFUSED = new Set(['Tab', 'Escape']);
 
 export default function KeyBind(props: KeyBindProps): JSX.Element {
   const [listening, setListening] = createSignal(false);
+  /** The capture in place while a key is being waited for */
+  let stop: (() => void) | undefined;
+
+  // A key still being waited for when the row goes stops being waited for
+  onCleanup(() => {
+    stop?.();
+  });
 
   const listen = (): void => {
-    if (listening()) {
+    if (stop != null) {
       return;
     }
     setListening(true);
@@ -56,18 +64,18 @@ export default function KeyBind(props: KeyBindProps): JSX.Element {
       }
       event.preventDefault();
       event.stopPropagation();
-      setListening(false);
-      window.removeEventListener('keydown', taken, true);
+      stop?.();
       if (!REFUSED.has(event.key)) {
         props.onChange(event.key.length === 1 ? event.key.toLowerCase() : event.key);
       }
     };
 
     window.addEventListener('keydown', taken, true);
-    onCleanup(() => {
+    stop = () => {
+      stop = undefined;
       setListening(false);
       window.removeEventListener('keydown', taken, true);
-    });
+    };
   };
 
   const spoken = (): string =>

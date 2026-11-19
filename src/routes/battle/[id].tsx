@@ -1,7 +1,7 @@
 import { Title } from '@solidjs/meta';
 import { useParams } from '@solidjs/router';
-import { clientOnly } from '@solidjs/start';
-import { type JSX, Show } from 'solid-js';
+import { type JSX, clientOnly } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { useAuth } from '../../auth/context';
 import LoginForm, { TitleCard } from '../../components/app/LoginForm';
 import { Note } from '../../components/styled';

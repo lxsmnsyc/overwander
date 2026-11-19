@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /** One number with a short label over it, for a row of them in a card */
 export default function StatTile(props: { label: string; children: JSX.Element }): JSX.Element {

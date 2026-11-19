@@ -1,5 +1,5 @@
-import { type ComponentProps, For, type JSX, Show } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { type ComponentProps, type JSX, dynamic } from '@solidjs/web';
+import { For, Show } from 'solid-js';
 import type { Types } from '../../data/constants/types';
 import Weather, {
   WEATHER_DESCRIPTIONS,
@@ -114,6 +114,8 @@ export function WeatherFavors(props: { weather: Weather }): JSX.Element {
 }
 
 export default function WeatherIcon(props: WeatherIconProps): JSX.Element {
+  const Icon = dynamic(() => getWeatherIcon(props.weather));
+
   return (
     <TooltipHost
       class="inline-flex items-center"
@@ -127,11 +129,7 @@ export default function WeatherIcon(props: WeatherIconProps): JSX.Element {
         aria-label={WEATHER_NAMES[props.weather]}
         role="img"
       >
-        <Dynamic
-          component={getWeatherIcon(props.weather)}
-          class={props.size ?? 'size-5'}
-          aria-hidden="true"
-        />
+        <Icon class={props.size ?? 'size-5'} aria-hidden="true" />
       </span>
     </TooltipHost>
   );

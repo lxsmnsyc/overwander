@@ -1,4 +1,5 @@
-import { For, type JSX, Show, from } from 'solid-js';
+import { For, Show, createMemo, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type Notice, NoticeKind } from '../../auth/notifications';
 import { Button, LIST_PAGE, List, Meta, Note, Pill, type PillTone, createPager } from '../styled';
 import { type Profile, watchProfile } from '../../auth/profile';
@@ -89,11 +90,18 @@ export interface NotificationsTabProps {
   notices: Notice[];
 }
 
-/** The sender, followed so a rename shows here too */
+/**
+ * The sender, followed so a rename shows here too. Seeded with nothing,
+ * so a row draws without its face and name until the profile lands
+ * rather than holding the list
+ */
 function readSender(uid: string): () => Profile | null | undefined {
-  return from<Profile | null>((set) =>
-    watchProfile(uid, (record) => {
-      set(record);
+  return createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(uid, (record) => {
+        set(record);
+      });
     }),
   );
 }

@@ -1,6 +1,7 @@
 import type { Drawing } from '../../auth/sprites';
 import { Field, Note } from '../styled';
-import { For, type JSX, Show, createEffect } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /** The file picker, dressed like the rest of the forms. */
 export function FilePicker(props: {
@@ -122,8 +123,21 @@ export function Written(props: {
   );
 }
 
+/** One form posted to a server function, and what came of the last post */
+export interface Submission<T> {
+  /** Whether a post is in the air */
+  pending: () => boolean;
+  /** What the last post that went through answered */
+  result: () => T | undefined;
+  /** Why the last post failed, or undefined */
+  error: () => unknown;
+  /** The form's `onSubmit`: posts the form unless one is in the air */
+  submit: (event: SubmitEvent & { currentTarget: HTMLFormElement }) => void;
+}
+
 /**
- * Empties the pickers once the sheet is on disk.
+ * Posts the form to `pack` as a plain call, and empties the pickers
+ * once the sheet is on disk.
  *
  * A form still holding the archive it just processed invites pressing
  * the button twice, and the second press writes the same files again
@@ -131,28 +145,48 @@ export function Written(props: {
  * written stays on the screen, since that is the thing worth reading
  *
  * The files are cleared through the DOM rather than through a signal
- * because a file picker's value is the browser's — a page cannot put a
+ * because a file picker's value is the browser's: a page cannot put a
  * file into one, and clearing it is the one change it is allowed
  */
-export function clearedOnSuccess(
-  form: () => HTMLFormElement | undefined,
-  done: () => unknown,
+export function createSubmission<T>(
+  pack: (form: FormData) => Promise<T>,
   reset: () => void,
-): void {
-  let seen: unknown;
+): Submission<T> {
+  const [pending, setPending] = createSignal(false);
+  const [result, setResult] = createSignal<{ value: T } | undefined>(undefined);
+  const [error, setError] = createSignal<unknown>(undefined);
 
-  createEffect(() => {
-    const result = done();
+  return {
+    pending,
+    result: () => result()?.value,
+    error,
+    submit: (event) => {
+      event.preventDefault();
+      if (pending()) {
+        return;
+      }
 
-    if (result == null || result === seen) {
-      return;
-    }
-    seen = result;
-    for (const picker of form()?.querySelectorAll<HTMLInputElement>('input[type=file]') ?? []) {
-      picker.value = '';
-    }
-    reset();
-  });
+      // The form is read before anything is cleared
+      const form = event.currentTarget;
+
+      setPending(true);
+      setError(undefined);
+      pack(new FormData(form)).then(
+        (value) => {
+          setResult({ value });
+          setPending(false);
+          for (const picker of form.querySelectorAll<HTMLInputElement>('input[type=file]')) {
+            picker.value = '';
+          }
+          reset();
+        },
+        (thrown: unknown) => {
+          setError(thrown);
+          setPending(false);
+        },
+      );
+    },
+  };
 }
 
 /** What went wrong, whether it was thrown here or on the server. */

@@ -21,9 +21,9 @@ open on and the one `FormHost` the app draws them in.
 - `openForm(Form, input)` opens it over whatever is up and resolves with the
   answer, or null. Only the top frame shows, so a form opened from inside
   another dialog's flow never fights it for the closing click.
-- A form that needs a record declares the resource and reads it in a child
-  under its own `Suspense` with a fallback, so a conversation's line stays up
-  while it loads.
+- A form that needs a record declares the async memo and reads it in a child
+  under its own `Loading` with a fallback, so a conversation's line stays up
+  while it loads (the `async-reads` skill).
 - Reach for the generic ones before writing a new one: `choose`/`choiceForm`,
   `PickCatchForm`, `PickItemForm`, `PickMoveForm`, `PickBoxForm`,
   `TeachMoveForm`.

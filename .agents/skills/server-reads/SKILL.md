@@ -31,7 +31,7 @@ readOnly(listTradesOnServer);
 
 - **`requireReader`, not `requireUid`.** A read moves nothing, so it skips the pace bucket's write, the ban and the switches. `requireUid` is for writes.
 - **Decide visibility in the function.** A row only its owner may see is read for the uid the token names. When the browser passes a uid, another player's answers empty. A row every signed-in player may see is read for any uid.
-- **Register it with `readOnly(fn)`** on the line after the function. Every server call marks the kept bag stale, and a registered read does not.
+- **Register it with `readOnly(fn)`** on the line after the function. Every server call marks the kept bag stale, and a registered read does not. `readOnly` keys on the reference's `fn.id`, and the `fetch` wrapper in `src/auth/stale-build.ts` counts a call by the id its path ends in, so the two match. Reads stay POST (see `server-function-order`).
 - **Batch in the browser** with `batchedQuery`, and read the batch with one query on the server (see `batched-queries`). A batched id list is checked with `ID_BATCH` or `UID_BATCH`.
 
 ## Following a table live

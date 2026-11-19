@@ -33,7 +33,7 @@ vi.mock('../../src/auth/live', () => ({
 }));
 
 // The lobby is read through a server call, which runs only inside a request
-vi.mock('solid-js/web', async (original) => ({
+vi.mock('@solidjs/web', async (original) => ({
   ...(await original<object>()),
   getRequestEvent: () => ({ locals: {} }),
 }));

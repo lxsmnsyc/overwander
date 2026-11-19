@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { CaughtPokemon } from '../../auth/caught';
 import { previewSnapshot } from '../../model/catch-snapshot';
 import { type Profile, getProfiles } from '../../auth/profile';
@@ -43,7 +44,9 @@ export interface TeamsPreviewProps {
   sides: SideSummary[];
 }
 
-function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }): JSX.Element {
+function TeamsRows(
+  props: TeamsPreviewProps & { loaded: Accessor<PreviewRow[] | null> },
+): JSX.Element {
   /** The side that fought a team, and so what it dealt and how it ended */
   const sideOf = (row: PreviewRow): SideSummary | undefined => {
     for (const side of props.sides) {
@@ -168,59 +171,65 @@ function TeamsRows(props: TeamsPreviewProps & { loaded: Resource<PreviewRow[]> }
 }
 
 export default function TeamsPreview(props: TeamsPreviewProps): JSX.Element {
-  const [loaded] = createResource(
-    () => (props.teams.length === 0 ? null : props.teams.join(',')),
-    async (key): Promise<PreviewRow[]> => {
-      const pending: Promise<TeamSnapshotRecord | null>[] = [];
+  // Keyed on the ids, so the same teams handed over again are not read again
+  const asked = createMemo(() => (props.teams.length === 0 ? null : props.teams.join(',')));
+  const loaded = createMemo<PreviewRow[] | null>((): Promise<PreviewRow[]> | null => {
+    const key = asked();
 
-      for (const id of key.split(',')) {
-        pending.push(getTeamSnapshotBatched(id));
-      }
-
-      const found = await Promise.all(pending);
-      const snapshots: TeamSnapshotRecord[] = [];
-      const players: string[] = [];
-
-      for (const snapshot of found) {
-        if (snapshot != null) {
-          snapshots.push(snapshot);
-          players.push(snapshot.player);
-        }
-      }
-
-      const profiles = await getProfiles(players);
-      const rows: PreviewRow[] = [];
-      /** How many teams of each alliance have been read, to match each to its side */
-      const met = new Map<number, number>();
-
-      for (const snapshot of snapshots) {
-        const lead = snapshot.catches.at(0);
-        const profile: Profile | undefined = profiles.get(snapshot.player);
-        // A side no player owns is named for what led it out
-        const wild = lead == null ? m.battle_wild() : getSpeciesData(lead.species).name;
-        const catches: [string, CaughtPokemon][] = [];
-        const nth = met.get(snapshot.alliance) ?? 0;
-
-        met.set(snapshot.alliance, nth + 1);
-        for (const [at, caught] of snapshot.catches.entries()) {
-          catches.push([caught.caught === '' ? `${at}` : caught.caught, previewSnapshot(caught)]);
-        }
-        rows.push({
-          player: snapshot.player,
-          name: snapshot.player === '' ? wild : (profile?.nickname ?? m.duels_a_trainer()),
-          sprite: profile?.sprite ?? null,
-          catches,
-          alliance: snapshot.alliance,
-          nth,
-        });
-      }
-      return rows;
-    },
-  );
+    return key == null ? null : readRows(key);
+  });
 
   return (
-    <Suspense fallback={<Note>{m.battle_loading_teams()}</Note>}>
+    <Loading fallback={<Note>{m.battle_loading_teams()}</Note>}>
       <TeamsRows {...props} loaded={loaded} />
-    </Suspense>
+    </Loading>
   );
+}
+
+/** The teams behind `key`, a comma-separated list of snapshot ids, as rows */
+async function readRows(key: string): Promise<PreviewRow[]> {
+  const pending: Promise<TeamSnapshotRecord | null>[] = [];
+
+  for (const id of key.split(',')) {
+    pending.push(getTeamSnapshotBatched(id));
+  }
+
+  const found = await Promise.all(pending);
+  const snapshots: TeamSnapshotRecord[] = [];
+  const players: string[] = [];
+
+  for (const snapshot of found) {
+    if (snapshot != null) {
+      snapshots.push(snapshot);
+      players.push(snapshot.player);
+    }
+  }
+
+  const profiles = await getProfiles(players);
+  const rows: PreviewRow[] = [];
+  /** How many teams of each alliance have been read, to match each to its side */
+  const met = new Map<number, number>();
+
+  for (const snapshot of snapshots) {
+    const lead = snapshot.catches.at(0);
+    const profile: Profile | undefined = profiles.get(snapshot.player);
+    // A side no player owns is named for what led it out
+    const wild = lead == null ? m.battle_wild() : getSpeciesData(lead.species).name;
+    const catches: [string, CaughtPokemon][] = [];
+    const nth = met.get(snapshot.alliance) ?? 0;
+
+    met.set(snapshot.alliance, nth + 1);
+    for (const [at, caught] of snapshot.catches.entries()) {
+      catches.push([caught.caught === '' ? `${at}` : caught.caught, previewSnapshot(caught)]);
+    }
+    rows.push({
+      player: snapshot.player,
+      name: snapshot.player === '' ? wild : (profile?.nickname ?? m.duels_a_trainer()),
+      sprite: profile?.sprite ?? null,
+      catches,
+      alliance: snapshot.alliance,
+      nth,
+    });
+  }
+  return rows;
 }

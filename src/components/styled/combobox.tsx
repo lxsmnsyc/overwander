@@ -1,14 +1,13 @@
-import { For, type JSX, Show, createEffect, createMemo, createSignal } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { For, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
+import { AutocompleteStateChild, DisclosureStateChild } from 'terracotta/states';
 import {
-  AutocompleteStateChild,
   ComboboxInput,
   ComboboxOption,
   ComboboxOptions,
-  DisclosureStateChild,
   Combobox as HeadlessCombobox,
-  Transition,
-} from 'terracotta';
+} from 'terracotta/combobox';
+import { Transition } from 'terracotta/transition';
 import { m } from '../../i18n/paraglide/messages.js';
 import { DROP, dropOrigin } from './transition';
 import { Badge, BadgeDismiss } from './feedback';
@@ -16,6 +15,7 @@ import { FieldFrame } from './form';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
+import spellAria from './aria';
 
 /**
  * A choice out of a list nobody would scroll: a species, an account, an
@@ -147,8 +147,8 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
       placeholder={props.placeholder ?? m.ui_search_placeholder()}
       disabled={props.disabled}
       aria-describedby={parts.describedBy}
-      aria-invalid={props.error == null ? undefined : true}
-      aria-required={props.required}
+      aria-invalid={props.error == null ? undefined : 'true'}
+      aria-required={spellAria(props.required)}
       class={`w-full ${props.tall === true ? 'h-11' : ''} ${props.error == null ? '' : 'border-ember'}`}
     />
   );
@@ -170,8 +170,8 @@ export default function Combobox<V>(props: ComboboxProps<V>): JSX.Element {
           matchWidth: true,
         });
 
-        createEffect(() => {
-          floating.refs.setReference(root() ?? null);
+        createEffect(root, (element) => {
+          floating.refs.setReference(element ?? null);
         });
 
         return (

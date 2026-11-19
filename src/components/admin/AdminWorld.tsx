@@ -1,13 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createMemo,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Badge, Button, Card, List, ListRow, Meta, Note, Row, TextField } from '../styled';
 import { BIOME_NAMES } from '../../data/biome';
 import type Biome from '../../data/ids/biome';
@@ -50,9 +42,9 @@ function spawnNames(window: SnapshotRecord): string {
  * The windows themselves, which is where the read happens. A read in
  * the body that declared it throws past every boundary written there
  */
-function ChunkWindows(props: { windows: Resource<SnapshotRecord[]> }): JSX.Element {
+function ChunkWindows(props: { windows: Accessor<SnapshotRecord[]> }): JSX.Element {
   const rows = (): SnapshotRecord[] =>
-    [...(props.windows() ?? [])].sort((left, right) => left.offset - right.offset);
+    [...props.windows()].sort((left, right) => left.offset - right.offset);
 
   return (
     <Show
@@ -165,10 +157,13 @@ export default function AdminWorld(): JSX.Element {
     return at == null ? null : getWorld().getChunk(at.x, at.y);
   });
 
-  const [windows] = createResource(
-    () => chunk()?.seed,
-    async (seed) => listChunkWindows(seed),
-  );
+  // Keyed on the seed, so a chunk derived again asks nothing
+  const seed = createMemo(() => chunk()?.seed);
+  const windows = createMemo((): Promise<SnapshotRecord[]> | SnapshotRecord[] => {
+    const at = seed();
+
+    return at == null ? [] : listChunkWindows(at);
+  });
 
   return (
     <div class="flex flex-col gap-4">
@@ -265,9 +260,9 @@ export default function AdminWorld(): JSX.Element {
               {/* What the chunk actually rolled, once per zone anybody
                   has walked it from. It is the only part of a chunk
                   that is stored rather than derived */}
-              <Suspense fallback={<Note>Reading the windows…</Note>}>
+              <Loading fallback={<Note>Reading the windows…</Note>}>
                 <ChunkWindows windows={windows} />
-              </Suspense>
+              </Loading>
             </Card>
           </>
         )}

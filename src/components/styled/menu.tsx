@@ -1,17 +1,13 @@
-import { type ComponentProps, For, type JSX, Show, createSignal } from 'solid-js';
-import { Dynamic, Portal, isServer } from 'solid-js/web';
-import {
-  Menu as HeadlessMenu,
-  MenuItem,
-  Popover,
-  PopoverButton,
-  PopoverPanel,
-  Transition,
-} from 'terracotta';
+import { type ComponentProps, type JSX, Portal, dynamic, isServer } from '@solidjs/web';
+import { For, Show, createSignal } from 'solid-js';
+import { Menu as HeadlessMenu, MenuItem } from 'terracotta/menu';
+import { Popover, PopoverButton, PopoverPanel } from 'terracotta/popover';
+import { Transition } from 'terracotta/transition';
 import { m } from '../../i18n/paraglide/messages.js';
 import useDropdown from './dropdown';
 import { usePortalHost } from './portal-host';
 import { DROP, dropOrigin } from './transition';
+import spellAria from './aria';
 
 /**
  * A short list of things that can be done to whatever is on screen,
@@ -112,6 +108,8 @@ export default function Menu(props: MenuProps): JSX.Element {
   /** Whether it opened as a sheet, read as it opens */
   const [asSheet, setAsSheet] = createSignal(false);
   const host = usePortalHost();
+  /** The icon the button wears in place of its word, if it has one */
+  const Icon = dynamic(() => props.icon);
   // Hung from the button's right edge: the button is usually pinned to
   // the right of a dialog header, and a panel laid out rightwards from
   // there runs off the screen. Drawn in the portal container, so the
@@ -136,8 +134,8 @@ export default function Menu(props: MenuProps): JSX.Element {
           transition-colors focus-visible:outline-2
           focus-visible:outline-offset-2 focus-visible:outline-tide ${look()} ${props.icon == null ? 'px-3' : 'px-2'}`}
       >
-        <Show when={props.icon} fallback={props.face ?? props.label}>
-          {(icon) => <Dynamic component={icon()} class="size-5" aria-hidden="true" />}
+        <Show when={props.icon != null} fallback={props.face ?? props.label}>
+          <Icon class="size-5" aria-hidden="true" />
         </Show>
         <Show when={props.icon == null}>
           <span aria-hidden="true">▾</span>
@@ -204,7 +202,7 @@ export default function Menu(props: MenuProps): JSX.Element {
                             ? 'text-ember-dark hover:bg-ember-soft hover:text-ember-dark [&[tc-active]]:bg-ember-soft [&[tc-active]]:text-ember-dark'
                             : ''
                         } ${action.checked === true ? 'bg-tide-soft' : ''}`}
-                        aria-disabled={action.disabled === true}
+                        aria-disabled={spellAria(action.disabled === true)}
                         onClick={() => {
                           if (action.disabled === true) {
                             return;

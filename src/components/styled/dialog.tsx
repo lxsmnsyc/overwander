@@ -1,22 +1,13 @@
-import {
-  type JSX,
-  type ParentProps,
-  Show,
-  Suspense,
-  children,
-  createEffect,
-  createSignal,
-} from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
+import { Loading, type ParentProps, Show, children, createSignal } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
   Dialog as HeadlessDialog,
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import FADE, { GROW, SHEER } from './transition';
 import { PortalHost, usePortalHost } from './portal-host';
 
@@ -291,13 +282,10 @@ export function Dialog(props: DialogProps): JSX.Element {
   /**
    * Whether the dialog is showing, which is the caller's answer until
    * something asks to close: then it goes false here first, the fade
-   * runs, and `onClose` is what the end of the fade reports
+   * runs, and `onClose` is what the end of the fade reports. A new
+   * `isOpen` from the caller replaces whatever was written here
    */
-  const [showing, setShowing] = createSignal(props.isOpen);
-
-  createEffect(() => {
-    setShowing(props.isOpen);
-  });
+  const [showing, setShowing] = createSignal(() => props.isOpen);
 
   /**
    * Whether the closing was this dialog's own doing — Escape, the
@@ -327,7 +315,10 @@ export function Dialog(props: DialogProps): JSX.Element {
       // A caller that refused the close keeps its dialog. Hiding is this
       // dialog's own doing and only a change of `isOpen` puts it back,
       // so a handler that declined left the panel gone while whatever it
-      // was standing over stayed open underneath, refusing every press
+      // was standing over stayed open underneath, refusing every press.
+      // A caller that accepted reads as still open here too, since its
+      // write has not flushed yet; its change of `isOpen` re-derives
+      // `showing` to false in the same flush, so this stays correct
       if (props.isOpen) {
         setShowing(true);
       }
@@ -483,7 +474,7 @@ export function Dialog(props: DialogProps): JSX.Element {
               one belongs to this one, so it stacks with it and goes
               when it goes */}
           <PortalHost>
-            <Suspense>
+            <Loading>
               <TransitionChild
                 {...(props.origin == null ? FADE : GROW)}
                 ref={(element: HTMLElement) => {
@@ -507,7 +498,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                   </div>
                 </DialogPanel>
               </TransitionChild>
-            </Suspense>
+            </Loading>
           </PortalHost>
         </HeadlessDialog>
       </Transition>

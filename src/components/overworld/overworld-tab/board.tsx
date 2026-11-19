@@ -20,7 +20,6 @@ import createBoardInteractions, {
 } from '../../../game/overworld/interact';
 import createStoreSignal from '../../app/store-signal';
 import LRUMap from '../../../core/lru-map';
-import { settled } from '../../app/resource-reads';
 import { type Direction, actionOf, forTheGame } from '../../app/keys';
 import settings from '../../app/settings';
 import { DEFAULT_CHARSET } from '../../../data/overworld/charsets';
@@ -76,16 +75,16 @@ import SafariDialog from '../safari-dialog';
 import ChunkCanvas, { type CellSpot, type RiddenCoat, type SpawnCoat } from '../chunk-canvas';
 import type { ConversationHandle } from '../../forms/conversation';
 import { visitNpc } from '../visit-npc';
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
-  type Resource,
+  type Accessor,
   Show,
   createEffect,
   createMemo,
   createSignal,
-  on,
   onCleanup,
-  onMount,
+  onSettled,
+  untrack,
 } from 'solid-js';
 import {
   BOARD_CELLS,
@@ -111,7 +110,7 @@ import describeFailure from '../../../i18n/refusals';
  * both read.
  *
  * Either read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the whole
+ * `Loading` written there and land on the boundary around the whole
  * page — the world is what that boundary would blank
  */
 /** The fight aura a syndicate stop wears, by who is standing there */
@@ -130,8 +129,8 @@ const EXPERT_LANDMARKS = new Set<Landmark>([
 ]);
 
 export default function OverworldBoard(props: {
-  buddy: Resource<Buddy | null>;
-  fled: Resource<Set<string>>;
+  buddy: Accessor<Buddy | null | undefined>;
+  fled: Accessor<Set<string> | undefined>;
   onFled: () => void;
 }): JSX.Element {
   const auth = useAuth();
@@ -143,19 +142,18 @@ export default function OverworldBoard(props: {
    */
   const [charset, setCharset] = createSignal(DEFAULT_CHARSET);
 
-  createEffect(() => {
-    const user = auth.user();
-
-    if (user == null) {
-      setCharset(DEFAULT_CHARSET);
-      return;
-    }
-    onCleanup(
-      watchProfile(user.uid, (profile) => {
+  createEffect(
+    () => auth.user()?.uid ?? null,
+    (uid) => {
+      if (uid == null) {
+        setCharset(DEFAULT_CHARSET);
+        return undefined;
+      }
+      return watchProfile(uid, (profile) => {
         setCharset(profile?.sprite ?? DEFAULT_CHARSET);
-      }),
-    );
-  });
+      });
+    },
+  );
   /**
    * Where the player is standing, in world cells.
    *
@@ -167,8 +165,8 @@ export default function OverworldBoard(props: {
   const game = useGame();
   const toast = useToast();
   const walk: BoardWalk<BoardView> = createBoardWalk<BoardView>({
-    uid: () => auth.user()?.uid ?? null,
-    elsewhere: () => game.elsewhere(),
+    uid: () => untrack(() => auth.user()?.uid ?? null),
+    elsewhere: () => untrack(game.elsewhere),
     takeWalk: game.takeWalk,
     standHere: game.standHere,
     setPosition: game.setPosition,
@@ -185,8 +183,8 @@ export default function OverworldBoard(props: {
   onCleanup(() => {
     walk.dispose();
   });
-  createEffect(() => {
-    walk.setCharset(charset());
+  createEffect(charset, (sprite) => {
+    walk.setCharset(sprite);
   });
 
   const atX = createStoreSignal(walk.x);
@@ -329,34 +327,35 @@ export default function OverworldBoard(props: {
   // position is worked out: a tab panel unmounts when it is left, so
   // walking back into the Overworld is a remount, and it must pick up
   // where the walk left off rather than start again
-  createEffect(() => {
-    const at = game.position();
-
-    if (at != null) {
-      walk.place(at);
-    }
-  });
+  createEffect(
+    () => game.position(),
+    (at) => {
+      if (at != null) {
+        walk.place(at);
+      }
+    },
+  );
 
   // Put somewhere by something other than a walk (a staff teleport, Dig
   // or Teleport), which has to move the board's own coordinates. Deferred
   // so a remount after a battle does not replay a move walked away from
   createEffect(
-    on(
-      game.moved,
-      (at) => {
-        if (at == null || !placed()) {
-          return;
-        }
-        walk.standAt(worldCell(at.chunkX, at.cellX), worldCell(at.chunkY, at.cellY), at.depth);
-      },
-      { defer: true },
-    ),
+    () => game.moved(),
+    (at) => {
+      // Whether the walk is placed is asked, not followed: being placed
+      // is no reason to replay the last move
+      if (at == null || !untrack(placed)) {
+        return;
+      }
+      walk.standAt(worldCell(at.chunkX, at.cellX), worldCell(at.chunkY, at.cellY), at.depth);
+    },
+    { defer: true },
   );
 
   const boardWindows = createBoardWindows({
     walk: walk,
     zone,
-    uid: () => auth.user()?.uid ?? null,
+    uid: () => untrack(() => auth.user()?.uid ?? null),
     failed: (message) => {
       remark(message, 'ember');
     },
@@ -367,7 +366,7 @@ export default function OverworldBoard(props: {
   });
 
   const acts = createBoardInteractions({
-    user: () => auth.user(),
+    user: () => untrack(auth.user),
     walk,
     windows: boardWindows,
     setEncounter: game.setEncounter,
@@ -438,14 +437,15 @@ export default function OverworldBoard(props: {
   const askForWindow = boardWindows.askForWindow;
 
   // What walks beside the player changes what the chunk holds, so the
-  // buddy's effects are read alongside it
-  const buddy = (): Buddy | null | undefined => settled(props.buddy);
+  // buddy's effects are read alongside it. The tab mounts the board
+  // only once both have landed, and a re-read keeps the last answer
+  const buddy = (): Buddy | null | undefined => props.buddy();
 
   /**
    * What has run from this player. Re-read when a meeting ends, since
    * the one that just fled is the one that has to stop being drawn
    */
-  const fled = (): Set<string> | undefined => settled(props.fled);
+  const fled = (): Set<string> | undefined => props.fled();
 
   /**
    * What is on the board.
@@ -476,7 +476,7 @@ export default function OverworldBoard(props: {
       : null,
   );
 
-  boardWindows.attach(() => view()?.chunks ?? null);
+  boardWindows.attach(() => untrack(view)?.chunks ?? null);
 
   const spent = createStoreSignal(boardWindows.spent);
   const picked = createStoreSignal(boardWindows.picked);
@@ -552,7 +552,6 @@ export default function OverworldBoard(props: {
         rechecked: rechecked(),
       };
     },
-    null,
     {
       equals: (before, after) =>
         before?.key === after?.key && before?.rechecked === after?.rechecked,
@@ -563,11 +562,11 @@ export default function OverworldBoard(props: {
     read: LandmarkStandings;
   } | null>(null);
 
-  createEffect(() => {
-    const ask = standingsAsk();
-
+  // A longhand load, not an async memo: no glow is a board that still
+  // draws, so the read must never hold the boundary above
+  createEffect(standingsAsk, (ask) => {
     if (ask == null) {
-      return;
+      return undefined;
     }
 
     let live = true;
@@ -591,9 +590,9 @@ export default function OverworldBoard(props: {
         // No glow is the board as it was: every press still asks, and the next look reads again
         standingsRead.delete(ask.key);
       });
-    onCleanup(() => {
+    return () => {
       live = false;
-    });
+    };
   });
 
   // The standings name chunk cells and the glow sits on board cells,
@@ -702,13 +701,18 @@ export default function OverworldBoard(props: {
    * the server, so what is on screen would be refused anyway: it is
    * closed rather than left offering a stranger's business
    */
-  createEffect(() => {
-    const open = wanderer();
+  createEffect(
+    () => {
+      const open = wanderer();
 
-    if (open != null && open.spot.snapshot.getStandingNpc(open.spot.cell) !== open.npc) {
-      talking?.end();
-    }
-  });
+      return open != null && open.spot.snapshot.getStandingNpc(open.spot.cell) !== open.npc;
+    },
+    (gone) => {
+      if (gone) {
+        talking?.end();
+      }
+    },
+  );
 
   /**
    * Which regions this session has already reported, so standing in a
@@ -730,49 +734,60 @@ export default function OverworldBoard(props: {
   // register. The register costs nothing, takes nothing and is not a
   // claim: it is what makes the town somewhere the portals will cross
   // to, for everybody
-  createEffect(() => {
-    // Nothing until the walk knows where it is. The board stands in the
-    // middle of chunk zero until the stored position lands, and a town
-    // sitting there is not one anybody has been to
-    if (!placed()) {
-      return;
-    }
-    // Read on the layer they are on: a cave under a town is not the
-    // town, and somebody crossing beneath it has walked into nothing
-    const town = townAt(around(), atX(), atY());
-    const key = town == null ? null : `${town.regionX},${town.regionY}`;
-
-    if (key !== standingIn) {
-      standingIn = key;
-      // The one place in the world with a name of its own. A border is
-      // not drawn anywhere, so being told is how a player knows
-      if (town != null && (key !== named || Date.now() - namedAt >= TOWN_NAME_PACE)) {
-        named = key;
-        namedAt = Date.now();
-        remark(townName(town), 'leaf');
+  createEffect(
+    () =>
+      // Nothing until the walk knows where it is. The board stands in
+      // the middle of chunk zero until the stored position lands, and a
+      // town sitting there is not one anybody has been to. Read on the
+      // layer they are on: a cave under a town is not the town, and
+      // somebody crossing beneath it has walked into nothing
+      placed() ? { town: townAt(around(), atX(), atY()) } : null,
+    (standing) => {
+      if (standing == null) {
+        return;
       }
-    }
-    if (key == null || town == null || reported.has(key)) {
-      return;
-    }
-    reported.add(key);
-    discoverTown(town.regionX, town.regionY).catch(() => {
-      // Nothing on screen is riding on it: the name is derived either
-      // way, and only crossing to the town wants the register
-      reported.delete(key);
-    });
-  });
+      const { town } = standing;
+      const key = town == null ? null : `${town.regionX},${town.regionY}`;
+
+      if (key !== standingIn) {
+        standingIn = key;
+        // The one place in the world with a name of its own. A border is
+        // not drawn anywhere, so being told is how a player knows
+        if (town != null && (key !== named || Date.now() - namedAt >= TOWN_NAME_PACE)) {
+          named = key;
+          namedAt = Date.now();
+          remark(townName(town), 'leaf');
+        }
+      }
+      if (key == null || town == null || reported.has(key)) {
+        return;
+      }
+      reported.add(key);
+      discoverTown(town.regionX, town.regionY).catch(() => {
+        // Nothing on screen is riding on it: the name is derived either
+        // way, and only crossing to the town wants the register
+        reported.delete(key);
+      });
+    },
+  );
 
   // Where they are, said at the top of the menu. The menu is a sibling
   // of the world rather than a child of it, so the words are published
   // upwards and cleared on the way out — a battle takes the page, and
   // the place under it is not where the player is standing any more
-  createEffect(() => {
-    const standing = view();
+  createEffect(
+    () => {
+      const standing = view();
 
-    game.setPlace(standing == null ? null : naming(standing));
-    game.setWeather(standing == null ? null : standing.weather);
-  });
+      return standing == null
+        ? { place: null, weather: null }
+        : { place: naming(standing), weather: standing.weather };
+    },
+    ({ place, weather }) => {
+      game.setPlace(place);
+      game.setWeather(weather);
+    },
+  );
 
   onCleanup(() => {
     game.setPlace(null);
@@ -799,8 +814,8 @@ export default function OverworldBoard(props: {
 
   // The egg is drawn in the menu's trainer corner, a sibling of the
   // board, so it travels there the way the place's name does
-  createEffect(() => {
-    game.setEgg(carried());
+  createEffect(carried, (egg) => {
+    game.setEgg(egg);
   });
   onCleanup(() => {
     game.setEgg(null);
@@ -811,28 +826,27 @@ export default function OverworldBoard(props: {
   // moment the fight is won — the world is not on screen then — and
   // what is left for the world to do is put the pokemon in front of
   // the player as soon as they are back in it
-  createEffect(() => {
-    const waiting = game.encounter();
-    const user = auth.user();
-
-    if (waiting == null || user == null) {
-      return;
-    }
-    game.setEncounter(null);
-    acts.meetWaiting(waiting);
-  });
+  createEffect(
+    () => (auth.user() == null ? null : game.encounter()),
+    (waiting) => {
+      if (waiting == null) {
+        return;
+      }
+      game.setEncounter(null);
+      acts.meetWaiting(waiting);
+    },
+  );
 
   const facing = createStoreSignal(walk.facing);
   const sight = createStoreSignal(walk.sight);
 
   // What the walk reads from the board and the session, changing
-  createEffect(() => {
-    view();
-    buddy();
-    auth.user();
-    game.elsewhere();
-    walk.refresh();
-  });
+  createEffect(
+    (): unknown[] => [view(), buddy(), auth.user(), game.elsewhere()],
+    () => {
+      walk.refresh();
+    },
+  );
 
   const ahead = walk.ahead;
 
@@ -859,7 +873,6 @@ export default function OverworldBoard(props: {
 
       return plan == null || plan.act ? null : [plan.goalX, plan.goalY];
     },
-    null,
     { equals: (was, now) => was?.[0] === now?.[0] && was?.[1] === now?.[1] },
   );
 
@@ -928,9 +941,11 @@ export default function OverworldBoard(props: {
     reach(target);
   };
 
+  // The walk reads these from its own frame loop and from effect applies,
+  // where a tracked read warns, so they are handed over untracked
   walk.attach({
-    buddy,
-    view,
+    buddy: () => untrack(buddy),
+    view: () => untrack(view),
     engaged,
     holdsSomething,
     withinReach,
@@ -949,7 +964,7 @@ export default function OverworldBoard(props: {
    * browser's own key repeat is ignored: the game keeps the pace, and
    * the machine's repeat rate is not the game's
    */
-  onMount(() => {
+  onSettled(() => {
     let held: Direction[] = [];
     let pacing: ReturnType<typeof setTimeout> | null = null;
 
@@ -1065,12 +1080,12 @@ export default function OverworldBoard(props: {
     // released, and a player who comes back to a board walking on its
     // own has to press that direction again to stop it
     globalThis.addEventListener('blur', stop);
-    onCleanup(() => {
+    return () => {
       stop();
       globalThis.removeEventListener('keydown', down);
       globalThis.removeEventListener('keyup', up);
       globalThis.removeEventListener('blur', stop);
-    });
+    };
   });
 
   /**

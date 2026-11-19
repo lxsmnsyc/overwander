@@ -1,0 +1,13 @@
+# Log: solid-2-codemod
+
+- 2026-11-18: branch `refactor/solid-2-codemod` cut from `origin/feat/solid-2` (dd1272465). `pnpm install`: already on the 2.0 tree (solid-js 2.0.0). No earlier work on the branch.
+- Baseline `pnpm typecheck`: 1249 errors, as the spike said. Baseline `oxlint src test` (on a `git archive` copy of the base): exit 1, 1525 errors, almost all type-aware `no-unsafe-*` rules fed by the unresolved imports.
+- TypeScript here is 7 (native), with no JS API, so the codemod parses with `@babel/parser` (typescript and jsx plugins) and edits with `magic-string`, both already in `node_modules/.pnpm`. The script lived in the session scratchpad and is not committed: it is a one-off.
+- What the script does: rewrites the imports from `solid-js`, `solid-js/web`, `solid-js/store`, `terracotta`, `@solidjs/start` and `@solidjs/router` (A dropped), merges them per module, renames JSX `Suspense`, `Index` (plus `keyed={false}`), `X.Provider` and router `A`, renames `onMount(` calls, and rewords comments naming `Suspense` or `onMount`. A second pass sorts the import members (oxlint `sort-imports`).
+- `onSettled` forbids `onCleanup` inside it (dev error `CLEANUP_IN_FORBIDDEN_SCOPE`, `@solidjs/signals` `onCleanup`), so a second script turned a trailing `onCleanup(fn)` into `return fn`. Three bodies by hand (battle-canvas, world-scene, BoardDemo). Bare early `return;` became `return undefined;` for `consistent-return`.
+- `WorldMapCanvas` creates two effects inside its mount callback, which `onSettled` forbids too (children-forbidden owner). Renamed only; left for the overworld child.
+- Hand edits: `[...404].tsx` `<HttpStatusCode code={404} />` to `httpStatus(404)`; `AdminShell` `activeClass`/`inactiveClass`/`end` to `data-active:` and `aria-[current=page]:` Tailwind variants; three `vi.mock('solid-js/web')` in tests; three comments in files the script skipped.
+- Deleting the aliases broke `vite build` on `better-auth/solid`, whose client imports `solid-js/store`. The app only reads `$store` atoms from it, so `src/auth/auth-client.ts` now uses `better-auth/client`. Build then fails only on `createResource`.
+- `ComponentProps<'svg'>` from `solid-js` no longer accepts intrinsic tags in 2.0 (it lives in `@solidjs/web` for those): moved like `JSX`. 255 errors went with it.
+- A merge pass for duplicate `@solidjs/web` imports also merged pre-existing duplicate local imports in 9 files; restored those from HEAD.
+- After: typecheck 474 errors in 143 files, none TS2305/TS2307/TS2724 for a renamed name. oxlint exit 1, 1132 errors (no new kinds except `no-deprecated` on `Dynamic`, now that it resolves). oxfmt clean. The four changed test files pass.

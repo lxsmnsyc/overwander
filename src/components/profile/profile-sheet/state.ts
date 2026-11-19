@@ -1,4 +1,4 @@
-import { type Accessor, createResource, createSignal, from } from 'solid-js';
+import { type Accessor, createMemo, createSignal, from } from 'solid-js';
 import { signOut } from '../../../auth/actions';
 import { type AuctionRecord, canReclaim, listAuctionsBy } from '../../../auth/auctions';
 import { hostDuel, inviteToDuel } from '../../../auth/duels';
@@ -7,8 +7,7 @@ import { type Profile, watchProfile } from '../../../auth/profile';
 import LobbyRole from '../../../model/lobby-role';
 import ProfileSection from '../../../game/session/profile-section';
 import { GameDialog, useGame } from '../../app/game-context';
-import createClientSignal from '../../app/client-signal';
-import { answered } from '../../app/resource-reads';
+import { createLoad } from '../../app/create-load';
 import createFriendTie, { type FriendTieState } from '../../friends/tie';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -57,10 +56,14 @@ export interface ProfileStateOptions {
 export default function createProfileState(options: ProfileStateOptions): ProfileState {
   const game = useGame();
   // The balance moves whenever the player earns or spends, so the
-  // profile is followed rather than read once
-  const profile = from<Profile | null>((set) =>
-    watchProfile(options.player, (record) => {
-      set(record);
+  // profile is followed rather than read once. Seeded with nothing,
+  // so the hero says it is loading instead of holding the sheet
+  const profile = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(options.player, (record) => {
+        set(record);
+      });
     }),
   );
   const [error, setError] = createSignal<string | null>(null);
@@ -78,15 +81,19 @@ export default function createProfileState(options: ProfileStateOptions): Profil
    * the tab that lists it because the count is wanted on the rail
    * itself, and the same query twice is two subscriptions
    */
-  const waiting = from<FriendRequests>((set) =>
-    options.viewOnly
-      ? () => {
-          // Nothing to follow: a visited profile is not the reader's,
-          // and somebody else's requests are not theirs to see
-        }
-      : watchFriendRequests(options.player, (requests) => {
-          set(requests);
-        }),
+  const waiting = createMemo(() =>
+    from<FriendRequests | undefined>((set) => {
+      // Seeded with nothing, so the rail counts none until they land
+      set(undefined);
+      if (options.viewOnly) {
+        // Nothing to follow: a visited profile is not the reader's,
+        // and somebody else's requests are not theirs to see
+        return () => undefined;
+      }
+      return watchFriendRequests(options.player, (requests) => {
+        set(requests);
+      });
+    }),
   );
   const asking = (): FriendRequests => waiting() ?? { incoming: [], outgoing: [] };
 
@@ -96,22 +103,17 @@ export default function createProfileState(options: ProfileStateOptions): Profil
    * of what is stranded belongs on the rail itself, and reading it in
    * both places would be the same query twice.
    *
-   * Gated on the browser, so nothing is asked for while the page is
-   * being drawn, and read below without waiting, since this body
-   * declares it. Somebody else's lots are not the reader's business:
-   * the reclaim button on one would be theirs to press, so a visited
-   * profile asks for nothing
+   * A load, read below without waiting and only in the browser, so
+   * nothing is asked for while the page is being drawn. Somebody
+   * else's lots are not the reader's business: the reclaim button on
+   * one would be theirs to press, so a visited profile asks for nothing
    */
-  const client = createClientSignal();
-  const [selling, { refetch }] = createResource(
-    () => client() && !options.viewOnly && options.player,
-    listAuctionsBy,
-  );
-  // Answered rather than left to the gate: a source that goes falsy
-  // stops a resource fetching but does not empty it, so a reader who
-  // walked from their own profile to somebody else's would be shown
-  // their own lots under the other player's name
-  const lots = (): [string, AuctionRecord][] => (options.viewOnly ? [] : (answered(selling) ?? []));
+  const selling = createLoad(() => !options.viewOnly && options.player, listAuctionsBy);
+  // Emptied on a visited profile rather than left to the key: a key
+  // that goes falsy stops a load asking but does not empty it, so a
+  // reader who walked from their own profile to somebody else's would
+  // be shown their own lots under the other player's name
+  const lots = (): [string, AuctionRecord][] => (options.viewOnly ? [] : (selling.latest() ?? []));
 
   /**
    * How many lots came back unsold and are still sitting in escrow.
@@ -209,7 +211,7 @@ export default function createProfileState(options: ProfileStateOptions): Profil
     asking,
     lots,
     refetchLots: () => {
-      Promise.resolve(refetch()).catch(() => undefined);
+      selling.refresh();
     },
     open,
     setOpen: (section) => {

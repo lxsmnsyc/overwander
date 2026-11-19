@@ -8,7 +8,8 @@ import { describeItem } from '../../../details';
 import ItemSprite from '../../../items/ItemSprite';
 import { Button } from '../../../styled';
 
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**

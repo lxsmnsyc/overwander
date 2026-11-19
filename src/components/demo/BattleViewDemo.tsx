@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Show, createEffect, createResource, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal, onCleanup, untrack } from 'solid-js';
 import type { Profile } from '../../auth/profile';
 import type { TeamSnapshotRecord } from '../../auth/teams';
 import { BattleModes } from '../../battle/battle';
@@ -181,7 +182,7 @@ function readOutcome(asked: string | undefined): 'won' | 'lost' | 'draw' | null 
 }
 
 function Stage(): JSX.Element {
-  const [params] = useSearchParams<{
+  const [asked] = useSearchParams<{
     scene?: string;
     kind?: string;
     seed?: string;
@@ -194,6 +195,9 @@ function Stage(): JSX.Element {
     boss?: string;
     seat?: string;
   }>();
+  // The stage is built from the address once, as it was opened: a demo
+  // page is reloaded rather than navigated within
+  const params = untrack(() => ({ ...asked }));
   const seed = params.seed ?? 'field-kit';
   const kind = params.scene === 'raid' ? (KINDS[params.kind ?? ''] ?? RaidKind.Legendary) : null;
   const built = kind == null ? stageDuel(seed) : stageRaid(seed, kind);
@@ -205,7 +209,7 @@ function Stage(): JSX.Element {
   const [verdict, setVerdict] = createSignal<{ title: string; said: string } | null>(null);
   const [dismissed, setDismissed] = createSignal(false);
   // Nobody here has a profile, so every side is named by its fallback
-  const [names] = createResource(async () => {
+  const names = createMemo(async (): Promise<Map<string, Profile> | null> => {
     await Promise.resolve();
     return new Map<string, Profile>();
   });
@@ -216,9 +220,9 @@ function Stage(): JSX.Element {
   });
 
   // Once the field is drawn: the boss's health, the inspector, the results
-  createEffect(() => {
-    if (!ready()) {
-      return;
+  createEffect(ready, (drawn) => {
+    if (!drawn) {
+      return undefined;
     }
 
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -262,11 +266,11 @@ function Stage(): JSX.Element {
         }, VERDICT_AFTER),
       );
     }
-    onCleanup(() => {
+    return () => {
       for (const timer of timers) {
         clearTimeout(timer);
       }
-    });
+    };
   });
 
   const lead = findUnit(built, true);

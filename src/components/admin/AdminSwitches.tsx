@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type SwitchRow, listSwitches, setSwitch } from '../../auth/admin';
 import { Badge, Button, Card, List, ListRow, Note, Status, Switch, TextField } from '../styled';
 import describeFailure from '../../i18n/refusals';
@@ -116,11 +109,11 @@ function SwitchLine(props: {
 }
 
 function SwitchList(props: {
-  switches: Resource<SwitchRow[]>;
+  switches: Accessor<SwitchRow[]>;
   onChanged: () => void;
 }): JSX.Element {
   const rowFor = (feature: string): SwitchRow | undefined => {
-    for (const row of props.switches() ?? []) {
+    for (const row of props.switches()) {
       if (row.feature === feature) {
         return row;
       }
@@ -140,7 +133,7 @@ function SwitchList(props: {
 }
 
 export default function AdminSwitches(): JSX.Element {
-  const [switches, { refetch }] = createResource(listSwitches);
+  const switches = createMemo(async () => listSwitches());
 
   return (
     <Card>
@@ -148,14 +141,14 @@ export default function AdminSwitches(): JSX.Element {
         A switch turned off closes that part at once: new starts are refused, while leaving,
         collecting and settling stay open.
       </Note>
-      <Suspense fallback={<Note>Reading the switches…</Note>}>
+      <Loading fallback={<Note>Reading the switches…</Note>}>
         <SwitchList
           switches={switches}
           onChanged={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(switches).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </Card>
   );
 }

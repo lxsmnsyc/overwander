@@ -42,7 +42,8 @@ import createLotActions, { type LotClaim } from './lot-actions';
 import LotRail, { LotKind, readKind } from './rail';
 import SellPane from './sell';
 import AuctionDialog, { type AuctionSubject } from '../AuctionDialog';
-import { For, type JSX, type Resource, Show, createSignal, from } from 'solid-js';
+import { type Accessor, For, Show, createMemo, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import playEffect, { Effect } from '../../app/sound';
 import describeFailure from '../../../i18n/refusals';
 import { formatNumber } from '../../../i18n/format';
@@ -86,19 +87,19 @@ export interface AuctionTabProps {
 /**
  * The board itself, which is where every one of these is read.
  *
- * A read in the body that declared it throws past every `Suspense`
+ * A read in the body that declared it throws past every `Loading`
  * written there and lands on the boundary around the whole page, so
  * the reading half is a component of its own
  */
 export function AuctionBoard(
   props: AuctionTabProps & {
-    auctions: () => [string, AuctionRecord][] | undefined;
-    lots: Resource<Map<string, CaughtPokemon>>;
-    sellers: Resource<Map<string, string>>;
-    buddy: Resource<string | null>;
-    onlyOne: Resource<boolean>;
-    sellable: Resource<CatchOption[]>;
-    standing: Resource<{ auction: string; endsAt: number } | null>;
+    auctions: Accessor<[string, AuctionRecord][]>;
+    lots: Accessor<Map<string, CaughtPokemon>>;
+    sellers: Accessor<Map<string, string>>;
+    buddy: Accessor<string | null>;
+    onlyOne: Accessor<boolean>;
+    sellable: Accessor<CatchOption[]>;
+    standing: Accessor<{ auction: string; endsAt: number } | null>;
     revision: number;
     onChanged: () => void;
   },
@@ -123,11 +124,14 @@ export function AuctionBoard(
   };
 
   // The balance moves with every bid placed and every one handed back,
-  // so it is followed rather than read once
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.player, (record) => {
-      set(record);
-    }),
+  // so it is followed rather than read once. The first answer joins
+  // the wait the boundary above already holds for the board
+  const profile = createMemo(() =>
+    from<Profile | null>((set) =>
+      watchProfile(props.player, (record) => {
+        set(record);
+      }),
+    ),
   );
 
   const gold = (): number => profile()?.gold ?? 0;
@@ -340,9 +344,15 @@ export function AuctionBoard(
     return lot == null ? undefined : nameOf(lot);
   };
 
+  // Getters, so the props are read where a lot is drawn and not here,
+  // in the body, where a read does not track
   const { lotDetails, lotActions, lotChoices } = createLotActions({
-    player: props.player,
-    viewOnly: props.viewOnly,
+    get player() {
+      return props.player;
+    },
+    get viewOnly() {
+      return props.viewOnly;
+    },
     gold,
     describeSeller,
     claimOf,

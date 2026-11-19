@@ -1,10 +1,12 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import {
   CheckboxDescription,
   CheckboxIndicator,
   CheckboxLabel,
   Checkbox as HeadlessCheckbox,
-} from 'terracotta';
+} from 'terracotta/checkbox';
+import spellAria from './aria';
 
 /**
  * One thing that is either on or off, with the sentence that says what
@@ -49,7 +51,7 @@ export default function Checkbox(props: CheckboxProps): JSX.Element {
         // Terracotta marks the box with `tc-checked` and nothing a
         // screen reader reads, so a `role="checkbox"` that never says
         // whether it is ticked
-        aria-checked={props.checked}
+        aria-checked={spellAria(props.checked)}
         class={`${BOX} ${props.checked ? 'border-leaf-dark bg-leaf' : 'border-line'}`}
       >
         {/* Drawn rather than a character: a tick that is part of the box

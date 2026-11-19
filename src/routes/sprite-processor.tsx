@@ -1,6 +1,5 @@
-import { A } from '@solidjs/router';
+import type { JSX } from '@solidjs/web';
 import { Title } from '@solidjs/meta';
-import type { JSX } from 'solid-js';
 import SpriteProcessor from '../components/sprite-processor';
 import { ThemeToggle } from '../components/app/theme';
 
@@ -28,9 +27,9 @@ export default function SpriteProcessorPage(): JSX.Element {
               Pack loose images, a charset or a tileset into a sheet, written straight into public/.
             </p>
           </div>
-          <A href="/" class="text-sm font-bold">
+          <a href="/" class="text-sm font-bold">
             The game
-          </A>
+          </a>
           <ThemeToggle />
         </header>
 

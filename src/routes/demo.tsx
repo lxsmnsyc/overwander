@@ -1,5 +1,5 @@
 import type { RouteSectionProps } from '@solidjs/router';
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import NotFound from './[...404]';
 
 /** The demo pages are development tools, so a production build answers every one with a 404 */

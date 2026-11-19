@@ -1,4 +1,4 @@
-import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, createEffect, createSignal } from 'solid-js';
 import {
   FriendTie,
   acceptFriendRequest,
@@ -40,7 +40,7 @@ const PRESS: Record<FriendTie, (uid: string) => Promise<FriendTie>> = {
  * that changes it.
  *
  * A signal rather than a resource because the answer is what a button
- * is *labelled*, and a label cannot be read from inside a Suspense the
+ * is *labelled*, and a label cannot be read from inside a Loading the
  * button is not in
  */
 export interface FriendTieState {
@@ -71,43 +71,43 @@ export default function createFriendTie(
   const [busy, setBusy] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
 
-  createEffect(() => {
-    const uid = player();
-    const already = options.known?.() ?? null;
+  createEffect(
+    () => ({ uid: player(), already: options.known?.() ?? null }),
+    ({ uid, already }) => {
+      setError(null);
+      if (uid == null) {
+        setTie(FriendTie.None);
+        return undefined;
+      }
+      if (already != null) {
+        setTie(already);
+        return undefined;
+      }
+      // A profile can be swapped while the answer for the last one is
+      // still coming; the late answer is dropped rather than shown
+      let live = true;
 
-    setError(null);
-    if (uid == null) {
-      setTie(FriendTie.None);
-      return;
-    }
-    if (already != null) {
-      setTie(already);
-      return;
-    }
-    // A profile can be swapped while the answer for the last one is
-    // still coming; the late answer is dropped rather than shown
-    let live = true;
-
-    onCleanup(() => {
-      live = false;
-    });
-    setBusy(true);
-    readFriendTie(uid)
-      .then((found) => {
-        if (live) {
-          setTie(found);
-        }
-      })
-      .catch(() => {
-        // Nothing to say: an unknown standing offers "Add friend",
-        // and the press itself reports what went wrong
-      })
-      .finally(() => {
-        if (live) {
-          setBusy(false);
-        }
-      });
-  });
+      setBusy(true);
+      readFriendTie(uid)
+        .then((found) => {
+          if (live) {
+            setTie(found);
+          }
+        })
+        .catch(() => {
+          // Nothing to say: an unknown standing offers "Add friend",
+          // and the press itself reports what went wrong
+        })
+        .finally(() => {
+          if (live) {
+            setBusy(false);
+          }
+        });
+      return () => {
+        live = false;
+      };
+    },
+  );
 
   const press = (change: (uid: string) => Promise<FriendTie>): void => {
     const uid = player();

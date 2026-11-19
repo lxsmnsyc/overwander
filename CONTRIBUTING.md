@@ -155,8 +155,8 @@ with a name, and existing calls are never reordered.
 
 Build controls on the terracotta primitives rather than hand-rolled elements.
 Canvas is for the overworld and battle scenes only; interface sprites are CSS
-background-images in the DOM. A component that calls `createResource` must not
-read it, since the read belongs in a child under `Suspense`.
+background-images in the DOM. A component that declares an async memo must not
+read it, since the read belongs in a child under `Loading`.
 
 ## Sprites
 

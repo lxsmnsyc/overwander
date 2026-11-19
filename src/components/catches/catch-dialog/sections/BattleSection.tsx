@@ -56,7 +56,8 @@ import {
   createReorder,
 } from '../../../styled';
 
-import { For, Index, type JSX, Show, createEffect, createMemo, createSignal, on } from 'solid-js';
+import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
@@ -250,25 +251,16 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
   /**
    * The three lists as the player has laid them out, which is the
    * section's own until Save is pressed. A pokemon that is not theirs,
-   * or is being held still, is read rather than arranged
+   * or is being held still, is read rather than arranged. A different
+   * pokemon on the sheet, or the same one saved, is a fresh arrangement
    */
-  const [moves, setMoves] = createSignal<Moves[]>([]);
-  const [abilities, setAbilities] = createSignal<Abilities[]>([]);
+  const [moves, setMoves] = createSignal((): Moves[] => [...props.caught.moves]);
+  const [abilities, setAbilities] = createSignal((): Abilities[] => [...props.caught.abilities]);
   // What its shape or held items make it wear in a fight
   const worn = createMemo(() =>
     getWornAbilities(props.caught.species, props.caught.items, props.caught.abilities),
   );
-  const [items, setItems] = createSignal<Items[]>([]);
-
-  const lay = (caught: CaughtPokemon): void => {
-    setMoves([...caught.moves]);
-    setAbilities([...caught.abilities]);
-    setItems([...caught.items]);
-  };
-
-  // A different pokemon on the sheet, or the same one saved, is a
-  // fresh arrangement
-  createEffect(on(() => props.caught, lay));
+  const [items, setItems] = createSignal((): Items[] => [...props.caught.items]);
 
   const arrangeable = (): boolean => props.owned && !props.frozen;
 
@@ -342,7 +334,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
           onSave={save}
         />
         <ul class="m-0 grid list-none grid-cols-2 gap-1.5 p-0" {...movesOrder.listProps}>
-          <Index each={moves()}>
+          <For keyed={false} each={moves()}>
             {(move, at) => (
               <li
                 {...movesOrder.itemProps(at)}
@@ -386,12 +378,13 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                 </MoveTooltip>
               </li>
             )}
-          </Index>
-          <Index
+          </For>
+          <For
+            keyed={false}
             each={unfilled(moves().length, getCatchSlots(props.caught, Slots.Move), Slots.Move)}
           >
             {(state) => <Unfilled state={state()} kind={Slots.Move} class={MOVE_CARD} wordy />}
-          </Index>
+          </For>
         </ul>
       </div>
 
@@ -431,7 +424,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
             onSave={save}
           />
           <ul class="m-0 grid list-none grid-cols-2 gap-1.5 p-0" {...abilitiesOrder.listProps}>
-            <Index each={abilities()}>
+            <For keyed={false} each={abilities()}>
               {(ability, at) => (
                 <li
                   {...abilitiesOrder.itemProps(at)}
@@ -448,8 +441,9 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   </TooltipHost>
                 </li>
               )}
-            </Index>
-            <Index
+            </For>
+            <For
+              keyed={false}
               each={unfilled(
                 abilities().length,
                 getCatchSlots(props.caught, Slots.Ability),
@@ -464,7 +458,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   wordy
                 />
               )}
-            </Index>
+            </For>
             {/* What it wears in a fight rather than carries: no grip, no
                 slot, and nothing a patch or a save can reach */}
             <For each={worn()}>
@@ -513,7 +507,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
               fill it: an empty square on a stranger's pokemon is a
               button nobody may press */}
           <ul class="m-0 flex list-none flex-row flex-wrap gap-1.5 p-0" {...itemsOrder.listProps}>
-            <Index each={itemSlots(props.caught, props.owned)}>
+            <For keyed={false} each={itemSlots(props.caught, props.owned)}>
               {(_, at) => (
                 <li
                   class={`contents ${at < items().length ? grip(itemsOrder.held() === at) : ''}`}
@@ -575,8 +569,9 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
                   </Show>
                 </li>
               )}
-            </Index>
-            <Index
+            </For>
+            <For
+              keyed={false}
               each={unfilled(
                 itemSlots(props.caught, props.owned).length,
                 getHeldItemRoom(props.caught),
@@ -584,7 +579,7 @@ export default function BattleSection(props: BattleSectionProps): JSX.Element {
               )}
             >
               {(state) => <Unfilled state={state()} kind={Slots.Item} class={ITEM_SQUARE} />}
-            </Index>
+            </For>
           </ul>
         </div>
       </div>

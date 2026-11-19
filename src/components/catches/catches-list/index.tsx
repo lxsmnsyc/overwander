@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createMemo, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
 import {
   type BoxLayout,
   type BoxRecord,
@@ -20,10 +21,9 @@ import {
   releaseCatches,
 } from '../../../auth/caught';
 import CatchPicker, { type CatchOption, type CatchPickerProps } from '../catch-picker';
+import { createLoad } from '../../app/create-load';
 import BattleData from '../../app/BattleData';
 import { useGame } from '../../app/game-context';
-import createClientSignal from '../../app/client-signal';
-import { answered } from '../../app/resource-reads';
 import { BoxIcon, PlusIcon, SelectIcon, SwapIcon } from '../../icons';
 import { Button, Dialog, DialogActions, Meta, Segmented, Select, useToast } from '../../styled';
 import settings from '../../app/settings';
@@ -90,7 +90,6 @@ const [lastOpen, setLastOpen] = createSignal<string | null>(null);
 export default function CatchesList(props: CatchesListProps): JSX.Element {
   const game = useGame();
   const toast = useToast();
-  const client = createClientSignal();
   const released = createReleased();
   const [picked, setPicked] = createSignal<string[]>([]);
   /**
@@ -123,13 +122,14 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
   const mine = (): boolean => props.viewOnly !== true;
 
-  const [boxes] = createResource(
-    () => client() && mine() && ([props.player, game.records()] as const),
+  // A load runs in the browser only, so the server render never waits on it
+  const boxes = createLoad(
+    () => mine() && ([props.player, game.records()] as const),
     async ([player]): Promise<[string, BoxRecord][]> => listBoxes(player),
   );
 
-  /** The declaring body, so this never waits: no boxes until they are read */
-  const made = (): [string, BoxRecord][] => answered(boxes) ?? [];
+  /** Never waits: no boxes until they are read */
+  const made = (): [string, BoxRecord][] => boxes.latest() ?? [];
 
   /** Whether a search is looking through every box, where counts are matches */
   const counting = (): boolean => everywhere() && query().trim() !== '';
@@ -259,8 +259,8 @@ export default function CatchesList(props: CatchesListProps): JSX.Element {
 
   // Leaving select mode lets go of what was picked. Coming back to a
   // box still lit from last time is a selection nobody made
-  createEffect(() => {
-    if (!marking()) {
+  createEffect(marking, (on) => {
+    if (!on) {
       setPicked([]);
     }
   });

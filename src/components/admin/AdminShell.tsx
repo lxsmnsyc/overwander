@@ -1,5 +1,6 @@
-import { A, useLocation } from '@solidjs/router';
-import { For, type JSX, type ParentProps } from 'solid-js';
+import { useLocation } from '@solidjs/router';
+import { For, type ParentProps } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { linksFor, sectionFor } from './sections';
 import { ROLES, ROLE_NAMES, type Role } from '../../model/staff';
 import { Badge } from '../styled';
@@ -24,7 +25,20 @@ const LINK =
 
 const RESTING = 'border-transparent text-muted hover:border-transparent hover:text-ink';
 
-const OPEN = 'border-tide-dark bg-tide text-on-accent shadow-pop-sm hover:text-on-accent';
+/**
+ * The open section's look, keyed on the router's link attributes: a
+ * section is open while the path is under its link (`data-active`).
+ * Each class is written out in full so Tailwind finds it in the source
+ */
+const OPEN =
+  'data-active:border-tide-dark data-active:bg-tide data-active:text-on-accent' +
+  ' data-active:shadow-pop-sm data-active:hover:text-on-accent';
+
+/** The same for the overview, which is open only on its own page (`aria-current`) */
+const OPEN_EXACT =
+  'aria-[current=page]:border-tide-dark aria-[current=page]:bg-tide' +
+  ' aria-[current=page]:text-on-accent aria-[current=page]:shadow-pop-sm' +
+  ' aria-[current=page]:hover:text-on-accent';
 
 export interface AdminShellProps extends ParentProps {
   /** Who is reading it, said in the header so a shared machine says so */
@@ -54,14 +68,14 @@ export default function AdminShell(props: AdminShellProps): JSX.Element {
               long, and the way out of a section should not be a
               scroll back to the top */}
           <div class="flex flex-col gap-3 p-3 lg:sticky lg:top-0">
-            <A
+            <a
               href="/"
               class="flex items-baseline gap-2 rounded-xl border-2 border-tide bg-tide px-3 py-2
                 text-on-accent no-underline shadow-pop hover:text-on-accent"
             >
               <span class="text-base font-extrabold tracking-tight">Overwander</span>
               <span class="text-xs font-bold tracking-[0.12em] uppercase opacity-80">Admin</span>
-            </A>
+            </a>
             <nav aria-label="Dashboard sections">
               {/* A column at a desk and a scrolling row on a phone:
                   five sections do not fit across a narrow screen, and
@@ -73,17 +87,14 @@ export default function AdminShell(props: AdminShellProps): JSX.Element {
                 <For each={linksFor(staff.role())}>
                   {(entry) => (
                     <li class="shrink-0 lg:shrink">
-                      <A
+                      <a
                         href={entry.href}
                         // Only the overview matches by prefix alone,
                         // and every section lives under it
-                        end={entry.href === '/admin'}
-                        class={LINK}
-                        activeClass={OPEN}
-                        inactiveClass={RESTING}
+                        class={`${LINK} ${RESTING} ${entry.href === '/admin' ? OPEN_EXACT : OPEN}`}
                       >
                         {entry.label}
-                      </A>
+                      </a>
                     </li>
                   )}
                 </For>

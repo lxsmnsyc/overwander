@@ -1,6 +1,7 @@
-import { For, type JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta/radio-group';
 import { CountPill } from './row-card';
-import { RadioGroup, RadioGroupLabel, RadioGroupOption } from 'terracotta';
 
 /**
  * Two to four choices side by side on one track, the chosen one raised

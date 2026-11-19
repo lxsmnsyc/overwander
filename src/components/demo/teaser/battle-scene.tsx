@@ -1,4 +1,5 @@
-import { type JSX, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { onCleanup } from 'solid-js';
 import BattleField from '../../battle/BattleField';
 import BattleTopBar from '../../battle/BattleTopBar';
 import { EventPriority } from '../../../core/event-emitter';

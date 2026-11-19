@@ -1,4 +1,3 @@
-import { action } from '@solidjs/router';
 import type { ProcessResult, UploadedImage } from '../server/sprites/extras';
 import processExtras from '../server/sprites/extras';
 import type { Drawing } from '../server/sprites/files';
@@ -12,7 +11,7 @@ import processPokengine, { parseOrder } from '../server/sprites/pokengine';
 /**
  * What the sprite processor asks the server to do.
  *
- * Each takes the **form** rather than arguments. A file is what these
+ * Each is a plain call that takes the **form** rather than arguments. A file is what these
  * are for, and a file belongs in a multipart body: reading it into a
  * typed array on the client only to serialise it through a function
  * call is a copy of the whole archive for nothing. Everything else the
@@ -53,7 +52,7 @@ function asFile(value: FormDataEntryValue | null, what: string): File {
  * to cut the margin off every cell, and the artist's credit, which the
  * pack writes into the credits page beside the sheet
  */
-export const packPokengine = action(async (form: FormData): Promise<PokengineResult> => {
+export async function packPokengine(form: FormData): Promise<PokengineResult> {
   'use server';
   requireDevelopment();
 
@@ -65,10 +64,10 @@ export const packPokengine = action(async (form: FormData): Promise<PokengineRes
     compact: flag(form, 'compact'),
     credit: String(form.get('credit') ?? ''),
   });
-}, 'sprites/pokengine');
+}
 
 /** Loose images into one sheet under `public/sprites/extras`. */
-export const packExtras = action(async (form: FormData): Promise<ProcessResult> => {
+export async function packExtras(form: FormData): Promise<ProcessResult> {
   'use server';
   requireDevelopment();
 
@@ -90,4 +89,4 @@ export const packExtras = action(async (form: FormData): Promise<ProcessResult> 
     // named rather than filed under a species
     { name: String(form.get('name') ?? ''), compact: flag(form, 'compact') },
   );
-}, 'sprites/extras');
+}

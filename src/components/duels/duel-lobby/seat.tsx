@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { PlayerFace } from '../../profile/PlayerPlate';
 import { Meta, Pill } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';

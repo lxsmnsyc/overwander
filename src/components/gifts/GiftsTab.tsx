@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createMemo,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import {
   type CatchGift,
   type EncounterGift,
@@ -217,11 +210,11 @@ function asSquare(gift: CatchGift | EncounterGift): BoxEntry {
  * The shelf itself, which is where the gifts are read.
  *
  * A list read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
 function GiftShelf(props: {
-  owed: Resource<ShelfRow[]>;
+  owed: Accessor<ShelfRow[]>;
   viewOnly?: boolean;
   /** Whether this is the dashboard's ledger rather than a shelf */
   everything?: boolean;
@@ -235,7 +228,7 @@ function GiftShelf(props: {
    * since the shelf is about to be read again anyway
    */
   const [taking, setTaking] = createSignal<string | null>(null);
-  const gifts = (): ShelfRow[] => props.owed() ?? [];
+  const gifts = (): ShelfRow[] => props.owed();
   const pokemonOf = (kind: GiftKind): PokemonRow[] => {
     const rows: PokemonRow[] = [];
 
@@ -533,7 +526,7 @@ export interface GiftsTabProps {
 }
 
 export default function GiftsTab(props: GiftsTabProps): JSX.Element {
-  const [owed, { refetch }] = createResource<ShelfRow[]>(async () => {
+  const owed = createMemo(async (): Promise<ShelfRow[]> => {
     const rows: ShelfRow[] = [];
 
     if (props.everything === true) {
@@ -549,15 +542,15 @@ export default function GiftsTab(props: GiftsTabProps): JSX.Element {
   });
 
   return (
-    <Suspense fallback={looking()}>
+    <Loading fallback={looking()}>
       <GiftShelf
         owed={owed}
         viewOnly={props.viewOnly === true || props.everything === true}
         everything={props.everything}
         onClaimed={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
+          refresh(owed).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

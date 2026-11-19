@@ -34,8 +34,8 @@ modern ones.
 
 | Piece          | What it does                                                   |
 | -------------- | -------------------------------------------------------------- |
-| SolidStart 2   | The app: file routes, server functions, SSR                    |
-| Solid 1.9      | Signals and resources; no virtual DOM                          |
+| Solid 2.0      | Signals, async memos and `Loading`; no virtual DOM             |
+| Vite plugin    | Start mode with Nitro: file routes, server functions, SSR      |
 | terracotta     | Headless, accessible dialogs, tabs, listboxes and buttons      |
 | Tailwind CSS 4 | Styling, configured in `src/app.css` rather than a config file |
 | Postgres 17    | Every row, with `pg_cron` for the sweeps, in Docker            |

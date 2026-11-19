@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { BALL_ITEMS } from '../../../data/ids/items';
 import { Genders } from '../../../data/ids/species';
 import { SpriteAnim } from '../../../data/ids/sprite-anims';

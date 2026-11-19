@@ -1,4 +1,5 @@
-import { type JSX, createMemo, createSignal, onCleanup, onMount } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { createMemo, createSignal, onSettled } from 'solid-js';
 import {
   type BoardView,
   type WatchedWindow,
@@ -274,15 +275,11 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
     }
   };
 
-  onMount(() => {
+  onSettled(() => {
     const pacing = window.setInterval(stride, STEP_PACE);
     const wandering = window.setInterval(wander, STRANGER_REPLAN);
 
     wander();
-    onCleanup(() => {
-      window.clearInterval(pacing);
-      window.clearInterval(wandering);
-    });
     props.onReady({
       walkTo: (x, y) => {
         setGoal([x, y]);
@@ -302,6 +299,11 @@ export default function WorldScene(props: WorldSceneProps): JSX.Element {
         return near;
       },
     });
+
+    return () => {
+      window.clearInterval(pacing);
+      window.clearInterval(wandering);
+    };
   });
 
   const titleOf = (index: number): string => {

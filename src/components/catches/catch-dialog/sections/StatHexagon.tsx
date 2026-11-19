@@ -1,4 +1,5 @@
-import { For, type JSX } from 'solid-js';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /**
  * Six numbers drawn as a hexagon: each one is a corner's distance from
@@ -109,21 +110,21 @@ export default function StatHexagon(props: StatHexagonProps): JSX.Element {
         stroke-width="3"
         stroke-linejoin="round"
       />
-      <For each={props.stats}>
+      <For each={props.stats} keyed={false}>
         {(stat, at) => {
-          const [x, y] = corner(at(), 1 + LABEL_GAP / REACH);
-          const lift = LIFTS[at()];
+          const [x, y] = corner(at, 1 + LABEL_GAP / REACH);
+          const lift = LIFTS[at];
 
           return (
             <text
               x={x}
               y={y + lift}
-              text-anchor={anchor(at())}
-              class={`text-[11px] font-extrabold ${stat.tone == null || stat.tone === '' ? 'fill-muted' : stat.tone}`}
+              text-anchor={anchor(at)}
+              class={`text-[11px] font-extrabold ${stat().tone == null || stat().tone === '' ? 'fill-muted' : stat().tone}`}
             >
-              <tspan x={x}>{stat.name}</tspan>
+              <tspan x={x}>{stat().name}</tspan>
               <tspan x={x} dy="13" class="font-display text-[13px] font-semibold tabular-nums">
-                {stat.value}
+                {stat().value}
               </tspan>
             </text>
           );

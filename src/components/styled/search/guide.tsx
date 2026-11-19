@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import type { QueryVocabulary } from '../../../core/query';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { InformationIcon } from '../../icons';

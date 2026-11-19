@@ -1,4 +1,5 @@
-import { type JSX, type ParentProps, Show, children, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, Show, children, createMemo, from } from 'solid-js';
 import { type Profile, watchProfile } from '../../auth/profile';
 import { Pill, type PillTone, RowActions, RowCard, RowText } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -36,9 +37,14 @@ export interface FriendEntryProps extends ParentProps {
 }
 
 export default function FriendEntry(props: FriendEntryProps): JSX.Element {
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.uid, (record) => {
-      set(record);
+  // Seeded with nothing, so the row draws a stand-in name until the
+  // profile lands instead of holding the list
+  const profile = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(props.uid, (record) => {
+        set(record);
+      });
     }),
   );
   /** A name for somebody whose profile is gone, or who never set one */

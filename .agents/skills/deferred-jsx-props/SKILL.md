@@ -1,15 +1,13 @@
 ---
 name: deferred-jsx-props
 description: >
-  A prop whose markup is built outside a render — pushed onto a queue,
-  held in a signal, sent from a promise — is typed `() => JSX.Element`,
+  A prop whose markup is built outside a render (pushed onto a queue,
+  held in a signal, sent from a promise) is typed `() => JSX.Element`,
   never `JSX.Element`. Applies whenever adding a prop or an API that
   stores markup and draws it later.
 ---
 
-Solid's compiler wraps a component's dynamic props in memos **when the element is constructed**. Construct it inside a render and those memos get that render's owner and are disposed with it. Construct it in an event handler, a `.then`, or a `setTimeout`, and they have no owner, live for the life of the page, and Solid says so:
-
-> computations created outside a `createRoot` or `render` will never be disposed
+Solid's compiler wraps a component's dynamic props in memos **when the element is constructed**. Construct it inside a render and those memos get that render's owner and are disposed with it. Construct it in an event handler, a `.then`, or a `setTimeout`, and they have no owner and live for the life of the page: computations created outside a `createRoot` or `render` are never disposed.
 
 ## The rule
 
@@ -17,13 +15,15 @@ Solid's compiler wraps a component's dynamic props in memos **when the element i
 - Markup that is **stored and drawn later** is `() => JSX.Element`. The holder calls it where it draws it.
 
 ```ts
-// Bad — every caller builds this in a handler or a promise
+import type { JSX } from '@solidjs/web';
+
+// Bad: every caller builds this in a handler or a promise
 export interface ToastRequest {
   art?: JSX.Element;
 }
 toast.push({ art: <ItemSprite item={stack.item} size={24} label="" /> });
 
-// Good — built under the card that draws it
+// Good: built under the card that draws it
 export interface ToastRequest {
   art?: () => JSX.Element;
 }

@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createSignal } from 'solid-js';
+import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Button, Meta, Row, Select } from '../styled';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import type { AuraKind } from '../../canvas/effects/auras';

@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource } from 'solid-js';
+import { type Accessor, For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { AwardRecord } from '../../../auth/awards';
 import type Awards from '../../../data/ids/awards';
 import { CARD, CARD_TITLE, riseAfter } from '../../styled';
@@ -67,7 +68,7 @@ function MedalGrid(props: { awards: Awards[]; wins: Map<Awards, number> }): JSX.
   );
 }
 
-export default function BadgeShelf(props: { held: Resource<AwardRecord[]> }): JSX.Element {
+export default function BadgeShelf(props: { held: Accessor<AwardRecord[]> }): JSX.Element {
   const wins = (): Map<Awards, number> => readWins(props.held());
 
   return (

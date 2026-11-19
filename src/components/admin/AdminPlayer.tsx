@@ -1,5 +1,5 @@
-import { A } from '@solidjs/router';
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo, createSignal } from 'solid-js';
 import type { PlayerRow } from '../../auth/admin';
 import {
   ROLES,
@@ -102,7 +102,7 @@ function PasswordLinkCard(props: { uid: string }): JSX.Element {
  * The account itself, which is where it is read. A read in the body
  * that declared it throws past every boundary written there
  */
-function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }): JSX.Element {
+function PlayerCard(props: { uid: string; player: Accessor<PlayerRow | null> }): JSX.Element {
   const staff = useStaff();
   /**
    * What the account holds now, once this page has changed it. Null
@@ -121,7 +121,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
 
   /** Whether this account stands below the reader's own */
   const beneath = (row: PlayerRow): boolean =>
-    row.uid !== staff.uid && canActOn(staff.role(), roleOf(row));
+    row.uid !== staff.uid() && canActOn(staff.role(), roleOf(row));
 
   const roleOptions = (): { value: Role; label: string }[] => {
     const options: { value: Role; label: string }[] = [];
@@ -158,7 +158,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
         <Card title="No such account">
           <Note>
             Nothing has ever signed in under {props.uid}.{' '}
-            <A href="/admin/players">Back to the accounts.</A>
+            <a href="/admin/players">Back to the accounts.</a>
           </Note>
         </Card>
       }
@@ -191,7 +191,7 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
               when={beneath(row())}
               fallback={
                 <Note>
-                  {row().uid === staff.uid
+                  {row().uid === staff.uid()
                     ? 'Your own account. Nobody may take their own authority off.'
                     : 'This account stands at or above your own, so there is nothing to change here.'}
                 </Note>
@@ -275,11 +275,12 @@ function PlayerCard(props: { uid: string; player: Resource<PlayerRow | null> }):
 }
 
 export default function AdminPlayer(props: { uid: string }): JSX.Element {
-  const [player] = createResource(() => props.uid, getPlayer);
+  const uid = createMemo(() => props.uid);
+  const player = createMemo(async () => getPlayer(uid()));
 
   return (
-    <Suspense fallback={<Note>Reading the account…</Note>}>
+    <Loading fallback={<Note>Reading the account…</Note>}>
       <PlayerCard uid={props.uid} player={player} />
-    </Suspense>
+    </Loading>
   );
 }

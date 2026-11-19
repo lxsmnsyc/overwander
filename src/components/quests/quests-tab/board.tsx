@@ -17,16 +17,8 @@ import {
   useToast,
 } from '../../styled';
 import { DAILY_SLOTS } from '../../../data/quests/rotations';
-import {
-  For,
-  Index,
-  type JSX,
-  type ParentProps,
-  type Resource,
-  Show,
-  createEffect,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, type ParentProps, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import sayItems from '../../items/say-items';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -92,8 +84,8 @@ function PaneHead(props: {
 }
 
 export default function QuestBoard(props: {
-  standings: Resource<QuestStanding[]>;
-  rotations: Resource<RotationBoard>;
+  standings: Accessor<QuestStanding[]>;
+  rotations: Accessor<RotationBoard>;
   onChanged: () => void;
   onClose: () => void;
 }): JSX.Element {
@@ -105,14 +97,13 @@ export default function QuestBoard(props: {
   /**
    * The board as it last stood.
    *
-   * `latest` rather than the accessor itself: claiming re-reads both
-   * boards, and a read that suspends would take the whole panel back
-   * to its fallback — losing which chains were open, where the list
-   * was scrolled, and the card the player just pressed. The numbers
-   * are a moment stale instead, which is what they were anyway. The
-   * first read has nothing to keep and suspends as usual
+   * Claiming re-reads both boards, and the boundary above keeps the
+   * panel standing through a refresh, so which chains were open,
+   * where the list was scrolled and the card the player just pressed
+   * all stay. The numbers are a moment stale instead, which is what
+   * they were anyway. Only the first read waits
    */
-  const all = (): QuestStanding[] => props.standings.latest ?? [];
+  const all = (): QuestStanding[] => props.standings();
   const standingOf = (quest: Quests): QuestStanding | undefined => {
     for (const one of all()) {
       if (one.quest === quest) {
@@ -191,7 +182,7 @@ export default function QuestBoard(props: {
   const dailyReady = (): number => {
     let count = 0;
 
-    for (const standing of props.rotations.latest?.daily ?? []) {
+    for (const standing of props.rotations().daily) {
       if (standing.claimable && !standing.claimed) {
         count += 1;
       }
@@ -201,37 +192,41 @@ export default function QuestBoard(props: {
   const dailyClaimed = (): number => {
     let count = 0;
 
-    for (const standing of props.rotations.latest?.daily ?? []) {
+    for (const standing of props.rotations().daily) {
       if (standing.claimed) {
         count += 1;
       }
     }
     return count;
   };
-  const weekly = (): RotationBoard['weekly'] | undefined => props.rotations.latest?.weekly;
+  const weekly = (): RotationBoard['weekly'] | undefined => props.rotations().weekly;
   const weeklyReady = (): number => (weekly()?.claimable === true && !weekly()?.claimed ? 1 : 0);
 
   /** Which row is open: seeded once from the first standings to arrive, and the player's after */
   const [place, setPlace] = createSignal<number>(Place.Daily);
   let placed = false;
 
-  createEffect(() => {
-    if (placed || props.standings.latest == null) {
-      return;
-    }
-    placed = true;
-    // What is ready to claim, then the first unfinished chain, as the
-    // board used to open them
-    if (dailyReady() > 0 || weeklyReady() > 0) {
-      setPlace(dailyReady() > 0 ? Place.Daily : Place.Weekly);
-      return;
-    }
-    const owed = ready();
+  createEffect(
+    () => {
+      // What is ready to claim, then the first unfinished chain, as the
+      // board used to open them. Null keeps the daily row
+      if (dailyReady() > 0 || weeklyReady() > 0) {
+        return dailyReady() > 0 ? Place.Daily : Place.Weekly;
+      }
+      const owed = ready();
 
-    if (owed.length > 0) {
-      setPlace(Place.Chain + owed[0]);
-    }
-  });
+      return owed.length > 0 ? Place.Chain + owed[0] : null;
+    },
+    (opening) => {
+      if (placed) {
+        return;
+      }
+      placed = true;
+      if (opening != null) {
+        setPlace(opening);
+      }
+    },
+  );
 
   const say = (message: string, tone: ToastTone): void => {
     toast.push({ message, tone });
@@ -328,9 +323,7 @@ export default function QuestBoard(props: {
         <RailTab value={Place.Daily}>
           <Dot tone="#F59A3B" />
           <span class="truncate">{m.quest_today()}</span>
-          <RowCounts ready={dailyReady()}>
-            {props.rotations.latest?.daily.length ?? DAILY_SLOTS}
-          </RowCounts>
+          <RowCounts ready={dailyReady()}>{props.rotations().daily.length}</RowCounts>
         </RailTab>
         <RailTab value={Place.Weekly}>
           <Dot tone="#F59A3B" />
@@ -370,12 +363,12 @@ export default function QuestBoard(props: {
             <PaneHead
               name={m.quest_today()}
               line={m.quest_hint_rotation({ count: DAILY_SLOTS })}
-              share={{ claimed: dailyClaimed(), total: props.rotations.latest?.daily.length ?? 0 }}
+              share={{ claimed: dailyClaimed(), total: props.rotations().daily.length }}
             />
             {/* By slot rather than by value: today's three keep
                 their places, and a re-read is new numbers in the
                 same three cards */}
-            <Index each={props.rotations.latest?.daily ?? []}>
+            <For keyed={false} each={props.rotations().daily}>
               {(standing) => (
                 <RotationCard
                   standing={standing()}
@@ -385,7 +378,7 @@ export default function QuestBoard(props: {
                   }}
                 />
               )}
-            </Index>
+            </For>
           </div>
         </TabPane>
         <TabPane value={Place.Weekly}>

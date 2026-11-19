@@ -1,13 +1,13 @@
-import { For, type JSX, createSignal } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { For, createSignal } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
 import {
   Listbox,
   ListboxButton,
   ListboxLabel,
   ListboxOption,
   ListboxOptions,
-  Transition,
-} from 'terracotta';
+} from 'terracotta/listbox';
+import { Transition } from 'terracotta/transition';
 import { DROP, dropOrigin } from './transition';
 import dismissOutside from './dismiss';
 import useDropdown from './dropdown';

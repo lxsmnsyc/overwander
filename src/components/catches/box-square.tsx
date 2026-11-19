@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, Show } from 'solid-js';
+import { type Accessor, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { AuraKind } from '../../canvas/effects/auras';
 import { Species } from '../../data/ids/species';
 import { LockIcon, MoonIcon, SparklesIcon, StarIcon, SunIcon } from '../icons';

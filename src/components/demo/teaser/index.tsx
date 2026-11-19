@@ -1,5 +1,6 @@
 import { useSearchParams } from '@solidjs/router';
-import { type JSX, Match, type Resource, Show, Suspense, Switch, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Match, Show, Switch, createMemo, untrack } from 'solid-js';
 import { asOffset, getLocalOffset, toLocalTime } from '../../../model/local-time';
 import { atClockHour } from '../../../data/day-clock';
 import ensureBattleData from '../../../data/battle-data';
@@ -48,21 +49,22 @@ const STOP_KINDS: Partial<Record<string, Landmark>> = {
 
 /** The staged fight, read apart from where it is loaded */
 function Fielded(props: {
-  fight: Resource<StagedFight | null>;
+  fight: Accessor<StagedFight | null>;
   onStart: () => void;
   onFoeCast: () => void;
 }): JSX.Element {
   return (
-    <Show when={props.fight()}>
+    // Keyed: the scene is built from one fight and never follows another
+    <Show when={props.fight()} keyed>
       {(staged) => (
-        <BattleScene fight={staged()} onStart={props.onStart} onFoeCast={props.onFoeCast} />
+        <BattleScene fight={staged} onStart={props.onStart} onFoeCast={props.onFoeCast} />
       )}
     </Show>
   );
 }
 
 export default function TeaserStage(): JSX.Element {
-  const [params] = useSearchParams<{
+  const [asked] = useSearchParams<{
     scene?: string;
     x?: string;
     y?: string;
@@ -72,6 +74,8 @@ export default function TeaserStage(): JSX.Element {
     skip?: string;
     boss?: string;
   }>();
+  // The scene is staged from the address once, as it was opened
+  const params = untrack(() => ({ ...asked }));
   const offset = asOffset(getLocalOffset());
   const hour = Number(params.hour ?? 12);
   const now = Math.floor(toLocalTime(Date.now(), offset) / DAY) * DAY + atClockHour(hour);
@@ -108,18 +112,19 @@ export default function TeaserStage(): JSX.Element {
     return [worldCell(spot.chunkX, spot.cellX), worldCell(spot.chunkY, spot.cellY)];
   };
 
-  const [fight] = createResource(
-    () => (scene === 'world' ? null : scene),
-    async (wanted) => {
-      await ensureBattleData();
-      if (wanted === 'raid' || wanted === 'shadow') {
-        return stageRaid(wanted === 'shadow', now, offset, params.boss);
-      }
-      const kind = STOP_KINDS[wanted];
+  // The scene is fixed for the page, so this is asked once
+  const fight = createMemo(async (): Promise<StagedFight | null> => {
+    if (scene === 'world') {
+      return null;
+    }
+    await ensureBattleData();
+    if (scene === 'raid' || scene === 'shadow') {
+      return stageRaid(scene === 'shadow', now, offset, params.boss);
+    }
+    const kind = STOP_KINDS[scene];
 
-      return kind == null ? null : stageStopFight(new Set([kind]), skip, now, offset);
-    },
-  );
+    return kind == null ? null : stageStopFight(new Set([kind]), skip, now, offset);
+  });
 
   return (
     <main class="fixed inset-0 overflow-hidden bg-shade">
@@ -142,7 +147,7 @@ export default function TeaserStage(): JSX.Element {
           />
         </Match>
         <Match when={scene !== 'world'}>
-          <Suspense>
+          <Loading>
             <Fielded
               fight={fight}
               onStart={() => {
@@ -152,7 +157,7 @@ export default function TeaserStage(): JSX.Element {
                 handle.foeCasts.push(Date.now() / 1000);
               }}
             />
-          </Suspense>
+          </Loading>
         </Match>
       </Switch>
     </main>

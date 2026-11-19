@@ -31,7 +31,7 @@ import {
 import { getCatchName, isNicknameLocked, isShadow, isShiny } from '../../../model/caught-record';
 import { NICKNAME_LIMIT, asNickname } from '../../../model/nickname';
 import { useAuth } from '../../../auth/context';
-import { answered, failed, readable } from '../../app/resource-reads';
+import { type Load, createLoad } from '../../app/create-load';
 
 import { canHatch, isEgg } from '../../../model/egg';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
@@ -88,17 +88,8 @@ import IncreasePPDialog from '../IncreasePPDialog';
 import BottleCapDialog from '../BottleCapDialog';
 import { askTeachings } from '../../forms/teach-move';
 
-import {
-  type JSX,
-  type Resource,
-  Show,
-  batch,
-  createEffect,
-  createResource,
-  createSignal,
-  on as following,
-  onCleanup,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createSignal, onCleanup } from 'solid-js';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
 import { joinSentences } from '../../../i18n/format';
@@ -195,16 +186,16 @@ function describeItems(items: readonly Items[]): string {
  */
 export function CatchSheetBody(
   props: CatchDialogProps & {
-    detail: Resource<{ id: string; caught: CaughtPokemon | null }>;
-    owners: Resource<Map<string, string>>;
-    dex: Resource<PokedexView>;
-    evolutions: Resource<EvolutionOption[]>;
-    fighting: Resource<boolean>;
-    onlyOne: Resource<boolean>;
-    selling: Resource<boolean>;
-    candies: Resource<number>;
-    bag: Resource<InventoryEntry[]>;
-    buddy: Resource<string | null>;
+    detail: Load<{ id: string; caught: CaughtPokemon | null }>;
+    owners: Load<Map<string, string>>;
+    dex: Load<PokedexView>;
+    evolutions: Load<EvolutionOption[]>;
+    fighting: Load<boolean>;
+    onlyOne: Load<boolean>;
+    selling: Load<boolean>;
+    candies: Load<number>;
+    bag: Load<InventoryEntry[]>;
+    buddy: Load<string | null>;
     onRecordChanged: () => void;
     onBagChanged: () => void;
     onBuddyChanged: () => void;
@@ -232,13 +223,12 @@ export function CatchSheetBody(
    * player clicked on in the meantime
    */
   const recordOf = (catchId: string): CaughtPokemon | null => {
-    // `latest` rather than the resource itself: everything on this
-    // sheet that writes re-reads the record afterwards, and a read
-    // that suspends unmounts the panel, and through the boundary the
-    // page is under, the page behind it. Keeping the last record on
-    // screen while the next one arrives is what makes a favorite land
-    // without the screen blinking
-    const held = props.detail.latest;
+    // A load that never waits: everything on this sheet that writes
+    // re-reads the record afterwards, and a read that suspends unmounts
+    // the panel, and through the boundary the page is under, the page
+    // behind it. Keeping the last record on screen while the next one
+    // arrives is what makes a favorite land without the screen blinking
+    const held = props.detail.latest();
     const loaded = held?.id === catchId ? held.caught : null;
 
     if (loaded == null) {
@@ -279,7 +269,7 @@ export function CatchSheetBody(
     }
     // A distributed pokemon names the trainer it came from, who has no
     // account to look up — so what the record says is what it is called
-    return props.owners.latest?.get(entry.owner) ?? entry.name ?? m.catch_owner_unknown();
+    return props.owners.latest()?.get(entry.owner) ?? entry.name ?? m.catch_owner_unknown();
   };
 
   /**
@@ -303,7 +293,7 @@ export function CatchSheetBody(
     // gives, and it is the right one. A sheet held up for it, or one
     // that flashed the full picture and then hid it, would both be
     // worse than one that fills in
-    const entry = answered(props.dex);
+    const entry = props.dex.latest();
     let kept: NonNullable<typeof entry>['caught'][number] | undefined;
     let seen = false;
 
@@ -338,7 +328,7 @@ export function CatchSheetBody(
   const frozen = (): boolean => {
     const loaded = view();
 
-    return props.fighting.latest === true || (loaded != null && isGuarded(loaded));
+    return props.fighting.latest() === true || (loaded != null && isGuarded(loaded));
   };
 
   /**
@@ -356,7 +346,7 @@ export function CatchSheetBody(
   const candy = createCandyFeed({
     recordOf,
     showing: () => props.catchId,
-    candies: () => readable(props.candies) ?? 0,
+    candies: () => props.candies.latest() ?? 0,
     grew: (level, here, levelledUp) => {
       // Once for the run rather than once a level
       if (here && levelledUp) {
@@ -394,20 +384,20 @@ export function CatchSheetBody(
 
   // A different pokemon on the sheet is a different pile of presses
   createEffect(
-    following(
-      () => props.catchId,
-      () => {
-        candy.switched();
-      },
-      { defer: true },
-    ),
+    () => props.catchId,
+    () => {
+      candy.switched();
+    },
+    { defer: true },
   );
 
   // The re-read landed, so the bag may be the truth again
-  createEffect(() => {
-    readable(props.candies);
-    candy.candiesRead();
-  });
+  createEffect(
+    () => props.candies.latest(),
+    () => {
+      candy.candiesRead();
+    },
+  );
 
   /** The level as the sheet is showing it, presses and all */
   const shownLevel = (): number => {
@@ -419,7 +409,7 @@ export function CatchSheetBody(
   /** The pile as the sheet is showing it, with what the presses would spend taken off */
   const shownCandies = (): number => {
     queued();
-    readable(props.candies);
+    props.candies.latest();
     return candy.shownCandies(view());
   };
 
@@ -462,7 +452,7 @@ export function CatchSheetBody(
   const holdables = (): InventoryEntry[] => {
     const found: InventoryEntry[] = [];
 
-    for (const entry of readable(props.bag) ?? []) {
+    for (const entry of props.bag.latest() ?? []) {
       if (isHoldable(entry.item)) {
         found.push(entry);
       }
@@ -662,7 +652,7 @@ export function CatchSheetBody(
     const carried = new Set<Items>();
     let husk: string | null = null;
 
-    for (const entry of readable(props.bag) ?? []) {
+    for (const entry of props.bag.latest() ?? []) {
       if (entry.amount > 0) {
         carried.add(entry.item);
       }
@@ -808,7 +798,7 @@ export function CatchSheetBody(
    * Whether this server gives a day to take a release back, asked the
    * first time the question is put and kept for the visit
    */
-  const [graced] = createResource(releasing, isReleaseGraced);
+  const graced = createLoad(releasing, isReleaseGraced);
   /** Whether the full ownership history is open over the sheet */
   const [tracing, setTracing] = createSignal(false);
 
@@ -855,12 +845,11 @@ export function CatchSheetBody(
         // The record is gone, so there is nothing left for this
         // dialog to show
         props.onChange?.();
-        // Together, or the sheet reopens for a frame between the
-        // confirmation closing and the sheet being told to
-        batch(() => {
-          setReleasing(false);
-          props.onClose();
-        });
+        // Both land in the same flush, so the sheet does not reopen
+        // for a frame between the confirmation closing and the sheet
+        // being told to
+        setReleasing(false);
+        props.onClose();
       })
       .catch((caught: unknown) => {
         setReleasing(false);
@@ -868,12 +857,20 @@ export function CatchSheetBody(
       });
   };
 
+  /**
+   * Whether the count behind "only one pokemon" is still on its way.
+   * The button waits for it; a count that failed leaves the button
+   * live, since the server refuses a last pokemon anyway
+   */
+  const countingCatches = (): boolean =>
+    props.onlyOne.latest() === undefined && !props.onlyOne.errored();
+
   /** Why this pokemon cannot be released right now, if it cannot */
   const blockedRelease = (loaded: CaughtPokemon): string | null => {
-    if (props.fighting.latest === true) {
+    if (props.fighting.latest() === true) {
       return m.catch_release_blocked_raid();
     }
-    if (props.onlyOne() === true) {
+    if (props.onlyOne.latest() === true) {
       // A player with no pokemon has no way back into the game
       return m.catch_release_blocked_only();
     }
@@ -915,7 +912,7 @@ export function CatchSheetBody(
    * knows whether there would be a list in it
    */
   const hasUsableItem = (): boolean => {
-    for (const entry of readable(props.bag) ?? []) {
+    for (const entry of props.bag.latest() ?? []) {
       if (entry.amount > 0 && isUsable(entry.item)) {
         return true;
       }
@@ -1009,14 +1006,14 @@ export function CatchSheetBody(
     return [
       {
         label: isFavorite(loaded) ? m.catch_unfavorite() : m.catch_favorite(),
-        disabled: props.fighting.latest === true,
+        disabled: props.fighting.latest() === true,
         onSelect: () => {
           favorite(!isFavorite(loaded));
         },
       },
       {
         label: isGuarded(loaded) ? m.catch_unlock() : m.catch_lock(),
-        disabled: props.fighting.latest === true,
+        disabled: props.fighting.latest() === true,
         onSelect: () => {
           guard(!isGuarded(loaded));
         },
@@ -1048,8 +1045,8 @@ export function CatchSheetBody(
         // still taking bids, the block has no room for another
         disabled:
           props.onAuction == null ||
-          props.fighting.latest === true ||
-          props.selling() === true ||
+          props.fighting.latest() === true ||
+          props.selling.latest() === true ||
           isFavorite(loaded) ||
           isEgg(loaded) ||
           !isAuctionableCatch(loaded),
@@ -1070,7 +1067,7 @@ export function CatchSheetBody(
         label: nameLabel(loaded, nameLocked),
         // An egg is not named: what is in it has not been met, and a
         // name given to a shell is a name given to nobody
-        disabled: props.fighting.latest === true || isEgg(loaded) || nameLocked,
+        disabled: props.fighting.latest() === true || isEgg(loaded) || nameLocked,
         onSelect: () => {
           // Opened on the name it already has rather than on an empty
           // box: renaming is far commoner than naming, and a player
@@ -1080,8 +1077,8 @@ export function CatchSheetBody(
       },
       {
         label:
-          props.buddy.latest === props.catchId ? m.catch_walking_with_you() : m.catch_set_buddy(),
-        disabled: props.buddy.latest === props.catchId,
+          props.buddy.latest() === props.catchId ? m.catch_walking_with_you() : m.catch_set_buddy(),
+        disabled: props.buddy.latest() === props.catchId,
         onSelect: takeAlong,
       },
     ];
@@ -1122,7 +1119,7 @@ export function CatchSheetBody(
         tone: 'danger',
         separated: true,
         // Opened even when refused, so the dialog can say why
-        disabled: props.fighting.latest === true,
+        disabled: props.fighting.latest() === true,
         onSelect: () => {
           setReleasing(true);
         },
@@ -1186,10 +1183,9 @@ export function CatchSheetBody(
         isOpen={
           props.catchId != null &&
           // Held shut until this catch's record is in, so a sheet never
-          // opens to say it is loading. The first read waits at the
-          // boundary above; a later catch keeps the last record
-          // standing, so the id is what says this one has arrived
-          props.detail.latest?.id === props.catchId &&
+          // opens to say it is loading. A later catch keeps the last
+          // record standing, so the id is what says this one has arrived
+          props.detail.latest()?.id === props.catchId &&
           teaching() == null &&
           bottle() == null &&
           naming() == null &&
@@ -1242,7 +1238,7 @@ export function CatchSheetBody(
             when={view()}
             fallback={
               <Note>
-                {props.detail.latest == null ? m.catch_sheet_loading() : m.catch_sheet_missing()}
+                {props.detail.latest() == null ? m.catch_sheet_loading() : m.catch_sheet_missing()}
               </Note>
             }
           >
@@ -1252,8 +1248,8 @@ export function CatchSheetBody(
                   caught={loaded()}
                   named={named()}
                   level={shownLevel()}
-                  buddy={props.buddy.latest === props.catchId}
-                  raiding={owned() != null && props.fighting.latest === true}
+                  buddy={props.buddy.latest() === props.catchId}
+                  raiding={owned() != null && props.fighting.latest() === true}
                   controls={controls()}
                   tiles={
                     // An egg has no type to raise and no family to feed yet
@@ -1261,7 +1257,7 @@ export function CatchSheetBody(
                       <HeroTiles
                         caught={loaded()}
                         owned={owned() != null}
-                        candies={failed(props.candies) == null ? shownCandies() : null}
+                        candies={props.candies.failed() == null ? shownCandies() : null}
                         level={shownLevel()}
                         cost={getCandyCost(loaded())}
                         held={
@@ -1303,7 +1299,7 @@ export function CatchSheetBody(
                           />
                         </div>
                         <Note>
-                          {props.buddy.latest === props.catchId
+                          {props.buddy.latest() === props.catchId
                             ? m.catch_egg_progress({
                                 steps: loaded().steps,
                                 hatch: loaded().hatchSteps,
@@ -1359,7 +1355,7 @@ export function CatchSheetBody(
                         owned={owned() != null}
                         frozen={frozen()}
                         holdables={holdables()}
-                        bag={readable(props.bag)}
+                        bag={props.bag.latest()}
                         giving={panel() === 'give'}
                         onGiving={(open) => {
                           setPanel(open ? 'give' : null);
@@ -1382,7 +1378,7 @@ export function CatchSheetBody(
                         // Asked only for the reader's own: the resource keeps
                         // its last answer when the question goes away, which
                         // was the last pokemon of theirs that was open
-                        options={owned() == null ? undefined : props.evolutions.latest}
+                        options={owned() == null ? undefined : props.evolutions.latest()}
                         owned={owned() != null}
                         frozen={frozen()}
                         shiny={isShiny(loaded())}
@@ -1451,7 +1447,7 @@ export function CatchSheetBody(
           setReleasing(false);
         }}
         title={m.catch_release_title()}
-        description={answered(graced) === true ? m.catch_release_graced() : m.catch_release_final()}
+        description={graced.latest() === true ? m.catch_release_graced() : m.catch_release_final()}
         terse
       >
         <Show when={view()}>
@@ -1476,7 +1472,11 @@ export function CatchSheetBody(
                 {(reason) => <Note>{reason()}</Note>}
               </Show>
               <DialogActions>
-                <Button tone="danger" disabled={blockedRelease(loaded()) != null} onClick={release}>
+                <Button
+                  tone="danger"
+                  disabled={blockedRelease(loaded()) != null || countingCatches()}
+                  onClick={release}
+                >
                   {m.catch_release()}
                 </Button>
                 <Button
@@ -1518,7 +1518,7 @@ export function CatchSheetBody(
           <input
             type="text"
             value={naming() ?? ''}
-            maxLength={NICKNAME_LIMIT}
+            maxlength={NICKNAME_LIMIT}
             onInput={(event) => {
               setNaming(event.currentTarget.value);
             }}
@@ -1587,7 +1587,7 @@ export function CatchSheetBody(
           </Show>
         }
         header={<Show when={view()}>{(loaded) => <TargetStrip caught={loaded()} />}</Show>}
-        entries={readable(props.bag)}
+        entries={props.bag.latest()}
         disabled={frozen()}
         // Only the prized and special bands ask twice. Everything a
         // player heals with — a Potion, a Full Restore, a wing — is

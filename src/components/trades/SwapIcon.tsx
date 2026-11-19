@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'solid-js';
+import type { ComponentProps, JSX } from '@solidjs/web';
 
 /** Two arrows passing each other: the mark between the sides of a trade */
 export default function SwapIcon(props: ComponentProps<'svg'>): JSX.Element {

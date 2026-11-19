@@ -1,7 +1,7 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, createMemo } from 'solid-js';
 import type { RaidRecord } from '../../../auth/raids';
 import { type Profile, getProfiles } from '../../../auth/profile';
-import { settled } from '../../app/resource-reads';
 import type { TeamRecord } from '../../../auth/teams';
 import { Note } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -17,8 +17,8 @@ import LobbyRows from './rows';
 export default function LobbyTeams(
   props: RaidLobbyProps & {
     raid: () => RaidRecord | null;
-    teams: Resource<TeamRecord[]>;
-    canJoin: Resource<boolean>;
+    teams: Accessor<TeamRecord[] | null>;
+    canJoin: Accessor<boolean>;
     watching: () => string[];
   },
 ): JSX.Element {
@@ -29,21 +29,21 @@ export default function LobbyTeams(
    * profile opens under. Read once for the whole lobby, keyed on who
    * is in it
    */
-  const [names] = createResource(
-    () => {
-      const players = new Set<string>();
+  const nameKey = createMemo(() => {
+    const players = new Set<string>();
 
-      for (const team of settled(props.teams) ?? []) {
-        players.add(team.player);
-      }
-      return [...players].sort().join(',');
-    },
-    async (key): Promise<Map<string, Profile>> => getProfiles(splitKey(key)),
+    for (const team of props.teams() ?? []) {
+      players.add(team.player);
+    }
+    return [...players].sort().join(',');
+  });
+  const names = createMemo(async (): Promise<Map<string, Profile>> =>
+    getProfiles(splitKey(nameKey())),
   );
 
   return (
-    <Suspense fallback={<Note>{m.raid_loading_one()}</Note>}>
+    <Loading fallback={<Note>{m.raid_loading_one()}</Note>}>
       <LobbyRows {...props} names={names} />
-    </Suspense>
+    </Loading>
   );
 }

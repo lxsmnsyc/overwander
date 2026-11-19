@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal, from } from 'solid-js';
+import { For, Show, createMemo, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type AuctionRecord,
   canReclaim,
@@ -118,9 +119,14 @@ function describeLot(auction: AuctionRecord, state: LotState, at: number): strin
  */
 function BidderPlate(props: { uid: string }): JSX.Element {
   const game = useGame();
-  const profile = from<Profile | null>((set) =>
-    watchProfile(props.uid, (record) => {
-      set(record);
+  // Seeded with nothing, so the row says "a trainer" until the profile
+  // lands instead of holding the list
+  const profile = createMemo(() =>
+    from<Profile | null | undefined>((set) => {
+      set(undefined);
+      return watchProfile(props.uid, (record) => {
+        set(record);
+      });
     }),
   );
 

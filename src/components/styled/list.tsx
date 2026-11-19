@@ -1,5 +1,7 @@
-import type { JSX, ParentProps } from 'solid-js';
-import { Button as HeadlessButton } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
+import { Button as HeadlessButton } from 'terracotta/button';
+import spellAria from './aria';
 
 /**
  * The game is mostly lists: a bag, a party, an auction board, a lobby.
@@ -87,7 +89,7 @@ export function RowButton(props: RowButtonProps): JSX.Element {
   return (
     <HeadlessButton
       type="button"
-      aria-pressed={props.pressed}
+      aria-pressed={spellAria(props.pressed)}
       disabled={props.disabled}
       class={`grow rounded-none border-0 bg-transparent p-0 text-left text-sm font-normal
         shadow-none hover:border-0 hover:text-tide-dark active:translate-y-0

@@ -1,4 +1,5 @@
-import { For, Index, type JSX, Show, createMemo } from 'solid-js';
+import { For, Show, createMemo } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Unit from '../../battle/unit';
 import { Statuses } from '../../data/ids/status';
 import { getStatusName } from '../../model/health';
@@ -207,7 +208,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
             and hands the row a signal, so a tick moves the widths and
             touches nothing else */}
         <ul class="m-0 flex list-none flex-col gap-0.5 p-0">
-          <Index each={view().moves}>
+          <For keyed={false} each={view().moves}>
             {(move) => (
               <li>
                 <MoveTooltip class="block" move={move().move}>
@@ -228,7 +229,7 @@ export default function UnitCard(props: UnitCardProps): JSX.Element {
                 </MoveTooltip>
               </li>
             )}
-          </Index>
+          </For>
         </ul>
 
         {/* What each of these does is the half worth reading, and

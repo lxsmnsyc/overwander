@@ -1,16 +1,15 @@
-import { type JSX, Show, createEffect, createSignal, createUniqueId, onCleanup } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type JSX, Portal } from '@solidjs/web';
+import { Show, createEffect, createSignal, createUniqueId } from 'solid-js';
 import {
   DialogOverlay,
   DialogPanel,
   Dialog as HeadlessDialog,
   DialogDescription as HeadlessDialogDescription,
   DialogTitle as HeadlessDialogTitle,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import type { QueryCompletion, QuerySuggestion } from '../../../core/query';
-import { usePortalHost } from '../../styled';
+import { spellAria, usePortalHost } from '../../styled';
 import { m } from '../../../i18n/paraglide/messages.js';
 import COMMAND_VOCABULARY from './commands';
 import FADE, { SHEER } from '../../styled/transition';
@@ -95,33 +94,36 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
    * nothing on the page has the keyboard: a slash typed into a search
    * box is a slash
    */
-  createEffect(() => {
-    if (!props.allowed) {
-      return;
-    }
-    const onKey = (event: KeyboardEvent): void => {
-      if (event.key !== '/' || !forTheGame(event)) {
-        return;
+  createEffect(
+    () => props.allowed,
+    (allowed) => {
+      if (!allowed) {
+        return undefined;
       }
-      event.preventDefault();
-      setLine('');
-      setCaret(0);
-      setActive(0);
-      setArrowed(false);
-      setResult(null);
-      setOpen(true);
-      getPosition(props.player)
-        .then((standing) => {
-          setOrigin(standing ?? ORIGIN);
-        })
-        .catch(() => undefined);
-    };
+      const onKey = (event: KeyboardEvent): void => {
+        if (event.key !== '/' || !forTheGame(event)) {
+          return;
+        }
+        event.preventDefault();
+        setLine('');
+        setCaret(0);
+        setActive(0);
+        setArrowed(false);
+        setResult(null);
+        setOpen(true);
+        getPosition(props.player)
+          .then((standing) => {
+            setOrigin(standing ?? ORIGIN);
+          })
+          .catch(() => undefined);
+      };
 
-    window.addEventListener('keydown', onKey);
-    onCleanup(() => {
-      window.removeEventListener('keydown', onKey);
-    });
-  });
+      window.addEventListener('keydown', onKey);
+      return () => {
+        window.removeEventListener('keydown', onKey);
+      };
+    },
+  );
 
   /** What the bar is offering, or nothing where it has nothing to offer */
   const offering = (): QueryCompletion | null =>
@@ -299,7 +301,7 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     role="combobox"
                     aria-label="Command"
                     aria-autocomplete="list"
-                    aria-expanded={suggestions().length > 0}
+                    aria-expanded={spellAria(suggestions().length > 0)}
                     aria-controls={listId}
                     aria-activedescendant={
                       suggestions().length > 0 ? optionId(active()) : undefined
@@ -308,6 +310,57 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     // at, and it was opened by a key rather than a press
                     ref={(element: HTMLInputElement) => {
                       box = element;
+                      // A listener of its own rather than Solid's
+                      // delegated one, which is answered at the document:
+                      // the dialog panel takes Tab and Escape on the way
+                      // there and traps the focus with them
+                      element.addEventListener('keydown', (event) => {
+                        const offered = suggestions();
+
+                        if (
+                          offered.length > 0 &&
+                          (event.key === 'ArrowDown' || event.key === 'ArrowUp')
+                        ) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          setActive(
+                            (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
+                              offered.length,
+                          );
+                          setArrowed(true);
+                          return;
+                        }
+                        if (offered.length > 0 && event.key === 'Tab' && !event.shiftKey) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          complete(offered);
+                          return;
+                        }
+                        // Tab finishes a word and Enter runs the line.
+                        // The list is open on nearly every keystroke,
+                        // since an empty word offers everything, so an
+                        // Enter that took the highlighted offer would
+                        // never reach a command. Arrowing into the list
+                        // is how somebody says they are choosing from it
+                        // Closed here rather than left to the dialog:
+                        // the game keeps several mounted at once, and
+                        // the one that answers Escape is not this one
+                        if (event.key === 'Escape') {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          close();
+                          return;
+                        }
+                        if (event.key === 'Enter') {
+                          event.preventDefault();
+                          event.stopPropagation();
+                          if (arrowed() && offered.length > 0) {
+                            pick(offered[active()]);
+                            return;
+                          }
+                          run();
+                        }
+                      });
                       requestAnimationFrame(() => {
                         element.focus();
                       });
@@ -319,57 +372,6 @@ export default function CommandBar(props: CommandBarProps): JSX.Element {
                     }}
                     onClick={follow}
                     onFocus={follow}
-                    // A listener of its own rather than Solid's
-                    // delegated one, which is answered at the document:
-                    // the dialog panel takes Tab and Escape on the way
-                    // there and traps the focus with them
-                    on:keydown={(event) => {
-                      const offered = suggestions();
-
-                      if (
-                        offered.length > 0 &&
-                        (event.key === 'ArrowDown' || event.key === 'ArrowUp')
-                      ) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        setActive(
-                          (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
-                            offered.length,
-                        );
-                        setArrowed(true);
-                        return;
-                      }
-                      if (offered.length > 0 && event.key === 'Tab' && !event.shiftKey) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        complete(offered);
-                        return;
-                      }
-                      // Tab finishes a word and Enter runs the line.
-                      // The list is open on nearly every keystroke,
-                      // since an empty word offers everything, so an
-                      // Enter that took the highlighted offer would
-                      // never reach a command. Arrowing into the list
-                      // is how somebody says they are choosing from it
-                      // Closed here rather than left to the dialog:
-                      // the game keeps several mounted at once, and
-                      // the one that answers Escape is not this one
-                      if (event.key === 'Escape') {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        close();
-                        return;
-                      }
-                      if (event.key === 'Enter') {
-                        event.preventDefault();
-                        event.stopPropagation();
-                        if (arrowed() && offered.length > 0) {
-                          pick(offered[active()]);
-                          return;
-                        }
-                        run();
-                      }
-                    }}
                   />
                 </span>
                 {/* Under the bar and inside the panel, so the panel

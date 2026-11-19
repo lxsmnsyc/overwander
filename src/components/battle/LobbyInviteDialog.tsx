@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal, from } from 'solid-js';
+import { For, Loading, Show, createMemo, createSignal, from } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type FriendLink, watchFriends } from '../../auth/friends';
 import LobbyRole from '../../model/lobby-role';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -51,10 +52,13 @@ export interface LobbyInviteDialogProps {
 
 export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.Element {
   const toast = useToast();
-  const friends = from<FriendLink[]>((set) =>
-    watchFriends(props.player, (rows) => {
-      set(rows);
-    }),
+  // Followed live, and read under a boundary of its own below
+  const friends = createMemo(() =>
+    from<FriendLink[]>((next) =>
+      watchFriends(props.player, (rows) => {
+        next(rows);
+      }),
+    ),
   );
   const [asked, setAsked] = createSignal<Set<string>>(new Set());
   const [busy, setBusy] = createSignal(false);
@@ -65,7 +69,7 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
   const roster = createPager((): string[] => {
     const uids: string[] = [];
 
-    for (const row of friends() ?? []) {
+    for (const row of friends()) {
       uids.push(row.uid);
     }
     return uids;
@@ -186,31 +190,32 @@ export default function LobbyInviteDialog(props: LobbyInviteDialogProps): JSX.El
         </div>
       </Show>
 
-      <Show
-        when={(friends() ?? []).length > 0}
-        fallback={<Note>{m.lobby_invite_no_friends()}</Note>}
-      >
-        <GroupLabel>{m.profile_section_friends()}</GroupLabel>
-        <List>
-          <For each={roster.shown()}>
-            {(uid) => (
-              <FriendEntry uid={uid}>
-                <Show when={!there().has(uid)} fallback={<Meta>{m.lobby_invite_present()}</Meta>}>
-                  <Button
-                    disabled={busy() || asked().has(uid)}
-                    onClick={() => {
-                      call(uid);
-                    }}
-                  >
-                    {asked().has(uid) ? m.lobby_invited() : m.lobby_invite()}
-                  </Button>
-                </Show>
-              </FriendEntry>
-            )}
-          </For>
-        </List>
-        {roster.controls()}
-      </Show>
+      {/* Until the first listing lands the sheet says what it said
+          before there was one, rather than holding the whole panel */}
+      <Loading fallback={<Note>{m.lobby_invite_no_friends()}</Note>}>
+        <Show when={friends().length > 0} fallback={<Note>{m.lobby_invite_no_friends()}</Note>}>
+          <GroupLabel>{m.profile_section_friends()}</GroupLabel>
+          <List>
+            <For each={roster.shown()}>
+              {(uid) => (
+                <FriendEntry uid={uid}>
+                  <Show when={!there().has(uid)} fallback={<Meta>{m.lobby_invite_present()}</Meta>}>
+                    <Button
+                      disabled={busy() || asked().has(uid)}
+                      onClick={() => {
+                        call(uid);
+                      }}
+                    >
+                      {asked().has(uid) ? m.lobby_invited() : m.lobby_invite()}
+                    </Button>
+                  </Show>
+                </FriendEntry>
+              )}
+            </For>
+          </List>
+          {roster.controls()}
+        </Show>
+      </Loading>
       <DialogActions stack>
         <Button onClick={props.onClose}>{m.battle_close()}</Button>
       </DialogActions>

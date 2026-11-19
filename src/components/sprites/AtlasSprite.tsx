@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
 import type BasicSprite from '../../canvas/sprites/basic-sprite';
 import type { BasicSpriteImage } from '../../canvas/sprites/basic-sprite';
 import loadBasicSprite from '../../canvas/sprites/basic-sprites';
@@ -175,15 +176,14 @@ export interface AtlasSpriteProps {
 export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
   const [sheet, setSheet] = createSignal<BasicSprite | null>(null);
 
-  createEffect(() => {
-    const path = props.sheet;
+  // Through a memo, so a caller rebuilding its props with the same
+  // sheet does not load it again
+  const path = createMemo(() => props.sheet);
+
+  createEffect(path, (wanted) => {
     let live = true;
 
-    onCleanup(() => {
-      live = false;
-    });
-
-    loadBasicSprite(path)
+    loadBasicSprite(wanted)
       .then((loaded) => {
         if (live) {
           setSheet(loaded);
@@ -193,6 +193,9 @@ export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
         // A sheet that will not load leaves the box empty; whatever it
         // was illustrating is named beside it in words
       });
+    return () => {
+      live = false;
+    };
   });
 
   const frame = (): BasicSpriteImage | null => sheet()?.frameOf(props.name) ?? null;
@@ -237,7 +240,7 @@ export default function AtlasSprite(props: AtlasSpriteProps): JSX.Element {
     <span
       role="img"
       aria-label={props.label ?? props.name}
-      aria-hidden={props.label === '' ? true : undefined}
+      aria-hidden={props.label === '' ? 'true' : undefined}
       title={props.title}
       style={box()}
       class={`relative block shrink-0 overflow-hidden ${props.class ?? ''}`}

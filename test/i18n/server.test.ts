@@ -1,4 +1,4 @@
-import type * as SolidWeb from 'solid-js/web';
+import type * as SolidWeb from '@solidjs/web';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 /**
@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const event = vi.hoisted(() => ({ current: undefined as { request: Request } | undefined }));
 
-vi.mock('solid-js/web', async (original) => ({
+vi.mock('@solidjs/web', async (original) => ({
   ...(await original<typeof SolidWeb>()),
   getRequestEvent: () => event.current,
 }));

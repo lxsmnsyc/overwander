@@ -1,0 +1,13 @@
+# Log: solid-2-social
+
+- Branch `refactor/solid-2-social` cut from `origin/feat/solid-2` (405ea34a2). `pnpm install` up to date.
+- Typecheck before: 232 errors on the branch, 154 in the owned paths (40 files).
+- `test/components/news.test.tsx` passes before any change (4 tests); it still uses the deprecated `<Dynamic>`.
+- Node experiment against solid-js 2.0.0 (scratch, not committed): an async memo whose compute reads a pending memo before its first await goes pending with it and resolves when the source lands. So key memos over a pending `from` feed are safe in front of `createMemo(async ...)`.
+- `from(subscribe)` inside `createMemo` is pending until its first value. Readers here mostly drew an empty state in 1.x (`?? []`, `?.`), and several sit in bodies with no boundary or in rows of a list. Calling `set(undefined)` synchronously in the subscribe seeds the memo, so it never holds a `Loading` (the same trick `createStoreSignal` uses with the store's value). Used where the reader draws an empty state; feeds read under a boundary that already waits for other reads (the auction board, its gold) are left unseeded so the first answer joins that wait.
+- `src/components/app/watch.ts` (`watchLive`) still had a one-argument effect and is used only by social files plus `Announcements.tsx`. Its producer read signals inside the subscription, which a `from` inside a memo would not track, so it now takes the key as its own argument: `watchLive(key, (key, set) => unsubscribe)`. Callers updated (4 social files, `Announcements.tsx`).
+- First dev run: `Announcements` threw `location is not defined` in the server render, because a subscription inside a memo opens during SSR, where the old effect never ran. `watchLive` now opens nothing when `isServer`.
+- Harness on `pnpm dev` + `pnpm db` + `pnpm seed`, signed in as alice through `/api/auth/sign-in/email`, Playwright: announcements (watchLive) and the friends tab's blocked list (seeded `from`) both followed an insert and a delete in the dev database; the blocked row named Bob through `FriendEntry`'s seeded profile watch. Friends rows had to be cleared first: `Roster` calls `useGame`, and there is no `GameProvider` in a harness.
+- Harness also showed `[STRICT_READ_UNTRACKED] "chosen" read directly in <ReleaseLine>`: a context provider's value is read once in 2.0, so switching releases kept the first release's line under the heading. `ReleaseLine` now carries an accessor; checked the line changes on picking another release.
+- One dev run broke on a missing paraglide message file while paraglide recompiled; a restart fixed it.
+- Typecheck after: 77 errors on the branch (232 before), none in the owned paths. oxlint exit 0 on every owned folder; oxfmt clean.

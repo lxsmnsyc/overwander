@@ -1,12 +1,5 @@
-import {
-  For,
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   AuctionLot,
   type AuctionRecord,
@@ -111,12 +104,12 @@ export interface BidsListProps {
  * server checks it again for real when a claim arrives
  */
 function BidRows(
-  props: BidsListProps & { history: Resource<BidHistoryEntry[]>; onChanged: () => void },
+  props: BidsListProps & { history: Accessor<BidHistoryEntry[]>; onChanged: () => void },
 ): JSX.Element {
   const game = useGame();
   const [status, setStatus] = createSignal<string | null>(null);
 
-  const paged = createPager(() => props.history() ?? [], LIST_PAGE);
+  const paged = createPager(() => props.history(), LIST_PAGE);
 
   const collect = (id: string): void => {
     setStatus(null);
@@ -135,7 +128,7 @@ function BidRows(
 
   return (
     <>
-      <Show when={props.history()?.length} fallback={<Note>{m.auction_no_bids()}</Note>}>
+      <Show when={props.history().length} fallback={<Note>{m.auction_no_bids()}</Note>}>
         <GroupLabel>{m.profile_section_bids()}</GroupLabel>
         <List>
           <For each={paged.shown()}>
@@ -198,20 +191,20 @@ function BidRows(
  *
  * The history is read one component down, under this boundary: read in
  * the body that declared it, a loading history would throw past every
- * `Suspense` written here and blank the page instead of this panel
+ * `Loading` written here and blank the page instead of this panel
  */
 export default function BidsList(props: BidsListProps): JSX.Element {
-  const [history, { refetch }] = createResource(() => props.player, listBidHistory);
+  const history = createMemo(async () => listBidHistory(props.player));
 
   return (
-    <Suspense fallback={<Note>{m.auction_loading_bids()}</Note>}>
+    <Loading fallback={<Note>{m.auction_loading_bids()}</Note>}>
       <BidRows
         player={props.player}
         history={history}
         onChanged={() => {
-          Promise.resolve(refetch()).catch(() => undefined);
+          refresh(history).catch(() => undefined);
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

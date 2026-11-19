@@ -4,7 +4,8 @@ import { type AuctionRecord, isLive } from '../../../auth/auctions';
 import { useGame } from '../../app/game-context';
 import type { ItemAction } from '../../items/ItemGrid';
 import { Button, Detail, Pill } from '../../styled';
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**

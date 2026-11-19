@@ -1,14 +1,13 @@
-import { For, type JSX, type Resource, Show, Suspense } from 'solid-js';
-import { Portal } from 'solid-js/web';
+import { type Accessor, For, Loading, Show } from 'solid-js';
+import { type JSX, Portal } from '@solidjs/web';
 import {
   DialogDescription,
   DialogOverlay,
   DialogPanel,
   DialogTitle,
   Dialog as HeadlessDialog,
-  Transition,
-  TransitionChild,
-} from 'terracotta';
+} from 'terracotta/dialog';
+import { Transition, TransitionChild } from 'terracotta/transition';
 import type { CandyEarned } from '../../../../auth/battles';
 import type { Profile } from '../../../../auth/profile';
 import { getSpeciesData } from '../../../../data/species';
@@ -44,7 +43,7 @@ export interface ResultsScreenProps {
   raiding: boolean;
   sides: SideSummary[];
   /** Who the rows belong to. Read here, under the screen's boundary */
-  names: Resource<Map<string, Profile>>;
+  names: Accessor<Map<string, Profile> | null>;
   /** The reader, who is called "You" rather than by their nickname */
   player: string;
   /**
@@ -152,7 +151,7 @@ function ResultsBody(
           top: landing on the buttons scrolled a phone's column past it.
           Terracotta's first focus skips tabindex -1, so it stays 0 */}
       <DialogTitle
-        tabIndex={0}
+        tabindex={0}
         class="motion-crossfade m-0 outline-none text-center font-display text-5xl font-bold tracking-[0.02em]
           text-white animate-[grow-in_var(--motion-scene)_var(--ease-spring)_backwards] sm:text-[64px]"
       >
@@ -267,7 +266,7 @@ export default function ResultsScreen(props: ResultsScreenProps): JSX.Element {
               <TransitionChild {...SHEER} class="fixed inset-0 z-40">
                 <DialogOverlay class="size-full bg-shade/75 backdrop-blur-[2px]" />
               </TransitionChild>
-              <Suspense>
+              <Loading>
                 <TransitionChild {...SHEER} class="fixed inset-0 z-40 overflow-y-auto">
                   <DialogPanel
                     class="flex min-h-full flex-col items-center justify-center-safe gap-3.5 px-4 py-6"
@@ -282,7 +281,7 @@ export default function ResultsScreen(props: ResultsScreenProps): JSX.Element {
                     <ResultsBody {...props} said={said()} />
                   </DialogPanel>
                 </TransitionChild>
-              </Suspense>
+              </Loading>
             </HeadlessDialog>
           </Transition>
         </Portal>

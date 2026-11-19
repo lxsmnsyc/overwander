@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import type { CaughtPokemon } from '../../auth/caught';
 import { TEAM_SIZE } from '../../auth/teams';
 import { HoverCard } from '../styled';

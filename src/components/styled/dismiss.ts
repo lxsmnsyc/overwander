@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from 'solid-js';
+import { createEffect } from 'solid-js';
 
 /**
  * Shut something that is hanging open the moment the pointer or the
@@ -21,9 +21,9 @@ export default function dismissOutside(
    */
   drawn?: () => HTMLElement | undefined,
 ): void {
-  createEffect(() => {
-    if (!open()) {
-      return;
+  createEffect(open, (isOpen) => {
+    if (!isOpen) {
+      return undefined;
     }
 
     const away = (event: Event): void => {
@@ -43,9 +43,9 @@ export default function dismissOutside(
     document.addEventListener('pointerdown', away, true);
     document.addEventListener('focusin', away, true);
 
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('pointerdown', away, true);
       document.removeEventListener('focusin', away, true);
-    });
+    };
   });
 }

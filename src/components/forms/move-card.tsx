@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { TYPE_COLORS } from '../../data/constants/types';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';

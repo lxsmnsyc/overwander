@@ -1,4 +1,5 @@
-import { type JSX, type ParentProps, Show, createUniqueId } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type ParentProps, Show, createUniqueId } from 'solid-js';
 
 /**
  * The furniture a form is built out of: what wraps one control, and

@@ -1,14 +1,13 @@
 import {
+  type Accessor,
   For,
-  type JSX,
-  type Resource,
+  Loading,
   Show,
-  Suspense,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import Regions from '../../data/ids/regions';
 import { REGIONS, getRegionSpan, getSpeciesRegion } from '../../data/species/regions';
 import { type PokedexView, getPokedex } from '../../auth/pokedex';
@@ -51,7 +50,7 @@ export interface PokedexTabProps {
  * The dex as a box of squares, which is where the record is read.
  *
  * A dex read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the whole
+ * `Loading` written there and lands on the boundary around the whole
  * page, so the reading half is its own component
  */
 type DexFilter = 'all' | 'caught' | 'missing';
@@ -164,7 +163,7 @@ function regionName(region: Regions): string {
   return REGION_LABELS[region]();
 }
 
-function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
+function PokedexBox(props: { dex: Accessor<PokedexView> }): JSX.Element {
   const game = useGame();
 
   const mode = (): DexMode => (game.dexShiny() ? 'shiny' : 'regular');
@@ -174,7 +173,7 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
   /** What the two tiles read: the dex's own counts, or the shiny rows lit */
   const counted = (kind: 'seen' | 'caught'): number => {
     if (mode() === 'regular') {
-      return (kind === 'seen' ? props.dex()?.seenSpecies : props.dex()?.caughtSpecies) ?? 0;
+      return kind === 'seen' ? props.dex().seenSpecies : props.dex().caughtSpecies;
     }
     let count = 0;
 
@@ -237,32 +236,44 @@ function PokedexBox(props: { dex: Resource<PokedexView> }): JSX.Element {
     return rows;
   });
 
-  const [page, setPage] = createSignal(0);
-
   const pages = (): number => Math.max(1, Math.ceil(listed().length / DEX_PAGE));
 
-  // A narrower list can leave the page past its end
-  createEffect(() => {
-    setPage((at) => Math.min(at, pages() - 1));
-  });
+  // A narrower list can leave the page past its end, so the page is
+  // pulled back whenever the count of pages changes
+  const [page, setPage] = createSignal((at?: number): number => Math.min(at ?? 0, pages() - 1));
+
+  /** The page holding the first entry at or past this dex number, if any is */
+  const findPage = (dexNumber: number): number | null => {
+    for (const [at, entry] of listed().entries()) {
+      if (entry.dexNumber >= dexNumber) {
+        return Math.floor(at / DEX_PAGE);
+      }
+    }
+    return null;
+  };
 
   /** Turn to the page holding the first entry at or past this dex number */
   const turnTo = (dexNumber: number): void => {
-    for (const [at, entry] of listed().entries()) {
-      if (entry.dexNumber >= dexNumber) {
-        setPage(Math.floor(at / DEX_PAGE));
-        return;
-      }
+    const at = findPage(dexNumber);
+
+    if (at != null) {
+      setPage(at);
     }
   };
 
-  createEffect(() => {
-    const number = asked();
+  // The number asked for, turned to again as the list under it changes
+  createEffect(
+    () => {
+      const number = asked();
 
-    if (number != null) {
-      turnTo(number);
-    }
-  });
+      return number == null ? null : findPage(number);
+    },
+    (at) => {
+      if (at != null) {
+        setPage(at);
+      }
+    },
+  );
 
   const highlight = (): Species | null => {
     const number = asked();
@@ -471,14 +482,14 @@ export default function PokedexTab(props: PokedexTabProps): JSX.Element {
   // Re-read whenever anything the player owns changes: catching one is
   // the whole point, and a dex that needed reopening to notice would
   // be the one screen in the game that lies about what just happened
-  const [dex] = createResource(
-    () => [props.player, game.records()] as const,
-    async ([player]) => getPokedex(player),
-  );
+  const dex = createMemo(async () => {
+    game.records();
+    return getPokedex(props.player);
+  });
 
   return (
-    <Suspense fallback={<Note>{m.dex_loading()}</Note>}>
+    <Loading fallback={<Note>{m.dex_loading()}</Note>}>
       <PokedexBox dex={dex} />
-    </Suspense>
+    </Loading>
   );
 }

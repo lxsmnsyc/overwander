@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createSignal, untrack } from 'solid-js';
 import AddFriendDialog from '../../friends/AddFriendDialog';
 import ProfileSection from '../../../game/session/profile-section';
 import { UserIcon } from '../../icons';
@@ -42,10 +43,12 @@ function ownTitle(): string {
 }
 
 function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }): JSX.Element {
+  // What the sheet opens on is read once: the sheet is built per opening,
+  // so a later change to these props does not move an open one
   const state = createProfileState({
     player: props.player,
-    viewOnly: props.viewOnly === true,
-    section: props.section,
+    viewOnly: untrack(() => props.viewOnly === true),
+    section: untrack(() => props.section),
   });
 
   // Named by the nickname where it is somebody else's, which is what a
@@ -124,13 +127,11 @@ function Sheet(props: ProfileSheetProps & { player: string; onGone: () => void }
  * only while somebody is looking
  */
 export default function ProfileSheet(props: ProfileSheetProps): JSX.Element {
-  const [last, setLast] = createSignal<string | null>(null);
-
-  createEffect(() => {
-    if (props.isOpen && props.player != null) {
-      setLast(props.player);
-    }
-  });
+  // Latched on opening and kept through the fade, until the sheet
+  // says it is gone
+  const [last, setLast] = createSignal<string | null>((was) =>
+    props.isOpen && props.player != null ? props.player : (was ?? null),
+  );
 
   return (
     <Show when={last()} keyed>

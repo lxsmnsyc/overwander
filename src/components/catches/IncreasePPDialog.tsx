@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { getMovePoints, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
@@ -62,17 +55,16 @@ export interface IncreasePPDialogProps {
  * The choosing itself, which is where the record is read.
  *
  * A record read in the body that declared it throws past every
- * `Suspense` written there and lands on the boundary around the page,
+ * `Loading` written there and lands on the boundary around the page,
  * taking the dialog with it — so the reading half stands on its own
  */
 function BottleBody(
   props: IncreasePPDialogProps & {
-    caught: Resource<CaughtPokemon | null>;
+    caught: Accessor<CaughtPokemon | null>;
     onUsedUp: () => void;
     onDone: () => void;
   },
 ): JSX.Element {
-  const [chosen, setChosen] = createSignal(0);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
@@ -140,12 +132,25 @@ function BottleBody(
     return false;
   };
 
-  const close = (): void => {
-    setStatus(null);
-    setChosen(0);
-    setBusy(false);
-    props.onDone();
-  };
+  // Open on a move that can actually take the points. The first slot
+  // is the obvious place to start and the wrong one for a pokemon
+  // whose first move is already full: a dialog that opens with its own
+  // button refused reads as broken. Worked out again whenever the
+  // record is read, from the slot the picker was on
+  const [chosen, setChosen] = createSignal((was?: number): number => {
+    const at = was ?? 0;
+    const moves = known();
+
+    if (moves.length === 0 || refused(moves.at(at)) == null) {
+      return at;
+    }
+    for (const [slot, move] of moves.entries()) {
+      if (refused(move) == null) {
+        return slot;
+      }
+    }
+    return at;
+  });
 
   /**
    * The move the picker is on. `at` rather than an index, since the
@@ -154,20 +159,12 @@ function BottleBody(
    */
   const picked = (): Moves | undefined => known().at(chosen());
 
-  // Open on a move that can actually take the points. The first slot
-  // is the obvious place to start and the wrong one for a pokemon
-  // whose first move is already full: a dialog that opens with its own
-  // button refused reads as broken
-  createEffect(() => {
-    if (known().length > 0 && refused(picked()) != null) {
-      for (const [at, move] of known().entries()) {
-        if (refused(move) == null) {
-          setChosen(at);
-          break;
-        }
-      }
-    }
-  });
+  const close = (): void => {
+    setStatus(null);
+    setChosen(0);
+    setBusy(false);
+    props.onDone();
+  };
 
   const use = (): void => {
     const catchId = props.catchId;
@@ -269,10 +266,11 @@ function BottleBody(
  * than the page the panel stands on
  */
 export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Element {
-  const [caught, { refetch }] = createResource(
-    () => (props.item == null ? null : props.catchId),
-    getCaught,
-  );
+  const caught = createMemo<CaughtPokemon | null>((): Promise<CaughtPokemon | null> | null => {
+    const catchId = props.item == null ? null : props.catchId;
+
+    return catchId == null ? null : getCaught(catchId);
+  });
 
   const bottle = (): string => (props.item == null ? m.catch_pp_it() : describeItem(props.item));
 
@@ -283,16 +281,16 @@ export default function IncreasePPDialog(props: IncreasePPDialogProps): JSX.Elem
       title={m.catch_pp_title()}
       description={m.catch_pp_description({ item: bottle() })}
     >
-      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
+      <Loading fallback={<Note>{m.catch_reading_record()}</Note>}>
         <BottleBody
           {...props}
           caught={caught}
           onUsedUp={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(caught).catch(() => undefined);
           }}
           onDone={props.onClose}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

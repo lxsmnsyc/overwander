@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createMemo, createResource, createSignal } from 'solid-js';
+import { For, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type CaughtPokemon, getCaughtBatched, isGuarded } from '../../auth/caught';
 import { getCatchName, isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
@@ -14,6 +15,7 @@ import CatchPicker, { type CatchOption } from '../catches/catch-picker';
 import TeamRow, { TeamRows } from '../catches/TeamRow';
 import { Badge, Button, DialogActions, Note, Segmented } from '../styled';
 import { DockNote } from './terms';
+import { createLoad } from '../app/create-load';
 
 /**
  * Why a pokemon cannot be brought into a raid. All four are shown
@@ -47,9 +49,10 @@ function SavedTeam(props: {
   healed?: boolean;
   onUse: () => void;
 }): JSX.Element {
-  // A preset holds ids, and the batched read turns its six into one request
-  const [party] = createResource(
-    () => props.preset.catches.join(','),
+  // A preset holds ids, and the batched read turns its six into one
+  // request. Drawn as it lands rather than waited on
+  const party = createLoad(
+    () => props.preset.catches.join(',') || null,
     async (key): Promise<[string, CaughtPokemon][]> => {
       const pending: Promise<[string, CaughtPokemon | null]>[] = [];
 
@@ -80,9 +83,9 @@ function SavedTeam(props: {
    * since that is read beside the box rather than off the record
    */
   const short = (): number => {
-    let missing = props.preset.catches.length - (party.latest?.length ?? 0);
+    let missing = props.preset.catches.length - (party.latest()?.length ?? 0);
 
-    for (const [id, caught] of party.latest ?? []) {
+    for (const [id, caught] of party.latest() ?? []) {
       if (heldBack({ id, caught, fighting: false }, props.healed) != null) {
         missing += 1;
       }
@@ -91,7 +94,7 @@ function SavedTeam(props: {
   };
 
   return (
-    <TeamRow name={props.preset.name} catches={party.latest ?? []}>
+    <TeamRow name={props.preset.name} catches={party.latest() ?? []}>
       <span class="truncate font-bold">{props.preset.name}</span>
       <Show when={short() > 0}>
         <Badge tone="ember">{m.pick_team_short({ count: short() })}</Badge>
@@ -130,12 +133,13 @@ function PickTeamView(props: FormProps<PickTeamInput, string[]>): JSX.Element {
     props.input.player === '' ? (auth.user()?.uid ?? null) : props.input.player;
 
   // Read when the form opens rather than held: a team saved in the
-  // profile a moment ago should be here without a reload
-  const [presets] = createResource(owner, async (player): Promise<[string, TeamPresetRecord][]> =>
+  // profile a moment ago should be here without a reload. Never waited
+  // on: the saved tab is empty until it lands
+  const presets = createLoad(owner, async (player): Promise<[string, TeamPresetRecord][]> =>
     listTeamPresets(player),
   );
 
-  const saved = (): [string, TeamPresetRecord][] => presets.latest ?? [];
+  const saved = (): [string, TeamPresetRecord][] => presets.latest() ?? [];
 
   const byId = createMemo(() => {
     const options = new Map<string, CatchOption>();

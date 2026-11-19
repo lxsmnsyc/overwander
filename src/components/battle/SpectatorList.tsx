@@ -1,9 +1,9 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type Profile, getProfiles } from '../../auth/profile';
 import PlayerPlate from '../profile/PlayerPlate';
 import { LIST_PAGE, List, Note, type Pager, RowCard, createPager } from '../styled';
 import { useGame } from '../app/game-context';
-import { settled } from '../app/resource-reads';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -24,13 +24,12 @@ export interface SpectatorListProps {
  * lands on the one around the whole page
  */
 function Watchers(
-  props: SpectatorListProps & { names: Resource<Map<string, Profile>>; page: Pager<string> },
+  props: SpectatorListProps & { names: Accessor<Map<string, Profile>>; page: Pager<string> },
 ): JSX.Element {
   const game = useGame();
-  // Settled, so somebody walking in keeps the names already shown rather
-  // than blanking the list to "Reading the room…"
-  const names = (): Map<string, Profile> | undefined => settled(props.names);
-  const named = (uid: string): string => names()?.get(uid)?.nickname ?? uid;
+  // The boundary keeps the names already shown while somebody walking
+  // in is looked up, rather than blanking the list to "Reading the room…"
+  const named = (uid: string): string => props.names().get(uid)?.nickname ?? uid;
 
   return (
     <>
@@ -40,7 +39,7 @@ function Watchers(
             <RowCard tone={uid === props.player ? 'leaf' : 'plain'} class="min-h-0 py-1.5">
               <PlayerPlate
                 name={uid === props.player ? m.battle_you() : named(uid)}
-                sprite={names()?.get(uid)?.sprite ?? null}
+                sprite={props.names().get(uid)?.sprite ?? null}
                 onOpen={
                   uid === props.player
                     ? undefined
@@ -62,25 +61,25 @@ export default function SpectatorList(props: SpectatorListProps): JSX.Element {
   // A lobby has no limit on who may watch it, so the list is paged the
   // way every other unbounded one is
   const page = createPager(() => props.watching, LIST_PAGE);
-  const [names] = createResource(
-    () => [...new Set(props.watching)].sort().join(','),
-    async (key): Promise<Map<string, Profile>> => {
-      const uids: string[] = [];
+  // Keyed on who is watching, so a list rebuilt with the same people
+  // in it does not ask again
+  const asked = createMemo(() => [...new Set(props.watching)].sort().join(','));
+  const names = createMemo(async (): Promise<Map<string, Profile>> => {
+    const uids: string[] = [];
 
-      for (const uid of key.split(',')) {
-        if (uid !== '') {
-          uids.push(uid);
-        }
+    for (const uid of asked().split(',')) {
+      if (uid !== '') {
+        uids.push(uid);
       }
-      return getProfiles(uids);
-    },
-  );
+    }
+    return getProfiles(uids);
+  });
 
   return (
     <Show when={props.watching.length > 0} fallback={<Note>{m.spectators_none()}</Note>}>
-      <Suspense fallback={<Note>{m.spectators_reading()}</Note>}>
+      <Loading fallback={<Note>{m.spectators_reading()}</Note>}>
         <Watchers {...props} names={names} page={page} />
-      </Suspense>
+      </Loading>
     </Show>
   );
 }

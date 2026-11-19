@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo, createSignal } from 'solid-js';
 import { isLockLive } from '../../model/battle-lock';
 import readBox from '../../auth/box';
 import { syncServerClock } from '../../auth/clock';
@@ -50,12 +51,12 @@ export interface PickCatchInput {
 }
 
 function PickCatchBody(
-  props: FormProps<PickCatchInput, CatchOption[]> & { options: Resource<CatchOption[]> },
+  props: FormProps<PickCatchInput, CatchOption[]> & { options: Accessor<CatchOption[]> },
 ): JSX.Element {
   const [picked, setPicked] = createSignal<string[]>([]);
 
   const max = (): number => props.input.max ?? 1;
-  const options = (): CatchOption[] => props.options.latest ?? [];
+  const options = (): CatchOption[] => props.options();
 
   const chosen = (): CatchOption[] => {
     const ids = new Set(picked());
@@ -142,12 +143,14 @@ function PickCatchBody(
 }
 
 function PickCatchView(props: FormProps<PickCatchInput, CatchOption[]>): JSX.Element {
-  const [options] = createResource(() => props.input.player, loadCatchOptions);
+  // Asked again only for another player, not for an input built again
+  const player = createMemo(() => props.input.player);
+  const options = createMemo(async () => loadCatchOptions(player()));
 
   return (
-    <Suspense fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
+    <Loading fallback={<Note class="text-center">{m.pick_catch_loading()}</Note>}>
       <PickCatchBody {...props} options={options} />
-    </Suspense>
+    </Loading>
   );
 }
 

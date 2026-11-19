@@ -1,13 +1,5 @@
-import {
-  type Accessor,
-  For,
-  type JSX,
-  type Setter,
-  batch,
-  createSignal,
-  onCleanup,
-  onMount,
-} from 'solid-js';
+import { type Accessor, For, type Setter, createSignal, onSettled } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Battle from '../../battle/battle';
 import { BattleEvents } from '../../battle/events';
 import Unit from '../../battle/unit';
@@ -147,7 +139,7 @@ function readParty(battle: Battle, player: string, theirs: boolean): Unit[] {
 }
 
 export default function BattleParty(props: BattlePartyProps): JSX.Element {
-  const [party, setParty] = createSignal<Unit[]>(
+  const [party, setParty] = createSignal<Unit[]>(() =>
     readParty(props.battle, props.player, props.theirs === true),
   );
 
@@ -167,7 +159,7 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     return entry[0];
   };
 
-  onMount(() => {
+  onSettled(() => {
     /**
      * The battle this row hung its listeners on, held rather than
      * re-read.
@@ -187,11 +179,10 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
     const battle = props.battle;
 
     const onCardEvent = (event: BaseEvent): void => {
-      batch(() => {
-        for (const unit of unitsOf(event)) {
-          revisions.get(unit)?.[1]((value) => value + 1);
-        }
-      });
+      // Writes already land together at the next flush
+      for (const unit of unitsOf(event)) {
+        revisions.get(unit)?.[1]((value) => value + 1);
+      }
     };
 
     const onRosterEvent = (): void => {
@@ -205,14 +196,14 @@ export default function BattleParty(props: BattlePartyProps): JSX.Element {
       battle.on(event, EventPriority.Post, onRosterEvent);
     }
 
-    onCleanup(() => {
+    return () => {
       for (const event of CARD_EVENTS) {
         battle.off(event, EventPriority.Post, onCardEvent);
       }
       for (const event of ROSTER_EVENTS) {
         battle.off(event, EventPriority.Post, onRosterEvent);
       }
-    });
+    };
   });
 
   return (

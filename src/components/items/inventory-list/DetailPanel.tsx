@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createResource } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import readBox from '../../../auth/box';
 import type { CaughtPokemon } from '../../../auth/caught';
 import { syncServerClock } from '../../../auth/clock';
@@ -9,9 +10,8 @@ import { isLockLive } from '../../../model/battle-lock';
 import { isShiny } from '../../../model/caught-record';
 import { isEgg } from '../../../model/egg';
 import { isUsableOn } from '../../../game/items/use-item';
-import createClientSignal from '../../app/client-signal';
 import { useGame } from '../../app/game-context';
-import { answered } from '../../app/resource-reads';
+import { createLoad } from '../../app/create-load';
 import { describeCatch } from '../../catches/catch-summary';
 import { detailItem } from '../../details';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
@@ -53,12 +53,12 @@ export interface DetailPanelProps {
  */
 export default function DetailPanel(props: DetailPanelProps): JSX.Element {
   const game = useGame();
-  const client = createClientSignal();
 
   // The same kept box the Use it on picker reads, read again as the
-  // records change: no read of its own reaches the server
-  const [box] = createResource(
-    () => client() && props.onPokemon && ([props.player, game.records()] as const),
+  // records change: no read of its own reaches the server. A load runs
+  // in the browser only, so the server render never waits on it
+  const box = createLoad(
+    () => props.onPokemon && ([props.player, game.records()] as const),
     async ([player]): Promise<[CaughtPokemon[], number]> => {
       const [records, now] = await Promise.all([readBox(player), syncServerClock()]);
       const caught: CaughtPokemon[] = [];
@@ -72,11 +72,11 @@ export default function DetailPanel(props: DetailPanelProps): JSX.Element {
 
   /**
    * The pokemon it would do some good, by the picker's own rule: none
-   * in a battle, and only the ones the item can change. This body
-   * declares the resource, so it reads it without waiting
+   * in a battle, and only the ones the item can change. Read without
+   * waiting: nothing until the box is in
    */
   const helped = (): CaughtPokemon[] | null => {
-    const read = answered(box);
+    const read = box.latest();
 
     if (read == null) {
       return null;

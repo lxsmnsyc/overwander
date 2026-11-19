@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Species } from '../../../../data/ids/species';
 import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 import { getSpeciesData, listEvolutionLine } from '../../../../data/species';

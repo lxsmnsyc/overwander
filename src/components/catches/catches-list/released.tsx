@@ -1,16 +1,16 @@
-import { For, type JSX, Show, createResource, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type ReleaseGrace,
   getCatchName,
   getReleaseGrace,
   takeBackCatch,
 } from '../../../auth/caught';
-import createClientSignal from '../../app/client-signal';
 import { useGame } from '../../app/game-context';
-import { answered } from '../../app/resource-reads';
 import { ClockIcon } from '../../icons';
 import AnimatedSprite from '../../sprites/AnimatedSprite';
 import { Button, LIST_PAGE, Note, createPager, useToast } from '../../styled';
+import { createLoad } from '../../app/create-load';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
 
@@ -36,17 +36,16 @@ export function createReleased(): Released {
   const game = useGame();
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
-  const client = createClientSignal();
   // Read again whenever the box is, since a release is what moves it.
-  // The browser's alone, so the server render never waits on it
-  const [grace] = createResource(
-    // The revision starts at 0, which a source would read as "not yet"
-    () => (client() ? { revision: game.records() } : false),
+  // A load runs in the browser only, so the server render never waits
+  // on it. The revision is wrapped, since a bare 0 would read as "not yet"
+  const grace = createLoad(
+    () => ({ revision: game.records() }),
     async (): Promise<ReleaseGrace> => getReleaseGrace(),
   );
 
   const letGo = (): ReleaseGrace['released'] => {
-    const known = answered(grace);
+    const known = grace.latest();
 
     return known?.grace === true ? known.released : [];
   };

@@ -1,11 +1,12 @@
-import { For, Index, type JSX, Show, createEffect, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Items } from '../../data/ids/items';
 import { describeItem, detailItem } from '../details';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import ItemCard from './ItemCard';
 import ItemSprite from './ItemSprite';
 import matchesItem, { ITEM_VOCABULARY, orderItems } from '../../data/items/search';
-import { Button, Detail, HoverCard, Note, Row, Search, TooltipHost } from '../styled';
+import { Button, Detail, HoverCard, Note, Row, Search, TooltipHost, spellAria } from '../styled';
 import { formatNumber } from '../../i18n/format';
 import { m } from '../../i18n/paraglide/messages.js';
 
@@ -192,7 +193,6 @@ function pickCellTone(cell: ItemCell): string {
 }
 
 export default function ItemGrid(props: ItemGridProps): JSX.Element {
-  const [page, setPage] = createSignal(0);
   const [query, setQuery] = createSignal(props.query ?? '');
 
   // A `sort:` is applied last, over whatever the search left
@@ -216,10 +216,8 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
 
   // Spending a stack or narrowing a search can empty the page being
   // looked at, and a player left staring at an empty tray reads it as
-  // an empty bag
-  createEffect(() => {
-    setPage((at) => Math.min(at, pages() - 1));
-  });
+  // an empty bag, so the page is pulled back whenever the count changes
+  const [page, setPage] = createSignal((at?: number): number => Math.min(at ?? 0, pages() - 1));
 
   const shown = (): ItemCell[] => narrowed().slice(page() * traySize(), (page() + 1) * traySize());
 
@@ -333,8 +331,8 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
       type="button"
       disabled={props.disabled === true || cell.blocked != null}
       aria-label={cell.said ?? sayCell(cell)}
-      aria-pressed={cell.expanded == null ? cell.selected === true : undefined}
-      aria-expanded={cell.expanded}
+      aria-pressed={spellAria(cell.expanded == null ? cell.selected === true : undefined)}
+      aria-expanded={spellAria(cell.expanded)}
       aria-controls={cell.controls}
       // Found again by the panel it opened, to hand focus back on close
       data-item={cell.item}
@@ -414,11 +412,11 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
         class={`grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide bg-parchment p-2
           shadow-pop ${COLUMN_CLASSES[props.columns ?? 6]}`}
       >
-        {/* `Index`, not `For`: callers rebuild the cell objects every
+        {/* Unkeyed, not keyed: callers rebuild the cell objects every
             time a purse or a bag moves, and a reference-keyed loop
             would tear every square down mid-hover. Keyed by slot, the
             DOM stays put and only the numbers on it change */}
-        <Index each={shown()}>
+        <For keyed={false} each={shown()}>
           {(cell) => (
             <Show
               when={carded(cell())}
@@ -467,7 +465,7 @@ export default function ItemGrid(props: ItemGridProps): JSX.Element {
               </HoverCard>
             </Show>
           )}
-        </Index>
+        </For>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>

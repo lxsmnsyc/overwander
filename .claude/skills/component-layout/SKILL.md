@@ -15,7 +15,7 @@ The folder is named for the component in kebab-case and sits where the file did:
 
 ```
 catches/catch-dialog/
-  index.tsx        the exported component, and what declares its resources
+  index.tsx        the exported component, and what declares its async memos
   sheet.tsx        the reading half, one component
   describe.ts(x)   pure readings of a record: no state, no JSX beyond a leaf
   sections/        one file per part of the panel, each a component
@@ -45,7 +45,7 @@ In order of how much they buy:
 
 1. **Pure functions and constants.** They move with no props to thread and are the easiest thing to test.
 2. **Sections of the returned markup.** Each takes explicit props — the values it reads and the callbacks it calls — never a bag of the parent's internals. A section that would need eight props is usually two sections.
-3. **The reading half of a resource.** See the `resource-suspense` skill: the declaring body stays in `index.tsx`, the reading body is the part.
+3. **The reading half of an async read.** See the `async-reads` skill: the declaring body stays in `index.tsx`, the reading body is the part.
 
 Splitting a canvas component is the same exercise with different names: measurements in `metrics.ts`, what is where in `field.ts`, painting in `draw.ts`, movement in `motion.ts`, and the component itself in `index.tsx`.
 

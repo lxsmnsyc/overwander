@@ -1,6 +1,5 @@
 import {
   For,
-  type JSX,
   Show,
   createEffect,
   createSignal,
@@ -8,6 +7,7 @@ import {
   onCleanup,
   untrack,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import {
   type QueryCompletion,
   type QuerySuggestion,
@@ -24,6 +24,7 @@ import { SearchIcon } from '../../icons';
 import { Badge, BadgeDismiss, type BadgeTone } from '../feedback';
 import SearchGuide from './guide';
 import Suggestions, { type SearchDrop } from './suggestions';
+import spellAria from '../aria';
 
 /**
  * Finding one row in a list of them.
@@ -138,21 +139,41 @@ function roleOf(term: string, vocabulary: QueryVocabulary): TermRole {
   return token.negated ? 'refuses' : 'narrows';
 }
 
+/** Badges and the text still in the box, read back as one query */
+function joinQuery(terms: string[], typed: string): string {
+  const parts: string[] = [];
+
+  for (const part of [...terms, typed]) {
+    const trimmed = part.trim();
+
+    if (trimmed !== '') {
+      parts.push(trimmed);
+    }
+  }
+  return parts.join(' ');
+}
+
 export default function Search(props: SearchProps): JSX.Element {
-  const seeded = splitTerms(props.value);
+  // The box starts from the caller's value once; the effect below
+  // follows it after that
+  const start = untrack(() => ({
+    value: props.value,
+    plain: props.vocabulary == null,
+    seeded: splitTerms(props.value),
+  }));
   /**
    * The terms already asked for, as they were typed. They are the
    * badges in the box, and are the query with whatever is still being
    * typed added to the end of them
    */
-  const [terms, setTerms] = createSignal(props.vocabulary == null ? [] : seeded.terms);
+  const [terms, setTerms] = createSignal(start.plain ? [] : start.seeded.terms);
   /**
    * What is in the box, which is not the same thing as what is being
    * searched for. The letters land here at once — a field that lagged
    * behind the keyboard would feel broken — and are handed on when the
    * typing stops
    */
-  const [typed, setTyped] = createSignal(props.vocabulary == null ? props.value : seeded.rest);
+  const [typed, setTyped] = createSignal(start.plain ? start.value : start.seeded.rest);
   /** Where the caret is, which is what decides the word being finished */
   const [caret, setCaret] = createSignal(0);
   const [open, setOpen] = createSignal(false);
@@ -175,18 +196,7 @@ export default function Search(props: SearchProps): JSX.Element {
   const optionId = (index: number): string => `${listId}-${index}`;
 
   /** The badges and the box read back as one query */
-  const query = (): string => {
-    const parts: string[] = [];
-
-    for (const part of [...terms(), typed()]) {
-      const trimmed = part.trim();
-
-      if (trimmed !== '') {
-        parts.push(trimmed);
-      }
-    }
-    return parts.join(' ');
-  };
+  const query = (): string => joinQuery(terms(), typed());
 
   const cancel = (): void => {
     if (waiting != null) {
@@ -204,12 +214,16 @@ export default function Search(props: SearchProps): JSX.Element {
    * when a picker reopens — puts that in the box too. Once the wait is
    * over the two agree, so this does nothing while somebody types
    */
-  createEffect(() => {
-    const settled = props.value;
-
-    if (settled !== untrack(query)) {
+  createEffect(
+    () => props.value,
+    (settled) => {
+      // What is in the box is read, not followed: a keystroke must not
+      // put the caller's last value back
+      if (settled === untrack(query)) {
+        return;
+      }
       cancel();
-      if (props.vocabulary == null) {
+      if (untrack(() => props.vocabulary) == null) {
         setTyped(settled);
       } else {
         const parts = splitTerms(settled);
@@ -218,8 +232,8 @@ export default function Search(props: SearchProps): JSX.Element {
         setTyped(parts.rest);
       }
       setOpen(false);
-    }
-  });
+    },
+  );
 
   /** What the box is offering, or nothing where it has nothing to offer */
   const offering = (): QueryCompletion | null => {
@@ -257,16 +271,16 @@ export default function Search(props: SearchProps): JSX.Element {
    * The list is fixed to the window, so anything that moves the box
    * under it moves it too
    */
-  createEffect(() => {
-    if (!open()) {
-      return;
+  createEffect(open, (isOpen) => {
+    if (!isOpen) {
+      return undefined;
     }
     window.addEventListener('scroll', measure, true);
     window.addEventListener('resize', measure);
-    onCleanup(() => {
+    return () => {
       window.removeEventListener('scroll', measure, true);
       window.removeEventListener('resize', measure);
-    });
+    };
   });
 
   const settle = (): void => {
@@ -369,8 +383,11 @@ export default function Search(props: SearchProps): JSX.Element {
         kept.push(term);
       }
     }
+    // Asked with the badges as they now are: the signal reads the old
+    // ones until the write lands
     setTerms(kept);
-    settle();
+    cancel();
+    props.onChange(joinQuery(kept, typed()));
   };
 
   /**
@@ -447,7 +464,65 @@ export default function Search(props: SearchProps): JSX.Element {
             )}
           </Show>
           <input
-            ref={box}
+            ref={(element: HTMLInputElement) => {
+              box = element;
+              // A listener of its own rather than Solid's delegated
+              // `onKeyDown`, which is answered at the document: a dialog
+              // panel takes Tab and Escape on its way there, traps the
+              // focus with them and stops them, so the box never heard
+              // either while it stood in one
+              element.addEventListener('keydown', (event) => {
+                const offered = suggestions();
+                const showing = open() && offered.length > 0;
+
+                if (showing && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setActive(
+                    (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
+                      offered.length,
+                  );
+                  setArrowed(true);
+                  return;
+                }
+                // Shift and Tab is somebody leaving the box, not somebody
+                // finishing a word
+                if (showing && event.key === 'Tab' && !event.shiftKey) {
+                  // Stopped as well as refused: a dialog panel moves the
+                  // focus itself rather than leaving it to the browser,
+                  // so refusing the key is not enough to keep it here
+                  event.preventDefault();
+                  event.stopPropagation();
+                  complete(offered);
+                  return;
+                }
+                if (showing && event.key === 'Enter') {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  pick(offered[active()]);
+                  return;
+                }
+                if (event.key === 'Escape' && open()) {
+                  // The list first: somebody closing the suggestions has
+                  // not asked to clear what they typed
+                  event.preventDefault();
+                  event.stopPropagation();
+                  setOpen(false);
+                  return;
+                }
+                if (event.key === 'Backspace' && caret() === 0 && box?.selectionEnd === 0) {
+                  event.preventDefault();
+                  reopen();
+                  return;
+                }
+                // Somebody who has finished typing and pressed Enter has
+                // said so; there is nothing left to wait for
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  settle();
+                }
+              });
+            }}
             type="search"
             value={typed()}
             placeholder={terms().length > 0 ? undefined : props.placeholder}
@@ -460,7 +535,7 @@ export default function Search(props: SearchProps): JSX.Element {
             autocomplete="off"
             role={props.vocabulary == null ? undefined : 'combobox'}
             aria-autocomplete={props.vocabulary == null ? undefined : 'list'}
-            aria-expanded={props.vocabulary == null ? undefined : open()}
+            aria-expanded={spellAria(props.vocabulary == null ? undefined : open())}
             aria-controls={props.vocabulary == null ? undefined : listId}
             aria-activedescendant={
               open() && suggestions().length > 0 ? optionId(active()) : undefined
@@ -479,62 +554,6 @@ export default function Search(props: SearchProps): JSX.Element {
             }}
             onBlur={() => {
               setOpen(false);
-            }}
-            // A listener of its own rather than Solid's delegated
-            // `onKeyDown`, which is answered at the document: a dialog
-            // panel takes Tab and Escape on its way there, traps the
-            // focus with them and stops them, so the box never heard
-            // either while it stood in one
-            on:keydown={(event) => {
-              const offered = suggestions();
-              const showing = open() && offered.length > 0;
-
-              if (showing && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-                event.preventDefault();
-                event.stopPropagation();
-                setActive(
-                  (active() + (event.key === 'ArrowDown' ? 1 : offered.length - 1)) %
-                    offered.length,
-                );
-                setArrowed(true);
-                return;
-              }
-              // Shift and Tab is somebody leaving the box, not somebody
-              // finishing a word
-              if (showing && event.key === 'Tab' && !event.shiftKey) {
-                // Stopped as well as refused: a dialog panel moves the
-                // focus itself rather than leaving it to the browser,
-                // so refusing the key is not enough to keep it here
-                event.preventDefault();
-                event.stopPropagation();
-                complete(offered);
-                return;
-              }
-              if (showing && event.key === 'Enter') {
-                event.preventDefault();
-                event.stopPropagation();
-                pick(offered[active()]);
-                return;
-              }
-              if (event.key === 'Escape' && open()) {
-                // The list first: somebody closing the suggestions has
-                // not asked to clear what they typed
-                event.preventDefault();
-                event.stopPropagation();
-                setOpen(false);
-                return;
-              }
-              if (event.key === 'Backspace' && caret() === 0 && box?.selectionEnd === 0) {
-                event.preventDefault();
-                reopen();
-                return;
-              }
-              // Somebody who has finished typing and pressed Enter has
-              // said so; there is nothing left to wait for
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                settle();
-              }
             }}
           />
           {/* The guide stands in the box, opposite the magnifier: the

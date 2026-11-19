@@ -1,4 +1,5 @@
-import { type JSX, Show, Suspense, createMemo, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Loading, Show, createMemo, createSignal } from 'solid-js';
 import { isLockLive } from '../../../model/battle-lock';
 import readBox from '../../../auth/box';
 import { readCatchContext, searchCaught } from '../../../auth/caught';
@@ -11,10 +12,10 @@ import {
 } from '../../../model/search/catch';
 import ensureBattleData from '../../../data/battle-data';
 import { type BoxRecord, DEFAULT_BOX_TONE, boxTone, listBoxes } from '../../../auth/boxes';
-import { answered } from '../../app/resource-reads';
 import { parseControls } from '../../../core/query';
 import { BoxIcon } from '../../icons';
 import { Button, Dialog, DialogActions, Meta, Note, Select, type SelectOption } from '../../styled';
+import { createLoad } from '../../app/create-load';
 import PickerBox from './box';
 import type { BoxFilter, CatchOption, CatchPickerProps } from './options';
 import { m } from '../../../i18n/paraglide/messages.js';
@@ -74,9 +75,15 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * as an empty collection rather than as one still loading, so
    * nothing is planned or shown until they are here
    */
-  const [registries] = createResource(ensureBattleData);
+  const registries = createLoad(
+    () => true,
+    async () => {
+      await ensureBattleData();
+      return true;
+    },
+  );
   /** The same, read without suspending the page the picker sits on */
-  const ready = (): boolean => registries.state === 'ready';
+  const ready = (): boolean => registries.latest() === true;
 
   const [own, setOwn] = createSignal('');
   /** The caller's query where it holds one, ours otherwise */
@@ -96,16 +103,12 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * changes only the part the runtime filters — a name, a second type
    * — leaves this the same and reads nothing
    */
-  const narrowing = createMemo<CatchConstraint[]>(
-    () => (ready() ? planCatchSearch(query()) : []),
-    [],
-    {
-      equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
-        JSON.stringify(before) === JSON.stringify(after),
-    },
-  );
+  const narrowing = createMemo<CatchConstraint[]>(() => (ready() ? planCatchSearch(query()) : []), {
+    equals: (before: CatchConstraint[], after: CatchConstraint[]) =>
+      JSON.stringify(before) === JSON.stringify(after),
+  });
 
-  const [owned] = createResource(
+  const owned = createLoad(
     () =>
       showing() && ready() && props.options == null
         ? ([owner(), props.revision, handled(), narrowing()] as const)
@@ -133,7 +136,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * square lives in. Somebody else's are never read: a box is its
    * owner's own arrangement
    */
-  const [boxes] = createResource(
+  const boxes = createLoad(
     () =>
       showing() && props.viewOnly !== true && owner() === auth.user()?.uid
         ? ([owner(), props.revision, handled()] as const)
@@ -171,7 +174,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
     if (id === DEFAULT_BOX) {
       return m.catch_box_default();
     }
-    for (const [made, box] of answered(boxes) ?? []) {
+    for (const [made, box] of boxes.latest() ?? []) {
       if (made === id) {
         return box.name;
       }
@@ -194,7 +197,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
       { value: DEFAULT_BOX, label: m.catch_box_default(), tone: DEFAULT_BOX_TONE },
     ];
 
-    for (const [id, box] of answered(boxes) ?? []) {
+    for (const [id, box] of boxes.latest() ?? []) {
       options.push({ value: id, label: box.name, tone: boxTone(box.colour) });
     }
     return (
@@ -246,7 +249,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
    * beside the rows. A view-only box reads them too: they are about
    * whose pokemon these are, not about who is looking
    */
-  const [around] = createResource(
+  const around = createLoad(
     () => (showing() && props.options == null ? ([owner(), handled()] as const) : null),
     async ([player]): Promise<CatchContext> => readCatchContext(player),
   );
@@ -281,14 +284,13 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
 
   /**
    * What went wrong reading the box, or nothing. A refused read leaves
-   * the last list standing, since the box shows `latest` rather than
-   * suspending on every keystroke, and a stale box with no word about
-   * it reads as a search that found nothing
+   * the box empty rather than suspending on every keystroke, and an
+   * empty box with no word about it reads as a search that found nothing
    */
-  const trouble = (): boolean => registries.error != null || owned.error != null;
+  const trouble = (): boolean => registries.errored() || owned.errored();
 
   const box = (): JSX.Element => (
-    <Suspense fallback={<Note>{m.pick_catch_loading()}</Note>}>
+    <Loading fallback={<Note>{m.pick_catch_loading()}</Note>}>
       <Show when={trouble()}>
         <Note>{m.catch_picker_failed()}</Note>
       </Show>
@@ -325,7 +327,7 @@ export default function CatchPicker(props: CatchPickerProps): JSX.Element {
           }}
         />
       </Show>
-    </Suspense>
+    </Loading>
   );
 
   return (

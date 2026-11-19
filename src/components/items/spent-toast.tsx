@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { STAT_LABELS } from '../catches/catch-dialog/describe';
 import type { Items } from '../../data/ids/items';
 import SpeciesCoat from '../sprites/SpeciesCoat';

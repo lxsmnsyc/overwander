@@ -14,7 +14,8 @@ import { SpriteAnim } from '../../../../data/ids/sprite-anims';
 import { Button, Note } from '../../../styled';
 import { CARD, CARD_TITLE } from '../metrics';
 
-import { Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**
@@ -183,7 +184,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                 </span>
                 <span class="text-xs font-extrabold">{getSpeciesData(props.species).name}</span>
                 <Arrow />
-                <Index each={props.options}>
+                <For keyed={false} each={props.options}>
                   {(option) => (
                     <div
                       class="flex w-full min-w-0 flex-col items-center gap-1 text-center"
@@ -228,7 +229,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                       </Show>
                     </div>
                   )}
-                </Index>
+                </For>
               </div>
             }
           >
@@ -240,7 +241,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                 fresh objects, so a keyed list would rebuild every sprite
                 when only a flag on one of them changed */}
             <ul class="m-0 flex list-none flex-col gap-0 p-0">
-              <Index each={props.options}>
+              <For keyed={false} each={props.options}>
                 {(option) => (
                   <li
                     class="flex min-h-8 items-center gap-1.5"
@@ -282,7 +283,7 @@ export default function EvolutionSection(props: EvolutionSectionProps): JSX.Elem
                     </Show>
                   </li>
                 )}
-              </Index>
+              </For>
             </ul>
           </Show>
         </Show>

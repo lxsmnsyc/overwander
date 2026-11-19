@@ -1,5 +1,5 @@
 import { Show, createContext, useContext } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { dynamic } from '@solidjs/web';
 import type { MDXBuiltinComponents } from 'solid-marked';
 
 /**
@@ -29,9 +29,10 @@ function isAway(url: string): boolean {
 /**
  * The line a release's index entry says about it. The page's own title
  * is its first heading, and the line stands right under it, so the
- * heading says where to put it
+ * heading says where to put it. An accessor, since a provider's value
+ * is read once and the feed swaps the page under the same provider
  */
-export const ReleaseLine = createContext('');
+export const ReleaseLine = createContext<() => string>(() => '');
 
 /** How a heading of each depth is drawn, over the base layer's face */
 const HEADING_SIZES = [
@@ -45,19 +46,19 @@ const MARKDOWN: MDXBuiltinComponents = {
 
   Heading: (props) => {
     const line = useContext(ReleaseLine);
+    const Tag = dynamic(() => HEADINGS[props.depth - 1]);
 
     return (
       <>
-        <Dynamic
-          component={HEADINGS[props.depth - 1]}
+        <Tag
           id={props.id}
           // Above the block it introduces rather than between two of them
           class={`first:mt-0 ${HEADING_SIZES[props.depth - 1] ?? 'mt-3'}`}
         >
           {props.children}
-        </Dynamic>
-        <Show when={props.depth === 1 && line !== ''}>
-          <span class="block text-xs text-muted">{line}</span>
+        </Tag>
+        <Show when={props.depth === 1 && line() !== ''}>
+          <span class="block text-xs text-muted">{line()}</span>
         </Show>
       </>
     );
@@ -72,17 +73,20 @@ const MARKDOWN: MDXBuiltinComponents = {
   // The game's own lists are stacks of rows and drop their markers.
   // Prose wants them back, and a marker needs a block rather than the
   // flex column the base layer sets
-  List: (props) => (
-    <Dynamic
-      component={props.ordered === true ? 'ol' : 'ul'}
-      start={props.start ?? undefined}
-      class={`block max-w-prose space-y-1 pl-5 ${
-        props.ordered === true ? 'list-decimal' : 'list-disc'
-      }`}
-    >
-      {props.children}
-    </Dynamic>
-  ),
+  List: (props) => {
+    const Tag = dynamic(() => (props.ordered === true ? 'ol' : 'ul'));
+
+    return (
+      <Tag
+        start={props.start ?? undefined}
+        class={`block max-w-prose space-y-1 pl-5 ${
+          props.ordered === true ? 'list-decimal' : 'list-disc'
+        }`}
+      >
+        {props.children}
+      </Tag>
+    );
+  },
 
   ListItem: (props) => (
     <li class="marker:text-tide">
@@ -154,21 +158,19 @@ const MARKDOWN: MDXBuiltinComponents = {
   ),
 
   TableRow: (props) => (
-    <InHead.Provider value={props.isHead}>
+    <InHead value={props.isHead}>
       <tr class={props.isHead ? 'border-b-2 border-line' : 'border-b-2 border-line-soft'}>
         {props.children}
       </tr>
-    </InHead.Provider>
+    </InHead>
   ),
 
-  TableCell: (props) => (
-    <Dynamic
-      component={useContext(InHead) ? 'th' : 'td'}
-      class="px-2 py-1 align-top first:pl-0 last:pr-0"
-    >
-      {props.children}
-    </Dynamic>
-  ),
+  TableCell: (props) => {
+    const inHead = useContext(InHead);
+    const Cell = dynamic(() => (inHead ? 'th' : 'td'));
+
+    return <Cell class="px-2 py-1 align-top first:pl-0 last:pr-0">{props.children}</Cell>;
+  },
 
   ThematicBreak: () => <hr class="border-t-2 border-line-soft" />,
   Break: () => <br />,

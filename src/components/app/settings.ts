@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js';
+import { isServer } from '@solidjs/web';
 import type { BoardEdge } from '../../overworld/board';
-import { isServer } from 'solid-js/web';
 import { asNumber, asRecord, asString } from '../../model/normalize';
 import { BALL_ITEMS, Balls } from '../../data/ids/items';
 import { ACTION_ORDER, DEFAULT_BINDS, type KeyBinds } from './keys';
@@ -107,7 +107,13 @@ export interface GameSettings {
  */
 function defaults(): GameSettings {
   return {
-    reduceMotion: !isServer && globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    // Asked of the machine only where it can answer: a test built for
+    // the browser runs on Node, where `isServer` is false and there is
+    // no `matchMedia`
+    reduceMotion:
+      !isServer &&
+      typeof globalThis.matchMedia === 'function' &&
+      globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches,
     clock: '24h',
     boxColumns: 6,
     keepBall: true,

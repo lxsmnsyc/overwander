@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, createSignal } from 'solid-js';
+import { type Accessor, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { DialogWidth } from '../styled';
 import { type ActionForm, widthOf } from './form';
 import { m } from '../../i18n/paraglide/messages.js';

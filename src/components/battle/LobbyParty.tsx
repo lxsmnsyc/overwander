@@ -1,4 +1,5 @@
-import { For, type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import { type Accessor, For, Loading, Show, createMemo } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { isShiny } from '../../model/caught-record';
 import { isEgg } from '../../model/egg';
 import { Genders, Species } from '../../data/ids/species';
@@ -6,7 +7,6 @@ import CatchCard from '../catches/CatchCard';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { titleCatch } from '../details';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
-import { settled } from '../app/resource-reads';
 import TeamStrip from '../catches/TeamStrip';
 import { HoverCard, Note } from '../styled';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -25,56 +25,57 @@ export default function LobbyParty(props: {
    */
   flat?: number;
 }): JSX.Element {
-  const [party] = createResource(
-    () => props.catches.join(','),
-    async (key): Promise<[string, CaughtPokemon][]> => {
-      const pending: Promise<[string, CaughtPokemon | null]>[] = [];
+  // Keyed on the ids, so a lobby rebuilding its rows does not ask again
+  const asked = createMemo(() => props.catches.join(','));
+  const party = createMemo(async (): Promise<[string, CaughtPokemon][]> => {
+    const key = asked();
+    const pending: Promise<[string, CaughtPokemon | null]>[] = [];
 
-      // Every party on screen asks in the same moment, so the whole lobby is one read
-      for (const id of key.split(',')) {
-        if (id === '') {
-          continue;
-        }
-        pending.push(
-          getCaughtBatched(id).then((caught): [string, CaughtPokemon | null] => [id, caught]),
-        );
+    // Every party on screen asks in the same moment, so the whole lobby is one read
+    for (const id of key.split(',')) {
+      if (id === '') {
+        continue;
       }
+      pending.push(
+        getCaughtBatched(id).then((caught): [string, CaughtPokemon | null] => [id, caught]),
+      );
+    }
 
-      const rows = await Promise.all(pending);
-      const found: [string, CaughtPokemon][] = [];
+    const rows = await Promise.all(pending);
+    const found: [string, CaughtPokemon][] = [];
 
-      for (const [id, caught] of rows) {
-        if (caught != null) {
-          found.push([id, caught]);
-        }
+    for (const [id, caught] of rows) {
+      if (caught != null) {
+        found.push([id, caught]);
       }
-      return found;
-    },
-  );
+    }
+    return found;
+  });
 
   return (
-    <Suspense fallback={<Note>{m.lobby_reading_party()}</Note>}>
+    <Loading fallback={<Note>{m.lobby_reading_party()}</Note>}>
       <Show when={props.flat} fallback={<PartyStrip party={party} class={props.class} />} keyed>
         {(size) => <PartyRow party={party} size={size} />}
       </Show>
-    </Suspense>
+    </Loading>
   );
 }
 
 function PartyStrip(props: {
-  party: Resource<[string, CaughtPokemon][]>;
+  party: Accessor<[string, CaughtPokemon][]>;
   class?: string;
 }): JSX.Element {
-  // Held through a re-read, so a party that changed does not blink back to "Reading"
-  return <TeamStrip catches={settled(props.party) ?? []} class={props.class} />;
+  // The boundary holds it through a re-read, so a party that changed
+  // does not blink back to "Reading"
+  return <TeamStrip catches={props.party()} class={props.class} />;
 }
 
 /** The party as a plain row of squares, the empty seats in it dashed */
 function PartyRow(props: {
-  party: Resource<[string, CaughtPokemon][]>;
+  party: Accessor<[string, CaughtPokemon][]>;
   size: number;
 }): JSX.Element {
-  const held = (): [string, CaughtPokemon][] => settled(props.party) ?? [];
+  const held = (): [string, CaughtPokemon][] => props.party();
   const open = (): number[] => {
     const left: number[] = [];
 

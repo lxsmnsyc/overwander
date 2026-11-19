@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import BattleData from '../app/BattleData';
 import { Button, Dialog, DialogActions, Meta } from '../styled';
 import PokedexTab from './PokedexTab';

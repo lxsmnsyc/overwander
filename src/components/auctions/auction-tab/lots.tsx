@@ -2,7 +2,8 @@ import { AuctionLot, type AuctionRecord } from '../../../auth/auctions';
 import { type CaughtPokemon, getCaughtBatched } from '../../../auth/caught';
 import { describeCatch } from '../../catches/catch-summary';
 import { describeItem } from '../../details';
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import { m } from '../../../i18n/paraglide/messages.js';
 
 /**
@@ -11,7 +12,7 @@ import { m } from '../../../i18n/paraglide/messages.js';
  * is — and it stays readable, which is what lets a bidder see what
  * they are bidding on
  */
-function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
+function CatchLotName(props: { caught: Accessor<CaughtPokemon | null> }): JSX.Element {
   return (
     <Show when={props.caught()} fallback={<span>{m.auction_a_pokemon()}</span>}>
       {(loaded) => <span>{describeCatch(loaded())}</span>}
@@ -22,15 +23,14 @@ function CatchLotName(props: { caught: Resource<CaughtPokemon | null> }): JSX.El
 function CatchLot(props: { catchId: string }): JSX.Element {
   // One per lot row, so the rows on screen share a read. A settled lot
   // whose catch has moved on names none, and there is nothing to read
-  const [caught] = createResource(
-    () => props.catchId || false,
-    async (id) => getCaughtBatched(id),
+  const caught = createMemo((): Promise<CaughtPokemon | null> | null =>
+    props.catchId === '' ? null : getCaughtBatched(props.catchId),
   );
 
   return (
-    <Suspense fallback={<span>{m.auction_a_pokemon()}</span>}>
+    <Loading fallback={<span>{m.auction_a_pokemon()}</span>}>
       <CatchLotName caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 

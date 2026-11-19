@@ -1,12 +1,5 @@
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createResource,
-  createSignal,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import useBottleCap from '../../auth/bottle-caps';
 import { type CaughtPokemon, getCaught } from '../../auth/caught';
 import { isShiny } from '../../model/caught-record';
@@ -38,11 +31,10 @@ export interface BottleCapDialogProps {
 /** The choosing itself, where the record is read, so a record still arriving does not take the panel with it */
 function CapBody(
   props: BottleCapDialogProps & {
-    caught: Resource<CaughtPokemon | null>;
+    caught: Accessor<CaughtPokemon | null>;
     onRead: () => void;
   },
 ): JSX.Element {
-  const [chosen, setChosen] = createSignal<Stats | null>(null);
   const [status, setStatus] = createSignal<string | null>(null);
   const [busy, setBusy] = createSignal(false);
 
@@ -53,13 +45,14 @@ function CapBody(
   };
 
   // Open on a stat that can take it, the lowest, since that is the one
-  // most players are here for
-  createEffect(() => {
+  // most players are here for. Worked out again whenever the record is
+  // read, keeping the stat the player chose while it can still take it
+  const [chosen, setChosen] = createSignal((was?: Stats | null): Stats | null => {
     const record = props.caught();
-    const current = chosen();
+    const current = was ?? null;
 
     if (record == null || (current != null && valueOf(current) < MAX_IV)) {
-      return;
+      return current;
     }
     let lowest: Stats | null = null;
 
@@ -68,7 +61,7 @@ function CapBody(
         lowest = stat;
       }
     }
-    setChosen(lowest);
+    return lowest;
   });
 
   const options = (): { value: Stats; label: string; description: string; disabled: boolean }[] => {
@@ -172,7 +165,11 @@ function CapBody(
 
 /** Spending a Bottle Cap on one stat of a pokemon's choosing */
 export default function BottleCapDialog(props: BottleCapDialogProps): JSX.Element {
-  const [caught, { refetch }] = createResource(() => props.catchId, getCaught);
+  const caught = createMemo<CaughtPokemon | null>((): Promise<CaughtPokemon | null> | null => {
+    const catchId = props.catchId;
+
+    return catchId == null ? null : getCaught(catchId);
+  });
 
   return (
     <Dialog
@@ -181,15 +178,15 @@ export default function BottleCapDialog(props: BottleCapDialogProps): JSX.Elemen
       title={getItemData(Items.BottleCap).name}
       description={m.catch_cap_description({ max: MAX_IV })}
     >
-      <Suspense fallback={<Note>{m.catch_reading_record()}</Note>}>
+      <Loading fallback={<Note>{m.catch_reading_record()}</Note>}>
         <CapBody
           {...props}
           caught={caught}
           onRead={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(caught).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </Dialog>
   );
 }

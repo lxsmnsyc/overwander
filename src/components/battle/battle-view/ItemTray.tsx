@@ -1,4 +1,5 @@
-import { Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../i18n/paraglide/messages.js';
 import ItemSprite from '../../items/ItemSprite';
 import { Meta, TooltipHost } from '../../styled';
@@ -51,7 +52,7 @@ export default function ItemTray(props: { items: ItemReading[]; size: number }):
   return (
     <Show when={props.items.length > 0} fallback={<Meta>{m.battle_no_item()}</Meta>}>
       <ul class="m-0 flex list-none flex-row flex-wrap gap-1 p-0">
-        <Index each={props.items}>
+        <For keyed={false} each={props.items}>
           {(reading) => (
             <li>
               <TooltipHost
@@ -90,7 +91,7 @@ export default function ItemTray(props: { items: ItemReading[]; size: number }):
               </TooltipHost>
             </li>
           )}
-        </Index>
+        </For>
       </ul>
     </Show>
   );

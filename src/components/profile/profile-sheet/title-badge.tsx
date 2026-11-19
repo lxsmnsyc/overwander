@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import { type AchievementSheet, listAchievements } from '../../../auth/achievements';
 import { AchievementTier, TIER_COLORS } from '../../../data/achievements';
 import { titleLine, titleType } from '../../../data/ids/titles';
@@ -8,7 +9,7 @@ import { titleLine, titleType } from '../../../data/ids/titles';
 /**
  * The tier the wearer stands at on the worn title's line, read off
  * the sheet in its own component so the resource is read under the
- * Suspense below
+ * Loading below
  */
 function readTier(sheet: AchievementSheet | undefined, title: number): AchievementTier {
   if (sheet == null) {
@@ -44,7 +45,7 @@ const PILL =
   ' leading-[18px] font-extrabold';
 
 function TierPill(props: {
-  sheet: Resource<AchievementSheet>;
+  sheet: Accessor<AchievementSheet>;
   title: number;
   name: string;
 }): JSX.Element {
@@ -79,11 +80,11 @@ export default function TitleBadge(props: {
     return <span class={`${PILL} border-gold-dark text-gold-dark`}>{props.name}</span>;
   }
 
-  const [sheet] = createResource(() => props.player, listAchievements);
+  const sheet = createMemo(async () => listAchievements(props.player));
 
   return (
-    <Suspense fallback={<span class={`${PILL} border-line text-muted`}>{props.name}</span>}>
+    <Loading fallback={<span class={`${PILL} border-line text-muted`}>{props.name}</span>}>
       <TierPill sheet={sheet} title={props.title} name={props.name} />
-    </Suspense>
+    </Loading>
   );
 }

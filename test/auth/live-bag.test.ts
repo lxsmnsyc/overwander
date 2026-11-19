@@ -43,7 +43,7 @@ vi.mock('../../src/auth/live', () => ({
 
 // The read is a server call now, which runs only inside a request, and
 // the player is whoever the test says
-vi.mock('solid-js/web', async (original) => ({
+vi.mock('@solidjs/web', async (original) => ({
   ...(await original<object>()),
   getRequestEvent: () => ({ locals: {} }),
 }));

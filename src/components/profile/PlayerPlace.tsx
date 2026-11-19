@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createMemo } from 'solid-js';
 import type { PositionRecord } from '../../model/position-record';
 import { Meta, Note, Row } from '../styled';
 import { getPlayerPosition } from '../../auth/positions';
@@ -28,7 +29,7 @@ function walked(at: number): string {
  * The line itself, which is where the position is read. A read in the
  * body that declared it throws past every boundary written there
  */
-function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Element {
+function PlaceLine(props: { place: Accessor<PositionRecord | null> }): JSX.Element {
   return (
     <Show when={props.place()} fallback={<Note>{m.profile_not_walked()}</Note>}>
       {(at) => (
@@ -60,11 +61,11 @@ function PlaceLine(props: { place: Resource<PositionRecord | null> }): JSX.Eleme
  * they are
  */
 export default function PlayerPlace(props: { player: string }): JSX.Element {
-  const [place] = createResource(() => props.player, getPlayerPosition);
+  const place = createMemo(async () => getPlayerPosition(props.player));
 
   return (
-    <Suspense fallback={<Note>{m.profile_looking()}</Note>}>
+    <Loading fallback={<Note>{m.profile_looking()}</Note>}>
       <PlaceLine place={place} />
-    </Suspense>
+    </Loading>
   );
 }

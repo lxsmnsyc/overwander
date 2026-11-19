@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import { For, Show, createEffect, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Generation, type default as World } from '../../overworld/world';
 import { readMapSky, readMapWindow } from './weather-map-sky';
 import { localNow } from '../../auth/clock';
@@ -120,57 +121,55 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
   const originX = (): number => props.centreX - SPAN / 2;
   const originY = (): number => props.centreY - SPAN / 2;
 
-  createEffect(() => {
-    const world = props.world;
-    const shown = view();
-    const shownHour = hour();
-    const x0 = originX();
-    const y0 = originY();
-    const context = canvas?.getContext('2d');
+  createEffect(
+    () => ({ world: props.world, shown: view(), shownHour: hour(), x0: originX(), y0: originY() }),
+    ({ world, shown, shownHour, x0, y0 }) => {
+      const context = canvas?.getContext('2d');
 
-    if (context == null) {
-      return;
-    }
-    const image = context.createImageData(SPAN * SCALE, SPAN * SCALE);
-    const tally = new Map<Weather, number>();
+      if (context == null) {
+        return;
+      }
+      const image = context.createImageData(SPAN * SCALE, SPAN * SCALE);
+      const tally = new Map<Weather, number>();
 
-    for (let row = 0; row < SPAN; row++) {
-      for (let column = 0; column < SPAN; column++) {
-        const reading = readMapSky(world, x0 + column, y0 + row, shownHour);
-        const weather = reading.weather;
-        let shade: [number, number, number];
+      for (let row = 0; row < SPAN; row++) {
+        for (let column = 0; column < SPAN; column++) {
+          const reading = readMapSky(world, x0 + column, y0 + row, shownHour);
+          const weather = reading.weather;
+          let shade: [number, number, number];
 
-        tally.set(weather, (tally.get(weather) ?? 0) + 1);
-        if (shown === View.Front) {
-          shade = grey(reading.front);
-        } else if (shown === View.Character) {
-          shade = grey(reading.character);
-        } else if (shown === View.Biome) {
-          shade = biomeShade(world.getChunkBiome(x0 + column, y0 + row));
-        } else if (shown === View.SkyGround) {
-          shade = biomeShade(world.getSkyGround(x0 + column, y0 + row));
-        } else {
-          shade = SHADES[weather];
-        }
-        for (let dy = 0; dy < SCALE; dy++) {
-          for (let dx = 0; dx < SCALE; dx++) {
-            const at = ((row * SCALE + dy) * SPAN * SCALE + column * SCALE + dx) * 4;
+          tally.set(weather, (tally.get(weather) ?? 0) + 1);
+          if (shown === View.Front) {
+            shade = grey(reading.front);
+          } else if (shown === View.Character) {
+            shade = grey(reading.character);
+          } else if (shown === View.Biome) {
+            shade = biomeShade(world.getChunkBiome(x0 + column, y0 + row));
+          } else if (shown === View.SkyGround) {
+            shade = biomeShade(world.getSkyGround(x0 + column, y0 + row));
+          } else {
+            shade = SHADES[weather];
+          }
+          for (let dy = 0; dy < SCALE; dy++) {
+            for (let dx = 0; dx < SCALE; dx++) {
+              const at = ((row * SCALE + dy) * SPAN * SCALE + column * SCALE + dx) * 4;
 
-            image.data[at] = shade[0];
-            image.data[at + 1] = shade[1];
-            image.data[at + 2] = shade[2];
-            image.data[at + 3] = 0xff;
+              image.data[at] = shade[0];
+              image.data[at + 1] = shade[1];
+              image.data[at + 2] = shade[2];
+              image.data[at + 3] = 0xff;
+            }
           }
         }
       }
-    }
-    context.putImageData(image, 0, 0);
+      context.putImageData(image, 0, 0);
 
-    const sorted: [Weather, number][] = [...tally];
+      const sorted: [Weather, number][] = [...tally];
 
-    sorted.sort((a, b) => b[1] - a[1]);
-    setCounts(sorted);
-  });
+      sorted.sort((a, b) => b[1] - a[1]);
+      setCounts(sorted);
+    },
+  );
 
   // The live window, checked often enough that the picture turns over
   // with the game rather than an hour after it
@@ -182,17 +181,17 @@ export default function WeatherMap(props: WeatherMapProps): JSX.Element {
     clearInterval(clock);
   });
 
-  createEffect(() => {
-    if (!playing()) {
-      return;
+  createEffect(playing, (on) => {
+    if (!on) {
+      return undefined;
     }
     const timer = setInterval(() => {
       setStep((was) => was + 1);
     }, PLAY_STEP);
 
-    onCleanup(() => {
+    return () => {
       clearInterval(timer);
-    });
+    };
   });
 
   const look = (event: MouseEvent): void => {

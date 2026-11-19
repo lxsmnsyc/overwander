@@ -5,6 +5,7 @@
  * dialog opened from the overworld and one opened from the bag are the
  * same dialog
  */
+export { default as spellAria } from './aria';
 export { default as Button } from './button';
 export { default as CloseButton } from './close-button';
 export type { ButtonProps, ButtonTone } from './button';

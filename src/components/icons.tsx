@@ -1,4 +1,4 @@
-import type { ComponentProps, JSX } from 'solid-js';
+import type { ComponentProps, JSX } from '@solidjs/web';
 
 /** Crossed swords: two players fighting each other on purpose */
 export function SwordsIcon(props: ComponentProps<'svg'>): JSX.Element {

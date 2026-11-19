@@ -1,4 +1,5 @@
-import type { JSX, ParentProps } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
 import { TYPE_NAMES } from '../../data/constants/types';
 import type { Moves } from '../../data/ids/moves';
 import { MOVE_CATEGORY_LABELS } from '../sprites/MoveCategorySprite';

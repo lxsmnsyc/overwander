@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type ProfileSection from '../../game/session/profile-section';
 import ProfileBody from './profile-sheet/body';
 import ProfileHero from './profile-sheet/hero';

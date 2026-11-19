@@ -1,4 +1,5 @@
-import { For, type JSX, Show, createSignal } from 'solid-js';
+import { For, Show, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Button, DialogActions, DialogSection, List, ListRow, RowButton } from '../styled';
 import { CostBadge, type CounterCost, CounterStep, CounterTerms, DockNote } from './terms';
 import { type ActionForm, defineForm } from './form';

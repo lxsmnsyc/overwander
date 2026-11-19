@@ -1,8 +1,9 @@
 /// <reference types="vitest/config" />
-import { solidStart } from '@solidjs/start/config';
+import solid from '@solidjs/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
+import { fileRoutes } from 'filesystem-routing/vite';
 import { nitro } from 'nitro/vite';
-import solidMarked from 'vite-plugin-solid-marked';
+import solidMarked from 'unplugin-solid-marked';
 import { defineConfig, loadEnv } from 'vite';
 import yamlData from './scripts/vite/yaml.ts';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
@@ -20,8 +21,10 @@ import COMPILE_OPTIONS from './src/i18n/compile-options.ts';
  * also drags in the production SSR manifest, which is not built during
  * a test run and throws on read.
  *
- * SolidStart stays, since it is what resolves the `server-only` marker
- * the modules under test import
+ * The Solid plugin stays, since it is what resolves the `server-only`
+ * marker the modules under test import. Start mode (entries, middleware,
+ * server functions) and the file routes stay out with Nitro: no test
+ * renders a page or serves a request
  */
 const forTests = process.env.VITEST != null;
 
@@ -34,9 +37,9 @@ const ENV_DIR = forTests ? 'test/env' : process.env.OVERWANDER_ENV_DIR;
 
 /**
  * One id per build, shared by the client and server bundles. A tab
- * names it on every server call, and a call from a build that is no
- * longer live is refused: server functions are addressed by their
- * place in a file, so an old tab's arguments would reach the wrong one
+ * names it when it joins the live feed (`/_live`), and the feed sends a
+ * tab from another build to reload. Server functions do not read it:
+ * Solid stamps and checks a build id of its own on every call
  */
 const BUILD_ID =
   process.env.BUILD_ID != null && process.env.BUILD_ID !== ''
@@ -81,14 +84,27 @@ export default defineConfig(({ mode }) => ({
     paraglideVitePlugin(COMPILE_OPTIONS),
     tailwindcss(),
     // The release pages under docs/ are imported as components, and
-    // this is what turns them into JSX. It runs before SolidStart's
-    // own plugin because what it emits is JSX for that to compile,
-    // and it is what keeps a markdown parser out of the browser
-    solidMarked({}),
-    solidStart({
-      devOverlay: false,
-      middleware: 'src/middleware/index.ts',
-    }),
+    // this is what turns them into JSX. It runs before the Solid plugin
+    // because what it emits is JSX for that to compile, and it is what
+    // keeps a markdown parser out of the browser
+    solidMarked.vite({}),
+    forTests
+      ? solid()
+      : solid({
+          ssr: true,
+          start: {
+            middleware: './src/middleware/index.ts',
+            devtools: false,
+          },
+          serverFunctions: true,
+          // The route modules the file routes plugin emits end in a
+          // `?pick=` query, and this makes the plugin compile them too
+          extensions: ['.jsx', '.tsx'],
+        }),
+    // src/routes, served from `virtual:file-routes`. `httpMethods` turns
+    // the uppercase exports of a route module (the Better Auth handler)
+    // into request handlers, which the middleware dispatches
+    ...(forTests ? [] : [fileRoutes({ httpMethods: true, types: true })]),
     ...(forTests
       ? []
       : [
@@ -115,10 +131,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   ssr: {
-    // `server-only` is a marker, not a library. SolidStart's
-    // `boundary-modules` plugin resolves it to an empty module on the
-    // server and refuses it on the client — which is the whole of how
-    // `src/server/*` is kept out of the browser bundle.
+    // `server-only` is a marker, not a library. The Solid plugin
+    // resolves it to an empty module on the server and refuses it on
+    // the client, which is the whole of how `src/server/*` is kept
+    // out of the browser bundle.
     //
     // It only gets to do that if Vite asks it. A bare import of a
     // package that is really there is **externalized** for SSR before
@@ -149,5 +165,38 @@ export default defineConfig(({ mode }) => ({
      * Playwright refuses to have its `test` called by another runner
      */
     exclude: ['**/node_modules/**', '**/dist/**', '.output/**', 'test/db/**', 'e2e/**'],
+    /**
+     * The Solid plugin compiles a project for the posture its
+     * `environment` names. `test/components` runs the way the browser
+     * does (no `environment` set): `isServer` is false and a signal
+     * write applies after a microtask, so those tests call `flush()`.
+     * Everything else runs the server build (`environment: 'node'`),
+     * which is where the engine, the data and the server modules run
+     * outside a tab. A component test that calls `renderToString` is
+     * named `*.ssr.test.tsx`: the browser build refuses it, so it runs
+     * in the server project.
+     *
+     * `vitest.fuzz.ts` and `vitest.sim.ts` drop `projects` from what
+     * they merge, since they pick their own files
+     */
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'client',
+          include: ['test/components/**/*.test.{ts,tsx}'],
+          exclude: ['test/components/**/*.ssr.test.{ts,tsx}'],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'server',
+          environment: 'node',
+          include: ['test/**/*.test.{ts,tsx}'],
+          exclude: ['test/db/**', 'test/components/**/!(*.ssr).test.{ts,tsx}'],
+        },
+      },
+    ],
   },
 }));

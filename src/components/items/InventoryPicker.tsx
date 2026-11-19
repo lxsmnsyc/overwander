@@ -1,10 +1,10 @@
+import type { JSX } from '@solidjs/web';
 import {
-  type JSX,
-  type Resource,
+  type Accessor,
+  Loading,
   Show,
-  Suspense,
   createEffect,
-  createResource,
+  createMemo,
   createSignal,
   untrack,
 } from 'solid-js';
@@ -15,7 +15,7 @@ import { describeItem } from '../details';
 import ItemGrid, { type ItemCell } from './ItemGrid';
 import ItemSprite from './ItemSprite';
 import { Button, Dialog, DialogActions, Note, Row, Status } from '../styled';
-import { failed, readable } from '../app/resource-reads';
+import { type Outcome, catchFailure } from '../app/create-load';
 import { m } from '../../i18n/paraglide/messages.js';
 
 /**
@@ -227,12 +227,12 @@ export type InventoryPickerProps = InventoryPickerCommonProps &
  * The tray itself, which is where the bag is read.
  *
  * A resource read in the body that declared it throws past every
- * `Suspense` written there, so the reading half is a component of its
+ * `Loading` written there, so the reading half is a component of its
  * own with the boundary above it
  */
 function PickerList(
   props: InventoryPickerProps & {
-    bag: Resource<InventoryEntry[]>;
+    bag: Accessor<Outcome<InventoryEntry[]> | null>;
     showing: boolean;
     onDone: () => void;
     /**
@@ -258,7 +258,7 @@ function PickerList(
   const offered = (): InventoryEntry[] => {
     const kept: InventoryEntry[] = [];
 
-    for (const entry of props.entries ?? readable(props.bag) ?? []) {
+    for (const entry of props.entries ?? props.bag()?.value ?? []) {
       if (props.filter?.(entry) ?? true) {
         kept.push(entry);
       }
@@ -280,11 +280,14 @@ function PickerList(
 
   // The draft is the caller's value until the picker is done with it,
   // so opening the list again starts from what is actually picked
-  createEffect(() => {
-    if (props.showing) {
-      setDraft(untrack(chosen));
-    }
-  });
+  createEffect(
+    () => (props.showing ? untrack(chosen) : null),
+    (wanted) => {
+      if (wanted != null) {
+        setDraft(wanted);
+      }
+    },
+  );
 
   const amountOf = (item: Items): number => {
     for (const [picked, amount] of draft()) {
@@ -450,7 +453,7 @@ function PickerList(
         when={offered().length}
         fallback={
           <Note>
-            {(props.entries == null ? failed(props.bag) : null) ??
+            {(props.entries == null ? (props.bag()?.failure ?? null) : null) ??
               props.empty ??
               m.item_picker_empty()}
           </Note>
@@ -634,10 +637,21 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
    */
   const showing = (): boolean => props.inline === true || (props.open ?? opened());
 
-  const [bag] = createResource(
-    () => (showing() && props.entries == null ? ([owner(), props.revision] as const) : null),
-    async ([player]) => getInventory(player),
+  // Keyed on who and the caller's revision, so a rebuilt key with the
+  // same answer does not read the bag again
+  const asked = createMemo(
+    () =>
+      showing() && props.entries == null ? { player: owner(), revision: props.revision } : null,
+    {
+      equals: (was, now) => was?.player === now?.player && was?.revision === now?.revision,
+    },
   );
+  // A failed read is an answer the tray says in place of its squares
+  const bag = createMemo((): Promise<Outcome<InventoryEntry[]>> | null => {
+    const at = asked();
+
+    return at == null ? null : catchFailure(getInventory(at.player));
+  });
 
   /**
    * What the picker is asking for. A caller with something more
@@ -657,7 +671,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
   };
 
   const tray = (docked: boolean): JSX.Element => (
-    <Suspense
+    <Loading
       fallback={
         <>
           <Note>{m.item_bag_loading()}</Note>
@@ -676,7 +690,7 @@ export default function InventoryPicker(props: InventoryPickerProps): JSX.Elemen
         onDone={close}
         dock={docked ? { close } : undefined}
       />
-    </Suspense>
+    </Loading>
   );
 
   return (

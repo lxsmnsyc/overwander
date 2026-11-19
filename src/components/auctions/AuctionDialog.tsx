@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createSignal } from 'solid-js';
 import {
   AuctionLot,
   MAX_INCREMENT,
@@ -16,6 +17,7 @@ import { describeItem } from '../details';
 import ItemSprite from '../items/ItemSprite';
 import { Button, Dialog, DialogActions, List, Meta, RowCard, RowText, Status } from '../styled';
 import { CatchFace } from './LotFace';
+import { createLoad } from '../app/create-load';
 import { NATURE_NAMES } from '../../data/ids/text';
 import { GENDER_LABELS } from '../catches/catch-summary';
 import { AUCTION_DURATION } from '../../model/auction-record';
@@ -62,7 +64,10 @@ export interface AuctionDialogProps {
  * reading half stands on its own
  */
 function ListingBody(
-  props: AuctionDialogProps & { caught: Resource<CaughtPokemon | null>; onDone: () => void },
+  props: AuctionDialogProps & {
+    caught: Accessor<CaughtPokemon | null | undefined>;
+    onDone: () => void;
+  },
 ): JSX.Element {
   const [asking, setAsking] = createSignal(MIN_STARTING_BID);
   const [raise, setRaise] = createSignal(MIN_INCREMENT);
@@ -168,9 +173,9 @@ function ListingBody(
             fallback={
               <Show when={props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null}>
                 {(id) => (
-                  <Suspense>
+                  <Loading>
                     <CatchFace catchId={id()} />
-                  </Suspense>
+                  </Loading>
                 )}
               </Show>
             }
@@ -302,15 +307,23 @@ function ListingBody(
 /**
  * Putting one thing on the block.
  *
- * The pokemon is read one component down, under this boundary: a
- * record read here would throw to the page and take the world with
- * it, and a lot is listed from the middle of somewhere else
+ * The pokemon's record never holds the sheet: the row says it is
+ * reading until it lands, and a lot is listed from the middle of
+ * somewhere else
  */
 export default function AuctionDialog(props: AuctionDialogProps): JSX.Element {
-  const [caught] = createResource(
-    () => (props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null),
-    getCaught,
-  );
+  const catchId = (): string | null =>
+    props.subject?.lot === AuctionLot.Catch ? props.subject.catchId : null;
+  const caught = createLoad(catchId, async (id) => ({ id, record: await getCaught(id) }));
 
-  return <ListingBody {...props} caught={caught} onDone={props.onClose} />;
+  // The last answer is kept while the next catch is read, so it is
+  // shown only for the catch it belongs to: otherwise the row would name
+  // the previous pokemon and the confirm would list one the player
+  // cannot see
+  const current = (): CaughtPokemon | null | undefined => {
+    const answer = caught.latest();
+    return answer != null && answer.id === catchId() ? answer.record : undefined;
+  };
+
+  return <ListingBody {...props} caught={current} onDone={props.onClose} />;
 }

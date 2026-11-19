@@ -1,5 +1,7 @@
-import { For, type JSX, Show, createEffect } from 'solid-js';
+import { For, Show, createEffect } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { QuerySuggestion } from '../../../core/query';
+import { spellAria } from '../../styled';
 
 /**
  * What the bar is offering to finish the word with.
@@ -37,11 +39,12 @@ export default function Offers(props: OffersProps): JSX.Element {
    * The arrows walk past the bottom of a list taller than its box, so
    * the row they are on is brought back into it
    */
-  createEffect(() => {
-    list
-      ?.querySelector<HTMLElement>(`#${CSS.escape(props.optionId(props.active))}`)
-      ?.scrollIntoView({ block: 'nearest' });
-  });
+  createEffect(
+    () => props.optionId(props.active),
+    (id) => {
+      list?.querySelector<HTMLElement>(`#${CSS.escape(id)}`)?.scrollIntoView({ block: 'nearest' });
+    },
+  );
 
   return (
     <ul
@@ -56,7 +59,7 @@ export default function Offers(props: OffersProps): JSX.Element {
           <li
             id={props.optionId(at())}
             role="option"
-            aria-selected={at() === props.active}
+            aria-selected={spellAria(at() === props.active)}
             class={`${OPTION} ${at() === props.active ? ACTIVE : ''}`}
             // Pressed rather than clicked: a click would have taken the
             // focus off the bar first

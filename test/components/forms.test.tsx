@@ -1,3 +1,4 @@
+import { flush } from 'solid-js';
 import { afterEach, describe, expect, it } from 'vitest';
 import { converse } from '../../src/components/forms/conversation';
 import { type FormProps, defineForm } from '../../src/components/forms/form';
@@ -28,8 +29,12 @@ async function tick(): Promise<void> {
   });
 }
 
-/** Draw the frame on top, as the host does */
+/**
+ * Draw the frame on top, as the host does. Signal writes apply after a
+ * microtask in the browser build, so the stack is flushed first
+ */
 function drawTop(): void {
+  flush();
   topFrame(frames())?.body();
 }
 
@@ -54,6 +59,7 @@ describe('action forms', () => {
   it('settles with null when the player walks away', async () => {
     const answer = openForm(EchoForm, 'leaving');
 
+    flush();
     topFrame(frames())?.onDismiss();
 
     await expect(answer).resolves.toBeNull();
@@ -82,10 +88,13 @@ describe('action forms', () => {
     const hidden = drawn;
     const over = openForm(EchoForm, 'over');
 
+    flush();
     hidden?.submit('early');
+    flush();
     expect(frames().length).toBe(1);
     await expect(under).resolves.toBe('early');
 
+    flush();
     topFrame(frames())?.onDismiss();
     await expect(over).resolves.toBeNull();
   });
@@ -99,6 +108,7 @@ describe('conversations', () => {
       said.push((await talk.form(EchoForm, 'again?')) ?? 'nobody');
     });
 
+    flush();
     expect(frames().length).toBe(1);
     await tick();
     drawTop();
@@ -120,6 +130,7 @@ describe('conversations', () => {
       reached = true;
     });
 
+    flush();
     topFrame(frames())?.onDismiss();
     await done;
 

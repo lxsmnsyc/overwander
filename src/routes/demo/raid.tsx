@@ -1,6 +1,5 @@
 import { Title } from '@solidjs/meta';
-import type { JSX } from 'solid-js';
-import { clientOnly } from '@solidjs/start';
+import { type JSX, clientOnly } from '@solidjs/web';
 
 /**
  * The raid demo, and nothing of it on the server.

@@ -1,5 +1,6 @@
-import { For, type JSX, Show } from 'solid-js';
-import { RadioGroup, RadioGroupOption } from 'terracotta';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { RadioGroup, RadioGroupOption } from 'terracotta/radio-group';
 import type { Moves } from '../../data/ids/moves';
 import { getMoveData } from '../../data/moves';
 import { TYPE_COLORS } from '../../data/constants/types';

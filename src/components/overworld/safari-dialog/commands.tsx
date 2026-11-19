@@ -1,4 +1,5 @@
-import { type JSX, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show } from 'solid-js';
 import { Button } from '../../styled';
 import type { InventoryEntry } from '../../../auth/inventory';
 import { type Items, getBall } from '../../../data/ids/items';

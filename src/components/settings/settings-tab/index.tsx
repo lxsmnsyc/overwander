@@ -1,5 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
-import { Dynamic } from 'solid-js/web';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import settings, { SETTINGS_PANES, type SettingsPane, setSetting } from '../../app/settings';
 import { RailTab, RailTabs, TabGroup, TabPane } from '../../styled';
 import SecurityPane from '../SecurityPane';
@@ -122,19 +122,23 @@ export default function SettingsTab(): JSX.Element {
 
       <div class="min-w-0 grow">
         <For each={shownPanes()}>
-          {(pane) => (
-            <TabPane value={SETTINGS_PANES.indexOf(pane)}>
-              <div class="flex flex-col gap-3">
-                <div class="flex flex-wrap items-baseline gap-x-2.5">
-                  <h3 class="m-0 font-display text-[22px] leading-tight font-semibold">
-                    {PANE_LABELS[pane]()}
-                  </h3>
-                  <span class="text-xs text-muted">{PANE_LINES[pane]()}</span>
+          {(pane) => {
+            const Body = PANE_BODIES[pane];
+
+            return (
+              <TabPane value={SETTINGS_PANES.indexOf(pane)}>
+                <div class="flex flex-col gap-3">
+                  <div class="flex flex-wrap items-baseline gap-x-2.5">
+                    <h3 class="m-0 font-display text-[22px] leading-tight font-semibold">
+                      {PANE_LABELS[pane]()}
+                    </h3>
+                    <span class="text-xs text-muted">{PANE_LINES[pane]()}</span>
+                  </div>
+                  <Body />
                 </div>
-                <Dynamic component={PANE_BODIES[pane]} />
-              </div>
-            </TabPane>
-          )}
+              </TabPane>
+            );
+          }}
         </For>
       </div>
     </TabGroup>

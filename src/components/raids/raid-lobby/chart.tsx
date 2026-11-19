@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { TYPE_EFFECTIVENESS, type Types, getTypeFactor } from '../../../data/constants/types';
 import TypeBadge from '../../sprites/TypeBadge';
 

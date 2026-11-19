@@ -1,4 +1,5 @@
-import { Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type { Species } from '../../data/ids/species';
 import { unownLetter } from '../../data/ids/forms';
 import { getSpeciesData } from '../../data/species';
@@ -180,7 +181,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
       class={`mx-auto grid w-full grid-cols-6 gap-1.5 rounded-card border-4 border-tide
         bg-parchment p-2 shadow-pop ${props.fill === true ? '' : 'max-w-md'}`}
     >
-      <Index each={squares()}>
+      <For keyed={false} each={squares()}>
         {(_, index) => (
           <Show
             when={entryAt(index)}
@@ -253,7 +254,7 @@ export default function PokedexGrid(props: PokedexGridProps): JSX.Element {
             )}
           </Show>
         )}
-      </Index>
+      </For>
     </div>
   );
 }

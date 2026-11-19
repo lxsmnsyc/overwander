@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js';
-import { isServer } from 'solid-js/web';
+import { isServer } from '@solidjs/web';
 import type { Point } from './placing';
 
 /**
@@ -62,7 +62,9 @@ export function showSafeAreas(on = true): void {
   }
 }
 
-if (import.meta.env.DEV && !isServer) {
+// Asked of `window` as well as `isServer`: a test compiled for the
+// browser still runs on Node, where there is no window to hang it on
+if (import.meta.env.DEV && !isServer && typeof window !== 'undefined') {
   try {
     setPainting(localStorage.getItem(SAFE_AREA_KEY) === '1');
   } catch {

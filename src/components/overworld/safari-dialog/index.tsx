@@ -1,15 +1,6 @@
 import type { PlayerIdentity } from '../../../auth/user';
-import {
-  type JSX,
-  type Resource,
-  Show,
-  Suspense,
-  createEffect,
-  createMemo,
-  createResource,
-  createSignal,
-  on,
-} from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, Show, createEffect, createMemo, createSignal } from 'solid-js';
 import { type InventoryEntry, getInventory } from '../../../auth/inventory';
 import type { EncounterRecord } from '../../../model/encounter-record';
 import { feedEncounter, throwBall } from '../../../auth/safari';
@@ -22,7 +13,6 @@ import playEffect, { Effect, playEffectAfter } from '../../app/sound';
 import { getSpeciesDexEntry } from '../../../auth/pokedex';
 import { Dialog, Status, useToast } from '../../styled';
 import settings, { setSetting } from '../../app/settings';
-import { failed, readable } from '../../app/resource-reads';
 import describeFailure from '../../../i18n/refusals';
 import { m } from '../../../i18n/paraglide/messages.js';
 import Commands from './commands';
@@ -36,6 +26,24 @@ import {
   STATE_MESSAGES,
   THROW_MESSAGES,
 } from './metrics';
+
+/**
+ * The bag as the encounter reads it: what is in it, or why it could
+ * not be read
+ */
+interface Bag {
+  entries: InventoryEntry[] | null;
+  failed: string | null;
+}
+
+/** The player's bag, with a failed read answered rather than thrown */
+async function readBag(uid: string): Promise<Bag> {
+  try {
+    return { entries: await getInventory(uid), failed: null };
+  } catch (error: unknown) {
+    return { entries: null, failed: error instanceof Error ? describeFailure(error) : null };
+  }
+}
 
 export interface SafariDialogProps {
   user: PlayerIdentity;
@@ -102,9 +110,12 @@ export interface SafariDialogProps {
  */
 function SafariBody(
   props: SafariDialogProps & {
-    bag: Resource<InventoryEntry[]>;
-    /** Whether this player has ever owned the species standing there, a shiny one for a shiny */
-    owned: Resource<boolean>;
+    bag: Accessor<Bag | null>;
+    /**
+     * Whether this player has ever owned the species standing there, a
+     * shiny one for a shiny. Undefined while the dex is still answering
+     */
+    owned: Accessor<boolean | undefined>;
     /** One of this item left the bag on the server */
     onSpent: (item: Items) => void;
   },
@@ -211,7 +222,6 @@ function SafariBody(
       revision();
       return props.session ?? held ?? null;
     },
-    null,
     { equals: false },
   );
 
@@ -226,52 +236,50 @@ function SafariBody(
   // On the way in only: clearing as the session goes empties a panel
   // the player is still watching fade
   createEffect(
-    on(
-      () => props.session,
-      (active) => {
-        if (active == null) {
-          return;
-        }
-        setNarrated(null);
-        setRummaging(false);
-        setTreat(null);
-        setCaught(null);
-        setThrowing(false);
-        setRocking(null);
-        // Said as the meeting opens rather than only drawn: the
-        // sparkles in the title and on the sprite are easy to walk
-        // past, and this is the one encounter worth the whole bag
-        if (isShiny(active.encounter)) {
-          playEffect(Effect.ShinySparkle);
-        }
-      },
-    ),
+    () => props.session,
+    (active) => {
+      if (active == null) {
+        return;
+      }
+      setNarrated(null);
+      setRummaging(false);
+      setTreat(null);
+      setCaught(null);
+      setThrowing(false);
+      setRocking(null);
+      // Said as the meeting opens rather than only drawn: the
+      // sparkles in the title and on the sprite are easy to walk
+      // past, and this is the one encounter worth the whole bag
+      if (isShiny(active.encounter)) {
+        playEffect(Effect.ShinySparkle);
+      }
+    },
   );
 
   // The session tracks the bag only through the persistence layer, so
   // the view keeps its count in step: it is what the throw button
   // counts down and what says there is nothing left to throw
-  createEffect(() => {
-    const active = props.session;
-    const carried = readable(props.bag);
+  createEffect(
+    () => ({ active: props.session, carried: props.bag()?.entries }),
+    ({ active, carried }) => {
+      if (active != null && carried != null) {
+        let total = 0;
 
-    if (active != null && carried != null) {
-      let total = 0;
-
-      for (const entry of carried) {
-        if (getBall(entry.item) != null) {
-          total += entry.amount;
+        for (const entry of carried) {
+          if (getBall(entry.item) != null) {
+            total += entry.amount;
+          }
         }
+        active.ballsLeft = total;
+        setRevision((value) => value + 1);
       }
-      active.ballsLeft = total;
-      setRevision((value) => value + 1);
-    }
-  });
+    },
+  );
 
   const balls = (): [Balls, number][] => {
     const pairs: [Balls, number][] = [];
 
-    for (const entry of readable(props.bag) ?? []) {
+    for (const entry of props.bag()?.entries ?? []) {
       const ball = getBall(entry.item);
 
       if (ball != null) {
@@ -286,7 +294,7 @@ function SafariBody(
    * has run out of, which is the number worth showing on the button
    */
   const stockOf = (item: Items): number => {
-    for (const entry of readable(props.bag) ?? []) {
+    for (const entry of props.bag()?.entries ?? []) {
       if (entry.item === item) {
         return entry.amount;
       }
@@ -315,29 +323,41 @@ function SafariBody(
    * the player is carrying decides both answers, and it is still being
    * read when the encounter opens
    */
-  createEffect(() => {
-    const active = props.session;
-    const carried = balls();
+  createEffect(
+    () => ({
+      active: props.session,
+      carried: balls(),
+      keep: settings().keepBall,
+      again: settings().lastBall,
+    }),
+    ({ active, carried, keep, again }) => {
+      if (active == null || carried.length === 0) {
+        return;
+      }
 
-    if (active == null || carried.length === 0) {
-      return;
-    }
-    if (settings().keepBall && handed !== active) {
-      const again = settings().lastBall;
+      // How many of a ball the bag holds, read off what the compute read
+      const stock = (ball: Balls): number => {
+        for (const [held, amount] of carried) {
+          if (held === ball) {
+            return amount;
+          }
+        }
+        return 0;
+      };
 
-      if (stockOf(BALL_ITEMS[again]) > 0) {
+      if (keep && handed !== active && stock(again) > 0) {
         handed = active;
         active.chooseBall(again);
         setRevision((value) => value + 1);
         return;
       }
-    }
-    if (stockOf(BALL_ITEMS[active.ball]) > 0) {
-      return;
-    }
-    active.chooseBall(carried[0][0]);
-    setRevision((value) => value + 1);
-  });
+      if (stock(active.ball) > 0) {
+        return;
+      }
+      active.chooseBall(carried[0][0]);
+      setRevision((value) => value + 1);
+    },
+  );
 
   /**
    * What the throw would send: the treat in hand, or the ball the
@@ -449,7 +469,7 @@ function SafariBody(
         // A species this player never owned is a new line in the dex,
         // said once the fanfare is done. Strictly false, so a dex
         // entry still loading does not count as missing
-        if (props.owned.latest === false) {
+        if (props.owned() === false) {
           playEffectAfter(Effect.DexEntry, Effect.CatchSuccess);
         }
       }
@@ -542,8 +562,8 @@ function SafariBody(
       title={
         <MeetingTitle
           encounter={session()?.encounter ?? null}
-          // Latest rather than read, so the heading never waits on the dex
-          owned={props.owned.latest === true}
+          // Never waits on the dex: undefined until it answers
+          owned={props.owned() === true}
         />
       }
       description={m.safari_description()}
@@ -589,12 +609,12 @@ function SafariBody(
               >
                 {narration()}
               </p>
-              <Status message={failed(props.bag)} />
+              <Status message={props.bag()?.failed ?? null} />
 
               <Commands
                 session={active()}
                 player={props.user.uid}
-                entries={readable(props.bag)}
+                entries={props.bag()?.entries ?? undefined}
                 inHand={inHand()}
                 stockOf={stockOf}
                 throwing={throwing()}
@@ -628,49 +648,84 @@ export default function SafariDialog(props: SafariDialogProps): JSX.Element {
   // Read once per opened session. A throw or a treat spends exactly
   // one of what was used, so the count is taken down here rather than
   // the whole bag read again after every action
-  const [bag, { mutate }] = createResource(
-    () => (props.session == null ? null : props.user.uid),
-    getInventory,
-  );
-  // A shiny counts as caught only once a shiny of the species has been:
-  // owning the plain one says nothing about the sparkling one
-  const [owned] = createResource(
-    () =>
-      props.session == null
-        ? null
-        : ([
-            props.user.uid,
-            props.session.encounter.species,
-            isShiny(props.session.encounter),
-          ] as const),
-    async ([uid, species, shiny]) => {
-      const entry = await getSpeciesDexEntry(uid, species);
+  const reader = createMemo(() => (props.session == null ? null : props.user.uid));
+  // Writable, so a spend takes one off what was read. A failed read
+  // is kept as an answer rather than thrown, since the encounter goes
+  // on without the bag and says why in its own status line
+  const [bag, setBag] = createSignal<Bag | null>((): Promise<Bag> | null => {
+    const uid = reader();
 
-      return shiny ? entry.shiny : entry.owned;
+    return uid == null ? null : readBag(uid);
+  });
+
+  // A shiny counts as caught only once a shiny of the species has been:
+  // owning the plain one says nothing about the sparkling one. Loaded
+  // longhand rather than as an async memo, since the heading and the
+  // catch fanfare read it and neither may wait on it
+  const asked = createMemo(
+    () => {
+      const session = props.session;
+
+      return session == null
+        ? null
+        : {
+            uid: props.user.uid,
+            species: session.encounter.species,
+            shiny: isShiny(session.encounter),
+          };
+    },
+    {
+      equals: (was, now) =>
+        was?.uid === now?.uid && was?.species === now?.species && was?.shiny === now?.shiny,
     },
   );
+  const [owned, setOwned] = createSignal<boolean | undefined>(undefined);
+
+  createEffect(asked, (dex) => {
+    setOwned(undefined);
+    if (dex == null) {
+      return undefined;
+    }
+
+    let live = true;
+
+    getSpeciesDexEntry(dex.uid, dex.species)
+      .then((entry) => {
+        if (live) {
+          setOwned(dex.shiny ? entry.shiny : entry.owned);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  });
 
   return (
-    <Suspense>
+    <Loading>
       <SafariBody
         {...props}
         bag={bag}
         owned={owned}
         onSpent={(item) => {
-          mutate((carried) => {
+          setBag((carried) => {
+            if (carried?.entries == null) {
+              return carried;
+            }
+
             const left: InventoryEntry[] = [];
 
-            for (const entry of carried ?? []) {
+            for (const entry of carried.entries) {
               if (entry.item !== item) {
                 left.push(entry);
               } else if (entry.amount > 1) {
                 left.push({ ...entry, amount: entry.amount - 1 });
               }
             }
-            return left;
+            return { entries: left, failed: null };
           });
         }}
       />
-    </Suspense>
+    </Loading>
   );
 }

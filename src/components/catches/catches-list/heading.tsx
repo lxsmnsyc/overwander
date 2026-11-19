@@ -1,4 +1,5 @@
-import { type JSX, Match, Show, Switch, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Match, Show, Switch, createSignal } from 'solid-js';
 import type { BoxLayout } from '../../../auth/boxes';
 import { ActionsIcon, PlusIcon } from '../../icons';
 import { Badge, Button, Menu, type MenuAction, Meta, Row, Select } from '../../styled';

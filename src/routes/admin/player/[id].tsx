@@ -1,6 +1,6 @@
-import type { JSX } from 'solid-js';
-import AdminPlayer from '../../../components/admin/AdminPlayer';
+import type { JSX } from '@solidjs/web';
 import { useParams } from '@solidjs/router';
+import AdminPlayer from '../../../components/admin/AdminPlayer';
 
 /**
  * One account, opened from a row of the accounts. The uid comes out

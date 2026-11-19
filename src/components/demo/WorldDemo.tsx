@@ -1,4 +1,5 @@
-import { type JSX, Show, createEffect, createMemo, createSignal, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Show, createEffect, createMemo, createSignal } from 'solid-js';
 import WorldMapCanvas, { townsInView } from '../overworld/WorldMapCanvas';
 import WeatherMap from './WeatherMap';
 import getWorld, { WORLD_GENERATION, WORLD_SEED } from '../../overworld/current';
@@ -81,86 +82,93 @@ export default function WorldDemo(): JSX.Element {
     return values;
   });
 
-  createEffect(() => {
-    const world = new World(seed(), undefined, generation());
-    const scale = zoom();
-    const x0 = left();
-    const y0 = top();
-    const showing = grid();
-    const paved = roads();
-    const stepped = levels();
-    const surface = canvas;
+  createEffect(
+    () => ({
+      seeded: seed(),
+      generated: generation(),
+      scale: zoom(),
+      x0: left(),
+      y0: top(),
+      showing: grid(),
+      paved: roads(),
+      stepped: levels(),
+    }),
+    ({ seeded, generated, scale, x0, y0, showing, paved, stepped }) => {
+      const surface = canvas;
 
-    if (surface == null) {
-      return;
-    }
+      if (surface == null) {
+        return undefined;
+      }
 
-    const context = surface.getContext('2d');
+      const context = surface.getContext('2d');
 
-    if (context == null) {
-      return;
-    }
+      if (context == null) {
+        return undefined;
+      }
 
-    // Painted off the main thread's clock rather than in the effect
-    // itself: a pan is a keypress and the field is a quarter of a
-    // million samples, and a frame spent showing the old picture is
-    // better than one spent showing nothing
-    const timer = setTimeout(() => {
-      const started = performance.now();
-      const cells = Math.ceil(SPAN / scale);
-      const image = context.createImageData(SPAN, SPAN);
+      const world = new World(seeded, undefined, generated);
 
-      for (let y = 0; y < cells; y++) {
-        for (let x = 0; x < cells; x++) {
-          const shade = shadeCell(world, x0 + x, y0 + y, { roads: paved, levels: stepped });
+      // Painted off the main thread's clock rather than in the effect
+      // itself: a pan is a keypress and the field is a quarter of a
+      // million samples, and a frame spent showing the old picture is
+      // better than one spent showing nothing
+      const timer = setTimeout(() => {
+        const started = performance.now();
+        const cells = Math.ceil(SPAN / scale);
+        const image = context.createImageData(SPAN, SPAN);
 
-          // One cell is `scale` pixels square, so the picture holds
-          // fewer cells the closer it is looked at
-          for (let dy = 0; dy < scale; dy++) {
-            for (let dx = 0; dx < scale; dx++) {
-              const at = ((y * scale + dy) * SPAN + (x * scale + dx)) * 4;
+        for (let y = 0; y < cells; y++) {
+          for (let x = 0; x < cells; x++) {
+            const shade = shadeCell(world, x0 + x, y0 + y, { roads: paved, levels: stepped });
 
-              image.data[at] = shade[0];
-              image.data[at + 1] = shade[1];
-              image.data[at + 2] = shade[2];
-              image.data[at + 3] = 0xff;
+            // One cell is `scale` pixels square, so the picture holds
+            // fewer cells the closer it is looked at
+            for (let dy = 0; dy < scale; dy++) {
+              for (let dx = 0; dx < scale; dx++) {
+                const at = ((y * scale + dy) * SPAN + (x * scale + dx)) * 4;
+
+                image.data[at] = shade[0];
+                image.data[at + 1] = shade[1];
+                image.data[at + 2] = shade[2];
+                image.data[at + 3] = 0xff;
+              }
             }
           }
         }
-      }
-      context.putImageData(image, 0, 0);
+        context.putImageData(image, 0, 0);
 
-      if (showing) {
-        // The chunk grid, over the top: the point of the picture is
-        // that nothing else lines up with it
-        context.strokeStyle = GRID_COLOR;
-        context.lineWidth = 1;
-        for (let at = 0; at < cells; at++) {
-          if ((x0 + at) % CHUNK_CELLS !== 0) {
-            continue;
+        if (showing) {
+          // The chunk grid, over the top: the point of the picture is
+          // that nothing else lines up with it
+          context.strokeStyle = GRID_COLOR;
+          context.lineWidth = 1;
+          for (let at = 0; at < cells; at++) {
+            if ((x0 + at) % CHUNK_CELLS !== 0) {
+              continue;
+            }
+            context.beginPath();
+            context.moveTo(at * scale + 0.5, 0);
+            context.lineTo(at * scale + 0.5, SPAN);
+            context.stroke();
           }
-          context.beginPath();
-          context.moveTo(at * scale + 0.5, 0);
-          context.lineTo(at * scale + 0.5, SPAN);
-          context.stroke();
-        }
-        for (let at = 0; at < cells; at++) {
-          if ((y0 + at) % CHUNK_CELLS !== 0) {
-            continue;
+          for (let at = 0; at < cells; at++) {
+            if ((y0 + at) % CHUNK_CELLS !== 0) {
+              continue;
+            }
+            context.beginPath();
+            context.moveTo(0, at * scale + 0.5);
+            context.lineTo(SPAN, at * scale + 0.5);
+            context.stroke();
           }
-          context.beginPath();
-          context.moveTo(0, at * scale + 0.5);
-          context.lineTo(SPAN, at * scale + 0.5);
-          context.stroke();
         }
-      }
-      setDrawn(Math.round(performance.now() - started));
-    }, 0);
+        setDrawn(Math.round(performance.now() - started));
+      }, 0);
 
-    onCleanup(() => {
-      clearTimeout(timer);
-    });
-  });
+      return () => {
+        clearTimeout(timer);
+      };
+    },
+  );
 
   const look = (event: MouseEvent): void => {
     const surface = canvas;

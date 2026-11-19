@@ -2,8 +2,9 @@ import type { PokedexView, SpeciesDexEntry } from '../../../auth/pokedex';
 import type { Species } from '../../../data/ids/species';
 import { type SpeciesData, getSpeciesData } from '../../../data/species';
 import { Note } from '../../styled';
-import { type JSX, type Resource, Show, createEffect, createSignal, on } from 'solid-js';
-import { answered } from '../../app/resource-reads';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Show, createEffect, createSignal } from 'solid-js';
+import type { Load, Outcome } from '../../app/create-load';
 import Abilities from './sections/Abilities';
 import BaseStats from './sections/BaseStats';
 import EvolutionLine, { type DexKnows } from './sections/EvolutionLine';
@@ -48,17 +49,17 @@ export interface DexReads {
  * The entry itself, which is where the dex and the candy are read.
  *
  * Either read in the body that declared it would throw past every
- * `Suspense` written there and land on the boundary around the page,
+ * `Loading` written there and land on the boundary around the page,
  * taking the dialog with it, so the reading half stands on its own
  */
 export function DexEntryBody(
   props: DexEntryDialogProps & {
-    dex: Resource<SpeciesDexEntry | null>;
-    candy: Resource<number>;
+    dex: Load<SpeciesDexEntry | null>;
+    candy: Accessor<Outcome<number>>;
     /** Whether this species was drawn a second time for its females. */
-    female: Resource<boolean>;
+    female: Accessor<boolean>;
     /** The reader's whole dex, for drawing the rest of the line */
-    pokedex: Resource<PokedexView>;
+    pokedex: Load<PokedexView>;
   },
 ): JSX.Element {
   /**
@@ -78,7 +79,7 @@ export function DexEntryBody(
     seen: number;
     caught: number;
   } => {
-    const entry = props.dex();
+    const entry = props.dex.latest();
 
     if (entry == null || entry.species !== props.species) {
       return { met: false, owned: false, shiny: false, seen: 0, caught: 0 };
@@ -99,13 +100,12 @@ export function DexEntryBody(
   const [female, setFemale] = createSignal(false);
 
   createEffect(
-    on(
-      () => props.species,
-      () => {
-        setShiny(false);
-        setFemale(false);
-      },
-    ),
+    () => props.species,
+    () => {
+      setShiny(false);
+      setFemale(false);
+    },
+    { defer: true },
   );
 
   /**
@@ -114,7 +114,7 @@ export function DexEntryBody(
    * that fill in rather than holding the entry up
    */
   const dexKnows = (species: Species): DexKnows => {
-    const view = answered(props.pokedex);
+    const view = props.pokedex.latest();
     let owned = false;
     let sparkled = false;
     let seen = false;
@@ -154,7 +154,7 @@ export function DexEntryBody(
               ownedShiny={known().shiny}
               shiny={shiny()}
               female={female()}
-              hasFemale={props.female() === true}
+              hasFemale={props.female()}
               onShiny={(sparkling) => {
                 setShiny(sparkling);
               }}

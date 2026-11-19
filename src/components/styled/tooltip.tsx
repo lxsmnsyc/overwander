@@ -1,14 +1,13 @@
+import { type JSX, Portal } from '@solidjs/web';
 import {
-  type JSX,
   type ParentProps,
   Show,
   createContext,
   createEffect,
   createSignal,
-  onCleanup,
+  untrack,
   useContext,
 } from 'solid-js';
-import { Portal } from 'solid-js/web';
 import { arrow, autoUpdate, flip, offset, shift, useFloating } from 'solid-floating-ui';
 import { m } from '../../i18n/paraglide/messages.js';
 import closeWhenGone from './gone';
@@ -81,7 +80,7 @@ const DetailRows = createContext(false);
 
 /** Draws every `Detail` inside it as a row */
 export function DetailRowsProvider(props: ParentProps): JSX.Element {
-  return <DetailRows.Provider value>{props.children}</DetailRows.Provider>;
+  return <DetailRows value>{props.children}</DetailRows>;
 }
 
 /**
@@ -155,18 +154,22 @@ export function Tooltip(props: TooltipProps & { notch?: TooltipNotch }): JSX.Ele
       </Show>
       <Show when={props.extra}>
         {(extra) => (
-          <DetailRows.Provider value>
+          <DetailRows value>
             {/* Emptied by an extra with nothing to say, so the panel goes with it */}
             <div class="grid gap-1 rounded-lg bg-line-soft px-2 py-1.5 text-xs empty:hidden">
               {extra()()}
             </div>
-          </DetailRows.Provider>
+          </DetailRows>
         )}
       </Show>
       <Show when={props.notch}>
         {(notch) => (
           <span
-            ref={notch().ref}
+            // Handed on untracked: the caller's ref is fixed, and a ref
+            // binding is read once
+            ref={(element: HTMLSpanElement) => {
+              untrack(notch).ref(element);
+            }}
             aria-hidden="true"
             class={`absolute size-3 rotate-45 border-line bg-paper ${
               notch().below
@@ -259,9 +262,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
    * somewhere else is what takes it down. Listened for only while the
    * card is up: a bag of thirty squares is thirty of these
    */
-  createEffect(() => {
-    if (!wanted()) {
-      return;
+  createEffect(wanted, (up) => {
+    if (!up) {
+      return undefined;
     }
 
     const away = (event: PointerEvent): void => {
@@ -271,9 +274,9 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     };
 
     document.addEventListener('pointerdown', away, true);
-    onCleanup(() => {
+    return () => {
       document.removeEventListener('pointerdown', away, true);
-    });
+    };
   });
 
   /** The touch's way in: hold to ask, rather than hover to ask */
@@ -296,7 +299,11 @@ export function TooltipHost(props: TooltipHostProps): JSX.Element {
     <span
       ref={(element) => {
         host = element;
-        floating.refs.setReference(element);
+        // Floating UI reads its own options as it takes the element,
+        // which in a ref callback is an untracked read on purpose
+        untrack(() => {
+          floating.refs.setReference(element);
+        });
       }}
       // Nothing to select: a hold on the trigger is asking about it,
       // and a phone that answers by selecting the word instead has

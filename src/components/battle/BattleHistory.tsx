@@ -1,15 +1,16 @@
 import {
+  type Accessor,
   For,
-  type JSX,
+  Loading,
   Match,
-  type Resource,
   Show,
-  Suspense,
   Switch,
-  createResource,
+  createMemo,
   createSignal,
   from,
+  refresh,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import BattleKind, { getBattleKind } from '../../model/battle-kind';
 import { BattleOutcome, type BattleRecord, watchBattleHistory } from '../../auth/battles';
 import { listClaimedRaids } from '../../auth/raids';
@@ -159,8 +160,8 @@ async function loadFought(key: string): Promise<FoughtLine> {
 }
 
 /** The owner's own frozen party, square for square */
-function OwnStrip(props: { fought: Resource<FoughtLine> }): JSX.Element {
-  return <TeamStrip catches={props.fought()?.mine ?? []} />;
+function OwnStrip(props: { fought: Accessor<FoughtLine> }): JSX.Element {
+  return <TeamStrip catches={props.fought().mine} />;
 }
 
 /**
@@ -182,15 +183,15 @@ const VERDICT_TONES: Record<BattleOutcome, 'leaf' | 'ember' | 'neutral'> = {
 };
 
 /** The other player's face, once the snapshots say who they were */
-function RivalFace(props: { fought: Resource<FoughtLine> }): JSX.Element {
-  return <PlayerFace sprite={props.fought()?.rival?.sprite} size={NPC_FACE} />;
+function RivalFace(props: { fought: Accessor<FoughtLine> }): JSX.Element {
+  return <PlayerFace sprite={props.fought().rival?.sprite} size={NPC_FACE} />;
 }
 
 /** The face of whoever the fight was against, in the square the board gives it */
 function OpponentFace(props: {
   kind: BattleKind;
   record: BattleRecord;
-  fought: Resource<FoughtLine>;
+  fought: Accessor<FoughtLine>;
 }): JSX.Element {
   return (
     <Switch>
@@ -213,9 +214,9 @@ function OpponentFace(props: {
         <PlayerFace sprite={props.record.opponentSprite} size={NPC_FACE} />
       </Match>
       <Match when={props.kind === BattleKind.Player}>
-        <Suspense fallback={<PlayerFace size={NPC_FACE} />}>
+        <Loading fallback={<PlayerFace size={NPC_FACE} />}>
           <RivalFace fought={props.fought} />
-        </Suspense>
+        </Loading>
       </Match>
     </Switch>
   );
@@ -225,7 +226,7 @@ function OpponentFace(props: {
 function OpponentName(props: {
   kind: BattleKind;
   record: BattleRecord;
-  fought: Resource<FoughtLine>;
+  fought: Accessor<FoughtLine>;
   onVisit: (uid: string) => void;
 }): JSX.Element {
   return (
@@ -247,8 +248,8 @@ function OpponentName(props: {
         </span>
       </Match>
       <Match when={props.kind === BattleKind.Player}>
-        <Suspense fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
-          <Show when={props.fought()?.rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
+        <Loading fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
+          <Show when={props.fought().rival} fallback={<Meta>{m.duels_a_trainer()}</Meta>}>
             {(rival) => (
               <RowButton
                 class="truncate text-left text-sm font-extrabold"
@@ -260,7 +261,7 @@ function OpponentName(props: {
               </RowButton>
             )}
           </Show>
-        </Suspense>
+        </Loading>
       </Match>
     </Switch>
   );
@@ -275,10 +276,10 @@ function HistoryRow(props: {
 }): JSX.Element {
   const game = useGame();
   const toast = useToast();
-  const [fought] = createResource(
-    () => `${props.record.teams.join(',')}|${props.owner}`,
-    loadFought,
-  );
+  // Keyed on the teams and the owner, so a list rebuilding its rows
+  // does not read every team again
+  const asked = createMemo(() => `${props.record.teams.join(',')}|${props.owner}`);
+  const fought = createMemo(async () => loadFought(asked()));
   const kind = (): BattleKind => getBattleKind(props.record);
 
   return (
@@ -311,9 +312,9 @@ function HistoryRow(props: {
       {/* The team stands on its own, so a narrow row never squeezes
           it out of sight */}
       <div class="w-full shrink-0 sm:w-72">
-        <Suspense fallback={<Note>{m.history_reading_team()}</Note>}>
+        <Loading fallback={<Note>{m.history_reading_team()}</Note>}>
           <OwnStrip fought={fought} />
-        </Suspense>
+        </Loading>
       </div>
       <Show when={props.owes}>
         <Button
@@ -380,12 +381,12 @@ const WAITING_KINDS: Partial<Record<EncounterType, () => string>> = {
  * Meetings owed to the player that they closed without catching. Each
  * opens the same meeting again, with every throw it has had so far
  */
-function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Element {
+function WaitingList(props: { waiting: Accessor<EncounterRecord[]> }): JSX.Element {
   const game = useGame();
-  const paged = createPager(() => props.waiting() ?? [], LIST_PAGE);
+  const paged = createPager(() => props.waiting(), LIST_PAGE);
 
   return (
-    <Show when={(props.waiting() ?? []).length > 0}>
+    <Show when={props.waiting().length > 0}>
       <div class="flex flex-col gap-2">
         <Meta>{m.history_waiting()}</Meta>
         <List>
@@ -430,15 +431,18 @@ function WaitingList(props: { waiting: Resource<EncounterRecord[]> }): JSX.Eleme
  *
  * It is a component of its own so that the read has a boundary above
  * it: a resource read in the body that declared it throws past every
- * `Suspense` written there, and the next one up is the whole page
+ * `Loading` written there, and the next one up is the whole page
  */
 function BattleList(
-  props: BattleHistoryProps & { claimed: Resource<Set<string>>; onClaimed: () => void },
+  props: BattleHistoryProps & { claimed: Accessor<Set<string>>; onClaimed: () => void },
 ): JSX.Element {
-  const battles = from<[string, BattleRecord][]>((set) =>
-    watchBattleHistory(props.player, (records) => {
-      set(records);
-    }),
+  // Followed live; the first listing holds the boundary above
+  const battles = createMemo(() =>
+    from<[string, BattleRecord][]>((next) =>
+      watchBattleHistory(props.player, (records) => {
+        next(records);
+      }),
+    ),
   );
 
   /**
@@ -449,7 +453,7 @@ function BattleList(
     props.viewOnly !== true &&
     record.outcome === BattleOutcome.Won &&
     record.raid.length > 0 &&
-    props.claimed()?.has(record.raid) === false;
+    !props.claimed().has(record.raid);
 
   /**
    * Which kind of fight is being looked at. A raid and a grunt read
@@ -461,7 +465,7 @@ function BattleList(
   const kinds = (): SegmentedOption<KindFilter>[] => {
     const records: BattleRecord[] = [];
 
-    for (const [, record] of battles() ?? []) {
+    for (const [, record] of battles()) {
       records.push(record);
     }
     return listKinds(records);
@@ -485,7 +489,7 @@ function BattleList(
   const shown = (): [string, BattleRecord][] => {
     const rows: [string, BattleRecord][] = [];
 
-    for (const row of battles() ?? []) {
+    for (const row of battles()) {
       if (only() === EVERY_KIND || getBattleKind(row[1]) === only()) {
         rows.push(row);
       }
@@ -498,41 +502,39 @@ function BattleList(
   const paged = createPager(shown, LIST_PAGE);
 
   return (
-    <Show when={battles()} fallback={<Note>{m.history_loading()}</Note>}>
-      <Show when={battles()?.length} fallback={<Note>{m.history_none()}</Note>}>
-        {/* Nothing to narrow while every fight was the same kind; the count
+    <Show when={battles().length} fallback={<Note>{m.history_none()}</Note>}>
+      {/* Nothing to narrow while every fight was the same kind; the count
             of what was fought stands at the row's end either way */}
-        <div class="flex flex-wrap items-center gap-2.5">
-          <Show when={kinds().length > 2}>
-            <Segmented
-              label={m.history_kind()}
-              value={only()}
-              options={kinds()}
-              onChange={(picked) => {
-                setKind(picked);
-              }}
-            />
-          </Show>
-          <span class="grow" />
-          <Meta>{m.history_fought({ count: battles()?.length ?? 0 })}</Meta>
-        </div>
-
-        <Show when={shown().length} fallback={<Note>{m.history_none_of_kind()}</Note>}>
-          <List>
-            <For each={paged.shown()}>
-              {([id, record]) => (
-                <HistoryRow
-                  id={id}
-                  record={record}
-                  owner={props.player}
-                  owes={owes(record)}
-                  onClaimed={props.onClaimed}
-                />
-              )}
-            </For>
-          </List>
-          {paged.controls()}
+      <div class="flex flex-wrap items-center gap-2.5">
+        <Show when={kinds().length > 2}>
+          <Segmented
+            label={m.history_kind()}
+            value={only()}
+            options={kinds()}
+            onChange={(picked) => {
+              setKind(picked);
+            }}
+          />
         </Show>
+        <span class="grow" />
+        <Meta>{m.history_fought({ count: battles().length })}</Meta>
+      </div>
+
+      <Show when={shown().length} fallback={<Note>{m.history_none_of_kind()}</Note>}>
+        <List>
+          <For each={paged.shown()}>
+            {([id, record]) => (
+              <HistoryRow
+                id={id}
+                record={record}
+                owner={props.player}
+                owes={owes(record)}
+                onClaimed={props.onClaimed}
+              />
+            )}
+          </For>
+        </List>
+        {paged.controls()}
       </Show>
     </Show>
   );
@@ -547,28 +549,28 @@ function BattleList(
  * uncaught waits above the list
  */
 export default function BattleHistory(props: BattleHistoryProps): JSX.Element {
-  const [claimed, { refetch }] = createResource(() => props.player, listClaimedRaids);
+  const claimed = createMemo(async () => listClaimedRaids(props.player));
   // The player's own only: another trainer's history has nothing owed to the reader
-  const [waiting] = createResource(
-    () => props.viewOnly !== true,
-    async () => listWaitingEncounters(),
+  const waiting = createMemo<EncounterRecord[]>(
+    (): EncounterRecord[] | Promise<EncounterRecord[]> =>
+      props.viewOnly === true ? [] : listWaitingEncounters(),
   );
 
   return (
     <div class="flex flex-col gap-3">
-      <Suspense>
+      <Loading>
         <WaitingList waiting={waiting} />
-      </Suspense>
-      <Suspense fallback={<Note>{m.history_loading()}</Note>}>
+      </Loading>
+      <Loading fallback={<Note>{m.history_loading()}</Note>}>
         <BattleList
           player={props.player}
           viewOnly={props.viewOnly}
           claimed={claimed}
           onClaimed={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
+            refresh(claimed).catch(() => undefined);
           }}
         />
-      </Suspense>
+      </Loading>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Show, Suspense, createResource, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Errored, Loading, Show, createMemo, createSignal, refresh } from 'solid-js';
 import type { EncounterRecord } from '../../model/encounter-record';
 import { getItemCount } from '../../auth/inventory';
 import { latherHoneyTree } from '../../auth/snapshots';
@@ -12,7 +13,6 @@ import landmarkPicture, { LANDMARK_SHEET } from '../../data/overworld/landmark-s
 
 import { Button, Dialog, DialogActions, HeroBand, Note, useToast } from '../styled';
 import { CostBadge, CounterSpent, CounterTerms } from '../forms/terms';
-import { failed, readable } from '../app/resource-reads';
 import playEffect, { Effect } from '../app/sound';
 import describeFailure from '../../i18n/refusals';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -33,14 +33,21 @@ export interface HoneyTreeDialogProps {
   onLathered: (cell: number, encounter: EncounterRecord | null) => void;
 }
 
-/** The jar count is read here, under the dialog's own boundary */
+/**
+ * The jar count is read here, under the dialog's own boundary. A count
+ * that could not be read is drawn as none, with `failed` saying why
+ */
 function HoneyTreeBody(
-  props: HoneyTreeDialogProps & { jars: Resource<number>; onSpent: () => void },
+  props: HoneyTreeDialogProps & {
+    jars: Accessor<number>;
+    failed: string | null;
+    onSpent: () => void;
+  },
 ): JSX.Element {
   const toast = useToast();
   const [busy, setBusy] = createSignal(false);
 
-  const jars = (): number => readable(props.jars) ?? 0;
+  const jars = (): number => props.jars();
 
   const close = (): void => {
     setBusy(false);
@@ -95,7 +102,7 @@ function HoneyTreeBody(
         have={{ amount: jars(), short: jars() < LATHER_COST, unit: describeItem(Items.Honey) }}
         often={props.lathered ? undefined : m.honey_tree_often()}
       />
-      <Show when={failed(props.jars)}>{(said) => <Note>{said()}</Note>}</Show>
+      <Show when={props.failed}>{(said) => <Note>{said()}</Note>}</Show>
       <Show when={props.lathered}>
         <CounterSpent says={m.honey_tree_sticky()} quoted={false} />
       </Show>
@@ -121,10 +128,12 @@ function HoneyTreeBody(
 
 /** A honey tree, and the jar it wants */
 export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Element {
-  const [jars, { refetch }] = createResource(
-    () => (props.cell == null ? null : props.player),
-    async (player) => getItemCount(player, Items.Honey),
+  const jars = createMemo<number>((): Promise<number> | number =>
+    props.cell == null ? 0 : getItemCount(props.player, Items.Honey),
   );
+  const spent = (): void => {
+    refresh(jars).catch(() => undefined);
+  };
 
   return (
     <Dialog
@@ -149,15 +158,20 @@ export default function HoneyTreeDialog(props: HoneyTreeDialogProps): JSX.Elemen
       }
       description={m.honey_tree_description()}
     >
-      <Suspense fallback={<Note>{m.honey_tree_counting()}</Note>}>
-        <HoneyTreeBody
-          {...props}
-          jars={jars}
-          onSpent={() => {
-            Promise.resolve(refetch()).catch(() => undefined);
-          }}
-        />
-      </Suspense>
+      <Loading fallback={<Note>{m.honey_tree_counting()}</Note>}>
+        <Errored
+          fallback={(error) => (
+            <HoneyTreeBody
+              {...props}
+              jars={() => 0}
+              failed={describeFailure(error())}
+              onSpent={spent}
+            />
+          )}
+        >
+          <HoneyTreeBody {...props} jars={jars} failed={null} onSpent={spent} />
+        </Errored>
+      </Loading>
     </Dialog>
   );
 }

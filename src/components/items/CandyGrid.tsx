@@ -1,4 +1,5 @@
-import { For, Index, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import type Families from '../../data/ids/families';
 import { getFamilyName } from '../../data/species';
 import CandySprite from '../sprites/CandySprite';
@@ -61,7 +62,7 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
         {/* `Index` rather than `For`, as the bag's tray does: the piles
             are rebuilt whenever one is spent, and a reference-keyed
             loop would tear every square down under the pointer */}
-        <Index each={props.piles}>
+        <For keyed={false} each={props.piles}>
           {(pile) => (
             <TooltipHost
               class="block w-full"
@@ -98,7 +99,7 @@ export default function CandyGrid(props: CandyGridProps): JSX.Element {
               </span>
             </TooltipHost>
           )}
-        </Index>
+        </For>
         {/* The rest of the tray, drawn empty rather than left out: a
             half-built grid reads as a broken one */}
         <For each={empties()}>

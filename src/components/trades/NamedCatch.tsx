@@ -1,4 +1,5 @@
-import { type JSX, type Resource, Suspense, createResource } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { type Accessor, Loading, createMemo } from 'solid-js';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { describeCatch } from '../catches/catch-summary';
 import { m } from '../../i18n/paraglide/messages.js';
@@ -11,7 +12,7 @@ import { m } from '../../i18n/paraglide/messages.js';
  */
 
 function Named(props: {
-  caught: Resource<CaughtPokemon | null>;
+  caught: Accessor<CaughtPokemon | null>;
   say?: (name: string) => string;
 }): JSX.Element {
   // A caller that puts the name inside a sentence passes how it reads
@@ -56,14 +57,11 @@ export default function NamedCatch(props: {
   say?: (name: string) => string;
 }): JSX.Element {
   // One per trade row, so the rows on screen share a read
-  const [caught] = createResource(
-    () => props.id,
-    async (id) => getCaughtBatched(id),
-  );
+  const caught = createMemo(async () => getCaughtBatched(props.id));
 
   return (
-    <Suspense fallback={<span>{props.say?.(m.trade_a_pokemon()) ?? m.trade_a_pokemon()}</span>}>
+    <Loading fallback={<span>{props.say?.(m.trade_a_pokemon()) ?? m.trade_a_pokemon()}</span>}>
       <Named caught={caught} say={props.say} />
-    </Suspense>
+    </Loading>
   );
 }

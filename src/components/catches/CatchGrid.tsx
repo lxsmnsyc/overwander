@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, Show, children, createMemo, createSignal } from 'solid-js';
+import { type Accessor, Show, children, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type CaughtPokemon, findDuplicates } from '../../auth/caught';
 import matchesCatch, { CATCH_VOCABULARY, orderCatches } from '../../model/search/catch';
 import CatchBox, {

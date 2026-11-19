@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { getCatchName, isShiny } from '../../model/caught-record';
 import { Genders } from '../../data/ids/species';
 import type { Items } from '../../data/ids/items';
@@ -87,11 +88,11 @@ export function CounterTerms(props: CounterTermsProps): JSX.Element {
           </Pill>
         )}
       </Show>
-      <For each={props.rows ?? []}>
+      <For each={props.rows ?? []} keyed={(row) => row.label}>
         {(row) => (
-          <Pill size="medium" tone={row.tone ?? 'plain'} class="gap-1.5">
-            <span class="font-bold text-muted">{row.label}</span>
-            {row.value}
+          <Pill size="medium" tone={row().tone ?? 'plain'} class="gap-1.5">
+            <span class="font-bold text-muted">{row().label}</span>
+            {row().value}
           </Pill>
         )}
       </For>

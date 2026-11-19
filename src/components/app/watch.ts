@@ -1,46 +1,41 @@
-import { type Accessor, createEffect, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, createMemo, from } from 'solid-js';
+import { isServer } from '@solidjs/web';
 
 /**
  * A signal fed by a subscription that has to be opened again when
  * what it follows changes.
  *
- * Solid's own `from` is the shorter way to do this and the wrong one
- * here: it calls the producer **once**, at creation, and never again.
- * That is fine for a subscription whose subject is known by then, and
- * silently fatal for one that is not — a producer that reads a signal
- * and gives up ("nothing to watch yet, here is a no-op unsubscribe")
- * is never asked a second time, so the moment it was waiting for
- * arrives and nothing is listening. What the player sees is a panel
- * that says "Loading…" for ever, with no error anywhere: the read was
- * never attempted.
+ * What it follows is the key, read in a memo of its own, so every
+ * signal the key reads is a reason to open it again, and an equal key
+ * built again opens nothing. The old subscription is closed first. A
+ * null or undefined key means there is nothing to follow yet: a panel
+ * waiting on one is never stuck on a producer that gave up before its
+ * subject arrived.
  *
- * This runs `open` inside an effect instead, so every signal it reads
- * is a reason to open it again, and the old subscription is closed
- * first. `open` returns null while there is nothing to follow yet.
- *
- * The value resets to null on each re-open, which is the point of
- * resetting it: what arrives next is about a different chunk, window
- * or player, and showing the last one's data under the new one's
- * heading is worse than showing nothing for a moment
+ * The value is null until the first answer and again on each re-open,
+ * which is the point of resetting it: what arrives next is about a
+ * different chunk, window or player, and showing the last one's data
+ * under the new one's heading is worse than showing nothing for a
+ * moment. Being null rather than pending, it never holds a `Loading`.
+ * Nothing is opened during a server render, where the live feed has no
+ * socket: the page is drawn with null and the browser opens it
  */
-export default function watchLive<T>(
-  open: (set: (value: T) => void) => (() => void) | null,
+export default function watchLive<K, T>(
+  key: () => K | null | undefined,
+  open: (key: K, set: (value: T) => void) => () => void,
 ): Accessor<T | null> {
-  const [value, setValue] = createSignal<T | null>(null);
+  const asked = createMemo(key);
 
-  createEffect(() => {
-    setValue(null);
+  return createMemo(() => {
+    const at = asked();
 
-    // Wrapped, since a stored value that is itself a function would
-    // otherwise be taken for an updater
-    const close = open((next) => {
-      setValue(() => next);
+    return from<T | null>((set) => {
+      // Seeded, so the first read answers null instead of waiting
+      set(null);
+      if (at == null || isServer) {
+        return () => undefined;
+      }
+      return open(at, set);
     });
-
-    if (close != null) {
-      onCleanup(close);
-    }
   });
-
-  return value;
 }

@@ -1,5 +1,6 @@
-import type { JSX, ParentProps } from 'solid-js';
-import { Tab, TabList } from 'terracotta';
+import type { JSX } from '@solidjs/web';
+import type { ParentProps } from 'solid-js';
+import { Tab, TabList } from 'terracotta/tabs';
 import { CountPill } from './row-card';
 
 /**

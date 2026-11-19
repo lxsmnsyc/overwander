@@ -1,5 +1,6 @@
-import { For, Index, type JSX, Show, createMemo } from 'solid-js';
-import { Transition } from 'terracotta';
+import { For, Show, createMemo } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { Transition } from 'terracotta/transition';
 import type Battle from '../../../battle/battle';
 import type Unit from '../../../battle/unit';
 import { getSpeciesData } from '../../../data/species';
@@ -146,7 +147,7 @@ function InspectorBody(props: {
         {/* `Index`: the rows are slots whose cooldowns move every tick,
             and keying on a fresh reading would rebuild each row */}
         <ul class="m-0 flex list-none flex-col gap-1 p-0">
-          <Index each={view().moves}>
+          <For keyed={false} each={view().moves}>
             {(move) => (
               <li>
                 <MoveTooltip class="block" move={move().move}>
@@ -170,7 +171,7 @@ function InspectorBody(props: {
                 </MoveTooltip>
               </li>
             )}
-          </Index>
+          </For>
         </ul>
 
         <div class={LABEL}>{m.battle_inspect_abilities()}</div>
@@ -234,7 +235,7 @@ function InspectorBody(props: {
 export default function Inspector(props: InspectorProps): JSX.Element {
   // The last unit pressed, kept while the dock leaves so it does not
   // empty out on its way off the screen
-  const shown = createMemo<Unit | null>((last) => props.unit ?? last, null);
+  const shown = createMemo<Unit | null>((last) => props.unit ?? last ?? null);
 
   return (
     <Transition

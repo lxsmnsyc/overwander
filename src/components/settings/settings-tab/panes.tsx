@@ -1,5 +1,6 @@
-import { For, type JSX } from 'solid-js';
-import { useColorScheme, usePreferredColorScheme } from 'terracotta';
+import { For } from 'solid-js';
+import type { JSX } from '@solidjs/web';
+import { useColorScheme, usePreferredColorScheme } from 'terracotta/color-scheme';
 import settings, { setSetting } from '../../app/settings';
 import Regions from '../../../data/ids/regions';
 import { getBaseForms } from '../../../data/species';

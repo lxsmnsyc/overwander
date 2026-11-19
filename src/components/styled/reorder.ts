@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, createSignal, onCleanup } from 'solid-js';
+import { type Accessor, createSignal, flush, onCleanup } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 
 /**
  * A list the player can put in another order by dragging it.
@@ -203,6 +204,9 @@ export default function createReorder(options: ReorderOptions): Reorder {
       options.onMove(carrying.at, over);
       carrying.at = over;
       setHeld(over);
+      // The entry is measured in its new place below, so the move is
+      // drawn now rather than at the end of the event
+      flush();
     }
     follow(event.clientX, event.clientY);
   };

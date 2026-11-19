@@ -28,4 +28,4 @@ Use `batchedQuery` inside a single request only when that request fans out throu
 - Give `key` for object queries, since without it only the same object is read once.
 - Give `limit`, since the server function checks the list's length (`ID_BATCH` allows 50). The existing ones use 50.
 - Have the callback return a `Map` by key, so `lookup` is one `get` rather than a search.
-- Read the result through `settled` where a list re-reads, so a refetch keeps the rows on screen rather than suspending them.
+- Read the result under a `Loading` where a list re-reads: it keeps the rows on screen through a `refresh` rather than swapping them for the fallback.

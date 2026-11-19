@@ -1,4 +1,5 @@
-import { type Accessor, type JSX, Show, createEffect, createMemo, createSignal } from 'solid-js';
+import { type Accessor, Show, createMemo, createSignal } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import Button from './button';
 import { Meta } from './list';
@@ -40,19 +41,16 @@ export function createPager<T>(
    */
   size: number | Accessor<number>,
 ): Pager<T> {
-  const [page, setPage] = createSignal(0);
   const fits = (): number => (typeof size === 'number' ? size : size());
   const pages = createMemo(() => Math.max(1, Math.ceil(items().length / fits())));
+  /** The page turned to, pulled back inside the list whenever the list shrinks */
+  const [page, setPage] = createSignal<number>((at) => Math.min(at ?? 0, pages() - 1));
   /**
    * Held rather than sliced on demand. A grid reads the page it is
    * given once per square, and each of those reads used to run
    * whatever built the list again
    */
   const shown = createMemo<T[]>(() => items().slice(page() * fits(), (page() + 1) * fits()));
-
-  createEffect(() => {
-    setPage((at) => Math.min(at, pages() - 1));
-  });
 
   return {
     shown,

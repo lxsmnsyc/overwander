@@ -21,7 +21,8 @@ import { Badge, Meta, TooltipHost } from '../../../styled';
 import StatusSquares from '../../StatusSquares';
 import { GENDER_LABELS, GENDER_MARKS, sayFriendship } from '../../catch-summary';
 
-import { For, type JSX, Show, children } from 'solid-js';
+import { For, Show, children } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { m } from '../../../../i18n/paraglide/messages.js';
 
 /**

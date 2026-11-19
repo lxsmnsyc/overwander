@@ -1,4 +1,5 @@
-import { For, type JSX, Show } from 'solid-js';
+import { For, Show } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { Genders, Species } from '../../../data/ids/species';
 import { isEgg } from '../../../model/egg';
 import { isShiny } from '../../../model/caught-record';

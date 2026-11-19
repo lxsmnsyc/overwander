@@ -1,18 +1,14 @@
 import {
   type Accessor,
   For,
-  Index,
-  type JSX,
-  type Resource,
+  Loading,
   Show,
-  Suspense,
   createEffect,
   createMemo,
-  createResource,
   createSignal,
-  on,
   untrack,
 } from 'solid-js';
+import type { JSX } from '@solidjs/web';
 import { type CaughtPokemon, getCaughtBatched } from '../../auth/caught';
 import { getCatchSlots, isShiny } from '../../model/caught-record';
 import { Slots } from '../../data/constants/slots';
@@ -28,7 +24,7 @@ import { MoveLine } from '../catches/MovePicker';
 import { MOVE_CARD, MoveStripe } from './move-card';
 import AnimatedSprite from '../sprites/AnimatedSprite';
 import { type CounterCost, CounterStep, CounterTerms } from './terms';
-import { Button, DialogActions, Meta, Note, Status } from '../styled';
+import { Button, DialogActions, Meta, Note, Status, spellAria } from '../styled';
 import playEffect, { Effect } from '../app/sound';
 import { type FormProps, defineForm } from './form';
 import { openForm } from './stack';
@@ -80,7 +76,7 @@ function describeLearnRefusal(refusal: LearnRefusal, name: string, move: string)
 }
 
 function TeachBody(
-  props: FormProps<TeachMoveInput, true> & { caught: Resource<CaughtPokemon | null> },
+  props: FormProps<TeachMoveInput, true> & { caught: Accessor<CaughtPokemon | null> },
 ): JSX.Element {
   const [forgetting, setForgetting] = createSignal(0);
   const [status, setStatus] = createSignal<string | null>(null);
@@ -218,12 +214,12 @@ function TeachBody(
       >
         <CounterStep>{m.teach_choose_forget()}</CounterStep>
         <ul class={MOVE_CARDS}>
-          <Index each={known()}>
+          <For keyed={false} each={known()}>
             {(move, at) => (
               <li>
                 <button
                   type="button"
-                  aria-pressed={forgetting() === at}
+                  aria-pressed={spellAria(forgetting() === at)}
                   class={`${MOVE_CARD} w-full cursor-pointer ${
                     forgetting() === at
                       ? 'border-ember bg-ember-soft text-ember-dark [&_.truncate]:line-through'
@@ -238,7 +234,7 @@ function TeachBody(
                 </button>
               </li>
             )}
-          </Index>
+          </For>
         </ul>
         <Meta>
           {m.teach_forget_note({
@@ -263,17 +259,18 @@ function TeachBody(
 }
 
 function TeachView(props: FormProps<TeachMoveInput, true>): JSX.Element {
-  const [caught] = createResource(() => props.input.catchId, getCaughtBatched);
+  const catchId = createMemo(() => props.input.catchId);
+  const caught = createMemo(async () => getCaughtBatched(catchId()));
 
   return (
-    <Suspense fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
+    <Loading fallback={<Note class="text-center">{m.teach_loading()}</Note>}>
       <TeachBody {...props} caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 
 /** The face itself, read under the boundary of `CatchFace` */
-function Face(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
+function Face(props: { caught: Accessor<CaughtPokemon | null> }): JSX.Element {
   return (
     <Show when={props.caught()}>
       {(loaded) => (
@@ -298,12 +295,13 @@ function Face(props: { caught: Resource<CaughtPokemon | null> }): JSX.Element {
  * form's body does, through the batched read, so both go out as one
  */
 function CatchFace(props: { catchId: string }): JSX.Element {
-  const [caught] = createResource(() => props.catchId, getCaughtBatched);
+  const catchId = createMemo(() => props.catchId);
+  const caught = createMemo(async () => getCaughtBatched(catchId()));
 
   return (
-    <Suspense>
+    <Loading>
       <Face caught={caught} />
-    </Suspense>
+    </Loading>
   );
 }
 
@@ -343,25 +341,23 @@ export function askTeachings(
     return current == null ? null : `${current.catchId}:${current.move}`;
   });
 
-  createEffect(
-    on(asking, (key) => {
-      const current = untrack(teaching);
+  createEffect(asking, (key) => {
+    const current = untrack(teaching);
 
-      if (key == null || current == null) {
-        return;
-      }
-      openForm(TeachMoveForm, {
-        catchId: current.catchId,
-        move: current.move,
-        teach: current.levelled ? learnLevelUpMove : undefined,
+    if (key == null || current == null) {
+      return;
+    }
+    openForm(TeachMoveForm, {
+      catchId: current.catchId,
+      move: current.move,
+      teach: current.levelled ? learnLevelUpMove : undefined,
+    })
+      .then((taught) => {
+        if (taught === true) {
+          onTaught(current.levelled);
+        }
+        next();
       })
-        .then((taught) => {
-          if (taught === true) {
-            onTaught(current.levelled);
-          }
-          next();
-        })
-        .catch(() => undefined);
-    }),
-  );
+      .catch(() => undefined);
+  });
 }

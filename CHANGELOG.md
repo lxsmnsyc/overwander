@@ -1,5 +1,24 @@
 # overwander
 
+## 4.54.0
+
+### Minor Changes
+
+- bb0d6d8: Added the Exp Charm and the Oval Charm, two key items the buddy carries. The Exp Charm pays one more candy of the caught pokemon's family on every catch. The Oval Charm halves the steps an egg needs when it is picked up, and does not stack with a Flame Body buddy. Both turn up in the rarest band of the ground's item pool. The Mark Charm is gone.
+- 1771e57: Added the Ether, Max Ether, Elixir and Max Elixir as held items. An Ether halves the first cooldown its holder's moves start and a Max Ether clears it, once a battle. An Elixir halves every cooldown, and a Max Elixir clears them, the moment all of its holder's moves are cooling down at once. They are not berries, so Unnerve does not stop them, and they turn up in the ground's item pool.
+- eed4c9a: Added the Room Service, a held item that drops its holder's Speed by one stage when a Trick Room goes up and is used up as it does. It is sold with the other one-shots and turns up in the ground's item pool.
+- 9962242: Added a shiny dex. A Regular and Shiny switch on the Pokedex reads the same grid by shiny coats: a shiny caught is drawn in its shiny coat, a shiny only seen is a silhouette, and the rest stay blank. The counts, the region bars and the gold star for a finished region follow the switch, and so does the forms grid.
+- e165712: Wild pokemon now come and go one at a time on their own clocks instead of the whole set turning over every five minutes. They fade in as they arrive, slower when they appear near you, fade out as they leave, and walk around near where they appeared. A pokemon out at the top of the hour stays for the rest of its time unless something the new hour brings lands where it roams.
+
+### Patch Changes
+
+- 8d69033: Fixed the overworld failing to load with "The learn set of species ... was read before the learn sets were loaded". Working out who may be a raid boss no longer reads learn sets or moves, which arrive after the first frame.
+- a5e8a1e: Fixed alternate forms and the Gen 9 pokemon showing English names and categories under Japanese and Spanish. Every form now has a name (Zoroark de Hisui, ゾロアーク（ヒスイのすがた）) and every pokemon has a category (Pokémon Gato Planta).
+- e165712: The game starts faster: learn sets, moves, abilities and items load after the first screen instead of before it, and only the language in use is downloaded. The first download is about a quarter smaller.
+- e165712: A pokemon met in the wild, an egg and a raid prize now record the biome of the cell they were found in, not the biome at the middle of the area.
+- 32d47f6: The safari nameplate says the whole meeting in one line (A wild Lv. 5 Pidgey ♀ appeared!, with marks for caught before, shadow and shiny), and the box on the field only shows what a buddy reveals.
+- 630bbd0: The catch sheet and the catch card now list the ability a pokemon wears in battle beside its pool, marked as worn. An Ogerpon mask shows its mask ability, and a pokemon holding a form item such as the Griseous Orb or the Ultranecrozium Z shows the ability that shape brings.
+
 ## 4.53.0
 
 ### Minor Changes
